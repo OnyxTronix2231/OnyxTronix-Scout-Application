@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static OnyxScoutApplication.Server.Data.Extensions.Result;
+
 namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
 {
     public class ScoutFormFormatRepository : Repository<ScoutFormForamt>, IScoutFormFormatRepository
