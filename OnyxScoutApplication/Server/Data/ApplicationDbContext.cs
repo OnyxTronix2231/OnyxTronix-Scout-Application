@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Shared.Models;
 
 namespace OnyxScoutApplication.Server.Data
 {
@@ -17,5 +18,7 @@ namespace OnyxScoutApplication.Server.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
+
+        public DbSet<ScoutFormForamt> ScoutFormFormats { get; set; }
     }
 }
