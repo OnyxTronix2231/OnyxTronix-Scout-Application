@@ -20,7 +20,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.UnitsOfWork
 
         public IScoutFormFormatRepository ScoutFormFormats { get; private set; }
 
-        public async Task<ActionResult> Update(int id, ScoutFormForamt scoutFormForamtModel)
+        public async Task<ActionResult> Update(int id, ScoutFormFormat scoutFormForamtModel)
         {
             var scoutFormForamtFromDb = await ScoutFormFormats.GetWithFields(id);
             if (scoutFormForamtFromDb.Value == null)

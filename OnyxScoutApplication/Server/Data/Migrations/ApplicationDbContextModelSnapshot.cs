@@ -339,7 +339,7 @@ namespace OnyxScoutApplication.Server.Data.Migrations
                     b.ToTable("Field");
                 });
 
-            modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormForamt", b =>
+            modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormat", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -407,7 +407,7 @@ namespace OnyxScoutApplication.Server.Data.Migrations
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.Field", b =>
                 {
-                    b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormForamt", "ScoutFormForamt")
+                    b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormat", "ScoutFormForamt")
                         .WithMany("Fields")
                         .HasForeignKey("ScoutFormForamtId")
                         .OnDelete(DeleteBehavior.Cascade)

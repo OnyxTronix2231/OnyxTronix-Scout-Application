@@ -5,7 +5,7 @@ using System.Text;
 
 namespace OnyxScoutApplication.Shared.Models
 {
-    public class ScoutFormForamt
+    public class ScoutFormFormat
     {
         public int Id { get; set; }
         

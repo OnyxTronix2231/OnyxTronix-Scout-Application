@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace OnyxScoutApplication.Server.Data.Presistance.Repositories.Interfaces
 {
-    public interface IScoutFormFormatRepository : IRepository<ScoutFormForamt>
+    public interface IScoutFormFormatRepository : IRepository<ScoutFormFormat>
     {
-        Task<ActionResult<ScoutFormForamt>> GetWithFields(int id);
+        Task<ActionResult<ScoutFormFormat>> GetWithFields(int id);
 
-        Task<ActionResult<ScoutFormForamt>> GetWithFieldsByYear(int year);
+        Task<ActionResult<ScoutFormFormat>> GetWithFieldsByYear(int year);
     }
 }

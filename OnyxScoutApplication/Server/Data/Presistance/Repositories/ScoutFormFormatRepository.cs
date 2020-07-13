@@ -11,13 +11,13 @@ using static OnyxScoutApplication.Server.Data.Extensions.Result;
 
 namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
 {
-    public class ScoutFormFormatRepository : Repository<ScoutFormForamt>, IScoutFormFormatRepository
+    public class ScoutFormFormatRepository : Repository<ScoutFormFormat>, IScoutFormFormatRepository
     {
         public ScoutFormFormatRepository(ApplicationDbContext context) : base(context)
         {
         }
 
-        public override async Task<ActionResult> Add(ScoutFormForamt scoutFormForamt)
+        public override async Task<ActionResult> Add(ScoutFormFormat scoutFormForamt)
         {
             if (await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Year == scoutFormForamt.Year))
             {
@@ -26,7 +26,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             return await base.Add(scoutFormForamt);
         }
 
-        public async Task<ActionResult<ScoutFormForamt>> GetWithFields(int id)
+        public async Task<ActionResult<ScoutFormFormat>> GetWithFields(int id)
         {
             var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.Fields).FirstOrDefaultAsync(i => i.Id == id);
             if(result == null)
@@ -36,7 +36,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             return result;
         }
 
-        public async Task<ActionResult<ScoutFormForamt>> GetWithFieldsByYear(int year)
+        public async Task<ActionResult<ScoutFormFormat>> GetWithFieldsByYear(int year)
         {
             var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.Fields).FirstOrDefaultAsync(i => i.Year == year);
             if (result == null)

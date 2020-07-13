@@ -25,25 +25,25 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ScoutFormForamt>>> Get()
+        public async Task<ActionResult<IEnumerable<ScoutFormFormat>>> Get()
         {
             return await unitOfWork.ScoutFormFormats.GetAll();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ScoutFormForamt>> Get(int id)
+        public async Task<ActionResult<ScoutFormFormat>> Get(int id)
         {
             return await unitOfWork.ScoutFormFormats.GetWithFields(id);
         }
 
         [HttpGet("ByYear/{year}")]
-        public async Task<ActionResult<ScoutFormForamt>> GetByYear(int year)
+        public async Task<ActionResult<ScoutFormFormat>> GetByYear(int year)
         {
             return await unitOfWork.ScoutFormFormats.GetWithFieldsByYear(year);
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateScoutFormFormat(int id, [FromBody] ScoutFormForamt scoutFormForamtModel)
+        public async Task<ActionResult> UpdateScoutFormFormat(int id, [FromBody] ScoutFormFormat scoutFormForamtModel)
         {
             var response = await unitOfWork.Update(id, scoutFormForamtModel);
             await unitOfWork.Complete();
@@ -51,7 +51,7 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateScoutFormFormat([FromBody] ScoutFormForamt scoutFormForamtModel)
+        public async Task<ActionResult> CreateScoutFormFormat([FromBody] ScoutFormFormat scoutFormForamtModel)
         {
             if (ModelState.IsValid)
             {

@@ -20,7 +20,7 @@ namespace OnyxScoutApplication.Shared.Models
         public int ScoutFormForamtId { get; set; }
 
         [JsonIgnore]
-        public ScoutFormForamt ScoutFormForamt { get; set; }
+        public ScoutFormFormat ScoutFormForamt { get; set; }
 
         public string Name { get; set; }
 
