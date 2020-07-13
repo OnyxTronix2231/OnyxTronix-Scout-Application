@@ -9,7 +9,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
     public class NotificationBase : ComponentBase
     {
         [Inject]
-        NotificationManager NotificationService { get; set; }
+        NotificationManager NotificationManager { get; set; }
 
         protected string Title { get; set; }
         protected string Message { get; set; }
@@ -18,8 +18,8 @@ namespace OnyxScoutApplication.Client.Others.Objects
 
         protected override void OnInitialized()
         {
-            NotificationService.OnShow += OnShow;
-            NotificationService.OnHide += OnHide;
+            NotificationManager.OnShow += OnShow;
+            NotificationManager.OnHide += OnHide;
         }
 
         public virtual void OnShow(string title, string message, NotificationType notificationType)

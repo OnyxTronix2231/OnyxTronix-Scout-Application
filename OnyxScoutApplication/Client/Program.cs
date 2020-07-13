@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Syncfusion.Blazor;
+using OnyxScoutApplication.Client.Others.Managers;
 
 namespace OnyxScoutApplication.Client
 {
@@ -15,7 +16,6 @@ namespace OnyxScoutApplication.Client
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
-
            
             ConfigureServices(builder.Services, builder);
 
@@ -34,6 +34,8 @@ namespace OnyxScoutApplication.Client
 
             services.AddSyncfusionBlazor();
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjgzMDMyQDMxMzgyZTMxMmUzME1Ja1ptbzlHdFZQanM2REdUdkVxakd2ckJ4bG5sZy85N2dxZUJ3Nm15N3M9");
+            services.AddTransient<HttpClientManager>();
+            services.AddTransient<NotificationManager>();
         }
     }
 }

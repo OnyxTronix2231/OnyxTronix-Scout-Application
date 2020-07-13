@@ -1,0 +1,23 @@
+﻿@page "/ScoutFormFormat/Create"
+
+@using OnyxScoutApplication.Client.Pages.ScoutFormFormat.Components
+
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
+
+<h3>Create</h3>
+<ScoutFormFormatComponent ScoutFormFormat="@scoutFormForamtModel" Type="FormType.Create" OnValidSubmit="@Create">
+
+</ScoutFormFormatComponent>
+@code {
+    private ScoutFormFormat scoutFormForamtModel = new ScoutFormFormat();
+
+    private async Task Create()
+    {
+        scoutFormForamtModel.Fields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
+        if (await Http.TryPostJson("ScoutFormFormat", scoutFormForamtModel))
+        {
+            NavigationManager.NavigateTo("ScoutFormFormats");
+        }
+    }
+}

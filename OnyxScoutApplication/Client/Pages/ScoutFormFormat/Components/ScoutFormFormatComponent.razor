@@ -1,0 +1,95 @@
+﻿<EditForm Model="@ScoutFormFormat" OnValidSubmit="@OnValidSubmit">
+    <FluentValidationValidator />
+
+
+    <div class="form-group col-sm-5">
+        <div>
+            <label for="year">Year</label>
+            <InputNumber class="form-control" @bind-Value="ScoutFormFormat.Year" />
+            <ValidationMessage For="@(() => ScoutFormFormat.Year)" />
+        </div>
+        <br />
+        @for (int i = 0; i < ScoutFormFormat.Fields.Count; i++)
+        {
+            int currentindex = i;
+
+            <button type="button" class="btn btn-danger" @onclick="() => RemoveField(currentindex)">Remove field</button>
+
+            Field field = ScoutFormFormat.Fields[i];
+            <div>
+                <label for="name">Field name</label>
+                <InputText class="form-control" @bind-Value="field.Name" />
+                <ValidationMessage For="@(() => field.Name)" />
+            </div>
+            <div>
+                <label for="type">Field type</label>
+                <select class="form-control" @bind="field.FieldType">
+                    @foreach (var type in Enum.GetValues(typeof(FieldType)))
+                    {
+                        <option value="@type">@type</option>
+                    }
+                </select>
+                <ValidationMessage For="@(() => field.FieldType)" />
+            </div>
+            <br />
+            <div class="form-group col-lg-8">
+                @switch (field.FieldType)
+                {
+                    case FieldType.None:
+                        break;
+                    case FieldType.TextField:
+                        <TextFieldComponent Field="field" IsEditMode="true" @bind-Value="field.DefaultValue">
+
+                        </TextFieldComponent>
+                        break;
+                    case FieldType.Numeric:
+                        <NumricFieldComponent Field="field" IsEditMode="true" @bind-Value="field.DefaultValue">
+
+                        </NumricFieldComponent>
+
+                        break;
+                    case FieldType.Boolean:
+                        <BooleanFieldComponent Field="field" IsEditMode="true" @bind-Value="field.DefaultValue">
+
+                        </BooleanFieldComponent>
+                        break;
+                    default:
+                        break;
+                }
+            </div>
+        }
+    </div>
+    <div>
+        <button type="button" class="btn btn-dark" @onclick="AddField">Add field</button>
+    </div>
+    <br />
+    @{var v = (Type == FormType.Create ? "Add" : "Save");}
+    <button type="submit" class="btn btn-primary">@v</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public ScoutFormFormat ScoutFormFormat { get; set; }
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+    [Parameter]
+    public FormType Type { get; set; }
+
+    private void AddField()
+    {
+        if (ScoutFormFormat.Fields.Count <= 24)
+        {
+            ScoutFormFormat.Fields.Add(new Field());
+        }
+    }
+
+    private void RemoveField(int index)
+    {
+        ScoutFormFormat.Fields.RemoveAt(index);
+    }
+
+    private void OnOptionSelect(Microsoft.AspNetCore.Components.ChangeEventArgs e, int index)
+    {
+        ScoutFormFormat.Fields[index].FieldType = Enum.Parse<FieldType>(e.Value.ToString());
+    }
+}

@@ -1,0 +1,11 @@
+﻿@inherits FormInputBase<bool>
+
+<div>
+    @if (IsEditMode)
+    {
+        <label for="name">Field default value</label>
+    }
+
+    <SfCheckBox CssClass="e-info" @bind-Checked="ValueBind"/>
+    <ValidationMessage For="@(() => Field.DefaultValue)" />
+</div>

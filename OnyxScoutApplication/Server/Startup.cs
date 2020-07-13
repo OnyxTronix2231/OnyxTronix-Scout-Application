@@ -13,6 +13,10 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using OnyxScoutApplication.Server.Data;
 using OnyxScoutApplication.Server.Models;
+using OnyxScoutApplication.Server.Data.Presistance.Repositories;
+using OnyxScoutApplication.Server.Data.Presistance.Repositories.Interfaces;
+using OnyxScoutApplication.Server.Data.Presistance.UnitsOfWork;
+using OnyxScoutApplication.Server.Data.Presistance.UnitsOfWork.interfaces;
 
 namespace OnyxScoutApplication.Server
 {
@@ -33,7 +37,11 @@ namespace OnyxScoutApplication.Server
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.Password.RequireNonAlphanumeric = false;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentityServer()
@@ -44,6 +52,9 @@ namespace OnyxScoutApplication.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatRepository>();
+            services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFormatUnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

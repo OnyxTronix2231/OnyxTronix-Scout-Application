@@ -1,0 +1,20 @@
+﻿@inherits FormInputBase<string>
+
+<div>
+    @if (IsEditMode)
+    {
+        <label for="name">Field default value</label>
+    }
+    <InputTextArea class="form-control" @bind-Value="ValueBind" />
+    <ValidationMessage For="@ValueExpression" />
+</div>
+@if (IsEditMode)
+{
+    <div>
+        <SfCheckBox Label="Required" CssClass="e-info" @bind-Checked="Field.Required"/>
+        <ValidationMessage For="@(() => Field.Required)" />
+    </div>
+}
+
+@code{
+}

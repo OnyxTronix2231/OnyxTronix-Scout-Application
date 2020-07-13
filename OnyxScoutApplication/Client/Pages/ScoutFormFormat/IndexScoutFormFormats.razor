@@ -1,0 +1,45 @@
+﻿@page "/ScoutFormFormats"
+@inject NavigationManager NavigationManager
+@inject HttpClientManager Http
+<h1>ScoutFormFormats</h1>
+<div class="form-group">
+    <a class="btn btn-primary" href="ScoutFormFormat/Create">Add scout form format</a>
+</div>
+@if (scoutFormForamts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Year</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var scoutFormFormat in scoutFormForamts)
+            {
+                <tr>
+                    <td>@scoutFormFormat.Year</td>
+                    <SfButton CssClass="e-warning" @onclick="() =>nav(scoutFormFormat)">Edit</SfButton>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<ScoutFormFormat> scoutFormForamts;
+
+    private void nav(ScoutFormFormat scoutFormFormat)
+    {
+        NavigationManager.NavigateTo("ScoutFormFormat/Edit/" + scoutFormFormat.Id);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        scoutFormForamts = await Http.GetJson<List<ScoutFormFormat>>("ScoutFormFormat");
+    }
+
+}
