@@ -1,0 +1,37 @@
+﻿@using Syncfusion.Blazor.Notifications
+@inherits NotificationBase
+<SfToast @ref="ToastObj" Title="@Title" Content="@Message" CssClass="@ToastTypeString">
+    <ToastPosition X="Center"></ToastPosition>
+</SfToast>
+
+@code {
+    public string ToastTypeString
+    {
+        get
+        {
+            return NotificationType switch
+            {
+                NotificationType.Warning => "e-toast-warning",
+                NotificationType.Success => "e-toast-success",
+                NotificationType.Danger => "e-toast-danger",
+                NotificationType.Info => "e-toast-info",
+                _ => "",
+            };
+        }
+    }
+    private SfToast ToastObj;
+
+    public override void OnShow(string title, string message, NotificationType type)
+    {
+        base.OnShow(title, message, type);
+        ToastObj.Show();
+        StateHasChanged();
+    }
+
+    public override void OnHide()
+    {
+        base.OnHide();
+        ToastObj.Hide();
+
+    }
+}

@@ -2,12 +2,10 @@ using System;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Text;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Syncfusion.Blazor;
 
 namespace OnyxScoutApplication.Client
 {
@@ -18,15 +16,24 @@ namespace OnyxScoutApplication.Client
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-            builder.Services.AddHttpClient("OnyxScoutApplication.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-                .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
-
-            // Supply HttpClient instances that include access tokens when making requests to the server project
-            builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("OnyxScoutApplication.ServerAPI"));
-
-            builder.Services.AddApiAuthorization();
+           
+            ConfigureServices(builder.Services, builder);
 
             await builder.Build().RunAsync();
+        }
+
+        private static void ConfigureServices(IServiceCollection services, WebAssemblyHostBuilder builder)
+        {
+            services.AddHttpClient("OnyxScoutApplication.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+               .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+
+            // Supply HttpClient instances that include access tokens when making requests to the server project
+            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("OnyxScoutApplication.ServerAPI"));
+
+            services.AddApiAuthorization();
+
+            services.AddSyncfusionBlazor();
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjgzMDMyQDMxMzgyZTMxMmUzME1Ja1ptbzlHdFZQanM2REdUdkVxakd2ckJ4bG5sZy85N2dxZUJ3Nm15N3M9");
         }
     }
 }
