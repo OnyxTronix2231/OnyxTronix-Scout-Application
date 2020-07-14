@@ -1,5 +1,5 @@
 ﻿<EditForm Model="@ScoutFormFormat" OnValidSubmit="@OnValidSubmit">
-    <FluentValidationValidator />
+    <FluentValidationValidator DisableAssemblyScanning="@true" />
 
 
     <div class="form-group col-sm-5">
@@ -38,18 +38,18 @@
                     case FieldType.None:
                         break;
                     case FieldType.TextField:
-                        <TextFieldComponent Field="field" IsEditMode="true" @bind-Value="field.DefaultValue">
+                        <TextFieldComponent Field="field" IsEditMode="true" @bind-Value="field.TextDefaultValue">
 
                         </TextFieldComponent>
                         break;
                     case FieldType.Numeric:
-                        <NumricFieldComponent Field="field" IsEditMode="true" @bind-Value="field.DefaultValue">
+                        <NumricFieldComponent Field="field" IsEditMode="true" @bind-Value="field.NumricDefaultValue">
 
                         </NumricFieldComponent>
 
                         break;
                     case FieldType.Boolean:
-                        <BooleanFieldComponent Field="field" IsEditMode="true" @bind-Value="field.DefaultValue">
+                        <BooleanFieldComponent Field="field" IsEditMode="true" @bind-Value="field.BoolDefaultValue">
 
                         </BooleanFieldComponent>
                         break;

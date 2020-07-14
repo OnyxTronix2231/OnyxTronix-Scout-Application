@@ -1,4 +1,5 @@
 ﻿@inherits FormInputBase<bool>
+@using System.Diagnostics.CodeAnalysis;
 
 <div>
     @if (IsEditMode)
@@ -6,6 +7,14 @@
         <label for="name">Field default value</label>
     }
 
-    <SfCheckBox CssClass="e-info" @bind-Checked="ValueBind"/>
-    <ValidationMessage For="@(() => Field.DefaultValue)" />
+    <SfCheckBox CssClass="e-info" @bind-Checked="CurrentValue" />
+    <ValidationMessage For="@(() => ValueExpression)" />
 </div>
+
+@code {
+    protected override bool TryParseValueFromString(string value, out bool result, [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        validationErrorMessage = "Value must be a valid boolean";
+        return bool.TryParse(value, out result);
+    }
+}

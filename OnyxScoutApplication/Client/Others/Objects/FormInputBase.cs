@@ -15,35 +15,12 @@ namespace OnyxScoutApplication.Client.Others.Objects
         Create
     }
 
-    public class FormInputBase<T> : InputBase<string>
+    public abstract class FormInputBase<T> : InputBase<T>
     {
-        private T valueBind;
-
         [Parameter]
         public Field Field { get; set; }
 
         [Parameter]
         public bool IsEditMode { get; set; }
-
-        protected T ValueBind
-        {
-            get => valueBind; set
-            {
-                valueBind = value;
-                CurrentValue = valueBind.ToString();
-            }
-        }
-
-        protected override void OnInitialized()
-        {
-            CurrentValue = ValueBind?.ToString();
-        }
-
-        protected override bool TryParseValueFromString(string value, out string result, [NotNullWhen(false)] out string validationErrorMessage)
-        {
-            result = value;
-            validationErrorMessage = null;
-            return true;
-        }
     }
 }

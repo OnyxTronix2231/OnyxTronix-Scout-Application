@@ -24,7 +24,11 @@ namespace OnyxScoutApplication.Shared.Models
 
         public string Name { get; set; }
 
-        public string DefaultValue { get; set; }
+        public string TextDefaultValue { get; set; }
+
+        public bool BoolDefaultValue { get; set; }
+
+        public int? NumricDefaultValue { get; set; }
 
         public int MyProperty { get; set; }
 

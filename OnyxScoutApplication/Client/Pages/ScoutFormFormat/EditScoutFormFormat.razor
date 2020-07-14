@@ -25,7 +25,7 @@
         scoutFormForamt.Fields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
         if (await Http.TryPutJson("ScoutFormFormat?id=" + id, scoutFormForamt))
         {
-            NavigationManager.NavigateTo("ScoutFormFormat");
+            NavigationManager.NavigateTo("ScoutFormFormats");
         }
     }
 }

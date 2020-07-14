@@ -1,20 +1,27 @@
 ﻿@inherits FormInputBase<string>
+@using System.Diagnostics.CodeAnalysis;
 
 <div>
     @if (IsEditMode)
     {
         <label for="name">Field default value</label>
     }
-    <InputTextArea class="form-control" @bind-Value="ValueBind" />
+    <InputTextArea class="form-control" @bind-Value="CurrentValue" />
     <ValidationMessage For="@ValueExpression" />
 </div>
 @if (IsEditMode)
 {
     <div>
-        <SfCheckBox Label="Required" CssClass="e-info" @bind-Checked="Field.Required"/>
+        <SfCheckBox Label="Required" CssClass="e-info" @bind-Checked="Field.Required" />
         <ValidationMessage For="@(() => Field.Required)" />
     </div>
 }
 
 @code{
+    protected override bool TryParseValueFromString(string value, out string result, [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        validationErrorMessage = null;
+        result = value;
+        return true;
+    }
 }
