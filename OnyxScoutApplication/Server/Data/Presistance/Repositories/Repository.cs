@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnyxScoutApplication.Server.Data.Presistance.Repositories.Interfaces;
 using System;
@@ -9,49 +10,53 @@ using System.Threading.Tasks;
 
 namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class Repository<DbEntity, DtoEntity> : IRepository<DbEntity, DtoEntity> where DbEntity : class where DtoEntity : class
     {
         protected readonly DbContext context;
+        protected readonly IMapper mapper;
 
-        public Repository(DbContext context)
+        public Repository(DbContext context, IMapper mapper)
         {
             this.context = context;
+            this.mapper = mapper;
         }
 
-        public virtual async Task<ActionResult<TEntity>> Get(int id)
+        public virtual async Task<ActionResult<DtoEntity>> Get(int id)
         {
-            var entity = await context.Set<TEntity>().FindAsync(id);
-            if(entity == null)
-            {
-                return new NotFoundResult();
-            }
-            return entity;
-        }
-
-        public virtual async Task<ActionResult<IEnumerable<TEntity>>> GetAll()
-        {
-            return await context.Set<TEntity>().ToListAsync();
-        }
-
-        public virtual async Task<ActionResult> Add(TEntity entity)
-        {
-            context.Set<TEntity>().Add(entity);
-            return await Task.Run(() => new OkResult());
-        }
-
-        public virtual async Task<ActionResult<IEnumerable<TEntity>>> Find(Expression<Func<TEntity, bool>> predicate)
-        {
-            return await context.Set<TEntity>().Where(predicate).ToListAsync();
-        }
-
-        public virtual async Task<ActionResult> Remove(int id)
-        {
-            var entity = await context.Set<TEntity>().FindAsync(id);
+            var entity = await context.Set<DbEntity>().FindAsync(id);
             if (entity == null)
             {
                 return new NotFoundResult();
             }
-            context.Set<TEntity>().Remove(entity);
+            return mapper.Map<DtoEntity>(entity);
+        }
+
+        public virtual async Task<ActionResult<IEnumerable<DtoEntity>>> GetAll()
+        {
+            return new OkObjectResult(mapper.Map<IEnumerable<DtoEntity>>(await context.Set<DbEntity>().ToListAsync()));
+        }
+
+        public virtual async Task<ActionResult> Add(DtoEntity entity)
+        {
+            //DbEntity db = Activator.CreateInstance<DbEntity>();
+            var mapped = mapper.Map<DbEntity>(entity);
+            context.Set<DbEntity>().Add(mapped);
+            return await Task.Run(() => new OkResult());
+        }
+
+        //public virtual async Task<ActionResult<IEnumerable<DtoEntity>>> Find(Expression<Func<DtoEntity, bool>> predicate)
+        //{
+        //    return await context.Set<DbEntity>().Where(predicate).ToListAsync();
+        //}
+
+        public virtual async Task<ActionResult> Remove(int id)
+        {
+            var entity = await context.Set<DbEntity>().FindAsync(id);
+            if (entity == null)
+            {
+                return new NotFoundResult();
+            }
+            context.Set<DbEntity>().Remove(mapper.Map<DbEntity>(entity));
             return new OkResult();
         }
     }

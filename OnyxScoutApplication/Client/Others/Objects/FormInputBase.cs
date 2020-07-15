@@ -18,7 +18,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
     public abstract class FormInputBase<T> : InputBase<T>
     {
         [Parameter]
-        public Field Field { get; set; }
+        public FieldDto Field { get; set; }
 
         [Parameter]
         public bool IsEditMode { get; set; }

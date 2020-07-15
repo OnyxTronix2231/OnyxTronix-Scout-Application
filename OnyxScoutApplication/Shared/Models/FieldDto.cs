@@ -5,21 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace OnyxScoutApplication.Shared.Models
 {
-    public enum FieldType
-    {
-        None,
-        Boolean,
-        TextField,
-        Numeric
-    }
-
-    public enum FieldStageType
-    {
-        Autonomous,
-        Teleoperated,
-        EndGame
-    }
-    public class Field
+    public class FieldDto
     {
         public int Id { get; set; }
 
@@ -37,9 +23,9 @@ namespace OnyxScoutApplication.Shared.Models
 
         public int? NumricDefaultValue { get; set; }
 
-        public FieldType FieldType { get; set; }
+        public int MyProperty { get; set; }
 
-        public FieldStageType? FieldStageType { get; set; }
+        public FieldType FieldType { get; set; }
 
         public int MaxValue { get; set; } = 9999;
 

@@ -17,6 +17,9 @@ using OnyxScoutApplication.Server.Data.Presistance.Repositories;
 using OnyxScoutApplication.Server.Data.Presistance.Repositories.Interfaces;
 using OnyxScoutApplication.Server.Data.Presistance.UnitsOfWork;
 using OnyxScoutApplication.Server.Data.Presistance.UnitsOfWork.interfaces;
+using AutoMapper;
+using System;
+using OnyxScoutApplication.Server.Data.Profiles;
 
 namespace OnyxScoutApplication.Server
 {
@@ -55,6 +58,7 @@ namespace OnyxScoutApplication.Server
 
             services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatRepository>();
             services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFormatUnitOfWork>();
+            services.AddAutoMapper(typeof(ScoutFormProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

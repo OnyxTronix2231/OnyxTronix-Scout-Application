@@ -1,0 +1,75 @@
+﻿@for (int i = 0; i < Fields.Count; i++)
+{
+    int currentindex = i;
+
+    <button type="button" class="btn btn-danger" @onclick="() => RemoveField(currentindex)">Remove field</button>
+
+    FieldDto field = Fields[i];
+    <div>
+        <label for="name">Field name</label>
+        <InputText class="form-control" @bind-Value="field.Name" />
+        <ValidationMessage For="@(() => field.Name)" />
+    </div>
+    <div>
+        <label for="type">Field type</label>
+        <select class="form-control" @bind="field.FieldType">
+            @foreach (var type in Enum.GetValues(typeof(FieldType)))
+            {
+                <option value="@type">@type</option>
+            }
+        </select>
+        <ValidationMessage For="@(() => field.FieldType)" />
+    </div>
+    <br />
+    <div class="form-group col-lg-8">
+        @switch (field.FieldType)
+        {
+            case FieldType.None:
+                break;
+            case FieldType.TextField:
+                <TextFieldComponent Field="field" IsEditMode="true" @bind-Value="field.TextDefaultValue">
+
+                </TextFieldComponent>
+                break;
+            case FieldType.Numeric:
+                <NumricFieldComponent Field="field" IsEditMode="true" @bind-Value="field.NumricDefaultValue">
+
+                </NumricFieldComponent>
+
+                break;
+            case FieldType.Boolean:
+                <BooleanFieldComponent Field="field" IsEditMode="true" @bind-Value="field.BoolDefaultValue">
+
+                </BooleanFieldComponent>
+                break;
+            default:
+                break;
+        }
+    </div>
+    
+}
+<div>
+    <button type="button" class="btn btn-dark" @onclick="AddField">Add field</button>
+</div>
+@code{
+    [Parameter]
+    public List<FieldDto> Fields { get; set; }
+
+    private void AddField()
+    {
+        if (Fields.Count <= 24)
+        {
+            Fields.Add(new FieldDto());
+        }
+    }
+
+    private void RemoveField(int index)
+    {
+        Fields.RemoveAt(index);
+    }
+
+    private void OnOptionSelect(Microsoft.AspNetCore.Components.ChangeEventArgs e, int index)
+    {
+        Fields[index].FieldType = Enum.Parse<FieldType>(e.Value.ToString());
+    }
+}

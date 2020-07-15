@@ -13,16 +13,18 @@
 @code {
     [Parameter]
     public int id { get; set; }
-    private ScoutFormFormat scoutFormForamt;
+    private ScoutFormFormatDto scoutFormForamt;
 
     protected override async Task OnInitializedAsync()
     {
-        scoutFormForamt = await Http.GetJson<ScoutFormFormat>("ScoutFormFormat/" + id);
+        scoutFormForamt = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/" + id);
     }
 
     private async Task Update()
     {
-        scoutFormForamt.Fields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
+        scoutFormForamt.AutonomousFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
+        scoutFormForamt.TeleoperatedFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
+        scoutFormForamt.EndGameFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
         if (await Http.TryPutJson("ScoutFormFormat?id=" + id, scoutFormForamt))
         {
             NavigationManager.NavigateTo("ScoutFormFormats");

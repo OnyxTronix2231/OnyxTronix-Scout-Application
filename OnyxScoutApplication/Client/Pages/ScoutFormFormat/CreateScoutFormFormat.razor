@@ -6,16 +6,18 @@
 @inject NavigationManager NavigationManager
 
 <h3>Create</h3>
-<ScoutFormFormatComponent ScoutFormFormat="@scoutFormForamtModel" Type="FormType.Create" OnValidSubmit="@Create">
+<ScoutFormFormatComponent ScoutFormFormat="@scoutFormFormat" Type="FormType.Create" OnValidSubmit="@Create">
 
 </ScoutFormFormatComponent>
 @code {
-    private ScoutFormFormat scoutFormForamtModel = new ScoutFormFormat();
+    private ScoutFormFormatDto scoutFormFormat = new ScoutFormFormatDto();
 
     private async Task Create()
     {
-        scoutFormForamtModel.Fields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
-        if (await Http.TryPostJson("ScoutFormFormat", scoutFormForamtModel))
+        scoutFormFormat.AutonomousFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
+        scoutFormFormat.TeleoperatedFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
+        scoutFormFormat.EndGameFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
+        if (await Http.TryPostJson("ScoutFormFormat", scoutFormFormat))
         {
             NavigationManager.NavigateTo("ScoutFormFormats");
         }

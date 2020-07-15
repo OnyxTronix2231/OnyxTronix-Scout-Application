@@ -6,7 +6,7 @@ using System.Text;
 
 namespace OnyxScoutApplication.Shared.Models.FluentValidations
 {
-    public class FieldValidator : AbstractValidator<Field>
+    public class FieldValidator : AbstractValidator<FieldDto>
     {
         public FieldValidator()
         {
@@ -14,7 +14,7 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
                 WithMessage((model, s) => "Default value must be a number between " + model.MinValue + " and " + model.MaxValue).When(c => c.FieldType == FieldType.Numeric);
         }
 
-        private bool BeNumberBetween(Field model, int? value)
+        private bool BeNumberBetween(FieldDto model, int? value)
         {
             if (value == null)
             {

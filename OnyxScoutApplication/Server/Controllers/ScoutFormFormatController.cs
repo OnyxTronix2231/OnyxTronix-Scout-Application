@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using OnyxScoutApplication.Server.Data.Presistance.UnitsOfWork.interfaces;
 using OnyxScoutApplication.Shared.Models;
@@ -25,33 +23,33 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ScoutFormFormat>>> Get()
+        public async Task<ActionResult<IEnumerable<ScoutFormFormatDto>>> Get()
         {
             return await unitOfWork.ScoutFormFormats.GetAll();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ScoutFormFormat>> Get(int id)
+        public async Task<ActionResult<ScoutFormFormatDto>> Get(int id)
         {
             return await unitOfWork.ScoutFormFormats.GetWithFields(id);
         }
 
         [HttpGet("ByYear/{year}")]
-        public async Task<ActionResult<ScoutFormFormat>> GetByYear(int year)
+        public async Task<ActionResult<ScoutFormFormatDto>> GetByYear(int year)
         {
             return await unitOfWork.ScoutFormFormats.GetWithFieldsByYear(year);
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateScoutFormFormat(int id, [FromBody] ScoutFormFormat scoutFormForamtModel)
+        public async Task<ActionResult> UpdateScoutFormFormat(int id, [FromBody] ScoutFormFormatDto scoutFormForamtModel)
         {
-            var response = await unitOfWork.Update(id, scoutFormForamtModel);
+            var response = await unitOfWork.ScoutFormFormats.Update(id, scoutFormForamtModel);
             await unitOfWork.Complete();
             return response;
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateScoutFormFormat([FromBody] ScoutFormFormat scoutFormForamtModel)
+        public async Task<ActionResult> CreateScoutFormFormat([FromBody] ScoutFormFormatDto scoutFormForamtModel)
         {
             if (ModelState.IsValid)
             {
