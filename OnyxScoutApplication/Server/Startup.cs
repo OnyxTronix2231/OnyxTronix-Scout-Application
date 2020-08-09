@@ -20,6 +20,8 @@ using OnyxScoutApplication.Server.Data.Presistance.UnitsOfWork.interfaces;
 using AutoMapper;
 using System;
 using OnyxScoutApplication.Server.Data.Profiles;
+using OnyxScoutApplication.Shared.Data.Presistance.TheBlueAlliance;
+using OnyxScoutApplication.Server.Data.Presistance.TheBlueAlliance;
 
 namespace OnyxScoutApplication.Server
 {
@@ -59,6 +61,7 @@ namespace OnyxScoutApplication.Server
             services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatRepository>();
             services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFormatUnitOfWork>();
             services.AddAutoMapper(typeof(ScoutFormProfile));
+            services.AddSingleton<ITheBlueAllianceService>(new TheBlueAllianceService("bX9cxVNbMq3WzxTDiWjfblxrk58HZj65QyToW1hvXURrtjHtuuXsFujFC5j6iPus"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

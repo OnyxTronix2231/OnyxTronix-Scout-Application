@@ -1,0 +1,156 @@
+﻿@using Syncfusion.Blazor.Grids
+@using System.Linq
+@inject NavigationManager NavigationManager
+@if (Matches != null && Matches.Count != 0)
+{
+    <SfGrid DataSource="@Matches" AllowSorting="true" AllowFiltering="true" Height="@Height">
+        <GridPageSettings PageSize="10"></GridPageSettings>
+        <GridEvents QueryCellInfo="CustomizeCell" TValue="Match"></GridEvents>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn Field=@nameof(Match.MatchNumber) HeaderText="Match number" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(Match.Date) HeaderText="Match date" Format="dd/MM/yyyy HH:mm" Type="ColumnType.DateTime" Width="150"></GridColumn>
+            @for (int i = 0; i < Matches[0].Alliances.Blue.TeamKeys.Count; i++)
+            {
+                var headName = "Blue team " + (i + 1);
+                int index = i;
+                <GridColumn HeaderText="@headName" Width="120">
+                    <Template>
+                        @{
+                            var match = context as Match;
+                            var teamNumber = match.Alliances.Blue.GetTeamAt(index);
+                            <span @onclick="() => OnTeamClicked(match, teamNumber)">@(teamNumber)</span>
+                        }
+                    </Template>
+                </GridColumn>
+            }
+            <GridColumn Field="Alliances.Blue.Score" HeaderText="Blue Score" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+            <GridColumn Field="Alliances.Red.Score" HeaderText="Red Score" TextAlign="TextAlign.Left" Width="120"></GridColumn>
+            @for (int i = 0; i < Matches[0].Alliances.Red.TeamKeys.Count; i++)
+            {
+                var headName = "Red team " + (i + 1);
+                int index = i;
+                <GridColumn HeaderText="@headName" Width="120">
+                    <Template>
+                        @{
+                            var match = context as Match;
+                            var teamNumber = match.Alliances.Red.GetTeamAt(index);
+                            <span @onclick="() => OnTeamClicked(match, teamNumber)">@(teamNumber)</span>
+                        }
+                    </Template>
+                </GridColumn>
+            }
+            <GridColumn HeaderText="Winning alliance" Width="120"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+}
+@code {
+    [Parameter]
+    public List<Match> Matches { get; set; }
+    [Parameter]
+    public int TeamNumber { get; set; }
+    [Parameter]
+    public List<ScoutForm> SubmittedForms { get; set; }
+    [Parameter]
+    public string Height { get; set; } = "100%";
+
+    public void CustomizeCell(QueryCellInfoEventArgs<Match> args)
+    {
+        if (args.Column.HeaderText.Contains("Blue")) //Cell color based on alliance color
+        {
+            args.Cell.AddClass(new string[] { "blue" });
+        }
+        else if (args.Column.HeaderText.Contains("Red"))
+        {
+            args.Cell.AddClass(new string[] { "red" });
+
+        }
+        else if (args.Column.HeaderText == "Winning alliance") //"WinningAlliance" Cell color
+        {
+            args.Cell.AddClass(new string[] { args.Data.WinningAlliance });
+        }
+        if (args.Column.HeaderText.Contains("Blue team ")) //Team's text style (bold, color and clickable)
+        {
+            int index = int.Parse(args.Column.HeaderText.Substring(args.Column.HeaderText.Length - 1, 1)) - 1;
+            if (args.Data.Alliances.Blue.GetTeamAt(index) == TeamNumber)
+            {
+                args.Cell.AddClass(new string[] { "targetTeam" });
+            }
+            if (SubmittedForms != null)
+            {
+                if (SubmittedForms.Any(form => form.TeamNumber == args.Data.Alliances.Blue.GetTeamAt(index) && form.MatchName == args.Data.Key))
+                {
+                    args.Cell.AddClass(new string[] { "filledTeamForm" });
+                }
+                else
+                {
+                    args.Cell.AddClass(new string[] { "clickable" });
+                    args.Cell.AddClass(new string[] { "notFilledTeamForm" });
+                }
+            }
+            else
+            {
+                args.Cell.AddClass(new string[] { "clickable" });
+            }
+        }
+        else if (args.Column.HeaderText.Contains("Red team "))
+        {
+            int index = int.Parse(args.Column.HeaderText.Substring(args.Column.HeaderText.Length - 1, 1)) - 1;
+            if (args.Data.Alliances.Red.GetTeamAt(index) == TeamNumber)
+            {
+                args.Cell.AddClass(new string[] { "targetTeam" });
+            }
+            if (SubmittedForms != null)
+            {
+                if (SubmittedForms.Any(form => form.TeamNumber == args.Data.Alliances.Red.GetTeamAt(index) && form.MatchName == args.Data.Key))
+                {
+                    args.Cell.AddClass(new string[] { "filledTeamForm" });
+                }
+                else
+                {
+                    args.Cell.AddClass(new string[] { "clickable" });
+                    args.Cell.AddClass(new string[] { "notFilledTeamForm" });
+                }
+            }
+            else
+            {
+                args.Cell.AddClass(new string[] { "clickable" });
+            }
+        }
+    }
+
+    private void OnTeamClicked(Match match, int teamNumber)
+    {
+
+        if (SubmittedForms == null || !SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == match.Key))
+        {
+            NavigationManager.NavigateTo("ScoutForm/Create/" + teamNumber + "/" + match.Date.Year + "/" + match.Key);
+        }
+    }
+}
+
+<style>
+    .red {
+        background-color: indianred;
+    }
+
+    .blue {
+        background-color: royalblue
+    }
+
+    .targetTeam {
+        font-weight: bold
+    }
+
+    .e-grid .e-gridcontent .e-rowcell.clickable {
+        cursor: pointer
+    }
+
+    .e-grid .e-gridcontent .e-rowcell.filledTeamForm {
+        color: lawngreen
+    }
+
+    .e-grid .e-gridcontent .e-rowcell.notFilledTeamForm {
+        color: darkred
+    }
+</style>

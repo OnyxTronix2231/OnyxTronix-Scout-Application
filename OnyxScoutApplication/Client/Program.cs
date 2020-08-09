@@ -10,6 +10,7 @@ using OnyxScoutApplication.Client.Others.Managers;
 using FluentValidation;
 using OnyxScoutApplication.Shared.Models;
 using OnyxScoutApplication.Shared.Models.FluentValidations;
+using Blazored.LocalStorage;
 
 namespace OnyxScoutApplication.Client
 {
@@ -41,6 +42,7 @@ namespace OnyxScoutApplication.Client
             services.AddTransient<NotificationManager>();
             services.AddTransient<IValidator<ScoutFormFormatDto>, ScoutFormForamtValidator>();
             services.AddTransient<IValidator<FieldDto>, FieldValidator>();
+            services.AddBlazoredLocalStorage();
         }
     }
 }

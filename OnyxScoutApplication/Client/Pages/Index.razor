@@ -1,7 +1,39 @@
 ﻿@page "/"
+@inject ILocalStorageService LocalStorage
 
-<h1>Hello, world!</h1>
+@inject HttpClientManager Http
 
-Welcome to your new app.
+<h1>Events</h1>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<div><EventSelector OnEventSelctionChange="UpdateMatchTable"></EventSelector></div>
+
+<div><MatchesGrid Matches="qMatches" SubmittedForms="data" Height="400"></MatchesGrid></div>
+
+<br />
+<div><MatchesGrid Matches="qfMatches" SubmittedForms="data"></MatchesGrid></div>
+
+<br />
+<div><MatchesGrid Matches="sfMatches" SubmittedForms="data"></MatchesGrid></div>
+
+<br />
+<div><MatchesGrid Matches="fMatches" SubmittedForms="data"></MatchesGrid></div>
+
+@code {
+    private List<Match> qMatches = new List<Match>();
+    private List<Match> qfMatches = new List<Match>();
+    private List<Match> sfMatches = new List<Match>();
+    private List<Match> fMatches = new List<Match>();
+    private List<ScoutForm> data = new List<ScoutForm>();
+
+    private async Task UpdateMatchTable(Event selectedEvent)
+    {
+        var result = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
+        //  data = await Http.GetJson<List<ScoutFormModel>>("ScoutForm");
+        result = result.OrderBy(i => i.Date).ToList();
+        qMatches = result.Where(i => i.Level == "qm").ToList();
+        qfMatches = result.Where(i => i.Level == "qf").ToList();
+        sfMatches = result.Where(i => i.Level == "sf").ToList();
+        fMatches = result.Where(i => i.Level == "f").ToList();
+    }
+}
+
