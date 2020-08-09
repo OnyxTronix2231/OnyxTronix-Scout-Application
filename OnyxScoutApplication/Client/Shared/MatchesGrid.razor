@@ -19,7 +19,7 @@
                         @{
                             var match = context as Match;
                             var teamNumber = match.Alliances.Blue.GetTeamAt(index);
-                            <span @onclick="() => OnTeamClicked(match, teamNumber)">@(teamNumber)</span>
+                            <span @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
                         }
                     </Template>
                 </GridColumn>
@@ -35,7 +35,7 @@
                         @{
                             var match = context as Match;
                             var teamNumber = match.Alliances.Red.GetTeamAt(index);
-                            <span @onclick="() => OnTeamClicked(match, teamNumber)">@(teamNumber)</span>
+                            <span @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
                         }
                     </Template>
                 </GridColumn>
@@ -53,6 +53,8 @@
     public List<ScoutForm> SubmittedForms { get; set; }
     [Parameter]
     public string Height { get; set; } = "100%";
+    [Parameter]
+    public EventCallback<TeamInMatch> OnTeamClicked { get; set; }
 
     public void CustomizeCell(QueryCellInfoEventArgs<Match> args)
     {
@@ -119,12 +121,12 @@
         }
     }
 
-    private void OnTeamClicked(Match match, int teamNumber)
+    private void OnGridTeamClicked(Match match, int teamNumber)
     {
-
         if (SubmittedForms == null || !SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == match.Key))
         {
-            NavigationManager.NavigateTo("ScoutForm/Create/" + teamNumber + "/" + match.Date.Year + "/" + match.Key);
+            // NavigationManager.NavigateTo("ScoutForm/Create/" + teamNumber + "/" + match.Date.Year + "/" + match.Key);
+            OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match});
         }
     }
 }

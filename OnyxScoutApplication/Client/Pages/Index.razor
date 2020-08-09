@@ -1,13 +1,13 @@
 ﻿@page "/"
 @inject ILocalStorageService LocalStorage
-
 @inject HttpClientManager Http
+@inject NavigationManager NavigationManager
 
 <h1>Events</h1>
 
 <div><EventSelector OnEventSelctionChange="UpdateMatchTable"></EventSelector></div>
 
-<div><MatchesGrid Matches="qMatches" SubmittedForms="data" Height="400"></MatchesGrid></div>
+<div><MatchesGrid Matches="qMatches" SubmittedForms="data" Height="400" OnTeamClicked="OnTeamClicked"></MatchesGrid></div>
 
 <br />
 <div><MatchesGrid Matches="qfMatches" SubmittedForms="data"></MatchesGrid></div>
@@ -34,6 +34,12 @@
         qfMatches = result.Where(i => i.Level == "qf").ToList();
         sfMatches = result.Where(i => i.Level == "sf").ToList();
         fMatches = result.Where(i => i.Level == "f").ToList();
+    }
+
+    private async Task OnTeamClicked(TeamInMatch teamInMatch)
+    {
+        await LocalStorage.SetItemAsync("ScoutForm/TeamInMatch", teamInMatch);
+        NavigationManager.NavigateTo("ScoutForm/Create");
     }
 }
 

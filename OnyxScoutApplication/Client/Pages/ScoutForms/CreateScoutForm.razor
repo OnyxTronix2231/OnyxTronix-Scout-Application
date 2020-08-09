@@ -1,0 +1,102 @@
+﻿@page "/ScoutForm/Create"
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+@using OnyxScoutApplication.Client.Pages.ScoutFormFormat.Components
+
+@if (TeamInMatch != null)
+{
+    <h3>ScoutForm</h3>
+    <EditForm Model="@scoutForm" OnValidSubmit="@OnValidSubmit">
+        <FluentValidationValidator />
+        <div class="form-group col-sm-5">
+            <label for="teamNumber">Team number</label>
+            <input class="form-control" type="number" id="teamNumber" value="@TeamInMatch.TeamNumber" readonly="readonly" />
+        </div>
+        <div class="form-group col-sm-5">
+            <label for="year">Year</label>
+            <input class="form-control" type="number" id="year" value="@TeamInMatch.Match.Date.Year" readonly="readonly" />
+        </div>
+        <div class="form-group col-sm-5">
+            <label for="matchName">Match number</label>
+            <input class="form-control" type="text" id="matchNumber" value="@TeamInMatch.Match.Key" readonly="readonly" />
+        </div>
+        @foreach (var data in scoutForm.AutonomousData)
+        {
+            <div class="form-group col-sm-5">
+                <label>@data.Field.Name</label>
+                @switch (data.Field.FieldType)
+                {
+                    case FieldType.None:
+                        break;
+                    case FieldType.TextField:
+                        <TextFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.StringValue">
+
+                        </TextFieldComponent>
+                        break;
+                    case FieldType.Numeric:
+                        <NumricFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.NumricValue">
+
+                        </NumricFieldComponent>
+
+                        break;
+                    case FieldType.Boolean:
+                        <BooleanFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.BooleanValue">
+
+                        </BooleanFieldComponent>
+                        break;
+                    default:
+                        break;
+                }
+            </div>
+        }
+        <div><button type="submit" class="btn btn-primary">Create</button></div>
+    </EditForm>
+}
+@code {
+    public TeamInMatch TeamInMatch { get; set; }
+
+    private ScoutFormDto scoutForm = new ScoutFormDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        TeamInMatch = await LocalStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
+        scoutForm.TeamNumber = TeamInMatch.TeamNumber;
+        scoutForm.Year = TeamInMatch.Match.Date.Year;
+        scoutForm.MatchName = TeamInMatch.Match.Key;
+        ScoutFormFormatDto scoutFormForamt = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/ " + TeamInMatch.Match.Date.Year);
+        if (scoutFormForamt == null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        foreach (var field in scoutFormForamt.AutonomousFields)
+        {
+            scoutForm.AutonomousData.Add(new ScoutFormDataDto() { Field = field, FieldID = field.Id });
+        }
+
+        foreach (var field in scoutFormForamt.TeleoperatedFields)
+        {
+            scoutForm.TeleoperatedData.Add(new ScoutFormDataDto() { Field = field, FieldID = field.Id });
+        }
+
+        foreach (var field in scoutFormForamt.EndGameFields)
+        {
+            scoutForm.EndGameData.Add(new ScoutFormDataDto() { Field = field, FieldID = field.Id });
+        }
+    }
+
+    private void OnValueChange(string value, ScoutFormDataDto data)
+    {
+        // data.Value = value;
+    }
+
+    private async Task OnValidSubmit()
+    {
+        if (await Http.TryPostJson("ScoutForm", scoutForm))
+        {
+            // NavigationManager.NavigateTo("TeamDetails/" + TeamInMatch.TeamNumber);
+        }
+    }
+}
