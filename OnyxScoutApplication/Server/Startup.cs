@@ -46,11 +46,13 @@ namespace OnyxScoutApplication.Server
             {
                 options.SignIn.RequireConfirmedAccount = true;
                 options.Password.RequireNonAlphanumeric = false;
-            })
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            }).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options => {
+                     options.IdentityResources["openid"].UserClaims.Add("role");
+                     options.ApiResources.Single().UserClaims.Add("role");
+                 });
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
