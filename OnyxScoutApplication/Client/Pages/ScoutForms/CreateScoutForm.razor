@@ -2,7 +2,6 @@
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
-@using OnyxScoutApplication.Client.Pages.ScoutFormFormat.Components
 
 @if (TeamInMatch != null)
 {
@@ -21,35 +20,12 @@
             <label for="matchName">Match number</label>
             <input class="form-control" type="text" id="matchNumber" value="@TeamInMatch.Match.Key" readonly="readonly" />
         </div>
-        @foreach (var data in scoutForm.AutonomousData)
-        {
-            <div class="form-group col-sm-5">
-                <label>@data.Field.Name</label>
-                @switch (data.Field.FieldType)
-                {
-                    case FieldType.None:
-                        break;
-                    case FieldType.TextField:
-                        <TextFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.StringValue">
+        <SectionEdit SectionData="scoutForm.AutonomousData" SectionName="Autonomous"></SectionEdit>
 
-                        </TextFieldComponent>
-                        break;
-                    case FieldType.Numeric:
-                        <NumricFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.NumricValue">
+        <SectionEdit SectionData="scoutForm.TeleoperatedData" SectionName="Teleoperated"></SectionEdit>
 
-                        </NumricFieldComponent>
+        <SectionEdit SectionData="scoutForm.EndGameData" SectionName="End game"></SectionEdit>
 
-                        break;
-                    case FieldType.Boolean:
-                        <BooleanFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.BooleanValue">
-
-                        </BooleanFieldComponent>
-                        break;
-                    default:
-                        break;
-                }
-            </div>
-        }
         <div><button type="submit" class="btn btn-primary">Create</button></div>
     </EditForm>
 }
@@ -94,9 +70,12 @@
 
     private async Task OnValidSubmit()
     {
+        Console.WriteLine("SUBBBBBBBB");
+
         if (await Http.TryPostJson("ScoutForm", scoutForm))
         {
             // NavigationManager.NavigateTo("TeamDetails/" + TeamInMatch.TeamNumber);
+            NavigationManager.NavigateTo("/");
         }
     }
 }
