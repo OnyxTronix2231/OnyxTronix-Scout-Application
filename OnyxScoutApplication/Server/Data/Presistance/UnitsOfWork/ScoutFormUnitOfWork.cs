@@ -6,19 +6,19 @@ using AutoMapper;
 
 namespace OnyxScoutApplication.Server.Data.Presistance.UnitsOfWork
 {
-    public class ScoutFormFormatUnitOfWork : IScoutFormFormatUnitOfWork
+    public class ScoutFormUnitOfWork : IScoutFormUnitOfWork
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
 
-        public ScoutFormFormatUnitOfWork(ApplicationDbContext context, IMapper mapper)
+        public ScoutFormUnitOfWork(ApplicationDbContext context, IMapper mapper)
         {
             this.context = context;
             this.mapper = mapper;
-            ScoutFormFormats = new ScoutFormFormatRepository(context, mapper);
+            ScoutForms = new ScoutFormRepository(context, mapper);
         }
 
-        public IScoutFormFormatRepository ScoutFormFormats { get; private set; }
+        public IScoutFormRepository ScoutForms { get; private set; }
 
         public async Task<int> Complete()
         {

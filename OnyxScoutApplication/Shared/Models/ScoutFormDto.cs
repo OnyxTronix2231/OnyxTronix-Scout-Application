@@ -10,15 +10,13 @@ namespace OnyxScoutApplication.Shared.Models
         [Key]
         public int Id { get; set; }
         
-        [Required]
         public int TeamNumber { get; set; }
      
-        [Required]
         public int Year { get; set; }
 
-        [Required]
-        [StringLength(30)]
         public string MatchName { get; set; }
+
+        public string WriterUserName { get; set; }
 
         public List<ScoutFormDataDto> AutonomousData { get; set; } = new List<ScoutFormDataDto>();
 

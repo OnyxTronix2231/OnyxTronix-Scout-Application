@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace OnyxScoutApplication.Server.Data.Presistance.UnitsOfWork.interfaces
 {
-    public interface IScoutFormFormatUnitOfWork : IDisposable
+    public interface IScoutFormUnitOfWork : IDisposable
     {
-        IScoutFormFormatRepository ScoutFormFormats { get; }
+        IScoutFormRepository ScoutForms { get; }
         Task<int> Complete();
     }
 }

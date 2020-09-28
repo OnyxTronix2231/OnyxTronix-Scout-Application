@@ -6,14 +6,17 @@ using System.Text;
 
 namespace OnyxScoutApplication.Shared.Models.FluentValidations
 {
-    public class ScoutFormForamtValidator : AbstractValidator<ScoutFormFormatDto>
+    public class ScoutFormValidator : AbstractValidator<ScoutFormDto>
     {
-        public ScoutFormForamtValidator()
+        public ScoutFormValidator()
         {
-            RuleFor(x => x.Year).GreaterThanOrEqualTo(2000).LessThanOrEqualTo(2099);
-            RuleForEach(x => x.AutonomousFields).SetValidator(new FieldValidator());
-            RuleForEach(x => x.TeleoperatedFields).SetValidator(new FieldValidator());
-            RuleForEach(x => x.EndGameFields).SetValidator(new FieldValidator());
+            RuleFor(x => x.Year).NotEmpty().GreaterThanOrEqualTo(2000).LessThanOrEqualTo(2099);
+            RuleFor(x => x.MatchName).NotEmpty();
+            RuleFor(x => x.TeamNumber).NotEmpty().GreaterThanOrEqualTo(2000).LessThanOrEqualTo(2099);
+            RuleFor(x => x.WriterUserName).NotEmpty();
+            RuleForEach(x => x.AutonomousData).SetValidator(new ScoutFormDataValidator());
+            RuleForEach(x => x.TeleoperatedData).SetValidator(new ScoutFormDataValidator());
+            RuleForEach(x => x.EndGameData).SetValidator(new ScoutFormDataValidator());
         }
     }
 }

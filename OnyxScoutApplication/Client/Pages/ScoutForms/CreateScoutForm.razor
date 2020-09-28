@@ -20,6 +20,10 @@
             <label for="matchName">Match number</label>
             <input class="form-control" type="text" id="matchNumber" value="@TeamInMatch.Match.Key" readonly="readonly" />
         </div>
+        <div class="form-group col-sm-5">
+            <label for="matchName">Writer</label>
+            <input class="form-control" type="text" id="matchNumber" value="@scoutForm.WriterUserName" readonly="readonly" />
+        </div>
         <SectionEdit SectionData="scoutForm.AutonomousData" SectionName="Autonomous"></SectionEdit>
 
         <SectionEdit SectionData="scoutForm.TeleoperatedData" SectionName="Teleoperated"></SectionEdit>
@@ -30,16 +34,22 @@
     </EditForm>
 }
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
     public TeamInMatch TeamInMatch { get; set; }
 
     private ScoutFormDto scoutForm = new ScoutFormDto();
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await authenticationStateTask;
+        var user = authState.User;
+
         TeamInMatch = await LocalStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
         scoutForm.TeamNumber = TeamInMatch.TeamNumber;
         scoutForm.Year = TeamInMatch.Match.Date.Year;
         scoutForm.MatchName = TeamInMatch.Match.Key;
+        scoutForm.WriterUserName = user.Identity.Name;
         ScoutFormFormatDto scoutFormForamt = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/ " + TeamInMatch.Match.Date.Year);
         if (scoutFormForamt == null)
         {
