@@ -18,13 +18,14 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
         {
         }
 
-        public override async Task<ActionResult> Add(ScoutFormDto scoutFormForamt)
+        public override async Task<ActionResult> Add(ScoutFormDto scoutForm)
         {
-            if (await ScoutAppContext.ScoutForms.AnyAsync(i => i.Year == scoutFormForamt.Year && i.MatchName == scoutFormForamt.MatchName && i.TeamNumber == scoutFormForamt.TeamNumber))
+            if (await ScoutAppContext.ScoutForms.AnyAsync(i => i.Year == scoutForm.Year && i.MatchName == scoutForm.MatchName && i.TeamNumber == scoutForm.TeamNumber))
             {
+                Console.WriteLine("This scout form already exists!");
                 return ResultCode(System.Net.HttpStatusCode.BadRequest, "This scout form already exists!");
             }
-            return await base.Add(scoutFormForamt);
+            return await base.Add(scoutForm);
         }
 
         public async Task<ActionResult<ScoutFormDto>> GetWithFields(int id)
@@ -37,7 +38,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             return mapper.Map<ScoutFormDto>(result);
         }
 
-        public async Task<ActionResult<ScoutFormDto>> GetWithFieldsByYear(int year)
+        public async Task<ActionResult<ScoutFormDto>> GetWithDataByYear(int year)
         {
             var result = await ScoutAppContext.ScoutForms.Include(i => i.Data).FirstOrDefaultAsync(i => i.Year == year);
             if (result == null)

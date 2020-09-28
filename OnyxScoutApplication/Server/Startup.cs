@@ -62,6 +62,8 @@ namespace OnyxScoutApplication.Server
 
             services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatRepository>();
             services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFormatUnitOfWork>();
+            services.AddScoped<IScoutFormRepository, ScoutFormRepository>();
+            services.AddScoped<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
             services.AddAutoMapper(typeof(ScoutFormProfile));
             services.AddSingleton<ITheBlueAllianceService>(new TheBlueAllianceService("bX9cxVNbMq3WzxTDiWjfblxrk58HZj65QyToW1hvXURrtjHtuuXsFujFC5j6iPus"));
         }

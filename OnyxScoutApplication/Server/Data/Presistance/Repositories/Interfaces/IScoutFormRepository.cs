@@ -11,7 +11,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories.Interfaces
     {
         Task<ActionResult<ScoutFormDto>> GetWithFields(int id);
 
-        Task<ActionResult<ScoutFormDto>> GetWithFieldsByYear(int year);
+        Task<ActionResult<ScoutFormDto>> GetWithDataByYear(int year);
         Task<ActionResult> Update(int id, ScoutFormDto scoutFormForamtDto);
     }
 }

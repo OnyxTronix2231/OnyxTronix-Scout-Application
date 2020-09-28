@@ -80,8 +80,6 @@
 
     private async Task OnValidSubmit()
     {
-        Console.WriteLine("SUBBBBBBBB");
-
         if (await Http.TryPostJson("ScoutForm", scoutForm))
         {
             // NavigationManager.NavigateTo("TeamDetails/" + TeamInMatch.TeamNumber);

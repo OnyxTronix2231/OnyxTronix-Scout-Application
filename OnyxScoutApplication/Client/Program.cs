@@ -39,7 +39,7 @@ namespace OnyxScoutApplication.Client
             services.AddSyncfusionBlazor();
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjgzMDMyQDMxMzgyZTMxMmUzME1Ja1ptbzlHdFZQanM2REdUdkVxakd2ckJ4bG5sZy85N2dxZUJ3Nm15N3M9");
             services.AddTransient<HttpClientManager>();
-            services.AddTransient<NotificationManager>();
+            services.AddSingleton<NotificationManager>();
             services.AddTransient<IValidator<ScoutFormFormatDto>, ScoutFormForamtValidator>();
             services.AddTransient<IValidator<FieldDto>, FieldValidator>();
             services.AddBlazoredLocalStorage();
