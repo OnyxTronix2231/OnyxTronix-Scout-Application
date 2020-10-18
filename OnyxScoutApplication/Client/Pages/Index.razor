@@ -24,12 +24,12 @@
     private List<Match> qfMatches = new List<Match>();
     private List<Match> sfMatches = new List<Match>();
     private List<Match> fMatches = new List<Match>();
-    private List<ScoutForm> data = new List<ScoutForm>();
+    private List<ScoutFormDto> data = new List<ScoutFormDto>();
 
     private async Task UpdateMatchTable(Event selectedEvent)
     {
         var result = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
-        //  data = await Http.GetJson<List<ScoutFormModel>>("ScoutForm");
+        data = await Http.GetJson<List<ScoutFormDto>>("ScoutForm");
         result = result.OrderBy(i => i.Date).ToList();
         qMatches = result.Where(i => i.Level == "qm").ToList();
         qfMatches = result.Where(i => i.Level == "qf").ToList();
