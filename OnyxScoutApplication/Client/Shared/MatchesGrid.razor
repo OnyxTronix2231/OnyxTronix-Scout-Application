@@ -78,6 +78,7 @@
             {
                 args.Cell.AddClass(new string[] { "targetTeam" });
             }
+            args.Cell.AddClass(new string[] { "clickable" });
             if (SubmittedForms != null)
             {
                 if (SubmittedForms.Any(form => form.TeamNumber == args.Data.Alliances.Blue.GetTeamAt(index) && form.MatchName == args.Data.Key))
@@ -102,6 +103,7 @@
             {
                 args.Cell.AddClass(new string[] { "targetTeam" });
             }
+            args.Cell.AddClass(new string[] { "clickable" });
             if (SubmittedForms != null)
             {
                 if (SubmittedForms.Any(form => form.TeamNumber == args.Data.Alliances.Red.GetTeamAt(index) && form.MatchName == args.Data.Key))
@@ -123,11 +125,9 @@
 
     private void OnGridTeamClicked(Match match, int teamNumber)
     {
-        if (SubmittedForms == null || !SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == match.Key))
-        {
-            // NavigationManager.NavigateTo("ScoutForm/Create/" + teamNumber + "/" + match.Date.Year + "/" + match.Key);
-            OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match});
-        }
+        bool isFormExists = SubmittedForms != null && SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == match.Key);
+        // NavigationManager.NavigateTo("ScoutForm/Create/" + teamNumber + "/" + match.Date.Year + "/" + match.Key);
+        OnTeamClicked.InvokeAsync(new TeamInMatch { TeamNumber = teamNumber, Match = match, IsFormExists = isFormExists });
     }
 }
 
@@ -149,7 +149,7 @@
     }
 
     .e-grid .e-gridcontent .e-rowcell.filledTeamForm {
-        color: lawngreen
+        color: lawngreen;
     }
 
     .e-grid .e-gridcontent .e-rowcell.notFilledTeamForm {

@@ -55,7 +55,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.TheBlueAlliance
 
         public async Task<List<Match>> GetMatchesByTeamAndEvent(int teamNumber, string eventKey)
         {
-            var response = await GetResponse(Path.Combine(prefix, "team", "frc", teamNumber.ToString(), "event", eventKey, "matches", "simple"));
+            var response = await GetResponse(Path.Combine(prefix, "team", "frc" + teamNumber.ToString(), "event", eventKey, "matches", "simple"));
             var result = JsonSerializer.Deserialize<List<Match>>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             return result;
         }

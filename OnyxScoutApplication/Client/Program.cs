@@ -11,6 +11,7 @@ using FluentValidation;
 using OnyxScoutApplication.Shared.Models;
 using OnyxScoutApplication.Shared.Models.FluentValidations;
 using Blazored.LocalStorage;
+using OnyxScoutApplication.Client.Others.Objects;
 
 namespace OnyxScoutApplication.Client
 {
@@ -39,6 +40,7 @@ namespace OnyxScoutApplication.Client
             services.AddSyncfusionBlazor();
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjgzMDMyQDMxMzgyZTMxMmUzME1Ja1ptbzlHdFZQanM2REdUdkVxakd2ckJ4bG5sZy85N2dxZUJ3Nm15N3M9");
             services.AddTransient<HttpClientManager>();
+            services.AddTransient<TeamDataAnalyzer>();
             services.AddSingleton<NotificationManager>();
             services.AddTransient<IValidator<ScoutFormFormatDto>, ScoutFormForamtValidator>();
             services.AddTransient<IValidator<FieldDto>, FieldValidator>();

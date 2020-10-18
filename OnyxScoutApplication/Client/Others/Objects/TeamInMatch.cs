@@ -11,5 +11,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
         public int TeamNumber { get; set; }
 
         public Match Match { get; set; }
+
+        public bool IsFormExists { get; set; }
     }
 }

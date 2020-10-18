@@ -13,5 +13,6 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories.Interfaces
 
         Task<ActionResult<ScoutFormDto>> GetWithDataByYear(int year);
         Task<ActionResult> Update(int id, ScoutFormDto scoutFormForamtDto);
+        Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey);
     }
 }

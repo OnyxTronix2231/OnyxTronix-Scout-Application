@@ -59,5 +59,11 @@ namespace OnyxScoutApplication.Server.Controllers
             }
             return ResultCode(System.Net.HttpStatusCode.BadRequest, "Invalid inputs!");
         }
+
+        [HttpGet("GetAllByTeam/{teamNumber}/{eventkey}")]
+        public async Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByTeam(int teamNumber, string eventKey)
+        {
+            return await unitOfWork.ScoutForms.GetAllByTeamWithData(teamNumber, eventKey);
+        }
     }
 }

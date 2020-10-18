@@ -1,0 +1,70 @@
+﻿@page "/TeamDetails"
+@using Syncfusion.Blazor.Grids
+@inject HttpClientManager Http
+@inject ILocalStorageService LocalStorage
+@inject TeamDataAnalyzer teamDataAnalyzer
+<h3>Team @teamNumber</h3>
+<h4>@selectedEvent?.Name</h4>
+
+@if (calculatedData.Count != 0)
+{
+    <SfGrid DataSource="@calculatedData" Width="600">
+        <GridColumns>
+            <GridColumn HeaderText="Name" Width="400">
+                <Template>
+                    @{
+                        <span> @((context as Tuple<FieldType, string, float>).Item2)</span>
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn HeaderText="Avarge/Success rate" Width="150">
+                <Template>
+                    @switch ((context as Tuple<FieldType, string, float>).Item1)
+                    {
+                        case FieldType.None:
+                            break;
+                        case FieldType.Boolean:
+                            <span> @(((context as Tuple<FieldType, string, float>).Item3 * 100).ToString("0.##"))%</span>
+                            break;
+                        case FieldType.TextField:
+                            break;
+                        case FieldType.Numeric:
+                            <span> @((context as Tuple<FieldType, string, float>).Item3.ToString("0.##"))</span>
+                            break;
+                        default:
+                            break;
+                    }
+                </Template>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+
+    <MatchesGrid Matches="matches" TeamNumber="teamNumber" SubmittedForms="data"></MatchesGrid>
+}
+
+@code {
+    private int teamNumber;
+    private Event selectedEvent;
+    private List<ScoutFormDto> data;
+    private List<Tuple<FieldType, string, float>> calculatedData = new List<Tuple<FieldType, string, float>>();
+    private List<Match> matches;
+
+    protected override async Task OnInitializedAsync()
+    {
+        teamNumber = await LocalStorage.GetItemAsync<int>("TeamDetails/TeamNumber");
+        Console.WriteLine(teamNumber);
+        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        if (selectedEvent == null)
+        {
+            return;
+        }
+        var formate = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        var result = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByTeam/" + teamNumber + "/" + selectedEvent.Key);
+        data = result.OrderBy(i => i.MatchName).ToList();
+        var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetMatchesByTeamAndEvent/" + teamNumber + "/" + selectedEvent.Key);
+        this.matches = matches.OrderBy(i => i.Date).ToList();
+        calculatedData.AddRange(teamDataAnalyzer.CalculateDataFor(FieldStageType.Autonomous, formate.AutonomousFields, result));
+        calculatedData.AddRange(teamDataAnalyzer.CalculateDataFor(FieldStageType.Teleoperated, formate.TeleoperatedFields, result));
+        calculatedData.AddRange(teamDataAnalyzer.CalculateDataFor(FieldStageType.EndGame, formate.EndGameFields, result));
+    }
+}

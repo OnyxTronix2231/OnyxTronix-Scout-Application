@@ -22,8 +22,30 @@ namespace OnyxScoutApplication.Server.Data.Profiles
             CreateMap<ScoutFormFormatDto, ScoutFormFormat>().ForMember(des => des.Fields, opt => opt.MapFrom<ScoutFormFormatResolver>());
 
             CreateMap<ScoutFormDataDto, ScoutFormData>().ForMember((des) => des.Value, opt => opt.MapFrom<ScoutFormDataValueResolver>());
+            CreateMap<ScoutFormData, ScoutFormDataDto>()
+                .ForMember((des) => des.StringValue, opt =>
+                {
+                    opt.PreCondition(src => src.Field.FieldType == FieldType.TextField);
+                    opt.MapFrom<ScoutFormDataDtoResolver<string>>();
+                })
+
+                .ForMember((des) => des.NumricValue, opt =>
+                {
+                    opt.PreCondition(src => src.Field.FieldType == FieldType.Numeric);
+                    opt.MapFrom<ScoutFormDataDtoResolver<int?>>();
+                })
+                .ForMember((des) => des.BooleanValue, opt =>
+                {
+                    opt.PreCondition(src => src.Field.FieldType == FieldType.Boolean);
+                    opt.MapFrom<ScoutFormDataDtoResolver<bool>>();
+                });
+
             CreateMap<ScoutFormDto, ScoutForm>().ForMember(des => des.Data, opt => opt.MapFrom<ScoutFormResolver>());
-            CreateMap<ScoutForm, ScoutFormDto>();
+            CreateMap<ScoutForm, ScoutFormDto>()
+                .ForMember(des => des.AutonomousData, opt => opt.MapFrom(src => src.Data.Where(i => i.Field.FieldStageType == FieldStageType.Autonomous)))
+                .ForMember(src => src.TeleoperatedData, opt => opt.MapFrom(des => des.Data.Where(i => i.Field.FieldStageType == FieldStageType.Teleoperated)))
+                .ForMember(src => src.EndGameData, opt => opt.MapFrom(des => des.Data.Where(i => i.Field.FieldStageType == FieldStageType.EndGame)));
+            CreateMap<ScoutFormFormatDto, ScoutFormFormat>().ForMember(des => des.Fields, opt => opt.MapFrom<ScoutFormFormatResolver>());
         }
     }
 }

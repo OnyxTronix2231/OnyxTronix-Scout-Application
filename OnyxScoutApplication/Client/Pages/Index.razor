@@ -39,8 +39,16 @@
 
     private async Task OnTeamClicked(TeamInMatch teamInMatch)
     {
-        await LocalStorage.SetItemAsync("ScoutForm/TeamInMatch", teamInMatch);
-        NavigationManager.NavigateTo("ScoutForm/Create");
+        if (!teamInMatch.IsFormExists)
+        {
+            await LocalStorage.SetItemAsync("ScoutForm/TeamInMatch", teamInMatch);
+            NavigationManager.NavigateTo("ScoutForm/Create");
+        }
+        else
+        {
+            await LocalStorage.SetItemAsync("TeamDetails/TeamNumber", teamInMatch.TeamNumber);
+            NavigationManager.NavigateTo("TeamDetails");
+        }
     }
 }
 
