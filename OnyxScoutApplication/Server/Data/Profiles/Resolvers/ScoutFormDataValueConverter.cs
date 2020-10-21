@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 {
-    public class ScoutFormDataValueResolver : IValueResolver<ScoutFormDataDto, ScoutFormData, string>
+    public class ScoutFormDataValueConverter : IValueResolver<ScoutFormDataDto, ScoutFormData, string>
     {
         public string Resolve(ScoutFormDataDto source, ScoutFormData destination, string destMember, ResolutionContext context)
         {

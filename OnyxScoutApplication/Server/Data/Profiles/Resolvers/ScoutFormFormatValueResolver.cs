@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 {
-    public class ScoutFormFormatResolver : IValueResolver<ScoutFormFormatDto, ScoutFormFormat, List<Field>>
+    public class ScoutFormFormatValueConverter : IValueResolver<ScoutFormFormatDto, ScoutFormFormat, List<Field>>
     {
         private readonly IMapper mapper;
 
-        public ScoutFormFormatResolver(IMapper mapper)
+        public ScoutFormFormatValueConverter(IMapper mapper)
         {
             this.mapper = mapper;
         }
