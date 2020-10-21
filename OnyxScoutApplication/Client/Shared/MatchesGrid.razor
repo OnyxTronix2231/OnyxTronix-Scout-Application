@@ -89,7 +89,7 @@
         {
             args.Cell.AddClass(new string[] { "targetTeam" });
         }
-        else if (TeamNumber == 0)
+        else
         {
             args.Cell.AddClass(new string[] { "clickable" });
         }
@@ -110,7 +110,6 @@
     private void OnGridTeamClicked(Match match, int teamNumber)
     {
         bool isFormExists = SubmittedForms != null && SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == match.Key);
-        // NavigationManager.NavigateTo("ScoutForm/Create/" + teamNumber + "/" + match.Date.Year + "/" + match.Key);
         OnTeamClicked.InvokeAsync(new TeamInMatch { TeamNumber = teamNumber, Match = match, IsFormExists = isFormExists });
     }
 }

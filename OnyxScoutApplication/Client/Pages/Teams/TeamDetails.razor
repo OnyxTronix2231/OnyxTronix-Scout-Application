@@ -1,9 +1,10 @@
-﻿@page "/TeamDetails"
+﻿@page "/TeamDetails/{teamNumber:int}"
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
 @inject TeamDataAnalyzer TeamDataAnalyzer
+@inject NavigationManager NavigationManager
 
-@if (endGameCalculatedData.Count != 0)
+@if (endGameCalculatedData != null)
 {
     <h3>Team @teamNumber</h3>
     <h4>@selectedEvent?.Name</h4>
@@ -17,20 +18,20 @@
     <h5>End game</h5>
     <TeamAnalyticGrid CalculatedData="endGameCalculatedData"></TeamAnalyticGrid>
     <br />
-    <MatchesGrid Matches="matches" TeamNumber="teamNumber" SubmittedForms="data"></MatchesGrid>
+    <MatchesGrid Matches="matches" TeamNumber="teamNumber" SubmittedForms="data" OnTeamClicked="OnTeamClicked"></MatchesGrid>
 }
 @code {
-    private int teamNumber;
+    [Parameter]
+    public int teamNumber { get; set; }
     private Event selectedEvent;
     private List<ScoutFormDto> data;
-    private List<FieldAverage> autoCalculatedData = new List<FieldAverage>();
-    private List<FieldAverage> teleopCalculatedData = new List<FieldAverage>();
-    private List<FieldAverage> endGameCalculatedData = new List<FieldAverage>();
+    private List<FieldAverage> autoCalculatedData;
+    private List<FieldAverage> teleopCalculatedData;
+    private List<FieldAverage> endGameCalculatedData;
     private List<Match> matches;
 
     protected override async Task OnInitializedAsync()
     {
-        teamNumber = await LocalStorage.GetItemAsync<int>("TeamDetails/TeamNumber");
         selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         if (selectedEvent == null)
         {
@@ -41,8 +42,16 @@
         data = result.OrderBy(i => i.MatchName).ToList();
         var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetMatchesByTeamAndEvent/" + teamNumber + "/" + selectedEvent.Key);
         this.matches = matches.OrderBy(i => i.Date).ToList();
-        autoCalculatedData.AddRange(TeamDataAnalyzer.CalculateDataFor(FieldStageType.Autonomous, formate.AutonomousFields, result));
-        teleopCalculatedData.AddRange(TeamDataAnalyzer.CalculateDataFor(FieldStageType.Teleoperated, formate.TeleoperatedFields, result));
-        endGameCalculatedData.AddRange(TeamDataAnalyzer.CalculateDataFor(FieldStageType.EndGame, formate.EndGameFields, result));
+        autoCalculatedData = TeamDataAnalyzer.CalculateDataFor(FieldStageType.Autonomous, formate.AutonomousFields, result);
+        teleopCalculatedData = TeamDataAnalyzer.CalculateDataFor(FieldStageType.Teleoperated, formate.TeleoperatedFields, result);
+        endGameCalculatedData = TeamDataAnalyzer.CalculateDataFor(FieldStageType.EndGame, formate.EndGameFields, result);
+    }
+
+    private void OnTeamClicked(TeamInMatch teamInMatch)
+    {
+        if (teamInMatch.TeamNumber != teamNumber)
+        {
+            NavigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber, true);
+        }
     }
 }

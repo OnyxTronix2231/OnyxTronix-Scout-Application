@@ -46,8 +46,7 @@
         }
         else
         {
-            await LocalStorage.SetItemAsync("TeamDetails/TeamNumber", teamInMatch.TeamNumber);
-            NavigationManager.NavigateTo("TeamDetails");
+            NavigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber);
         }
     }
 }
