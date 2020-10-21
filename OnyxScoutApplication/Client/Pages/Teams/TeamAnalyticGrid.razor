@@ -1,0 +1,36 @@
+﻿<div>
+    <SfGrid DataSource="@CalculatedData" Width="600">
+        <GridColumns>
+            <GridColumn HeaderText="Name" Width="400">
+                <Template>
+                    @{
+                        <span> @((context as FieldAverage).Field.Name)</span>
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn HeaderText="Avarge/Success rate" Width="150">
+                <Template>
+                    @switch ((context as FieldAverage).Field.FieldType)
+                    {
+                        case FieldType.None:
+                            break;
+                        case FieldType.Boolean:
+                            <span> @(((context as FieldAverage).Average * 100).ToString("0.##"))%</span>
+                            break;
+                        case FieldType.TextField:
+                            break;
+                        case FieldType.Numeric:
+                            <span> @((context as FieldAverage).Average.ToString("0.##"))</span>
+                            break;
+                        default:
+                            break;
+                    }
+                </Template>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+@code {
+    [Parameter]
+    public List<FieldAverage> CalculatedData { get; set; }
+}

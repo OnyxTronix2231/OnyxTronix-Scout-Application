@@ -71,54 +71,38 @@
         {
             args.Cell.AddClass(new string[] { args.Data.WinningAlliance });
         }
+
         if (args.Column.HeaderText.Contains("Blue team ")) //Team's text style (bold, color and clickable)
         {
-            int index = int.Parse(args.Column.HeaderText.Substring(args.Column.HeaderText.Length - 1, 1)) - 1;
-            if (args.Data.Alliances.Blue.GetTeamAt(index) == TeamNumber)
-            {
-                args.Cell.AddClass(new string[] { "targetTeam" });
-            }
-            args.Cell.AddClass(new string[] { "clickable" });
-            if (SubmittedForms != null)
-            {
-                if (SubmittedForms.Any(form => form.TeamNumber == args.Data.Alliances.Blue.GetTeamAt(index) && form.MatchName == args.Data.Key))
-                {
-                    args.Cell.AddClass(new string[] { "filledTeamForm" });
-                }
-                else
-                {
-                    args.Cell.AddClass(new string[] { "clickable" });
-                    args.Cell.AddClass(new string[] { "notFilledTeamForm" });
-                }
-            }
-            else
-            {
-                args.Cell.AddClass(new string[] { "clickable" });
-            }
+            TeamTextStyle(args, args.Data.Alliances.Blue);
         }
         else if (args.Column.HeaderText.Contains("Red team "))
         {
-            int index = int.Parse(args.Column.HeaderText.Substring(args.Column.HeaderText.Length - 1, 1)) - 1;
-            if (args.Data.Alliances.Red.GetTeamAt(index) == TeamNumber)
-            {
-                args.Cell.AddClass(new string[] { "targetTeam" });
-            }
+            TeamTextStyle(args, args.Data.Alliances.Red);
+        }
+    }
+
+    private void TeamTextStyle(QueryCellInfoEventArgs<Match> args, Alliance alliance)
+    {
+        int index = int.Parse(args.Column.HeaderText.Substring(args.Column.HeaderText.Length - 1, 1)) - 1;
+        if (alliance.GetTeamAt(index) == TeamNumber)
+        {
+            args.Cell.AddClass(new string[] { "targetTeam" });
+        }
+        else if (TeamNumber == 0)
+        {
             args.Cell.AddClass(new string[] { "clickable" });
-            if (SubmittedForms != null)
+        }
+
+        if (SubmittedForms != null)
+        {
+            if (SubmittedForms.Any(form => form.TeamNumber == alliance.GetTeamAt(index) && form.MatchName == args.Data.Key))
             {
-                if (SubmittedForms.Any(form => form.TeamNumber == args.Data.Alliances.Red.GetTeamAt(index) && form.MatchName == args.Data.Key))
-                {
-                    args.Cell.AddClass(new string[] { "filledTeamForm" });
-                }
-                else
-                {
-                    args.Cell.AddClass(new string[] { "clickable" });
-                    args.Cell.AddClass(new string[] { "notFilledTeamForm" });
-                }
+                args.Cell.AddClass(new string[] { "filledTeamForm" });
             }
             else
             {
-                args.Cell.AddClass(new string[] { "clickable" });
+                args.Cell.AddClass(new string[] { "notFilledTeamForm" });
             }
         }
     }

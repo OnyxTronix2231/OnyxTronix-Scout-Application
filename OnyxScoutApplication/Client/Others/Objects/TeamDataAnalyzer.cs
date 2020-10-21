@@ -8,17 +8,14 @@ namespace OnyxScoutApplication.Client.Others.Objects
 {
     public class TeamDataAnalyzer
     {
-        public List<Tuple<FieldType, string, float>> CalculateDataFor(FieldStageType fieldStageType, List<FieldDto> format, List<ScoutFormDto> data)
+        public List<FieldAverage> CalculateDataFor(FieldStageType fieldStageType, List<FieldDto> format, List<ScoutFormDto> data)
         {
-            List<Tuple<FieldType, string, float>> l = new List<Tuple<FieldType, string, float>>();
+            List<FieldAverage> averagaes = new List<FieldAverage>();
             for (int i = 0; i < format.Count; i++)
             {
-                Console.WriteLine(i);
-                Console.WriteLine(format[i].Name);
-                Console.WriteLine(fieldStageType);
-                l.Add(new Tuple<FieldType, string, float>(format[i].FieldType, format[i].Name, GetAvgFor(fieldStageType, format[i].FieldType, i, data)));
+                averagaes.Add(new FieldAverage { Field = format[i], Average = GetAvgFor(fieldStageType, format[i].FieldType, i, data) });
             }
-            return l;
+            return averagaes;
         }
 
         private float GetAvgFor(FieldStageType fieldStageType, FieldType fieldType, int i, List<ScoutFormDto> data)
