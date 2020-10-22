@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace OnyxScoutApplication.Server.Data.Migrations
+namespace OnyxScoutApplication.Server.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -78,6 +78,35 @@ namespace OnyxScoutApplication.Server.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PersistedGrants", x => x.Key);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ScoutFormFormats",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Year = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ScoutFormFormats", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ScoutForms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TeamNumber = table.Column<int>(nullable: false),
+                    Year = table.Column<int>(nullable: false),
+                    MatchName = table.Column<string>(nullable: true),
+                    WriterUserName = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ScoutForms", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -186,6 +215,69 @@ namespace OnyxScoutApplication.Server.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Field",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ScoutFormForamtId = table.Column<int>(nullable: false),
+                    FieldId = table.Column<int>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    TextDefaultValue = table.Column<string>(nullable: true),
+                    BoolDefaultValue = table.Column<bool>(nullable: false),
+                    NumricDefaultValue = table.Column<int>(nullable: true),
+                    CascadeConditionDefaultValue = table.Column<bool>(nullable: false),
+                    FieldType = table.Column<int>(nullable: false),
+                    FieldStageType = table.Column<int>(nullable: true),
+                    MaxValue = table.Column<int>(nullable: false),
+                    MinValue = table.Column<int>(nullable: false),
+                    Required = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Field", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Field_Field_FieldId",
+                        column: x => x.FieldId,
+                        principalTable: "Field",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Field_ScoutFormFormats_ScoutFormForamtId",
+                        column: x => x.ScoutFormForamtId,
+                        principalTable: "ScoutFormFormats",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ScoutFormData",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Value = table.Column<string>(nullable: true),
+                    FieldID = table.Column<int>(nullable: false),
+                    ScoutFormId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ScoutFormData", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ScoutFormData_Field_FieldID",
+                        column: x => x.FieldID,
+                        principalTable: "Field",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ScoutFormData_ScoutForms_ScoutFormId",
+                        column: x => x.ScoutFormId,
+                        principalTable: "ScoutForms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -237,6 +329,16 @@ namespace OnyxScoutApplication.Server.Data.Migrations
                 column: "Expiration");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Field_FieldId",
+                table: "Field",
+                column: "FieldId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Field_ScoutFormForamtId",
+                table: "Field",
+                column: "ScoutFormForamtId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PersistedGrants_Expiration",
                 table: "PersistedGrants",
                 column: "Expiration");
@@ -245,6 +347,16 @@ namespace OnyxScoutApplication.Server.Data.Migrations
                 name: "IX_PersistedGrants_SubjectId_ClientId_Type",
                 table: "PersistedGrants",
                 columns: new[] { "SubjectId", "ClientId", "Type" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScoutFormData_FieldID",
+                table: "ScoutFormData",
+                column: "FieldID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScoutFormData_ScoutFormId",
+                table: "ScoutFormData",
+                column: "ScoutFormId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -271,10 +383,22 @@ namespace OnyxScoutApplication.Server.Data.Migrations
                 name: "PersistedGrants");
 
             migrationBuilder.DropTable(
+                name: "ScoutFormData");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Field");
+
+            migrationBuilder.DropTable(
+                name: "ScoutForms");
+
+            migrationBuilder.DropTable(
+                name: "ScoutFormFormats");
         }
     }
 }

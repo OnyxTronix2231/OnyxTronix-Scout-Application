@@ -10,7 +10,8 @@ namespace OnyxScoutApplication.Shared.Models
         None,
         Boolean,
         TextField,
-        Numeric
+        Numeric,
+        CascadeField
     }
 
     public enum FieldStageType
@@ -23,8 +24,9 @@ namespace OnyxScoutApplication.Shared.Models
     {
         public int Id { get; set; }
 
-        //[ForeignKey("ScoutFormForamt")]
         public int ScoutFormForamtId { get; set; }
+
+        public int? FieldId { get; set; }
 
         [JsonIgnore]
         public ScoutFormFormat ScoutFormForamt { get; set; }
@@ -37,6 +39,8 @@ namespace OnyxScoutApplication.Shared.Models
 
         public int? NumricDefaultValue { get; set; }
 
+        public bool CascadeConditionDefaultValue { get; set; }
+
         public FieldType FieldType { get; set; }
 
         public FieldStageType? FieldStageType { get; set; }
@@ -46,5 +50,7 @@ namespace OnyxScoutApplication.Shared.Models
         public int MinValue { get; set; } = 0;
 
         public bool Required { get; set; } = false;
+
+        public List<Field> CascadeFields { get; set; }
     }
 }

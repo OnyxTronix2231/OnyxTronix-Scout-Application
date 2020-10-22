@@ -23,6 +23,8 @@ namespace OnyxScoutApplication.Shared.Models
 
         public int? NumricDefaultValue { get; set; }
 
+        public bool CascadeConditionDefaultValue { get; set; }
+
         public int MyProperty { get; set; }
 
         public FieldType FieldType { get; set; }
@@ -32,5 +34,7 @@ namespace OnyxScoutApplication.Shared.Models
         public int MinValue { get; set; } = 0;
 
         public bool Required { get; set; } = false;
+
+        public List<FieldDto> CascadeFields { get; set; } = new List<FieldDto>();
     }
 }

@@ -24,7 +24,15 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             {
                 return ResultCode(System.Net.HttpStatusCode.BadRequest, "This scout format already exists for this year!");
             }
-            return await base.Add(scoutFormForamt);
+            ScoutFormFormatDto clone = new ScoutFormFormatDto()
+            {
+                Year = scoutFormForamt.Year
+            };
+            await base.Add(clone);
+            await context.SaveChangesAsync();
+            var result = await ScoutAppContext.ScoutFormFormats.FirstOrDefaultAsync(i => i.Year == scoutFormForamt.Year);
+            scoutFormForamt.Id = result.Id;
+            return await Update(result.Id, scoutFormForamt);
         }
 
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFields(int id)
@@ -56,9 +64,20 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             }
             var updated = mapper.Map<ScoutFormFormat>(scoutFormForamtDto);
             result = mapper.Map(updated, result);
+            RecursivelySetScoutFormForamtId(id, result.Fields);
             context.Update(result);
             return new OkResult();
         }
+
+        private void RecursivelySetScoutFormForamtId(int id, List<Field> fields)
+        {
+            foreach (Field aField in fields)
+            {
+                aField.ScoutFormForamtId = id;
+                RecursivelySetScoutFormForamtId(id, aField.CascadeFields);
+            }
+        }
+
         private ApplicationDbContext ScoutAppContext
         {
             get

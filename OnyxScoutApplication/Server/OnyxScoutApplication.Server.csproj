@@ -6,14 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\Migrations\20200713143948_AddScoutFormForamtModel.cs" />
-    <Compile Remove="Data\Migrations\20200713143948_AddScoutFormForamtModel.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200713144146_AddScoutFormForamtModel.cs" />
-    <Compile Remove="Data\Migrations\20200713144146_AddScoutFormForamtModel.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200713144302_AddScoutFormForamtModel.cs" />
-    <Compile Remove="Data\Migrations\20200713144302_AddScoutFormForamtModel.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200713144340_AddScoutFormForamtModel.cs" />
-    <Compile Remove="Data\Migrations\20200713144340_AddScoutFormForamtModel.Designer.cs" />
+    <Compile Remove="Migrations\20201022173930_Init.cs" />
+    <Compile Remove="Migrations\20201022173930_Init.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

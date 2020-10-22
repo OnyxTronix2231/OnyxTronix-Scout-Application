@@ -31,16 +31,16 @@ else
 }
 
 @code {
-    private List<ScoutFormFormat> scoutFormForamts;
+    private List<ScoutFormFormatDto> scoutFormForamts;
 
-    private void nav(ScoutFormFormat scoutFormFormat)
+    private void nav(ScoutFormFormatDto scoutFormFormat)
     {
         NavigationManager.NavigateTo("ScoutFormFormat/Edit/" + scoutFormFormat.Id);
     }
 
     protected override async Task OnInitializedAsync()
     {
-        scoutFormForamts = await Http.GetJson<List<ScoutFormFormat>>("ScoutFormFormat");
+        scoutFormForamts = await Http.GetJson<List<ScoutFormFormatDto>>("ScoutFormFormat");
     }
 
 }

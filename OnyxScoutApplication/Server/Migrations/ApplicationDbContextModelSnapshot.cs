@@ -3,21 +3,19 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnyxScoutApplication.Server.Data;
 
-namespace OnyxScoutApplication.Server.Data.Migrations
+namespace OnyxScoutApplication.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200714155248_SeparateFieldDefValues")]
-    partial class SeparateFieldDefValues
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.5")
+                .HasAnnotation("ProductVersion", "3.1.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -313,6 +311,15 @@ namespace OnyxScoutApplication.Server.Data.Migrations
                     b.Property<bool>("BoolDefaultValue")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("CascadeConditionDefaultValue")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("FieldId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FieldStageType")
+                        .HasColumnType("int");
+
                     b.Property<int>("FieldType")
                         .HasColumnType("int");
 
@@ -320,9 +327,6 @@ namespace OnyxScoutApplication.Server.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("MinValue")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MyProperty")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -342,9 +346,60 @@ namespace OnyxScoutApplication.Server.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FieldId");
+
                     b.HasIndex("ScoutFormForamtId");
 
                     b.ToTable("Field");
+                });
+
+            modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutForm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("MatchName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TeamNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WriterUserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ScoutForms");
+                });
+
+            modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("FieldID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ScoutFormId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FieldID");
+
+                    b.HasIndex("ScoutFormId");
+
+                    b.ToTable("ScoutFormData");
                 });
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormat", b =>
@@ -415,11 +470,28 @@ namespace OnyxScoutApplication.Server.Data.Migrations
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.Field", b =>
                 {
+                    b.HasOne("OnyxScoutApplication.Shared.Models.Field", null)
+                        .WithMany("CascadeFields")
+                        .HasForeignKey("FieldId");
+
                     b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormat", "ScoutFormForamt")
                         .WithMany("Fields")
                         .HasForeignKey("ScoutFormForamtId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormData", b =>
+                {
+                    b.HasOne("OnyxScoutApplication.Shared.Models.Field", "Field")
+                        .WithMany()
+                        .HasForeignKey("FieldID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnyxScoutApplication.Shared.Models.ScoutForm", null)
+                        .WithMany("Data")
+                        .HasForeignKey("ScoutFormId");
                 });
 #pragma warning restore 612, 618
         }

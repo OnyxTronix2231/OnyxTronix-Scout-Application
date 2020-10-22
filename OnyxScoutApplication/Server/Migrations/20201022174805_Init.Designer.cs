@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnyxScoutApplication.Server.Data;
 
-namespace OnyxScoutApplication.Server.Data.Migrations
+namespace OnyxScoutApplication.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200928184309_AddedScoutForm")]
-    partial class AddedScoutForm
+    [Migration("20201022174805_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -313,6 +313,12 @@ namespace OnyxScoutApplication.Server.Data.Migrations
                     b.Property<bool>("BoolDefaultValue")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("CascadeConditionDefaultValue")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("FieldId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("FieldStageType")
                         .HasColumnType("int");
 
@@ -341,6 +347,8 @@ namespace OnyxScoutApplication.Server.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FieldId");
 
                     b.HasIndex("ScoutFormForamtId");
 
@@ -464,6 +472,10 @@ namespace OnyxScoutApplication.Server.Data.Migrations
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.Field", b =>
                 {
+                    b.HasOne("OnyxScoutApplication.Shared.Models.Field", null)
+                        .WithMany("CascadeFields")
+                        .HasForeignKey("FieldId");
+
                     b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormat", "ScoutFormForamt")
                         .WithMany("Fields")
                         .HasForeignKey("ScoutFormForamtId")
