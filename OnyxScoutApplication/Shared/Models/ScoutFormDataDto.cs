@@ -6,16 +6,28 @@ using System.Text;
 
 namespace OnyxScoutApplication.Shared.Models
 {
-    public class ScoutFormData
+    public class ScoutFormDataDto
     {
         [Key]
         public int Id { get; set; }
 
-        public string Value {get; set; }
+        public int ScoutFormId { get; set; }
+
+        public int? ScoutFormDataId { get; set; }
 
         [ForeignKey("Field")]
         public int FieldID { get; set; }
 
-        public Field Field { get; set; }
+        public FieldDto Field { get; set; }
+
+        public string StringValue {get; set; }
+
+        public int? NumricValue {get; set; }
+
+        public bool BooleanValue {get; set; }
+
+        
+
+        public List<ScoutFormDataDto> CascadeData { get; set; } = new List<ScoutFormDataDto>();
     }
 }

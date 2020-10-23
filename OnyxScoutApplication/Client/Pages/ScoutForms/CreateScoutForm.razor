@@ -58,23 +58,29 @@
 
         foreach (var field in scoutFormForamt.AutonomousFields)
         {
-            scoutForm.AutonomousData.Add(new ScoutFormDataDto() { Field = field, FieldID = field.Id });
+            scoutForm.AutonomousData.Add(GetScoutFormDataFromField(field));
         }
 
         foreach (var field in scoutFormForamt.TeleoperatedFields)
         {
-            scoutForm.TeleoperatedData.Add(new ScoutFormDataDto() { Field = field, FieldID = field.Id });
+            scoutForm.TeleoperatedData.Add(GetScoutFormDataFromField(field));
         }
 
         foreach (var field in scoutFormForamt.EndGameFields)
         {
-            scoutForm.EndGameData.Add(new ScoutFormDataDto() { Field = field, FieldID = field.Id });
+            scoutForm.EndGameData.Add(GetScoutFormDataFromField(field));
         }
     }
 
-    private void OnValueChange(string value, ScoutFormDataDto data)
+    private ScoutFormDataDto GetScoutFormDataFromField(FieldDto field)
     {
-        // data.Value = value;
+        ScoutFormDataDto scoutFormData = new ScoutFormDataDto() { Field = field, FieldID = field.Id };
+        Console.WriteLine(field.Name);
+        foreach (var f in field.CascadeFields)
+        {
+            scoutFormData.CascadeData.Add(GetScoutFormDataFromField(f));
+        }
+        return scoutFormData;
     }
 
     private async Task OnValidSubmit()

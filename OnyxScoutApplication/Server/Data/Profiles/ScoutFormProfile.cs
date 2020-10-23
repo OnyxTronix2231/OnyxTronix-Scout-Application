@@ -24,8 +24,8 @@ namespace OnyxScoutApplication.Server.Data.Profiles
 
             CreateMap<ScoutFormDataDto, ScoutFormData>().ForMember((des) => des.Value, opt => opt.MapFrom<ScoutFormDataValueConverter>());
             CreateMap<ScoutFormData, ScoutFormDataDto>().ConvertUsing<ScoutFormDataDtoConverter>();
-                
 
+            CreateMap<ScoutForm, ScoutForm>();
             CreateMap<ScoutFormDto, ScoutForm>().ForMember(des => des.Data, opt => opt.MapFrom<ScoutFormValueConverter>());
             CreateMap<ScoutForm, ScoutFormDto>()
                 .ForMember(des => des.AutonomousData, opt => opt.MapFrom(src => src.Data.Where(i => i.Field.FieldStageType == FieldStageType.Autonomous)))

@@ -26,6 +26,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 
             switch (source.Field.FieldType)
             {
+                case FieldType.CascadeField:
                 case FieldType.Boolean:
                     destination.BooleanValue = bool.Parse(source.Value);
                     break;

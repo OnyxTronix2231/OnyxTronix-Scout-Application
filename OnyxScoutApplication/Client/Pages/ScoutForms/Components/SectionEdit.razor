@@ -23,6 +23,15 @@
 
                 </BooleanFieldComponent>
                 break;
+            case FieldType.CascadeField:
+                <BooleanFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.BooleanValue">
+
+                </BooleanFieldComponent>
+                if (data.BooleanValue)
+                {
+                    <SectionEdit SectionData="data.CascadeData"></SectionEdit>
+                }
+                break;
             default:
                 break;
         }
