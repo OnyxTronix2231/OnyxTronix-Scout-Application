@@ -33,8 +33,11 @@ namespace OnyxScoutApplication.Client.Others.Objects
                 {
                     if (shouldCount(scoutForm))
                     {
-                        avarge += (int)getTragetList(scoutForm)[i].NumricValue;
-                        count++;
+                        if (getTragetList(scoutForm)[i].NumricValue != null)
+                        {
+                            avarge += (int)getTragetList(scoutForm)[i].NumricValue;
+                            count++;
+                        }
                     }
                 }
                 return avarge /= count;

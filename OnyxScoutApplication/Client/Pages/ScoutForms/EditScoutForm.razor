@@ -1,0 +1,34 @@
+﻿@page "/ScoutForm/Edit/{Id:int}"
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
+
+@if (scoutForm != null)
+{
+    <h3>ScoutForm</h3>
+    <ScoutFromComponent ScoutForm="scoutForm" Type="FormType.Update" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
+}
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    private ScoutFormDto scoutForm;
+
+    protected override async Task OnInitializedAsync()
+    {
+        scoutForm = await Http.GetJson<ScoutFormDto>("ScoutForm/ " + Id);
+        if (scoutForm == null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+    }
+
+    private async Task OnValidSubmit()
+    {
+        if (await Http.TryPutJson("ScoutForm/" + Id, scoutForm))
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

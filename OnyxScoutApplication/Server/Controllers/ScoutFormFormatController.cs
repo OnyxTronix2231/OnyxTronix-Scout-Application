@@ -47,7 +47,7 @@ namespace OnyxScoutApplication.Server.Controllers
             return await unitOfWork.ScoutFormFormats.GetTemplateScoutFormByYear(year);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateScoutFormFormat(int id, [FromBody] ScoutFormFormatDto scoutFormForamtModel)
         {
             var response = await unitOfWork.ScoutFormFormats.Update(id, scoutFormForamtModel);

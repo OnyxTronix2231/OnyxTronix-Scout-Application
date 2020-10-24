@@ -42,7 +42,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
 
         public async Task<ActionResult<ScoutFormDto>> GetWithFields(int id)
         {
-            var result = await ScoutAppContext.ScoutForms.Include(i => i.Data).ThenInclude(i => i.CascadeData).FirstOrDefaultAsync(i => i.Id == id);
+            var result = await ScoutAppContext.ScoutForms.Include(i => i.Data).ThenInclude(i => i.CascadeData).Include(i => i.Data).ThenInclude(i => i.Field).FirstOrDefaultAsync(i => i.Id == id);
             if(result == null)
             {
                 return new NotFoundObjectResult("No scout form found with the id of: " + id);

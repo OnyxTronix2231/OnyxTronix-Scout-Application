@@ -25,7 +25,7 @@
         scoutFormForamt.AutonomousFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
         scoutFormForamt.TeleoperatedFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
         scoutFormForamt.EndGameFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
-        if (await Http.TryPutJson("ScoutFormFormat?id=" + id, scoutFormForamt))
+        if (await Http.TryPutJson("ScoutFormFormat/" + id, scoutFormForamt))
         {
             NavigationManager.NavigateTo("ScoutFormFormats");
         }

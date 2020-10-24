@@ -6,12 +6,12 @@
 @if (scoutForm != null)
 {
     <h3>ScoutForm</h3>
-    <ScoutFromComponent ScoutForm="scoutForm" TeamInMatch="TeamInMatch" Type="FormType.Create" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
+    <ScoutFromComponent ScoutForm="scoutForm" Type="FormType.Create" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
 }
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
-    public TeamInMatch TeamInMatch { get; set; }
+    private TeamInMatch teamInMatch;
     private ScoutFormDto scoutForm;
 
     protected override async Task OnInitializedAsync()
@@ -19,16 +19,16 @@
         var authState = await authenticationStateTask;
         var user = authState.User;
 
-        TeamInMatch = await LocalStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
-        scoutForm = await Http.GetJson<ScoutFormDto>("ScoutFormFormat/TemplateScoutFormByYear/ " + TeamInMatch.Match.Date.Year);
+        teamInMatch = await LocalStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
+        scoutForm = await Http.GetJson<ScoutFormDto>("ScoutFormFormat/TemplateScoutFormByYear/ " + teamInMatch.Match.Date.Year);
         if (scoutForm == null)
         {
             NavigationManager.NavigateTo("/");
             return;
         }
-        scoutForm.TeamNumber = TeamInMatch.TeamNumber;
-        scoutForm.Year = TeamInMatch.Match.Date.Year;
-        scoutForm.MatchName = TeamInMatch.Match.Key;
+        scoutForm.TeamNumber = teamInMatch.TeamNumber;
+        scoutForm.Year = teamInMatch.Match.Date.Year;
+        scoutForm.MatchName = teamInMatch.Match.Key;
         scoutForm.WriterUserName = user.Identity.Name;
     }
 
