@@ -27,6 +27,11 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             switch (source.Field.FieldType)
             {
                 case FieldType.CascadeField:
+                    if (bool.Parse(source.Value))
+                    {
+                        destination.CascadeData = mapper.Map<List<ScoutFormDataDto>>(source.CascadeData);
+                    }
+                    goto case FieldType.Boolean;
                 case FieldType.Boolean:
                     destination.BooleanValue = bool.Parse(source.Value);
                     break;

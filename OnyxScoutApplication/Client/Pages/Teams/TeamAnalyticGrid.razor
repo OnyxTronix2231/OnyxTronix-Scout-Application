@@ -22,6 +22,9 @@
                         case FieldType.Numeric:
                             <span> @((context as FieldAverage).Average.ToString("0.##"))</span>
                             break;
+                        case FieldType.CascadeField:
+                            <span> @(((context as FieldAverage).Average * 100).ToString("0.##"))%</span>
+                            break;
                         default:
                             break;
                     }

@@ -42,9 +42,9 @@
         data = result.OrderBy(i => i.MatchName).ToList();
         var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetMatchesByTeamAndEvent/" + teamNumber + "/" + selectedEvent.Key);
         this.matches = matches.OrderBy(i => i.Date).ToList();
-        autoCalculatedData = TeamDataAnalyzer.CalculateDataFor(FieldStageType.Autonomous, formate.AutonomousFields, result);
-        teleopCalculatedData = TeamDataAnalyzer.CalculateDataFor(FieldStageType.Teleoperated, formate.TeleoperatedFields, result);
-        endGameCalculatedData = TeamDataAnalyzer.CalculateDataFor(FieldStageType.EndGame, formate.EndGameFields, result);
+        autoCalculatedData = TeamDataAnalyzer.CalculateDataFor(formate.AutonomousFields, result, scoutForm => scoutForm.AutonomousData, s => true);
+        teleopCalculatedData = TeamDataAnalyzer.CalculateDataFor(formate.TeleoperatedFields, result, scoutForm => scoutForm.TeleoperatedData, s => true);
+        endGameCalculatedData = TeamDataAnalyzer.CalculateDataFor(formate.EndGameFields, result, scoutForm => scoutForm.EndGameData, s => true);
     }
 
     private void OnTeamClicked(TeamInMatch teamInMatch)
