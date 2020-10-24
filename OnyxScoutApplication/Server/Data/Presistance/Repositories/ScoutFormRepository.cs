@@ -76,7 +76,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             scoutForm = mapper.Map(updated, scoutForm);
             RecursivelySetScoutFormId(scoutForm.Id, scoutForm.Data);
             context.Update(scoutForm);
-            return new OkResult();
+            return await Task.Run(() => new OkResult());
         }
 
         private void RecursivelySetScoutFormId(int id, List<ScoutFormData> data)

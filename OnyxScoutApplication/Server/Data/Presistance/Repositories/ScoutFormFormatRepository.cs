@@ -62,11 +62,16 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             {
                 return new BadRequestObjectResult("No scout from format found to update!");
             }
+            return await Update(result, scoutFormForamtDto);
+        }
+
+        public async Task<ActionResult> Update(ScoutFormFormat scoutFormFormat, ScoutFormFormatDto scoutFormForamtDto)
+        {
             var updated = mapper.Map<ScoutFormFormat>(scoutFormForamtDto);
-            result = mapper.Map(updated, result);
-            RecursivelySetScoutFormForamtId(id, result.Fields);
-            context.Update(result);
-            return new OkResult();
+            scoutFormFormat = mapper.Map(updated, scoutFormFormat);
+            RecursivelySetScoutFormForamtId(scoutFormFormat.Id, scoutFormFormat.Fields);
+            context.Update(scoutFormFormat);
+            return await Task.Run(() => new OkResult());
         }
 
         private void RecursivelySetScoutFormForamtId(int id, List<Field> fields)
