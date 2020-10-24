@@ -30,9 +30,15 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             List<ScoutFormData> endGameFields = mapper.Map<List<ScoutFormData>>(source.EndGameData);
             endGameFields.ForEach(i => i.Field.FieldStageType = FieldStageType.EndGame);
             destination.Data.AddRange(endGameFields);
-            destination.Data.ForEach(x => x.Field = null);
+            DeleteFieldRefRecursively(destination.Data);
 
             return destination.Data;
+        }
+
+        private void DeleteFieldRefRecursively(List<ScoutFormData> data)
+        {
+            data.ForEach(i => i.Field = null);
+            data.ForEach(i => DeleteFieldRefRecursively(i.CascadeData));
         }
     }
 }

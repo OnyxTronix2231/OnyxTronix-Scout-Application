@@ -37,7 +37,8 @@ namespace OnyxScoutApplication.Server.Controllers
         [HttpGet("ByYear/{year}")]
         public async Task<ActionResult<ScoutFormFormatDto>> GetByYear(int year)
         {
-            return await unitOfWork.ScoutFormFormats.GetWithFieldsByYear(year);
+            var v = await unitOfWork.ScoutFormFormats.GetWithFieldsByYear(year);
+            return v;
         }
 
         [HttpPut]

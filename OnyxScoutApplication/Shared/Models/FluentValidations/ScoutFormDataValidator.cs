@@ -14,6 +14,7 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
                 WithMessage((model, s) => "Value must be a number between " + model.Field.MinValue + " and " + model.Field.MaxValue).When(c => c.Field.FieldType == FieldType.Numeric);
             RuleFor(x => x.NumricValue).NotEmpty().WithMessage((model, s) => "Field required").When(m => m.Field.Required && m.Field.FieldType == FieldType.Numeric);
             RuleFor(x => x.StringValue).NotEmpty().WithMessage((model, s) => "Field required").When(m => m.Field.Required && m.Field.FieldType == FieldType.TextField);
+            RuleForEach(x => x.CascadeData).SetValidator(this).When(x => x.Field.FieldType == FieldType.CascadeField && x.BooleanValue);
         }
 
         private bool BeNumberBetween(ScoutFormDataDto model, int? value)
