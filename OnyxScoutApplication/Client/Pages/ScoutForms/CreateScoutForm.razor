@@ -6,31 +6,7 @@
 @if (scoutForm != null)
 {
     <h3>ScoutForm</h3>
-    <EditForm Model="@scoutForm" OnValidSubmit="@OnValidSubmit">
-        <FluentValidationValidator />
-        <div class="form-group col-sm-5">
-            <label for="teamNumber">Team number</label>
-            <input class="form-control" type="number" id="teamNumber" value="@TeamInMatch.TeamNumber" readonly="readonly" />
-        </div>
-        <div class="form-group col-sm-5">
-            <label for="year">Year</label>
-            <input class="form-control" type="number" id="year" value="@TeamInMatch.Match.Date.Year" readonly="readonly" />
-        </div>
-        <div class="form-group col-sm-5">
-            <label for="matchName">Match number</label>
-            <input class="form-control" type="text" id="matchNumber" value="@TeamInMatch.Match.Key" readonly="readonly" />
-        </div>
-        <div class="form-group col-sm-5">
-            <label for="matchName">Writer</label>
-            <input class="form-control" type="text" id="matchNumber" value="@scoutForm.WriterUserName" readonly="readonly" />
-        </div>
-        <SectionEdit SectionData="scoutForm.AutonomousData" SectionName="Autonomous"></SectionEdit>
-
-        <SectionEdit SectionData="scoutForm.TeleoperatedData" SectionName="Teleoperated"></SectionEdit>
-
-        <SectionEdit SectionData="scoutForm.EndGameData" SectionName="End game"></SectionEdit>
-        <div><button type="submit" class="btn btn-primary">Create</button></div>
-    </EditForm>
+    <ScoutFromComponent ScoutForm="scoutForm" TeamInMatch="TeamInMatch" Type="FormType.Create" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
 }
 @code {
     [CascadingParameter]

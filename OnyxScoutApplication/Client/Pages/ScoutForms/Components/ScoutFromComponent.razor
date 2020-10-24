@@ -1,0 +1,39 @@
+﻿<h3>ScoutFromComponent</h3>
+
+<EditForm Model="@ScoutForm" OnValidSubmit="@OnValidSubmit">
+    <FluentValidationValidator />
+    <div class="form-group col-sm-5">
+        <label for="teamNumber">Team number</label>
+        <input class="form-control" type="number" id="teamNumber" value="@TeamInMatch.TeamNumber" readonly="readonly" />
+    </div>
+    <div class="form-group col-sm-5">
+        <label for="year">Year</label>
+        <input class="form-control" type="number" id="year" value="@TeamInMatch.Match.Date.Year" readonly="readonly" />
+    </div>
+    <div class="form-group col-sm-5">
+        <label for="matchName">Match number</label>
+        <input class="form-control" type="text" id="matchNumber" value="@TeamInMatch.Match.Key" readonly="readonly" />
+    </div>
+    <div class="form-group col-sm-5">
+        <label for="matchName">Writer</label>
+        <input class="form-control" type="text" id="matchNumber" value="@ScoutForm.WriterUserName" readonly="readonly" />
+    </div>
+    <SectionEdit SectionData="ScoutForm.AutonomousData" SectionName="Autonomous"></SectionEdit>
+
+    <SectionEdit SectionData="ScoutForm.TeleoperatedData" SectionName="Teleoperated"></SectionEdit>
+
+    <SectionEdit SectionData="ScoutForm.EndGameData" SectionName="End game"></SectionEdit>
+
+    <div><button type="submit" class="btn btn-primary">@(Type == FormType.Create ? "Add" : "Save")</button></div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public ScoutFormDto ScoutForm { get; set; }
+    [Parameter]
+    public TeamInMatch TeamInMatch { get; set; }
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+    [Parameter]
+    public FormType Type { get; set; }
+}
