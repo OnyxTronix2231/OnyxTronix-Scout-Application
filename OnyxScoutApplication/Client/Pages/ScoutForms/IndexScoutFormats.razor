@@ -1,0 +1,48 @@
+﻿@page "/ScoutForms"
+@inject NavigationManager NavigationManager
+@inject HttpClientManager Http
+@attribute [Authorize(Roles = "Admin")]
+<h1>ScoutForms</h1>
+@if (scoutForms == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Team number</th>
+                <th>Year</th>
+                <th>Match name</th>
+                <th>Writer user name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var scoutForm in scoutForms)
+            {
+            <tr>
+                <td>@scoutForm.TeamNumber</td>
+                <td>@scoutForm.Year</td>
+                <td>@scoutForm.MatchName</td>
+                <td>@scoutForm.WriterUserName</td>
+                <SfButton CssClass="e-warning" @onclick="() =>nav(scoutForm)">Edit</SfButton>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<ScoutFormDto> scoutForms;
+
+    protected override async Task OnInitializedAsync()
+    {
+        scoutForms = await Http.GetJson<List<ScoutFormDto>>("ScoutForm");
+    }
+
+    private void nav(ScoutFormDto scoutForm)
+    {
+        // NavigationManager.NavigateTo("ScoutForm/Edit/" + scoutForm.Id);
+    }
+}

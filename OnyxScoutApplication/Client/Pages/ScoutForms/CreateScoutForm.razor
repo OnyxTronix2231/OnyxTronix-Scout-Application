@@ -3,7 +3,7 @@
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
 
-@if (TeamInMatch != null)
+@if (scoutForm != null)
 {
     <h3>ScoutForm</h3>
     <EditForm Model="@scoutForm" OnValidSubmit="@OnValidSubmit">
@@ -36,8 +36,7 @@
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
     public TeamInMatch TeamInMatch { get; set; }
-
-    private ScoutFormDto scoutForm = new ScoutFormDto();
+    private ScoutFormDto scoutForm;
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,49 +44,22 @@
         var user = authState.User;
 
         TeamInMatch = await LocalStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
-        scoutForm.TeamNumber = TeamInMatch.TeamNumber;
-        scoutForm.Year = TeamInMatch.Match.Date.Year;
-        scoutForm.MatchName = TeamInMatch.Match.Key;
-        scoutForm.WriterUserName = user.Identity.Name;
-        ScoutFormFormatDto scoutFormForamt = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/ " + TeamInMatch.Match.Date.Year);
-        if (scoutFormForamt == null)
+        scoutForm = await Http.GetJson<ScoutFormDto>("ScoutFormFormat/TemplateScoutFormByYear/ " + TeamInMatch.Match.Date.Year);
+        if (scoutForm == null)
         {
             NavigationManager.NavigateTo("/");
             return;
         }
-
-        foreach (var field in scoutFormForamt.AutonomousFields)
-        {
-            scoutForm.AutonomousData.Add(GetScoutFormDataFromField(field));
-        }
-
-        foreach (var field in scoutFormForamt.TeleoperatedFields)
-        {
-            scoutForm.TeleoperatedData.Add(GetScoutFormDataFromField(field));
-        }
-
-        foreach (var field in scoutFormForamt.EndGameFields)
-        {
-            scoutForm.EndGameData.Add(GetScoutFormDataFromField(field));
-        }
-    }
-
-    private ScoutFormDataDto GetScoutFormDataFromField(FieldDto field)
-    {
-        ScoutFormDataDto scoutFormData = new ScoutFormDataDto() { Field = field, FieldID = field.Id };
-        Console.WriteLine(field.Name);
-        foreach (var f in field.CascadeFields)
-        {
-            scoutFormData.CascadeData.Add(GetScoutFormDataFromField(f));
-        }
-        return scoutFormData;
+        scoutForm.TeamNumber = TeamInMatch.TeamNumber;
+        scoutForm.Year = TeamInMatch.Match.Date.Year;
+        scoutForm.MatchName = TeamInMatch.Match.Key;
+        scoutForm.WriterUserName = user.Identity.Name;
     }
 
     private async Task OnValidSubmit()
     {
         if (await Http.TryPostJson("ScoutForm", scoutForm))
         {
-            // NavigationManager.NavigateTo("TeamDetails/" + TeamInMatch.TeamNumber);
             NavigationManager.NavigateTo("/");
         }
     }

@@ -31,6 +31,8 @@ namespace OnyxScoutApplication.Server.Data.Profiles
                 .ForMember(des => des.AutonomousData, opt => opt.MapFrom(src => src.Data.Where(i => i.Field.FieldStageType == FieldStageType.Autonomous)))
                 .ForMember(src => src.TeleoperatedData, opt => opt.MapFrom(des => des.Data.Where(i => i.Field.FieldStageType == FieldStageType.Teleoperated)))
                 .ForMember(src => src.EndGameData, opt => opt.MapFrom(des => des.Data.Where(i => i.Field.FieldStageType == FieldStageType.EndGame)));
+
+            CreateMap<ScoutFormFormatDto, ScoutFormDto>().ConvertUsing<ScoutFormFromatToScoutFormConverter>();
         }
     }
 }

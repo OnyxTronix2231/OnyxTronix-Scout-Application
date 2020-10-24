@@ -91,8 +91,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
         public async Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey)
         {
             var scoutForm = await ScoutAppContext.ScoutForms.Include(i => i.Data).ThenInclude(sn => sn.Field).Where(i => i.TeamNumber == teamNumber && i.MatchName.Contains(eventKey)).ToListAsync();
-            var v = mapper.Map<List<ScoutFormDto>>(scoutForm);
-            return v;
+            return mapper.Map<List<ScoutFormDto>>(scoutForm);
         }
 
         private ApplicationDbContext ScoutAppContext

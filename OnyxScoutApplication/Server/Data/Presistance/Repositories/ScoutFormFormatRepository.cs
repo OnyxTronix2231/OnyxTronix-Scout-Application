@@ -35,6 +35,16 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             return await Update(result.Id, scoutFormForamt);
         }
 
+        public async Task<ActionResult<ScoutFormDto>> GetTemplateScoutFormByYear(int year)
+        {
+            var result = await GetWithFieldsByYear(year);
+            if(result.Value == null)
+            {
+                return new NotFoundObjectResult("No scout form format found for year - " + year);
+            }
+            return mapper.Map<ScoutFormDto>(result.Value);
+        }
+
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFields(int id)
         {
             var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.Fields).ThenInclude(f => f.CascadeFields).FirstOrDefaultAsync(i => i.Id == id);
