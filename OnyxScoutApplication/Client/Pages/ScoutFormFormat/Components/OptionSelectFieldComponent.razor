@@ -1,0 +1,69 @@
+﻿@using Syncfusion.Blazor.Inputs
+@using System.Diagnostics.CodeAnalysis;
+
+@inherits FormInputBase<string>
+<div>
+    @if (IsEditMode)
+    {
+        <label for="name">Field default value</label>
+    }
+    <Syncfusion.Blazor.DropDowns.SfDropDownList TValue="string" TItem="string" DataSource="this.Field.Options" @bind-Value="CurrentValue" />
+        <ValidationMessage For="@ValueExpression" />
+</div>
+@if (IsEditMode)
+{
+    <div>
+        <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required" />
+        <ValidationMessage For="@(() => Field.Required)" />
+    </div>
+    @foreach (var (item, index) in options.Select((x, i) => (x, i)))
+    {
+        var name = options[index];
+        <div>
+            <button type="button" class="btn btn-danger" @onclick="() => RemoveOption(index)">Remove option</button>
+            @{var v = name.OptionText; }
+            <SfTextBox Value="@v" Input="a => Update(a, index)"></SfTextBox >
+           
+        </div>
+    }
+    <ValidationMessage For="@(() => Field.Options)" />
+
+    <div>
+        <button type="button" class="btn btn-dark" @onclick="AddOption">Add option</button>
+    </div>
+}
+@code {
+    private List<Option> options = new List<Option>();
+
+    protected override Task OnInitializedAsync()
+    {
+        options = Field.Options.Select(i => new Option() { OptionText = i }).ToList();
+        return base.OnInitializedAsync();
+    }
+
+    protected override bool TryParseValueFromString(string value, out string result, [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        validationErrorMessage = null;
+        result = value;
+        return true;
+    }
+
+    private void AddOption()
+    {
+        options.Add(new Option());
+        Field.Options = options.Select(i => i.OptionText).ToList();
+    }
+
+    private void RemoveOption(int index)
+    {
+        options.RemoveAt(index);
+        Field.Options = options.Select(i => i.OptionText).ToList();
+    }
+
+    private void Update(InputEventArgs args, int index)
+    {
+        options[index].OptionText = args.Value;
+        Field.Options = options.Select(i => i.OptionText).ToList();
+        StateHasChanged();
+    }
+}

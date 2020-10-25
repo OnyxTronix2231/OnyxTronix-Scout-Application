@@ -26,8 +26,6 @@ namespace OnyxScoutApplication.Shared.Models
 
         public bool BooleanValue {get; set; }
 
-        
-
         public List<ScoutFormDataDto> CascadeData { get; set; } = new List<ScoutFormDataDto>();
     }
 }

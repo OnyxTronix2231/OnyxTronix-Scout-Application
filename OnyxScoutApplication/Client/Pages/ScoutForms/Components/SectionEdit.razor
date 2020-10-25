@@ -32,6 +32,9 @@
                     <SectionEdit SectionData="data.CascadeData"></SectionEdit>
                 }
                 break;
+            case FieldType.OptionSelect:
+                <OptionSelectFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.StringValue"></OptionSelectFieldComponent>
+                break;
             default:
                 break;
         }

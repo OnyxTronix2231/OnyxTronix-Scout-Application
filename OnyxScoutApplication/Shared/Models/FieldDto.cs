@@ -35,6 +35,8 @@ namespace OnyxScoutApplication.Shared.Models
 
         public bool Required { get; set; } = false;
 
+        public List<string> Options { get; set; } = new List<string>();
+
         public List<FieldDto> CascadeFields { get; set; } = new List<FieldDto>();
     }
 }

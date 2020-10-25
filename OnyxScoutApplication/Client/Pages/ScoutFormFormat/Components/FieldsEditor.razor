@@ -49,6 +49,11 @@
 
                 <FieldsEditor Fields="field.CascadeFields"></FieldsEditor>
                 break;
+            case FieldType.OptionSelect:
+                <OptionSelectFieldComponent Field="field" IsEditMode="true" @bind-Value="field.TextDefaultValue">
+
+                </OptionSelectFieldComponent>
+                break;
             default:
                 break;
         }

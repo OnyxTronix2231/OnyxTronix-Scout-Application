@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -11,14 +12,15 @@ namespace OnyxScoutApplication.Shared.Models
         Boolean,
         TextField,
         Numeric,
-        CascadeField
+        CascadeField,
+        OptionSelect
     }
 
     public enum FieldStageType
     {
         Autonomous,
         Teleoperated,
-        EndGame
+        EndGame,
     }
     public class Field
     {
@@ -50,6 +52,8 @@ namespace OnyxScoutApplication.Shared.Models
         public int MinValue { get; set; } = 0;
 
         public bool Required { get; set; } = false;
+
+        public string Options { get; set; } = "";
 
         public List<Field> CascadeFields { get; set; }
     }
