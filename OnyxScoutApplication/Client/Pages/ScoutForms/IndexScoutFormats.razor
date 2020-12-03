@@ -1,7 +1,7 @@
 ﻿@page "/ScoutForms"
 @inject NavigationManager NavigationManager
 @inject HttpClientManager Http
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize(Roles = "Owner, Admin, Scouter")]
 <h1>ScoutForms</h1>
 @if (scoutForms == null)
 {
