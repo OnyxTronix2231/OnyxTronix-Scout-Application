@@ -76,6 +76,7 @@ namespace OnyxScoutApplication.Server.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email };
+                user.UserRoles.Add(new ApplicationUserRole() { RoleId = "3", UserId = user.Id});
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
@@ -98,7 +99,6 @@ namespace OnyxScoutApplication.Server.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _userManager.AddToRoleAsync(user, "Guest");
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }

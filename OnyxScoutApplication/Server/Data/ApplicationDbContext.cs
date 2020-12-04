@@ -22,5 +22,16 @@ namespace OnyxScoutApplication.Server.Data
         public DbSet<ScoutFormFormat> ScoutFormFormats { get; set; }
 
         public DbSet<ScoutForm> ScoutForms { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<ApplicationUser>()
+            .HasMany(x => x.UserRoles)
+            .WithOne(x => x.User)
+            .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
+        }
     }
 }

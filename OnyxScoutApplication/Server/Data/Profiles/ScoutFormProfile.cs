@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using OnyxScoutApplication.Server.Data.Profiles.Resolvers;
+using OnyxScoutApplication.Server.Models;
 using OnyxScoutApplication.Shared.Models;
 using System;
 using System.Collections.Generic;
@@ -37,6 +39,20 @@ namespace OnyxScoutApplication.Server.Data.Profiles
                 .ForMember(src => src.EndGameData, opt => opt.MapFrom(des => des.Data.Where(i => i.Field.FieldStageType == FieldStageType.EndGame)));
 
             CreateMap<ScoutFormFormatDto, ScoutFormDto>().ConvertUsing<ScoutFormFromatToScoutFormConverter>();
+
+            CreateMap<IdentityRole, IdentityRoleDto>();
+            CreateMap<IdentityRoleDto, IdentityRole>();
+
+            CreateMap<ApplicationUserRole, ApplicationUserRoleDto>();
+            CreateMap<ApplicationUserRoleDto, ApplicationUserRole>();
+
+            CreateMap<ApplicationRole, ApplicationRoleDto>();
+            CreateMap<ApplicationRoleDto, ApplicationRole>();
+           
+            CreateMap<ApplicationUser, ApplicationUser>();
+            CreateMap<ApplicationUser, ApplicationUserDto>();
+            CreateMap<ApplicationUserDto, ApplicationUser>();
         }
+        
     }
 }

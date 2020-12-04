@@ -14,7 +14,8 @@ namespace OnyxScoutApplication.Server.Migrations
                     Id = table.Column<string>(nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true)
+                    ConcurrencyStamp = table.Column<string>(nullable: true),
+                    Discriminator = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -176,7 +177,9 @@ namespace OnyxScoutApplication.Server.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(nullable: false),
-                    RoleId = table.Column<string>(nullable: false)
+                    RoleId = table.Column<string>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false),
+                    ApplicationRoleId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -187,6 +190,12 @@ namespace OnyxScoutApplication.Server.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_ApplicationRoleId",
+                        column: x => x.ApplicationRoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -232,7 +241,8 @@ namespace OnyxScoutApplication.Server.Migrations
                     FieldStageType = table.Column<int>(nullable: true),
                     MaxValue = table.Column<int>(nullable: false),
                     MinValue = table.Column<int>(nullable: false),
-                    Required = table.Column<bool>(nullable: false)
+                    Required = table.Column<bool>(nullable: false),
+                    Options = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -257,9 +267,10 @@ namespace OnyxScoutApplication.Server.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Value = table.Column<string>(nullable: true),
+                    ScoutFormId = table.Column<int>(nullable: false),
+                    ScoutFormDataId = table.Column<int>(nullable: true),
                     FieldID = table.Column<int>(nullable: false),
-                    ScoutFormId = table.Column<int>(nullable: true)
+                    Value = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -271,11 +282,17 @@ namespace OnyxScoutApplication.Server.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_ScoutFormData_ScoutFormData_ScoutFormDataId",
+                        column: x => x.ScoutFormDataId,
+                        principalTable: "ScoutFormData",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_ScoutFormData_ScoutForms_ScoutFormId",
                         column: x => x.ScoutFormId,
                         principalTable: "ScoutForms",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -304,6 +321,11 @@ namespace OnyxScoutApplication.Server.Migrations
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_ApplicationRoleId",
+                table: "AspNetUserRoles",
+                column: "ApplicationRoleId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
@@ -352,6 +374,11 @@ namespace OnyxScoutApplication.Server.Migrations
                 name: "IX_ScoutFormData_FieldID",
                 table: "ScoutFormData",
                 column: "FieldID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScoutFormData_ScoutFormDataId",
+                table: "ScoutFormData",
+                column: "ScoutFormDataId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScoutFormData_ScoutFormId",

@@ -1,0 +1,52 @@
+﻿@page "/UsersManager"
+<h3>Users manager</h3>
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Owner")]
+
+@if (applicationUsers == null)
+{
+    <h4>Loading....</h4>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User name</th>
+                <th>Email</th>
+                <th>Roles</th>
+                <th>Writer user name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var applicationUser in applicationUsers)
+            {
+                <tr>
+                    <td>@applicationUser.UserName</td>
+                    <td>@applicationUser.Email</td>
+                    @foreach (ApplicationUserRoleDto identityRole in applicationUser.UserRoles)
+                    {
+                        <td>@identityRole.Role?.NormalizedName</td>
+                    }
+                    <SfButton CssClass="e-warning" @onclick="() => edit(applicationUser)">Edit</SfButton>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@code {
+    private List<ApplicationUserDto> applicationUsers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        applicationUsers = await Http.GetJson<List<ApplicationUserDto>>("ApplicationUser");
+    }
+
+    private void edit(ApplicationUserDto applicationUserDto)
+    {
+        NavigationManager.NavigateTo("/UsersManager/Edit/" + applicationUserDto.UserName);
+    }
+}

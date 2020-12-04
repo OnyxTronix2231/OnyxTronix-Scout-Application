@@ -10,7 +10,7 @@ using OnyxScoutApplication.Server.Data;
 namespace OnyxScoutApplication.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201022174805_Init")]
+    [Migration("20201204141425_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -112,6 +112,10 @@ namespace OnyxScoutApplication.Server.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
@@ -128,6 +132,8 @@ namespace OnyxScoutApplication.Server.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRole");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -210,11 +216,17 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserRole<string>");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -337,6 +349,9 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<int?>("NumricDefaultValue")
                         .HasColumnType("int");
 
+                    b.Property<string>("Options")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("Required")
                         .HasColumnType("bit");
 
@@ -389,7 +404,10 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<int>("FieldID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ScoutFormId")
+                    b.Property<int?>("ScoutFormDataId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ScoutFormId")
                         .HasColumnType("int");
 
                     b.Property<string>("Value")
@@ -398,6 +416,8 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FieldID");
+
+                    b.HasIndex("ScoutFormDataId");
 
                     b.HasIndex("ScoutFormId");
 
@@ -417,6 +437,25 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ScoutFormFormats");
+                });
+
+            modelBuilder.Entity("OnyxScoutApplication.Server.Models.ApplicationRole", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole");
+
+                    b.HasDiscriminator().HasValue("ApplicationRole");
+                });
+
+            modelBuilder.Entity("OnyxScoutApplication.Server.Models.ApplicationUserRole", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<string>");
+
+                    b.Property<string>("ApplicationRoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasIndex("ApplicationRoleId");
+
+                    b.HasDiscriminator().HasValue("ApplicationUserRole");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -453,12 +492,6 @@ namespace OnyxScoutApplication.Server.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("OnyxScoutApplication.Server.Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -491,9 +524,28 @@ namespace OnyxScoutApplication.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormData", null)
+                        .WithMany("CascadeData")
+                        .HasForeignKey("ScoutFormDataId");
+
                     b.HasOne("OnyxScoutApplication.Shared.Models.ScoutForm", null)
                         .WithMany("Data")
-                        .HasForeignKey("ScoutFormId");
+                        .HasForeignKey("ScoutFormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("OnyxScoutApplication.Server.Models.ApplicationUserRole", b =>
+                {
+                    b.HasOne("OnyxScoutApplication.Server.Models.ApplicationRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("ApplicationRoleId");
+
+                    b.HasOne("OnyxScoutApplication.Server.Models.ApplicationUser", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

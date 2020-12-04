@@ -1,0 +1,84 @@
+﻿@page "/UsersManager/Edit/{Name}"
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
+
+
+@if (user == null)
+{
+    <h4>Loading....</h4>
+}
+else
+{
+<EditForm Model="@user" OnValidSubmit="@OnValidSubmit">
+    <FluentValidationValidator />
+    <div class="form-group col-sm-5">
+        <label for="email">Email</label>
+        <input class="form-control" type="number" id="email" value="@user.Email" readonly="readonly" />
+    </div>
+    <div class="form-group col-sm-5">
+        <label for="userName">User name</label>
+        <input class="form-control" type="number" id="userName" value="@user.UserName" readonly="readonly" />
+    </div>
+    <div class="form-group col-sm-5">
+        <label for="matchName">Roles</label>
+        <SfButton CssClass="e-success" OnClick="() => AddNewRole()">Add</SfButton>
+
+        @foreach (ApplicationUserRoleDto applicationUserRole in user.UserRoles)
+        {
+
+            <SfDropDownList TValue="string" TItem="ApplicationRoleDto" DataSource="roles" @bind-Value="@applicationUserRole.RoleId">
+                <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
+                <DropDownListEvents TValue="string" ValueChange="s => OnValueSelect(applicationUserRole, s)"></DropDownListEvents>
+
+            </SfDropDownList>
+
+            <SfButton CssClass="e-danger" OnClick="() => RemoveRole(applicationUserRole)">Remove</SfButton>
+        }
+    </div>
+    <div><button type="submit" class="btn btn-primary"> Save </button></div>
+</EditForm>
+}
+@code {
+    [Parameter]
+    public string Name { get; set; }
+    private ApplicationUserDto user;
+    private List<ApplicationRoleDto> roles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await Http.GetJson<ApplicationUserDto>("ApplicationUser/" + Name);
+        if (user == null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+        Console.WriteLine("USERRRRR NAMEEEEE: " + user.UserName);
+        roles = await Http.GetJson<List<ApplicationRoleDto>>("ApplicationUser/GetAllRoles");
+
+    }
+
+    public async Task OnValidSubmit()
+    {
+        if (await Http.TryPutJson("ApplicationUser/" + user.UserName, user))
+        {
+            NavigationManager.NavigateTo("UsersManager");
+        }
+    }
+
+    public void RemoveRole(ApplicationUserRoleDto applicationUserRole)
+    {
+        user.UserRoles.Remove(applicationUserRole);
+    }
+
+    public void OnValueSelect(ApplicationUserRoleDto applicationUserRole, ChangeEventArgs<string> args)
+    {
+        Console.WriteLine(args.Value);
+        applicationUserRole.Role = roles.FirstOrDefault(i => i.Id == args.Value);
+        applicationUserRole.User = user;
+    }
+
+    public void AddNewRole()
+    {
+        user.UserRoles.Add(new ApplicationUserRoleDto() { Role = roles[roles.Count - 1], RoleId = roles[roles.Count - 1].Id });
+    }
+}

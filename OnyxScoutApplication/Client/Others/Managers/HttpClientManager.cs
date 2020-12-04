@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 }
                 else
                 {
-                    notificationService.Notify("Error fetching data", await response.Content.ReadAsStringAsync(), NotificationType.Danger);
+                    notificationService.Notify("Error fetching data: " + response.StatusCode, await response.Content.ReadAsStringAsync(), NotificationType.Danger);
                 }
                 return result;
             }
