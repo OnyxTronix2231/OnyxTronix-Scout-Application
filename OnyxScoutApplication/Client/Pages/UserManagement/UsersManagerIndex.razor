@@ -15,7 +15,6 @@ else
         <thead>
             <tr>
                 <th>User name</th>
-                <th>Email</th>
                 <th>Roles</th>
             </tr>
         </thead>
@@ -24,7 +23,6 @@ else
             {
             <tr>
                 <td>@applicationUser.UserName</td>
-                <td>@applicationUser.Email</td>
                 @{string roles = "";}
                 @foreach (ApplicationUserRoleDto identityRole in applicationUser.UserRoles)
                 {
