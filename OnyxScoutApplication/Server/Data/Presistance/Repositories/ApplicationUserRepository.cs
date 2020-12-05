@@ -53,8 +53,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
 
         public async Task<ActionResult> Update(ApplicationUser applicationUser, ApplicationUserDto applicationUserDto)
         {
-            var updated = mapper.Map<ApplicationUser>(applicationUserDto);
-            applicationUser = mapper.Map(updated, applicationUser);
+            var updated = mapper.Map(applicationUserDto, applicationUser);
             foreach (var userRole in applicationUser.UserRoles)
             {
                 userRole.Role = null;

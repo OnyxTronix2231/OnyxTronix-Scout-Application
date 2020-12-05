@@ -1,7 +1,7 @@
 ﻿@page "/ScoutFormFormats"
 @inject NavigationManager NavigationManager
 @inject HttpClientManager Http
-@attribute [Authorize(Roles = "Owner, Admin, Scouter")]
+@attribute [Authorize(Roles = Roles.Admin)]
 <h1>ScoutFormFormats</h1>
 <div class="form-group">
     <a class="btn btn-primary" href="ScoutFormFormat/Create">Add scout form format</a>

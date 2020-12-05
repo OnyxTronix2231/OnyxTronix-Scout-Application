@@ -12,32 +12,24 @@ using OnyxScoutApplication.Server.Models;
 using OnyxScoutApplication.Server.Data;
 using IdentityModel;
 using Microsoft.EntityFrameworkCore;
+using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Server.Controllers
 {
-    [Authorize(Roles = "Owner")]
+    [Authorize(Roles = Roles.Owner)]
     [ApiController]
     [Route("[controller]")]
     public class ApplicationUserController : Controller
     {
-        private readonly ApplicationDbContext applicationDbContext;
         private readonly IApplicationUserUnitOfWork unitOfWork;
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly RoleManager<IdentityRole> roleManager;
-        public ApplicationUserController(ApplicationDbContext applicationDbContext,IApplicationUserUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public ApplicationUserController(IApplicationUserUnitOfWork unitOfWork)
         {
-            this.applicationDbContext = applicationDbContext;
             this.unitOfWork = unitOfWork;
-            this.userManager = userManager;
-            this.roleManager = roleManager;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<ApplicationUserDto>>> Get()
         {
-            //var u = await userManager.GetUserAsync(User);
-            //var r = await userManager.GetRolesAsync(u);
-            //var vv = applicationDbContext.Users.Include(u => u.UserRoles).ThenInclude(i => i.Role).ToList();
             var v = await unitOfWork.ApplicationUser.GetAllWithRoles();
             return v;
         }

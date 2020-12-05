@@ -2,7 +2,7 @@
 @inject ILocalStorageService LocalStorage
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
-@attribute [Authorize(Roles = "Owner, Admin, Scouter")]
+@attribute [Authorize(Roles = Roles.Scouter)]
 
 <h1>Events</h1>
 

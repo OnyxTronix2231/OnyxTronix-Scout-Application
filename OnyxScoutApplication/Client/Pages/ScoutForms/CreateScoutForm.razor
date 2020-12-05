@@ -2,6 +2,7 @@
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
+@attribute [Authorize(Roles = Roles.Scouter)]
 
 @if (scoutForm != null)
 {

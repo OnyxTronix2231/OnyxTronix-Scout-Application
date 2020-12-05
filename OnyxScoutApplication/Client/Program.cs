@@ -12,6 +12,7 @@ using OnyxScoutApplication.Shared.Models;
 using OnyxScoutApplication.Shared.Models.FluentValidations;
 using Blazored.LocalStorage;
 using OnyxScoutApplication.Client.Others.Objects;
+using OnyxScoutApplication.Server.Data.Extensions;
 
 namespace OnyxScoutApplication.Client
 {
@@ -35,7 +36,9 @@ namespace OnyxScoutApplication.Client
             // Supply HttpClient instances that include access tokens when making requests to the server project
             services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("OnyxScoutApplication.ServerAPI"));
 
-            services.AddApiAuthorization();
+            builder.Services.AddApiAuthorization()
+               .AddAccountClaimsPrincipalFactory<RolesClaimsPrincipalFactory>();
+
 
             services.AddSyncfusionBlazor();
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjgzMDMyQDMxMzgyZTMxMmUzME1Ja1ptbzlHdFZQanM2REdUdkVxakd2ckJ4bG5sZy85N2dxZUJ3Nm15N3M9");

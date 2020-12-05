@@ -1,6 +1,7 @@
 ﻿@page "/ScoutForm/Edit/{Id:int}"
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = Roles.Admin)]
 
 @if (scoutForm != null)
 {

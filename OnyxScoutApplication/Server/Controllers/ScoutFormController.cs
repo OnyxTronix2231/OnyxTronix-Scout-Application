@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using OnyxScoutApplication.Server.Data.Presistance.UnitsOfWork.interfaces;
 using OnyxScoutApplication.Shared.Models;
 using static OnyxScoutApplication.Server.Data.Extensions.Result;
+using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Server.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Roles.Scouter)]
     [ApiController]
     [Route("[controller]")]
     public class ScoutFormController : Controller
