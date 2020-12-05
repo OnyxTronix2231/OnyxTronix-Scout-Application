@@ -9,34 +9,35 @@
 }
 else
 {
-<EditForm Model="@user" OnValidSubmit="@OnValidSubmit">
-    <FluentValidationValidator />
-    <div class="form-group col-sm-5">
-        <label for="email">Email</label>
-        <input class="form-control" type="number" id="email" value="@user.Email" readonly="readonly" />
-    </div>
-    <div class="form-group col-sm-5">
-        <label for="userName">User name</label>
-        <input class="form-control" type="number" id="userName" value="@user.UserName" readonly="readonly" />
-    </div>
-    <div class="form-group col-sm-5">
-        <label for="matchName">Roles</label>
-        <SfButton Type="button" CssClass="e-success" OnClick="() => AddNewRole()">Add</SfButton>
+    <EditForm Model="@user" OnValidSubmit="@OnValidSubmit">
+        <FluentValidationValidator />
+        <ValidationSummary />
+        <div class="form-group col-sm-5">
+            <label for="email">Email</label>
+            <input class="form-control" type="text" id="email" value="@user.Email" readonly="readonly" />
+        </div>
+        <div class="form-group col-sm-5">
+            <label for="userName">User name</label>
+            <input class="form-control" type="text" id="userName" value="@user.UserName" readonly="readonly" />
+        </div>
+        <div class="form-group col-sm-5">
+            <label for="matchName">Roles</label>
+            <SfButton Type="button" CssClass="e-success" OnClick="() => AddNewRole()">Add</SfButton>
 
-        @foreach (ApplicationUserRoleDto applicationUserRole in user.UserRoles)
-        {
+            @foreach (ApplicationUserRoleDto applicationUserRole in user.UserRoles)
+            {
 
-            <SfDropDownList TValue="string" TItem="ApplicationRoleDto" DataSource="roles" @bind-Value="@applicationUserRole.RoleId">
-                <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
-                <DropDownListEvents TValue="string" ValueChange="s => OnValueSelect(applicationUserRole, s)"></DropDownListEvents>
+                <SfDropDownList TValue="string" TItem="ApplicationRoleDto" DataSource="roles" @bind-Value="@applicationUserRole.RoleId">
+                    <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
+                    <DropDownListEvents TValue="string" ValueChange="s => OnValueSelect(applicationUserRole, s)"></DropDownListEvents>
 
-            </SfDropDownList>
+                </SfDropDownList>
 
-            <SfButton Type="button" CssClass="e-danger" OnClick="() => RemoveRole(applicationUserRole)">Remove</SfButton>
-        }
-    </div>
-    <div><button type="submit" class="btn btn-primary"> Save </button></div>
-</EditForm>
+                <SfButton Type="button" CssClass="e-danger" OnClick="() => RemoveRole(applicationUserRole)">Remove</SfButton>
+            }
+        </div>
+        <div><button type="submit" class="btn btn-primary"> Save </button></div>
+    </EditForm>
 }
 @code {
     [Parameter]
@@ -46,6 +47,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        roles = await Http.GetJson<List<ApplicationRoleDto>>("ApplicationUser/GetAllRoles");
         user = await Http.GetJson<ApplicationUserDto>("ApplicationUser/" + Name);
         if (user == null)
         {
@@ -53,7 +55,6 @@ else
             return;
         }
         Console.WriteLine("USERRRRR NAMEEEEE: " + user.UserName);
-        roles = await Http.GetJson<List<ApplicationRoleDto>>("ApplicationUser/GetAllRoles");
 
     }
 

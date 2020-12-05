@@ -46,7 +46,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
                Include(u => u.UserRoles).ThenInclude(i => i.Role).FirstOrDefaultAsync(i => i.UserName == name);
             if (result == null)
             {
-                return new BadRequestObjectResult("No user with name: " + "\"name\"" + " found to update!");
+                return new BadRequestObjectResult($"No user with name: {name} found to update!");
             }
             return await Update(result, applicationUserDto);
         }
