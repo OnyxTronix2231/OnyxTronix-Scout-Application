@@ -1,4 +1,14 @@
 {
+  "IdentityServer": {
+    "Clients": {
+      "MyProject.Client": {
+        "Profile": "IdentityServerSPA"
+      }
+    },
+    "Key": {
+      "Type": "Development"
+    }
+  },
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
