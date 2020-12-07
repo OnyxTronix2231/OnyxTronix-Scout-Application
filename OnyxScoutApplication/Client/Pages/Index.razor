@@ -37,11 +37,12 @@
         fMatches = result.Where(i => i.Level == "f").ToList();
     }
 
-    private async Task OnTeamClicked(TeamInMatch teamInMatch)
+    private void OnTeamClicked(TeamInMatch teamInMatch)
     {
         if (!teamInMatch.IsFormExists)
         {
-            await LocalStorage.SetItemAsync("ScoutForm/TeamInMatch", teamInMatch);
+
+            LocalStorage.SetItemAsync("ScoutForm/TeamInMatch", teamInMatch);
             NavigationManager.NavigateTo("ScoutForm/Create");
         }
         else
