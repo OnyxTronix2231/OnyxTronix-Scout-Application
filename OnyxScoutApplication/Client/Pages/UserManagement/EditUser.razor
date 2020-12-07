@@ -25,7 +25,7 @@ else
 
                 <SfDropDownList TValue="string" TItem="ApplicationRoleDto" DataSource="roles" @bind-Value="@applicationUserRole.RoleId">
                     <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
-                    <DropDownListEvents TValue="string" ValueChange="s => OnValueSelect(applicationUserRole, s)"></DropDownListEvents>
+                    <DropDownListEvents TItem="ApplicationRoleDto" TValue="string" ValueChange="s => OnValueSelect(applicationUserRole, s)"></DropDownListEvents>
 
                 </SfDropDownList>
 
@@ -67,7 +67,7 @@ else
         user.UserRoles.Remove(applicationUserRole);
     }
 
-    public void OnValueSelect(ApplicationUserRoleDto applicationUserRole, ChangeEventArgs<string> args)
+    public void OnValueSelect(ApplicationUserRoleDto applicationUserRole, Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, ApplicationRoleDto> args)
     {
         Console.WriteLine(args.Value);
         applicationUserRole.Role = roles.FirstOrDefault(i => i.Id == args.Value);
