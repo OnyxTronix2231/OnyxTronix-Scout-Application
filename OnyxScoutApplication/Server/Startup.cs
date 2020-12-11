@@ -80,8 +80,7 @@ namespace OnyxScoutApplication.Server
                 {
                     options.PublicOrigin = Configuration.GetValue<string>("PublicOrigin");
                 }
-            })
-                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
+            }).AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
                  {
                      options.IdentityResources["openid"].UserClaims.Add("name");
                      options.ApiResources.Single().UserClaims.Add("name");
@@ -94,45 +93,7 @@ namespace OnyxScoutApplication.Server
                 .AddIdentityServerJwt();
 
             services.Configure<IdentityOptions>(options =>
-    options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
-
-
-
-            //to validate the token which has been sent by clients
-
-           // services.AddAuthentication().AddOpenIdConnect();
-            //    .AddIdentityServerJwt()
-            //    .AddOpenIdConnect(option =>
-            //    option.Events = new OpenIdConnectEvents
-            //    {
-            //        OnTokenResponseReceived = xxx =>
-            //        {
-            //            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-            //            JwtSecurityToken jwt = handler.ReadJwtToken(xxx.TokenEndpointResponse.AccessToken);
-
-            //            var claimsIdentity = (ClaimsIdentity)xxx.Principal.Identity;
-            //            claimsIdentity.AddClaims(jwt.Claims);
-            //            return Task.FromResult(0);
-            //        }
-            //    });
-                //.AddIdentityServerJwt()
-                //.AddJwtBearer(config =>
-                //{
-                //    config.RequireHttpsMetadata = false;
-                //    config.SaveToken = true;
-
-                //    config.TokenValidationParameters = new TokenValidationParameters
-                //    {
-                //        ValidateIssuer = true,
-                //        ValidateAudience = true,
-                //        ValidateLifetime = true,
-                //        ValidateIssuerSigningKey = true,
-                //        ValidIssuer = Configuration["JwtIssuer"],
-                //        ValidAudience = Configuration["JwtAudience"],
-                //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSecurityKey"]))
-                //    };
-                //});
-
+                options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
 
             services.AddControllersWithViews();
             services.AddRazorPages();
