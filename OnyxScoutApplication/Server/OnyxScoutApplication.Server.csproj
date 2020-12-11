@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -22,7 +22,9 @@
     <ProjectReference Include="..\Client\OnyxScoutApplication.Client.csproj" />
     <ProjectReference Include="..\Shared\OnyxScoutApplication.Shared.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Content Include="SetupScripts\**" CopyToPublishDirectory="PreserveNewest"/>
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.10" />

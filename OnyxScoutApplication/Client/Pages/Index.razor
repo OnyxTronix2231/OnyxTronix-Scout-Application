@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inject ILocalStorageService LocalStorage
+@inject ISyncLocalStorageService SyncLocalStorage
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = Roles.Scouter)]
@@ -41,8 +41,7 @@
     {
         if (!teamInMatch.IsFormExists)
         {
-
-            LocalStorage.SetItemAsync("ScoutForm/TeamInMatch", teamInMatch);
+            SyncLocalStorage.SetItem("ScoutForm/TeamInMatch", teamInMatch);
             NavigationManager.NavigateTo("ScoutForm/Create");
         }
         else

@@ -31,25 +31,42 @@ using System.Threading.Tasks;
 using IdentityServer4.AspNetIdentity;
 using IdentityServer4.Services;
 using OnyxScoutApplication.Server.Data.Extensions;
+using IdentityServer4.Extensions;
 
 namespace OnyxScoutApplication.Server
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Env { get; }
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            Env = env;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            Console.WriteLine($"Configuring services in {Env.EnvironmentName} mode");
+
             services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                string connectionString;
+                if (Env.IsDevelopment())
+                {
+                    connectionString = Configuration.GetConnectionString("LocalConnection");
+                }
+                else
+                {
+                    connectionString = Configuration.GetConnectionString("DefaultConnection");
+                }
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    connectionString
+                   );
+            });
 
             services.AddDefaultIdentity<ApplicationUser>(options =>
             {
@@ -57,11 +74,17 @@ namespace OnyxScoutApplication.Server
                 options.Password.RequireNonAlphanumeric = false;
             }).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddTransient<IProfileService, ProfileService>();
-            services.AddIdentityServer()
+            services.AddIdentityServer(options =>
+            {
+                if (!Env.IsDevelopment())
+                {
+                    options.PublicOrigin = Configuration.GetValue<string>("PublicOrigin");
+                }
+            })
                  .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
                  {
                      options.IdentityResources["openid"].UserClaims.Add("name");
-                        options.ApiResources.Single().UserClaims.Add("name");
+                     options.ApiResources.Single().UserClaims.Add("name");
                      options.IdentityResources["openid"].UserClaims.Add("role");
                      options.ApiResources.Single().UserClaims.Add("role");
                  });
@@ -127,9 +150,9 @@ namespace OnyxScoutApplication.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (Env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
@@ -149,6 +172,10 @@ namespace OnyxScoutApplication.Server
             app.UseRouting();
 
             app.UseIdentityServer();
+            if (!Env.IsDevelopment())
+            {
+                app.Use((ctx, next) => { ctx.SetIdentityServerOrigin("https://scouter.onyxtronix.com"); return next(); });
+            }
             app.UseAuthentication();
             app.UseAuthorization();
 
