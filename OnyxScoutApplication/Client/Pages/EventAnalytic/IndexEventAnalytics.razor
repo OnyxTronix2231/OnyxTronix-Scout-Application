@@ -24,6 +24,7 @@
         {
             NotificationManager.Notify("Please select an event first", "", NotificationType.Warning);
             NavigationManager.NavigateTo("/");
+            return;
         }
         format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
         scoutForms = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
