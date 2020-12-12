@@ -14,10 +14,13 @@ namespace OnyxScoutApplication.Client.Others.Objects
             List<FieldAverage> averagaes = new List<FieldAverage>();
             for (int i = 0; i < fields.Count; i++)
             {
-                averagaes.Add(new FieldAverage { Field = fields[i], Average = GetAvgFor(fields[i].FieldType, i, scoutForms, getTragetList, shouldCount) });
-                if (fields[i].FieldType == FieldType.CascadeField)
+                if (fields[i].FieldType != FieldType.TextField)
                 {
-                    averagaes.AddRange(CalculateDataFor(fields[i].CascadeFields, scoutForms, scoutForm => getTragetList(scoutForm)[i].CascadeData, scoutForm => getTragetList(scoutForm)[i].BooleanValue));
+                    averagaes.Add(new FieldAverage { Field = fields[i], Average = GetAvgFor(fields[i].FieldType, i, scoutForms, getTragetList, shouldCount) });
+                    if (fields[i].FieldType == FieldType.CascadeField)
+                    {
+                        averagaes.AddRange(CalculateDataFor(fields[i].CascadeFields, scoutForms, scoutForm => getTragetList(scoutForm)[i].CascadeData, scoutForm => getTragetList(scoutForm)[i].BooleanValue));
+                    }
                 }
             }
             return averagaes;
