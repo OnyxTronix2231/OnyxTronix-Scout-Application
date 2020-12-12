@@ -10,24 +10,11 @@
             </GridColumn>
             <GridColumn HeaderText="Avarge/Success rate" Width="150">
                 <Template>
-                    @switch ((context as FieldAverage).Field.FieldType)
-                    {
-                        case FieldType.None:
-                            break;
-                        case FieldType.Boolean:
-                            <span> @(((context as FieldAverage).Average * 100).ToString("0.##"))%</span>
-                            break;
-                        case FieldType.TextField:
-                            break;
-                        case FieldType.Numeric:
-                            <span> @((context as FieldAverage).Average.ToString("0.##"))</span>
-                            break;
-                        case FieldType.CascadeField:
-                            <span> @(((context as FieldAverage).Average * 100).ToString("0.##"))%</span>
-                            break;
-                        default:
-                            break;
+                    @{
+                        var v = (FieldAverage)context;
+                        var s = v.Formated;
                     }
+                    <span>@s</span>
                 </Template>
             </GridColumn>
         </GridColumns>

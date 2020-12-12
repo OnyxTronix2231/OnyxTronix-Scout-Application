@@ -16,7 +16,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
             {
                 if (fields[i].FieldType != FieldType.TextField)
                 {
-                    averagaes.Add(new FieldAverage { Field = fields[i], Average = GetAvgFor(fields[i].FieldType, i, scoutForms, getTragetList, shouldCount) });
+                    averagaes.Add(GetAvgFor(fields[i], i, scoutForms, getTragetList, shouldCount));
                     if (fields[i].FieldType == FieldType.CascadeField)
                     {
                         averagaes.AddRange(CalculateDataFor(fields[i].CascadeFields, scoutForms, scoutForm => getTragetList(scoutForm)[i].CascadeData, scoutForm => getTragetList(scoutForm)[i].BooleanValue));
@@ -26,9 +26,9 @@ namespace OnyxScoutApplication.Client.Others.Objects
             return averagaes;
         }
 
-        private float GetAvgFor(FieldType fieldType, int i, List<ScoutFormDto> data, Func<ScoutFormDto, List<ScoutFormDataDto>> getTragetList, Func<ScoutFormDto, bool> shouldCount)
+        private FieldAverage GetAvgFor(FieldDto field, int i, List<ScoutFormDto> data, Func<ScoutFormDto, List<ScoutFormDataDto>> getTragetList, Func<ScoutFormDto, bool> shouldCount)
         {
-            if (fieldType == FieldType.Numeric)
+            if (field.FieldType == FieldType.Numeric)
             {
                 float avarge = 0;
                 int count = 0;
@@ -43,9 +43,9 @@ namespace OnyxScoutApplication.Client.Others.Objects
                         }
                     }
                 }
-                return avarge /= count;
+                return new FieldAverage(field, avarge /= count);
             }
-            else if (fieldType == FieldType.Boolean)
+            else if (field.FieldType == FieldType.Boolean)
             {
                 float trueAvarage = 0;
                 int count = 0;
@@ -60,9 +60,9 @@ namespace OnyxScoutApplication.Client.Others.Objects
                         }
                     }
                 }
-                return trueAvarage /= count;
+                return new FieldAverage(field, trueAvarage /= count);
             } 
-            else if(fieldType == FieldType.CascadeField)
+            else if(field.FieldType == FieldType.CascadeField)
             {
                 float trueAvarage = 0;
                 int count = 0;
@@ -77,9 +77,9 @@ namespace OnyxScoutApplication.Client.Others.Objects
                         }
                     }
                 }
-                return trueAvarage /= count;
+                return new FieldAverage(field, trueAvarage /= count);
             }
-            return 0;
+            return new FieldAverage(field, 0);
         }
     }
 }

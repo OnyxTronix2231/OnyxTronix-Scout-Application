@@ -1,0 +1,76 @@
+﻿@inject TeamDataAnalyzer TeamDataAnalyzer
+<div>
+    @if (Fields != null)
+    {
+        string s = (250 + Fields.Count * 80).ToString() + "px";
+        Console.WriteLine(s);
+    <SfGrid @ref="GridInstance" DataSource="@calculatedData" AllowSorting="true" AllowMultiSorting="true" Width="@s">
+        <GridColumns>
+            <GridColumn HeaderText="Team" Width="10px">
+                <Template>
+                    @{
+                        var v = (KeyValuePair<Team, List<FieldAverage>>)context;
+                        <span> @(v.Key.Nickname + ":" + v.Key.TeamNumber)</span>
+                    }
+                </Template>
+            </GridColumn>
+
+            @for (int i = 0; i < Fields.Count; i++)
+            {
+                int index = i;
+                <GridColumn HeaderText="@Fields[index].Name" TextAlign="TextAlign.Center" Width="5px">
+                    <Template>
+                        @{
+                            var v = (KeyValuePair<Team, List<FieldAverage>>)context;
+                            var s = v.Value[index].Formated;
+                        }
+                        <span>@s</span>
+                    </Template>
+                </GridColumn>
+                            }
+        </GridColumns>
+    </SfGrid>
+     }
+</div>
+
+<div><SfButton OnClick="Sort">Sort by</SfButton></div>
+<br />
+<div><SfTextBox @bind-Value="@name"></SfTextBox></div>
+@code {
+    [Parameter]
+    public List<ScoutFormDto> ScoutForms { get; set; }
+    [Parameter]
+    public List<Team> Teams { get; set; }
+    [Parameter]
+    public List<FieldDto> Fields { get; set; }
+    [Parameter]
+    public Func<ScoutFormDto, List<ScoutFormDataDto>> GetTragetList { get; set; }
+    private SfGrid<KeyValuePair<Team, List<FieldAverage>>> GridInstance;
+    private List<KeyValuePair<Team, List<FieldAverage>>> calculatedData;
+    private string name;
+    protected override void OnParametersSet()
+    {
+        List<KeyValuePair<Team, List<FieldAverage>>> data = new List<KeyValuePair<Team, List<FieldAverage>>>();
+        foreach (var team in Teams)
+        {
+            List<FieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(Fields, ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), GetTragetList, s => true).ToList();
+
+            avgs.ForEach(i => i.Average = float.IsNormal(i.Average) ? i.Average : 0); //TODO: Remove when support for Nan is added in syncfution
+            data.Add(new KeyValuePair<Team, List<FieldAverage>>(team, avgs));
+        }
+        calculatedData = data;
+    }
+
+    private void Sort()
+    {
+        try
+        {
+            calculatedData = calculatedData.OrderByDescending(pair1 => pair1.Value.Where(f => f.Field.Name == name).Single().Average).ToList();
+            GridInstance.Refresh();
+            StateHasChanged();
+        }
+        catch
+        {
+        }
+    }
+}
