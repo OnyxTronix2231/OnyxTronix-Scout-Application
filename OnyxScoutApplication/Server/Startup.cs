@@ -63,9 +63,7 @@ namespace OnyxScoutApplication.Server
                 {
                     connectionString = Configuration.GetConnectionString("DefaultConnection");
                 }
-                options.UseSqlServer(
-                    connectionString
-                   );
+                options.UseSqlServer(connectionString);
             });
 
             services.AddDefaultIdentity<ApplicationUser>(options =>

@@ -23,6 +23,10 @@
     <ProjectReference Include="..\Shared\OnyxScoutApplication.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Watch Include="..\**\*.razor" />
+    <Watch Include="..\**\*.scss" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="SetupScripts\**" CopyToPublishDirectory="PreserveNewest"/>
   </ItemGroup>
   <ItemGroup>
