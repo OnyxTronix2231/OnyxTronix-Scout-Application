@@ -10,7 +10,7 @@
                 <Template>
                     @{
                         var v = (KeyValuePair<Team, List<FieldAverage>>)context;
-                        <span> @(v.Key.Nickname + ":" + v.Key.TeamNumber)</span>
+                        <span class="clickable" @onclick="() => OnTeamGridClicked(v.Key.TeamNumber)"> @(v.Key.Nickname + ":" + v.Key.TeamNumber)</span>
                     }
                 </Template>
             </GridColumn>
@@ -33,6 +33,7 @@
      }
 </div>
 
+<br />
 <div><SfButton OnClick="Sort">Sort by</SfButton></div>
 <br />
 <div><SfTextBox @bind-Value="@name"></SfTextBox></div>
@@ -45,6 +46,8 @@
     public List<FieldDto> Fields { get; set; }
     [Parameter]
     public Func<ScoutFormDto, List<ScoutFormDataDto>> GetTragetList { get; set; }
+    [Parameter]
+    public EventCallback<int> OnTeamClicked { get; set; }
     private SfGrid<KeyValuePair<Team, List<FieldAverage>>> GridInstance;
     private List<KeyValuePair<Team, List<FieldAverage>>> calculatedData;
     private string name;
@@ -61,6 +64,11 @@
         calculatedData = data;
     }
 
+    private void OnTeamGridClicked(int teamNumber)
+    {
+        OnTeamClicked.InvokeAsync(teamNumber);
+    }
+
     private void Sort()
     {
         try
@@ -74,3 +82,8 @@
         }
     }
 }
+<style>
+    .clickable {
+        cursor: pointer
+    }
+</style>

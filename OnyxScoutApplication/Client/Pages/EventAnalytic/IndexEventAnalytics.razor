@@ -7,7 +7,8 @@
 
 @if (fields != null)
 {
-    <EventAnalyticGrid Teams="teams" Fields="fields" ScoutForms="scoutForms" GetTragetList="s => s.AutonomousData.Concat(s.TeleoperatedData).Concat(s.EndGameData).ToList()"/>
+    <EventAnalyticGrid Teams="teams" Fields="fields" ScoutForms="scoutForms" GetTragetList="s => s.AutonomousData.Concat(s.TeleoperatedData).Concat(s.EndGameData).ToList()"
+                       OnTeamClicked="OnTeamClicked" />
 }
 
 @code {
@@ -30,5 +31,10 @@
         scoutForms = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
         teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
         fields = format.AutonomousFields.Concat(format.TeleoperatedFields).Concat(format.EndGameFields).Where(i => i.FieldType != FieldType.TextField).ToList();
+    }
+
+    private void OnTeamClicked(int teamNumber)
+    {
+        NavigationManager.NavigateTo("TeamDetails/" + teamNumber);
     }
 }
