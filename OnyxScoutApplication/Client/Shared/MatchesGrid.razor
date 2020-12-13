@@ -19,7 +19,7 @@
                         @{
                             var match = context as Match;
                             var teamNumber = match.Alliances.Blue.GetTeamAt(index);
-                            <span @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
+                            <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
                         }
                     </Template>
                 </GridColumn>
@@ -35,7 +35,7 @@
                         @{
                             var match = context as Match;
                             var teamNumber = match.Alliances.Red.GetTeamAt(index);
-                            <span @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
+                            <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
                         }
                     </Template>
                 </GridColumn>
@@ -71,40 +71,32 @@
         {
             args.Cell.AddClass(new string[] { args.Data.WinningAlliance });
         }
-
-        if (args.Column.HeaderText.Contains("Blue team ")) //Team's text style (bold, color and clickable)
-        {
-            TeamTextStyle(args, args.Data.Alliances.Blue);
-        }
-        else if (args.Column.HeaderText.Contains("Red team "))
-        {
-            TeamTextStyle(args, args.Data.Alliances.Red);
-        }
     }
 
-    private void TeamTextStyle(QueryCellInfoEventArgs<Match> args, Alliance alliance)
+    private string GetTeamTextStyle(int teamNumber, string matchName)  //Team's text style (bold, color and clickable)
     {
-        int index = int.Parse(args.Column.HeaderText.Substring(args.Column.HeaderText.Length - 1, 1)) - 1;
-        if (alliance.GetTeamAt(index) == TeamNumber)
+        string classes = "";
+        if (teamNumber == TeamNumber)
         {
-            args.Cell.AddClass(new string[] { "targetTeam" });
+            classes += "targetTeam ";
         }
         else
         {
-            args.Cell.AddClass(new string[] { "clickable" });
+            classes += "clickable ";
         }
 
         if (SubmittedForms != null)
         {
-            if (SubmittedForms.Any(form => form.TeamNumber == alliance.GetTeamAt(index) && form.MatchName == args.Data.Key))
+            if (SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == matchName))
             {
-                args.Cell.AddClass(new string[] { "filledTeamForm" });
+                classes += "filledTeamForm ";
             }
             else
             {
-                args.Cell.AddClass(new string[] { "notFilledTeamForm" });
+                classes += "notFilledTeamForm ";
             }
         }
+        return classes;
     }
 
     private void OnGridTeamClicked(Match match, int teamNumber)
@@ -127,15 +119,15 @@
         font-weight: bold
     }
 
-    .e-grid .e-gridcontent .e-rowcell.clickable {
+    .clickable {
         cursor: pointer
     }
 
-    .e-grid .e-gridcontent .e-rowcell.filledTeamForm {
+    .filledTeamForm {
         color: lawngreen;
     }
 
-    .e-grid .e-gridcontent .e-rowcell.notFilledTeamForm {
+    .notFilledTeamForm {
         color: darkred
     }
 </style>
