@@ -14,6 +14,7 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
             RuleForEach(x => x.AutonomousFields).SetValidator(new FieldValidator());
             RuleForEach(x => x.TeleoperatedFields).SetValidator(new FieldValidator());
             RuleForEach(x => x.EndGameFields).SetValidator(new FieldValidator());
+            RuleFor(x => x.AutonomousFields).Must(i => !i.GroupBy(f => f.Name).Where(x => x.Skip(1).Any()).Any()).WithMessage("Fields name must be unique");
         }
     }
 }
