@@ -4,39 +4,46 @@
     {
         string s = (250 + Fields.Count * 80).ToString() + "px";
         Console.WriteLine(s);
-    <SfGrid @ref="GridInstance" DataSource="@calculatedData" AllowSorting="true" AllowMultiSorting="true" Width="@s">
-        <GridColumns>
-            <GridColumn HeaderText="Team" Width="10px">
-                <Template>
-                    @{
-                        var v = (KeyValuePair<Team, List<FieldAverage>>)context;
-                        <span class="clickable" @onclick="() => OnTeamGridClicked(v.Key.TeamNumber)"> @(v.Key.Nickname + ":" + v.Key.TeamNumber)</span>
-                    }
-                </Template>
-            </GridColumn>
+        <div>
+            <div>
+                <SfDropDownList TItem="FieldDto" TValue="string" Placeholder="Select field name to sort by" DataSource="Fields" @bind-Value="@name" Width="250px">
+                    <DropDownListFieldSettings Text="Name" Value="Name"></DropDownListFieldSettings>
+                    <DropDownListEvents TItem="FieldDto" TValue="string" ValueChange="OnSortValueChange"></DropDownListEvents>
+                </SfDropDownList>
+            </div>
+        </div>
 
-            @for (int i = 0; i < Fields.Count; i++)
-            {
-                int index = i;
-                <GridColumn HeaderText="@Fields[index].Name" TextAlign="TextAlign.Center" Width="5px">
+
+        <SfGrid DataSource="@calculatedData" AllowSorting="true" AllowMultiSorting="true" Width="@s">
+            <GridColumns>
+                <GridColumn HeaderText="Team" Width="10px">
                     <Template>
                         @{
                             var v = (KeyValuePair<Team, List<FieldAverage>>)context;
-                            var s = v.Value[index].Formated;
+                            <div><span class="clickable" @onclick="() => OnTeamGridClicked(v.Key.TeamNumber)">@(v.Key.TeamNumber)</span></div>
+                            <div><span class="clickable" @onclick="() => OnTeamGridClicked(v.Key.TeamNumber)"> @(v.Key.Nickname)</span></div>
                         }
-                        <span>@s</span>
                     </Template>
                 </GridColumn>
+
+                @for (int i = 0; i < Fields.Count; i++)
+                {
+                    int index = i;
+                    <GridColumn HeaderText="@Fields[index].Name" TextAlign="TextAlign.Center" Width="5px">
+                        <Template>
+                            @{
+                                var v = (KeyValuePair<Team, List<FieldAverage>>)context;
+                                var s = v.Value[index].Formated;
                             }
-        </GridColumns>
-    </SfGrid>
-     }
+                            <span>@s</span>
+                        </Template>
+                    </GridColumn>
+                }
+            </GridColumns>
+        </SfGrid>
+    }
 </div>
 
-<br />
-<div><SfButton OnClick="Sort">Sort by</SfButton></div>
-<br />
-<div><SfTextBox @bind-Value="@name"></SfTextBox></div>
 @code {
     [Parameter]
     public List<ScoutFormDto> ScoutForms { get; set; }
@@ -48,9 +55,9 @@
     public Func<ScoutFormDto, List<ScoutFormDataDto>> GetTragetList { get; set; }
     [Parameter]
     public EventCallback<int> OnTeamClicked { get; set; }
-    private SfGrid<KeyValuePair<Team, List<FieldAverage>>> GridInstance;
     private List<KeyValuePair<Team, List<FieldAverage>>> calculatedData;
-    private string name;
+    private string name = "";
+
     protected override void OnParametersSet()
     {
         List<KeyValuePair<Team, List<FieldAverage>>> data = new List<KeyValuePair<Team, List<FieldAverage>>>();
@@ -69,17 +76,13 @@
         OnTeamClicked.InvokeAsync(teamNumber);
     }
 
-    private void Sort()
+    private void OnSortValueChange()
     {
-        try
+        if(string.IsNullOrWhiteSpace(name))
         {
-            calculatedData = calculatedData.OrderByDescending(pair1 => pair1.Value.Where(f => f.Field.Name == name).Single().Average).ToList();
-            GridInstance.Refresh();
-            StateHasChanged();
+            return;
         }
-        catch
-        {
-        }
+        calculatedData = calculatedData.OrderByDescending(pair1 => pair1.Value.Where(f => f.Field.Name == name).Single().Average).ToList();
     }
 }
 <style>
