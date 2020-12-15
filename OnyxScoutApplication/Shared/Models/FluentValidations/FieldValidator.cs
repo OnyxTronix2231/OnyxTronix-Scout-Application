@@ -10,6 +10,7 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
     {
         public FieldValidator()
         {
+            RuleFor(x => x.Name).Must(s => !string.IsNullOrWhiteSpace(s)).WithMessage("Please write a valid field name");
             RuleFor(x => x.NumricDefaultValue).Must((model, s) => BeNumberBetween(model, s)).
                 WithMessage((model, s) => "Default value must be a number between " + model.MinValue + " and " + model.MaxValue).When(c => c.FieldType == FieldType.Numeric);
             RuleFor(x => x.Options).Must((v) => v.Count >= 2).
