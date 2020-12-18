@@ -22,7 +22,7 @@ async function onInstall(event) {
 
     // Also cache authentication configuration
     assetsRequests.push(new Request('_configuration/OnyxScoutApplication.Client'));
-
+    self.skipWaiting();
     await caches.open(cacheName).then(cache => cache.addAll(assetsRequests));
 }
 
