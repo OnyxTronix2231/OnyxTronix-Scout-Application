@@ -2,6 +2,7 @@
 
 @inherits LayoutComponentBase
 @inject NotificationManager NotificationManager
+@inject NavigationManager NavigationManager
 @inject IJSRuntime  JSRuntime
 
 <div class="sidebar">
@@ -16,8 +17,8 @@
 
     <div class="content px-4">
         @Body
-    </div> 
-</div> 
+    </div>
+</div>
 @code{
     bool updateReady;
     protected override async Task OnInitializedAsync()
@@ -35,7 +36,13 @@
         Console.WriteLine("New version available");
         updateReady = true;
         StateHasChanged();
-        NotificationManager.Notify("Update available", "Please refresh the page", NotificationType.Warning, 0);
+        NotificationManager.Notify("Update available", "Please refresh the page", NotificationType.Warning, 0,
+            new Syncfusion.Blazor.Notifications.ToastButton() { Content = "Refresh", OnClick = EventCallback.Factory.Create(this, RefreshPage) });
         return await Task.FromResult("Alerted client");
+    }
+
+    private void RefreshPage(MouseEventArgs mouseEventArgs) 
+    {
+        NavigationManager.NavigateTo("/", true);
     }
 }
