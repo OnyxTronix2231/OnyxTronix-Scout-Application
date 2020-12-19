@@ -13,6 +13,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
 
         protected string Title { get; set; }
         protected string Message { get; set; }
+        protected int Timeout { get; set; }
         protected NotificationType NotificationType { get; set; }
         protected bool IsVisible { get; set; }
 
@@ -22,11 +23,12 @@ namespace OnyxScoutApplication.Client.Others.Objects
             NotificationManager.OnHide += OnHide;
         }
 
-        public virtual void OnShow(string title, string message, NotificationType notificationType)
+        public virtual void OnShow(string title, string message, NotificationType notificationType, int timeout)
         {
             Title = title;
             Message = message;
             NotificationType = notificationType;
+            Timeout = timeout;
             IsVisible = true;
             StateHasChanged();
         }
