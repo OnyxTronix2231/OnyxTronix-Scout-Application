@@ -1,0 +1,40 @@
+﻿@page "/TeamDetails/Notes/{teamNumber:int}"
+
+@inject HttpClientManager Http
+@inject ILocalStorageService LocalStorage
+@if (notes != null)
+{
+    <h3>Team @teamNumber</h3>
+    <h4>@selectedEvent?.Name</h4>
+    <div>
+        @for (int i = 0; i < notes.Length; i++)
+        {
+            <div>
+                <SfTextBox Value="@notes[i]" Width="100%" Readonly="true" Multiline="true"></SfTextBox>
+            </div>
+            <br />
+        }
+    </div>
+}
+@code {
+    [Parameter]
+    public int teamNumber { get; set; }
+    private string[] notes;
+    private Event selectedEvent;
+
+    protected override async Task OnInitializedAsync()
+    {
+        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        if (selectedEvent == null)
+        {
+            return;
+        }
+
+        var result = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByTeam/" + teamNumber + "/" + selectedEvent.Key);
+
+        notes = result.Select(i => i.AutonomousData.Where(f => f.Field.FieldType == FieldType.TextField)).SelectMany(i => i).Select(i => i.StringValue).ToArray();
+        notes = notes.Concat(result.Select(i => i.TeleoperatedData.Where(f => f.Field.FieldType == FieldType.TextField)).SelectMany(i => i).Select(i => i.StringValue).ToArray()).ToArray();
+        notes = notes.Concat(result.Select(i => i.EndGameData.Where(f => f.Field.FieldType == FieldType.TextField)).SelectMany(i => i).Select(i => i.StringValue).ToArray()).ToArray();
+
+    }
+}
