@@ -28,6 +28,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
 
         private FieldAverage GetAvgFor(FieldDto field, int i, List<ScoutFormDto> data, Func<ScoutFormDto, List<ScoutFormDataDto>> getTragetList, Func<ScoutFormDto, bool> shouldCount)
         {
+            FieldAverage fieldAverage = new FieldAverage(field);
             if (field.FieldType == FieldType.Numeric)
             {
                 float avarge = 0;
@@ -38,14 +39,16 @@ namespace OnyxScoutApplication.Client.Others.Objects
                     {
                         if (getTragetList(scoutForm)[i].NumricValue != null)
                         {
-                            avarge += (int)getTragetList(scoutForm)[i].NumricValue;
+                            int value = (int)getTragetList(scoutForm)[i].NumricValue;
+                            avarge += value;
                             count++;
+                            fieldAverage.Values.Add(value);
                         }
                     }
                 }
-                return new FieldAverage(field, avarge /= count);
+                fieldAverage.Average = avarge /= count;
             }
-            else if (field.FieldType == FieldType.Boolean)
+            else if (field.FieldType == FieldType.Boolean || field.FieldType == FieldType.CascadeField)
             {
                 float trueAvarage = 0;
                 int count = 0;
@@ -60,26 +63,9 @@ namespace OnyxScoutApplication.Client.Others.Objects
                         }
                     }
                 }
-                return new FieldAverage(field, trueAvarage /= count);
-            } 
-            else if(field.FieldType == FieldType.CascadeField)
-            {
-                float trueAvarage = 0;
-                int count = 0;
-                foreach (var scoutForm in data)
-                {
-                    if (shouldCount(scoutForm))
-                    {
-                        count++;
-                        if (getTragetList(scoutForm)[i].BooleanValue)
-                        {
-                            trueAvarage++;
-                        }
-                    }
-                }
-                return new FieldAverage(field, trueAvarage /= count);
+                fieldAverage.Average = trueAvarage /= count;
             }
-            return new FieldAverage(field, 0);
+            return fieldAverage;
         }
     }
 }

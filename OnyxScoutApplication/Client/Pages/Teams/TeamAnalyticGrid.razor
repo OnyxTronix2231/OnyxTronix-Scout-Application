@@ -11,10 +11,24 @@
             <GridColumn HeaderText="Avarge/Success rate" Width="150">
                 <Template>
                     @{
-                        var v = (FieldAverage)context;
-                        var s = v.Formated;
+                        var f = (FieldAverage)context;
+                        var text = f.Formated;
                     }
-                    <span>@s</span>
+                    <span>@text</span>
+                </Template>
+            </GridColumn>
+            <GridColumn HeaderText="Top 3" Width="150">
+                <Template>
+                    @{
+                        var f = (FieldAverage)context;
+                        var s = f.GetSortedValues().Take(3).ToArray();
+                        string text = "";
+                        for (int i = 0; i < s.Length; i++)
+                        {
+                            text += s[i] + " ";
+                        }
+                    }
+                    <span>@text</span>
                 </Template>
             </GridColumn>
         </GridColumns>
