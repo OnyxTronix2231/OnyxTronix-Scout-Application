@@ -2,39 +2,56 @@
 @inject ISyncLocalStorageService SyncLocalStorage
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
 @attribute [Authorize(Roles = Roles.Scouter)]
 
 <h1>Events</h1>
 
 <div><EventSelector OnEventSelctionChange="UpdateMatchTable"></EventSelector></div>
 
-<div><MatchesGrid Matches="qMatches" SubmittedForms="data" Height="400" OnTeamClicked="OnTeamClicked"></MatchesGrid></div>
+<div><MatchesGrid Matches="qMatches" SubmittedForms="scoutForms" Height="400" OnTeamClicked="OnTeamClicked"></MatchesGrid></div>
 
 <br />
-<div><MatchesGrid Matches="qfMatches" SubmittedForms="data" OnTeamClicked="OnTeamClicked"></MatchesGrid></div>
+<div><MatchesGrid Matches="qfMatches" SubmittedForms="scoutForms" OnTeamClicked="OnTeamClicked"></MatchesGrid></div>
 
 <br />
-<div><MatchesGrid Matches="sfMatches" SubmittedForms="data" OnTeamClicked="OnTeamClicked"></MatchesGrid></div>
+<div><MatchesGrid Matches="sfMatches" SubmittedForms="scoutForms" OnTeamClicked="OnTeamClicked"></MatchesGrid></div>
 
 <br />
-<div><MatchesGrid Matches="fMatches" SubmittedForms="data" OnTeamClicked="OnTeamClicked"></MatchesGrid></div>
+<div><MatchesGrid Matches="fMatches" SubmittedForms="scoutForms" OnTeamClicked="OnTeamClicked"></MatchesGrid></div>
 
 @code {
-    private List<Match> qMatches = new List<Match>();
-    private List<Match> qfMatches = new List<Match>();
-    private List<Match> sfMatches = new List<Match>();
-    private List<Match> fMatches = new List<Match>();
-    private List<ScoutFormDto> data = new List<ScoutFormDto>();
+    private List<Match> qMatches;
+    private List<Match> qfMatches;
+    private List<Match> sfMatches;
+    private List<Match> fMatches;
+    private List<ScoutFormDto> scoutForms;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (await LocalStorage.ContainKeyAsync("TheBlueAlliance.AllMatches"))
+        {
+            var matches = await LocalStorage.GetItemAsync<List<Match>>("TheBlueAlliance.AllMatches");
+            scoutForms = await LocalStorage.GetItemAsync<List<ScoutFormDto>>("ScoutForms.All");
+            UpdateByMatches(matches);
+        }
+    }
 
     private async Task UpdateMatchTable(Event selectedEvent)
     {
-        var result = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
-        data = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
-        result = result.OrderBy(i => i.Date).ToList();
-        qMatches = result.Where(i => i.Level == "qm").ToList();
-        qfMatches = result.Where(i => i.Level == "qf").ToList();
-        sfMatches = result.Where(i => i.Level == "sf").ToList();
-        fMatches = result.Where(i => i.Level == "f").ToList();
+        var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
+        await LocalStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
+        scoutForms = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+        UpdateByMatches(matches);
+    }
+
+    private void UpdateByMatches(List<Match> matches)
+    {
+        matches = matches.OrderBy(i => i.Date).ToList();
+        qMatches = matches.Where(i => i.Level == "qm").ToList();
+        qfMatches = matches.Where(i => i.Level == "qf").ToList();
+        sfMatches = matches.Where(i => i.Level == "sf").ToList();
+        fMatches = matches.Where(i => i.Level == "f").ToList();
     }
 
     private void OnTeamClicked(TeamInMatch teamInMatch)

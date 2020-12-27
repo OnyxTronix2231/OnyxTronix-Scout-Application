@@ -3,6 +3,9 @@
 @inherits LayoutComponentBase
 @inject NotificationManager NotificationManager
 @inject NavigationManager NavigationManager
+@inject HttpClientManager Http
+@inject ILocalStorageService LocalStorage
+
 @inject IJSRuntime  JSRuntime
 
 <div class="sidebar">
@@ -28,6 +31,22 @@
             "blazorFuncs.registerClient",
             new object[] { DotNetObjectReference.Create(this) }
           );
+
+        if (await LocalStorage.ContainKeyAsync("EventSelector/SelectedEventKey"))
+        {
+            Console.WriteLine("Update");
+            Event selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+
+            var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
+            await LocalStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
+
+            var scoutForms = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+            await LocalStorage.SetItemAsync("ScoutForms.All", scoutForms);
+
+            var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
+            events = events.OrderBy(i => i.StartDate).Where(i => string.Equals(i.Country, selectedEvent.Country, StringComparison.OrdinalIgnoreCase)).ToList();
+            await LocalStorage.SetItemAsync("TheBlueAlliance.AllEvents", events);
+        }
     }
 
     [JSInvokable("onupdateavailable")]
@@ -41,7 +60,7 @@
         return await Task.FromResult("Alerted client");
     }
 
-    private void RefreshPage(MouseEventArgs mouseEventArgs) 
+    private void RefreshPage(MouseEventArgs mouseEventArgs)
     {
         NavigationManager.NavigateTo("/", true);
     }
