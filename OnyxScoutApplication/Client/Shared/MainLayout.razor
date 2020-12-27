@@ -34,7 +34,6 @@
 
         if (await LocalStorage.ContainKeyAsync("EventSelector/SelectedEventKey"))
         {
-            Console.WriteLine("Update");
             Event selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
 
             var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);

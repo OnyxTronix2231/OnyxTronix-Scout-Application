@@ -11,11 +11,13 @@
     <DropDownListEvents TItem="string" TValue="string" OnValueSelect="OnCountryFillterChange"></DropDownListEvents>
 </SfDropDownList>
 <br />
-
+@if (events != null)
+{
 <SfDropDownList TValue="string" TItem="Event" Width="355px" PopupHeight="355px" PopupWidth="355px" Placeholder="Select an event" Value="lastEventKey" DataSource="@events">
     <DropDownListEvents TItem="Event" TValue="string" OnValueSelect="OnEventChange"></DropDownListEvents>
     <DropDownListFieldSettings Text="Name" Value="Key"></DropDownListFieldSettings>
 </SfDropDownList>
+}
 
 
 @code {
@@ -24,7 +26,7 @@
     public int? SelectedYearFiltter { get; set; } = 0;
     public string SelecteCountryFiltter { get; set; }
     public Event SelectedEvent { get; set; } = new Event();
-    private List<Event> events = new List<Event>();
+    private List<Event> events;
     private List<int?> filtterYears = new List<int?>();
     private List<string> filtterCountries = new List<string>();
     private string lastEventKey;
@@ -45,7 +47,6 @@
             List<Event> events = await LocalStorage.GetItemAsync<List<Event>>("TheBlueAlliance.AllEvents");
             UpdateEventsList(events);
             UpdateSelectedEvent(SelectedEvent);
-            StateHasChanged();
         }
         else
         {
@@ -56,16 +57,8 @@
 
     private void UpdateEventsList(List<Event> events)
     {
-        lastEventKey = "";
         events = events.OrderBy(i => i.StartDate).Where(i => string.Equals(i.Country, SelecteCountryFiltter, StringComparison.OrdinalIgnoreCase)).ToList();
-        if (this.events.Any())
-        {
-            this.events = events;
-        }
-        else
-        {
-            this.events.AddRange(events);
-        }
+        this.events = events;
     }
 
     private async Task OnYearFillterChange(Syncfusion.Blazor.DropDowns.SelectEventArgs<int?> args)
