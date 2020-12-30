@@ -1,34 +1,44 @@
 ﻿<div>
-    <SfGrid DataSource="@CalculatedData" Width="600">
+    <SfGrid DataSource="@CalculatedData" AllowResizing="true" Width="100%">
         <GridColumns>
-            <GridColumn HeaderText="Name" Width="400">
+            <GridColumn HeaderText="Name" AllowResizing="true" Width="25%">
                 <Template>
                     @{
                         <span> @((context as FieldAverage).Field.Name)</span>
                     }
                 </Template>
             </GridColumn>
-            <GridColumn HeaderText="Avarge/Success rate" Width="150">
+            <GridColumn HeaderText="Avarge/Success rate" AllowResizing="true" Width="25%">
                 <Template>
                     @{
                         var f = (FieldAverage)context;
-                        var text = f.Formated;
+                        var text = f.GetFormatedAverage();
                     }
                     <span>@text</span>
                 </Template>
             </GridColumn>
-            <GridColumn HeaderText="Top 3" Width="150">
+            <GridColumn HeaderText="Min" AllowResizing="true" Width="10%">
+                <Template>
+                    @{ 
+                        var fieldAverage = (FieldAverage)context;
+                    }
+                    <span>@fieldAverage.GetFormatedLowValuesByCount(1)</span>
+                </Template>
+            </GridColumn>
+            <GridColumn HeaderText="Max" AllowResizing="true" Width="10%">
                 <Template>
                     @{
-                        var f = (FieldAverage)context;
-                        var s = f.GetSortedValues().Take(3).ToArray();
-                        string text = "";
-                        for (int i = 0; i < s.Length; i++)
-                        {
-                            text += s[i] + " ";
-                        }
+                        var fieldAverage = (FieldAverage)context;
                     }
-                    <span>@text</span>
+                    <span>@fieldAverage.GetFormatedHighValuesByCount(1)</span>
+                </Template>
+            </GridColumn>
+            <GridColumn HeaderText="Top 3" AllowResizing="true" Width="20%">
+                <Template>
+                    @{
+                        var fieldAverage = (FieldAverage)context;
+                    }
+                    <span>@fieldAverage.GetFormatedHighValuesByCount(3)</span>
                 </Template>
             </GridColumn>
         </GridColumns>

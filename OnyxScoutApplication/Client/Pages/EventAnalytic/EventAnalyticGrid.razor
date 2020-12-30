@@ -33,7 +33,7 @@
                         <Template>
                             @{
                                 var v = (KeyValuePair<Team, List<FieldAverage>>)context;
-                                var s = v.Value[index].Formated;
+                                var s = v.Value[index].GetFormatedAverage();
                             }
                             <span>@s</span>
                         </Template>

@@ -1,4 +1,5 @@
-﻿using OnyxScoutApplication.Shared.Models;
+﻿using OnyxScoutApplication.Client.Others.Objects.Analyzers;
+using OnyxScoutApplication.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
             {
                 if (fields[i].FieldType != FieldType.TextField)
                 {
-                    averagaes.Add(GetAvgFor(fields[i], i, scoutForms, getTragetList, shouldCount));
+                    averagaes.Add(GetAvgFor(fields[i], scoutForms, getTragetList, shouldCount));
                     if (fields[i].FieldType == FieldType.CascadeField)
                     {
                         averagaes.AddRange(CalculateDataFor(fields[i].CascadeFields, scoutForms, scoutForm => getTragetList(scoutForm)[i].CascadeData, scoutForm => getTragetList(scoutForm)[i].BooleanValue));
@@ -26,46 +27,25 @@ namespace OnyxScoutApplication.Client.Others.Objects
             return averagaes;
         }
 
-        private FieldAverage GetAvgFor(FieldDto field, int i, List<ScoutFormDto> data, Func<ScoutFormDto, List<ScoutFormDataDto>> getTragetList, Func<ScoutFormDto, bool> shouldCount)
+        private FieldAverage GetAvgFor(FieldDto field, List<ScoutFormDto> data, Func<ScoutFormDto, List<ScoutFormDataDto>> getTragetList, Func<ScoutFormDto, bool> shouldCount)
         {
-            FieldAverage fieldAverage = new FieldAverage(field);
             if (field.FieldType == FieldType.Numeric)
             {
-                float avarge = 0;
-                int count = 0;
-                foreach (var scoutForm in data)
-                {
-                    if (shouldCount(scoutForm))
-                    {
-                        if (getTragetList(scoutForm)[i].NumricValue != null)
-                        {
-                            int value = (int)getTragetList(scoutForm)[i].NumricValue;
-                            avarge += value;
-                            count++;
-                            fieldAverage.Values.Add(value);
-                        }
-                    }
-                }
-                fieldAverage.Average = avarge /= count;
+                NumricAnalayzer numricAnalayzer = new NumricAnalayzer();
+                return numricAnalayzer.Analyze(data, field, getTragetList, shouldCount);
             }
             else if (field.FieldType == FieldType.Boolean || field.FieldType == FieldType.CascadeField)
             {
-                float trueAvarage = 0;
-                int count = 0;
-                foreach (var scoutForm in data)
-                {
-                    if (shouldCount(scoutForm))
-                    {
-                        count++;
-                        if (getTragetList(scoutForm)[i].BooleanValue)
-                        {
-                            trueAvarage++;
-                        }
-                    }
-                }
-                fieldAverage.Average = trueAvarage /= count;
+                BooleanAnalayzer booleanAnalayzer = new BooleanAnalayzer();
+                return booleanAnalayzer.Analyze(data, field, getTragetList, shouldCount);
+            } 
+            else  if(field.FieldType == FieldType.OptionSelect)
+            {
+                OptionSelectAnalayzer optionSelectAnalayzer = new OptionSelectAnalayzer();
+                Console.WriteLine("Analyzing option select");
+                return optionSelectAnalayzer.Analyze(data, field, getTragetList, shouldCount);
             }
-            return fieldAverage;
+            return null;
         }
     }
 }
