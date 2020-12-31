@@ -2,7 +2,7 @@
 <div>
     @if (Fields != null)
     {
-        string s = (250 + Fields.Count * 80).ToString() + "px";
+        string s = (250 + Fields.Count * 100).ToString() + "px";
         Console.WriteLine(s);
         <div>
             <div>
@@ -14,7 +14,7 @@
         </div>
 
 
-        <SfGrid DataSource="@calculatedData" AllowSorting="true" AllowMultiSorting="true" Width="@s">
+        <SfGrid DataSource="@calculatedData"  AllowResizing="true" AllowSorting="true" AllowMultiSorting="true" Width="@s">
             <GridColumns>
                 <GridColumn HeaderText="Team" Width="10px">
                     <Template>
@@ -29,19 +29,20 @@
                 @for (int i = 0; i < Fields.Count; i++)
                 {
                     int index = i;
-                    <GridColumn HeaderText="@Fields[index].Name" TextAlign="TextAlign.Center" Width="5px">
+                    string width = Fields[index].FieldType == FieldType.OptionSelect ? "10px" : "5px";
+                    <GridColumn HeaderText="@Fields[index].Name" AllowResizing="true" TextAlign="Fields[index].FieldType == FieldType.OptionSelect ? TextAlign.Left : TextAlign.Center" Width="@width">
                         <Template>
                             @{
                                 var v = (KeyValuePair<Team, List<FieldAverage>>)context;
-                                var s = v.Value[index].GetFormatedAverage();
+                                var s = v.Value.First(i => i.Field.Name == Fields[index].Name).GetFormatedAverage();
                             }
                             <span>@s</span>
                         </Template>
                     </GridColumn>
                 }
             </GridColumns>
-        </SfGrid>
-    }
+        </SfGrid> 
+    } 
 </div>
 
 @code {
