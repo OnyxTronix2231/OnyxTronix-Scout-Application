@@ -20,7 +20,9 @@ namespace OnyxScoutApplication.Client.Others.Objects
                     averagaes.Add(GetAvgFor(fields[i], scoutForms, getTragetList, shouldCount));
                     if (fields[i].FieldType == FieldType.CascadeField)
                     {
-                        averagaes.AddRange(CalculateDataFor(fields[i].CascadeFields, scoutForms, scoutForm => getTragetList(scoutForm)[i].CascadeData, scoutForm => getTragetList(scoutForm)[i].BooleanValue));
+                        Func<ScoutFormDto, ScoutFormDataDto> getScoutFormData = scoutForm => getTragetList(scoutForm).FirstOrDefault(f => f.Field.Name == fields[i].Name);
+                        averagaes.AddRange(CalculateDataFor(fields[i].CascadeFields, scoutForms, scoutForm => getScoutFormData(scoutForm).CascadeData, 
+                            scoutForm => getScoutFormData(scoutForm) != null && getScoutFormData(scoutForm).BooleanValue));
                     }
                 }
             }
