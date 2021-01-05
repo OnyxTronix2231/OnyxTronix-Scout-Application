@@ -1,4 +1,5 @@
 ﻿using OnyxScoutApplication.Client.Others.Objects.Analyzers;
+using OnyxScoutApplication.Client.Others.Objects.TeamData;
 using OnyxScoutApplication.Shared.Models;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,9 @@ namespace OnyxScoutApplication.Client.Others.Objects
 {
     public class TeamDataAnalyzer
     {
-        public List<FieldAverage> CalculateDataFor(List<FieldDto> fields, List<ScoutFormDto> scoutForms, Func<ScoutFormDto, List<ScoutFormDataDto>> getTragetList, Func<ScoutFormDto, bool> shouldCount)
+        public List<TeamFieldAverage> CalculateDataFor(List<FieldDto> fields, List<ScoutFormDto> scoutForms, Func<ScoutFormDto, List<ScoutFormDataDto>> getTragetList, Func<ScoutFormDto, bool> shouldCount)
         {
-            List<FieldAverage> averagaes = new List<FieldAverage>();
+            List<TeamFieldAverage> averagaes = new List<TeamFieldAverage>();
             for (int i = 0; i < fields.Count; i++)
             {
                 if (fields[i].FieldType != FieldType.TextField)
@@ -29,7 +30,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
             return averagaes;
         }
 
-        private FieldAverage GetAvgFor(FieldDto field, List<ScoutFormDto> data, Func<ScoutFormDto, List<ScoutFormDataDto>> getTragetList, Func<ScoutFormDto, bool> shouldCount)
+        private TeamFieldAverage GetAvgFor(FieldDto field, List<ScoutFormDto> data, Func<ScoutFormDto, List<ScoutFormDataDto>> getTragetList, Func<ScoutFormDto, bool> shouldCount)
         {
             if (field.FieldType == FieldType.Numeric)
             {

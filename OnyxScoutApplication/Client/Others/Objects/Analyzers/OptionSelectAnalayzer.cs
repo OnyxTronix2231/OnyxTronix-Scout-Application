@@ -1,4 +1,5 @@
-﻿using OnyxScoutApplication.Shared.Models;
+﻿using OnyxScoutApplication.Client.Others.Objects.TeamData;
+using OnyxScoutApplication.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,9 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
     public class OptionSelectAnalayzer : IFieldAnalyzer
     {
-        public FieldAverage Analyze(List<ScoutFormDto> scoutForms, FieldDto field, Func<ScoutFormDto, List<ScoutFormDataDto>> getTragetList, Func<ScoutFormDto, bool> shouldCount)
+        public TeamFieldAverage Analyze(List<ScoutFormDto> scoutForms, FieldDto field, Func<ScoutFormDto, List<ScoutFormDataDto>> getTragetList, Func<ScoutFormDto, bool> shouldCount)
         {
-            FieldAverage fieldAverage = new FieldAverage(field);
+            OptionSelectTeamFieldAverage fieldAverage = new OptionSelectTeamFieldAverage(field);
             int totalCount = 0;
             Dictionary<string, int> optionsCount = new Dictionary<string, int>();
             foreach (var scoutForm in scoutForms)
@@ -42,7 +43,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 {
                     count = optionsCount[key];
                 }
-                fieldAverage.optionsAvarage.Add(key, count / totalCount);
+                fieldAverage.OptionsAvarage.Add(key, count / totalCount);
             }
             return fieldAverage;
         }

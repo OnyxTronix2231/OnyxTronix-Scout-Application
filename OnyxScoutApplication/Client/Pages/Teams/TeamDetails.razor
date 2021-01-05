@@ -28,9 +28,9 @@
     public int teamNumber { get; set; }
     private Event selectedEvent;
     private List<ScoutFormDto> data;
-    private List<FieldAverage> autoCalculatedData;
-    private List<FieldAverage> teleopCalculatedData;
-    private List<FieldAverage> endGameCalculatedData;
+    private List<TeamFieldAverage> autoCalculatedData;
+    private List<TeamFieldAverage> teleopCalculatedData;
+    private List<TeamFieldAverage> endGameCalculatedData;
     private List<Match> matches;
 
     protected override async Task OnInitializedAsync()

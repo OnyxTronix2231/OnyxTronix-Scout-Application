@@ -4,14 +4,14 @@
             <GridColumn HeaderText="Name" AllowResizing="true" Width="25%">
                 <Template>
                     @{
-                        <span> @((context as FieldAverage).Field.Name)</span>
+                        <span> @((context as TeamFieldAverage).Field.Name)</span>
                     }
                 </Template>
             </GridColumn>
             <GridColumn HeaderText="Avarge/Success rate" AllowResizing="true" Width="25%">
                 <Template>
                     @{
-                        var f = (FieldAverage)context;
+                        var f = (TeamFieldAverage)context;
                         var text = f.GetFormatedAverage();
                     }
                     <span>@text</span>
@@ -19,26 +19,26 @@
             </GridColumn>
             <GridColumn HeaderText="Min" AllowResizing="true" Width="10%">
                 <Template>
-                    @{ 
-                        var fieldAverage = (FieldAverage)context;
+                    @if (context is NumricTeamFieldAverage numricTeamFieldAverage)
+                    {
+                    <span>@numricTeamFieldAverage.GetFormatedLowValuesByCount(1)</span>
                     }
-                    <span>@fieldAverage.GetFormatedLowValuesByCount(1)</span>
                 </Template>
             </GridColumn>
             <GridColumn HeaderText="Max" AllowResizing="true" Width="10%">
                 <Template>
-                    @{
-                        var fieldAverage = (FieldAverage)context;
+                    @if (context is NumricTeamFieldAverage numricTeamFieldAverage)
+                    {
+                        <span>@numricTeamFieldAverage.GetFormatedHighValuesByCount(1)</span>
                     }
-                    <span>@fieldAverage.GetFormatedHighValuesByCount(1)</span>
                 </Template>
             </GridColumn>
             <GridColumn HeaderText="Top 3" AllowResizing="true" Width="20%">
                 <Template>
-                    @{
-                        var fieldAverage = (FieldAverage)context;
+                    @if (context is NumricTeamFieldAverage numricTeamFieldAverage)
+                    {
+                        <span>@numricTeamFieldAverage.GetFormatedHighValuesByCount(3)</span>
                     }
-                    <span>@fieldAverage.GetFormatedHighValuesByCount(3)</span>
                 </Template>
             </GridColumn>
         </GridColumns>
@@ -46,5 +46,5 @@
 </div>
 @code {
     [Parameter]
-    public List<FieldAverage> CalculatedData { get; set; }
+    public List<TeamFieldAverage> CalculatedData { get; set; }
 }
