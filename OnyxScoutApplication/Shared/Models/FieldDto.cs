@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -7,6 +8,8 @@ namespace OnyxScoutApplication.Shared.Models
 {
     public class FieldDto
     {
+        private string textDefaultValue;
+
         public int Id { get; set; }
 
         //[ForeignKey("ScoutFormForamt")]
@@ -17,7 +20,15 @@ namespace OnyxScoutApplication.Shared.Models
 
         public string Name { get; set; }
 
-        public string TextDefaultValue { get; set; }
+        public string TextDefaultValue { 
+            get 
+            {
+                if (FieldType == FieldType.MultipleChoice && SelectedOptions.Count != 0)
+                {
+                    return SelectedOptions.Aggregate((i, j) => i + ";" + j);
+                }
+                return textDefaultValue; 
+            } set => textDefaultValue = value; }
 
         public bool BoolDefaultValue { get; set; }
 
@@ -36,6 +47,10 @@ namespace OnyxScoutApplication.Shared.Models
         public bool Required { get; set; } = false;
 
         public List<string> Options { get; set; } = new List<string>();
+
+        public List<string> SelectedOptions { get; set; } = new List<string>();
+
+        public int MaximumSelectionLength { get; set; }
 
         public List<FieldDto> CascadeFields { get; set; } = new List<FieldDto>();
     }

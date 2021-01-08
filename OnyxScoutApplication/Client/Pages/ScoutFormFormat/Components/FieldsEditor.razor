@@ -56,6 +56,11 @@
 
                 </OptionSelectFieldComponent>
                 break;
+            case FieldType.MultipleChoice:
+                <MultipleChoiceComponent Field="field" IsEditMode="true" @bind-Value="field.SelectedOptions">
+
+                </MultipleChoiceComponent>
+                break;
             default:
                 break;
         }

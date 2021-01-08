@@ -26,6 +26,8 @@ namespace OnyxScoutApplication.Shared.Models
 
         public bool BooleanValue {get; set; }
 
+        public List<string> SelectedOptions { get; set; } = new List<string>();
+
         public List<ScoutFormDataDto> CascadeData { get; set; } = new List<ScoutFormDataDto>();
     }
 }

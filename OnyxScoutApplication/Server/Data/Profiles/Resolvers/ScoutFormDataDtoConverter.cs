@@ -42,6 +42,9 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                         destination.NumricValue = int.Parse(source.Value);
                     }
                     break;
+                case FieldType.MultipleChoice:
+                    destination.SelectedOptions = source.Value?.Split(';').ToList();
+                    break;
                 default:
                     break;
             }

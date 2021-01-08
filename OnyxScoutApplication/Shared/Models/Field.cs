@@ -13,7 +13,8 @@ namespace OnyxScoutApplication.Shared.Models
         TextField,
         Numeric,
         CascadeField,
-        OptionSelect
+        OptionSelect,
+        MultipleChoice
     }
 
     public enum FieldStageType
@@ -54,6 +55,8 @@ namespace OnyxScoutApplication.Shared.Models
         public bool Required { get; set; } = false;
 
         public string Options { get; set; } = "";
+
+        public int MaximumSelectionLength { get; set; }
 
         public List<Field> CascadeFields { get; set; }
     }

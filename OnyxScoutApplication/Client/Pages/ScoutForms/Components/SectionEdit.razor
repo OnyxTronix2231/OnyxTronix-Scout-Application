@@ -35,8 +35,11 @@
             case FieldType.OptionSelect:
                 <OptionSelectFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.StringValue"></OptionSelectFieldComponent>
                 break;
-            default:
+            case FieldType.MultipleChoice:
+                <MultipleChoiceComponent Field="data.Field" IsEditMode="false" @bind-Value="data.SelectedOptions"></MultipleChoiceComponent>
                 break;
+            default:
+                break; 
         }
     </div>
 }

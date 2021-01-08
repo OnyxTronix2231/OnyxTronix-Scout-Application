@@ -42,11 +42,15 @@ namespace OnyxScoutApplication.Client.Others.Objects
                 BooleanAnalayzer booleanAnalayzer = new BooleanAnalayzer();
                 return booleanAnalayzer.Analyze(data, field, getTragetList, shouldCount);
             } 
-            else  if(field.FieldType == FieldType.OptionSelect)
+            else if(field.FieldType == FieldType.OptionSelect)
             {
                 OptionSelectAnalayzer optionSelectAnalayzer = new OptionSelectAnalayzer();
-                Console.WriteLine("Analyzing option select");
                 return optionSelectAnalayzer.Analyze(data, field, getTragetList, shouldCount);
+            }
+            else if (field.FieldType == FieldType.MultipleChoice)
+            {
+                MultipleChoiceAnalayzer multipleChoiceAnalayzer = new MultipleChoiceAnalayzer();
+                return multipleChoiceAnalayzer.Analyze(data, field, getTragetList, shouldCount);
             }
             return null;
         }

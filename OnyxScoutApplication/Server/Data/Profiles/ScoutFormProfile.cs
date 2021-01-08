@@ -14,12 +14,14 @@ namespace OnyxScoutApplication.Server.Data.Profiles
     {
         public ScoutFormProfile()
         {
-            CreateMap<FieldDto, Field>().ForMember(src => src.Options, opt =>
+            CreateMap<FieldDto, Field>().ForMember(des => des.Options, opt =>
             {
-                opt.PreCondition(des => des.FieldType == FieldType.OptionSelect);
-                opt.MapFrom(des => des.Options.Aggregate((i, j) => i + ";" + j));
+                opt.PreCondition(src => src.FieldType == FieldType.OptionSelect || src.FieldType == FieldType.MultipleChoice);
+                opt.MapFrom(src => src.Options.Aggregate((i, j) => i + ";" + j));
             });
-            CreateMap<Field, FieldDto>().ForMember(src => src.Options, opt => opt.MapFrom(des => des.Options.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()));
+
+            CreateMap<Field, FieldDto>().ForMember(des => des.Options, opt => opt.MapFrom(des => des.Options.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()))
+                .ForMember(des => des.SelectedOptions, opt => opt.MapFrom(des => des.TextDefaultValue.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()));
 
             CreateMap<ScoutFormFormat, ScoutFormFormat>();
             CreateMap<ScoutFormFormatDto, ScoutFormFormatDto>();
