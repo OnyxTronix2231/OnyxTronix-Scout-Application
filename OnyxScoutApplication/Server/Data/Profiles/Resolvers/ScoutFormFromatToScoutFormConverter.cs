@@ -38,6 +38,27 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
         private ScoutFormDataDto GetScoutFormDataFromField(FieldDto field)
         {
             ScoutFormDataDto scoutFormData = new ScoutFormDataDto() { Field = field, FieldID = field.Id };
+            switch (field.FieldType)
+            {
+                case FieldType.None:
+                    break;
+                case FieldType.CascadeField:
+                case FieldType.Boolean:
+                    scoutFormData.BooleanValue = field.BoolDefaultValue;
+                    break;
+                case FieldType.OptionSelect:
+                case FieldType.TextField:
+                    scoutFormData.StringValue = field.TextDefaultValue;
+                    break;
+                case FieldType.Numeric:
+                    scoutFormData.NumricValue = field.NumricDefaultValue;
+                    break;
+                case FieldType.MultipleChoice:
+                    scoutFormData.SelectedOptions = field.SelectedOptions;
+                    break;
+                default:
+                    break;
+            }
             foreach (var f in field.CascadeFields)
             {
                 scoutFormData.CascadeData.Add(GetScoutFormDataFromField(f));
