@@ -14,14 +14,14 @@
         </div>
 
 
-        <SfGrid DataSource="@calculatedData"  AllowResizing="true" AllowSorting="true" AllowMultiSorting="true" Width="@s">
+        <SfGrid DataSource="@calculatedData" AllowFiltering="true" AllowExcelExport="true" ShowColumnChooser="true" Toolbar=@toolbarItems AllowResizing="true" AllowSorting="true" AllowMultiSorting="true" Width="@s">
             <GridColumns>
-                <GridColumn HeaderText="Team" Width="10px">
+                <GridColumn Field="Team.TeamNumber" HeaderText="Team" Width="10px">
                     <Template>
                         @{
-                            var v = (KeyValuePair<Team, List<TeamFieldAverage>>)context;
-                            <div><span class="clickable" @onclick="() => OnTeamGridClicked(v.Key.TeamNumber)">@(v.Key.TeamNumber)</span></div>
-                            <div><span class="clickable" @onclick="() => OnTeamGridClicked(v.Key.TeamNumber)"> @(v.Key.Nickname)</span></div>
+                            var v = (TeamAverage)context;
+                            <div><span class="clickable" @onclick="() => OnTeamGridClicked(v.Team.TeamNumber)"> @(v.Team.Nickname)</span></div>
+                            <div><span class="clickable" @onclick="() => OnTeamGridClicked(v.Team.TeamNumber)">@(v.Team.TeamNumber)</span></div>
                         }
                     </Template>
                 </GridColumn>
@@ -33,16 +33,16 @@
                     <GridColumn HeaderText="@Fields[index].Name" AllowResizing="true" TextAlign="Fields[index].FieldType == FieldType.OptionSelect ? TextAlign.Left : TextAlign.Left" Width="@width">
                         <Template>
                             @{
-                                var v = (KeyValuePair<Team, List<TeamFieldAverage>>)context;
-                                var s = v.Value.First(i => i.Field.Name == Fields[index].Name).GetFormatedAverage();
+                                var v = (TeamAverage)context;
+                                var s = v.TeamFieldAverage.First(i => i.Field.Name == Fields[index].Name).GetFormatedAverage();
                             }
                             <span>@s</span>
                         </Template>
                     </GridColumn>
                 }
             </GridColumns>
-        </SfGrid> 
-    } 
+        </SfGrid>
+    }
 </div>
 
 @code {
@@ -56,18 +56,19 @@
     public Func<ScoutFormDto, List<ScoutFormDataDto>> GetTragetList { get; set; }
     [Parameter]
     public EventCallback<int> OnTeamClicked { get; set; }
-    private List<KeyValuePair<Team, List<TeamFieldAverage>>> calculatedData;
+    private List<TeamAverage> calculatedData;
     private string name = "";
+    private string[] toolbarItems = new string[] { "ColumnChooser", "ExcelExport" };
 
     protected override void OnParametersSet()
     {
-        List<KeyValuePair<Team, List<TeamFieldAverage>>> data = new List<KeyValuePair<Team, List<TeamFieldAverage>>>();
+        List<TeamAverage> data = new List<TeamAverage>();
         foreach (var team in Teams)
         {
             List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(Fields, ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), GetTragetList, s => true).ToList();
 
-           // avgs.ForEach(i => i.Average = float.IsNormal(i.Average) ? i.Average : 0); //TODO: Remove when support for Nan is added in syncfution
-            data.Add(new KeyValuePair<Team, List<TeamFieldAverage>>(team, avgs));
+            // avgs.ForEach(i => i.Average = float.IsNormal(i.Average) ? i.Average : 0); //TODO: Remove when support for Nan is added in syncfution
+            data.Add(new TeamAverage { Team = team, TeamFieldAverage = avgs });
         }
         calculatedData = data;
     }
@@ -79,11 +80,17 @@
 
     private void OnSortValueChange()
     {
-        if(string.IsNullOrWhiteSpace(name))
+        if (string.IsNullOrWhiteSpace(name))
         {
             return;
         }
-        calculatedData = calculatedData.OrderByDescending(pair1 => pair1.Value.Where(f => f.Field.Name == name).Single()).ToList();
+        calculatedData = calculatedData.OrderByDescending(pair1 => pair1.TeamFieldAverage.Where(f => f.Field.Name == name).Single()).ToList();
+    }
+
+    private class TeamAverage
+    {
+        public Team Team { get; set; }
+        public List<TeamFieldAverage> TeamFieldAverage { get; set; }
     }
 }
 <style>

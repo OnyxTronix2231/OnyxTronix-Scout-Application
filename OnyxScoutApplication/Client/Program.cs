@@ -41,7 +41,7 @@ namespace OnyxScoutApplication.Client
 
 
             services.AddSyncfusionBlazor();
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzYzMzI0QDMxMzgyZTMzMmUzMFIzSk51S290d2owNmZVODEvUzh6ZndQK25MVWRMUTFJOFVXL0lQWDA3WWc9");
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzgwMDc5QDMxMzgyZTM0MmUzMFM2RGdsNWJYWDRvR3RQdVdzd1BmOGM0djYxMlNTVWk4RWE0TUxVM3BjVTg9");
             services.AddTransient<HttpClientManager>();
             services.AddTransient<TeamDataAnalyzer>();
             services.AddSingleton<NotificationManager>();
