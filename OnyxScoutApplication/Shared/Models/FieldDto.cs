@@ -8,8 +8,6 @@ namespace OnyxScoutApplication.Shared.Models
 {
     public class FieldDto
     {
-        private string textDefaultValue;
-
         public int Id { get; set; }
 
         //[ForeignKey("ScoutFormForamt")]
@@ -20,15 +18,7 @@ namespace OnyxScoutApplication.Shared.Models
 
         public string Name { get; set; }
 
-        public string TextDefaultValue { 
-            get 
-            {
-                if (FieldType == FieldType.MultipleChoice && SelectedOptions.Count != 0)
-                {
-                    return SelectedOptions.Aggregate((i, j) => i + ";" + j);
-                }
-                return textDefaultValue; 
-            } set => textDefaultValue = value; }
+        public string TextDefaultValue { get; set; }
 
         public bool BoolDefaultValue { get; set; }
 
@@ -48,7 +38,7 @@ namespace OnyxScoutApplication.Shared.Models
 
         public List<string> Options { get; set; } = new List<string>();
 
-        public List<string> SelectedOptions { get; set; } = new List<string>();
+        public List<string> DefaultSelectedOptions { get; set; } = new List<string>();
 
         public int MaximumSelectionLength { get; set; }
 

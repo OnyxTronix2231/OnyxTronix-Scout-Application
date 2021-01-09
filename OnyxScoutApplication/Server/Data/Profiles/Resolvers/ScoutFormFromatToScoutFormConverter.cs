@@ -54,7 +54,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                     scoutFormData.NumricValue = field.NumricDefaultValue;
                     break;
                 case FieldType.MultipleChoice:
-                    scoutFormData.SelectedOptions = field.SelectedOptions;
+                    scoutFormData.SelectedOptions = field.DefaultSelectedOptions;
                     break;
                 default:
                     break;
