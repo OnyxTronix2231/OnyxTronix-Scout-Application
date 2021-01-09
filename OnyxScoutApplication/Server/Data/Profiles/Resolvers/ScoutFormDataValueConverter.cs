@@ -27,7 +27,10 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                     destination.Value = source.NumricValue.ToString();
                     break;
                 case FieldType.MultipleChoice:
-                    destination.Value = source.SelectedOptions?.Aggregate(string.Empty, (i, j) => i + ";" + j);
+                    if (source.SelectedOptions != null)
+                    {
+                        destination.Value = string.Join(";", source.SelectedOptions);
+                    }
                     break;
                 default:
                     break;

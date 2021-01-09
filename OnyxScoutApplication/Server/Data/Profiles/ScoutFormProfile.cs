@@ -20,7 +20,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles
                 opt.MapFrom(src => src.Options.Aggregate((i, j) => i + ";" + j));
             }).
             ForMember(des => des.TextDefaultValue,
-            opt => opt.MapFrom(src => src.FieldType == FieldType.MultipleChoice ? src.DefaultSelectedOptions.Aggregate((i, j) => i + ";" + j) : src.TextDefaultValue));
+            opt => opt.MapFrom(src => src.FieldType == FieldType.MultipleChoice? src.DefaultSelectedOptions.Aggregate(string.Empty, (i, j) => i + ";" + j) : src.TextDefaultValue));
 
             CreateMap<Field, FieldDto>().ForMember(des => des.Options, opt => opt.MapFrom(des => des.Options.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()))
                 .ForMember(des => des.DefaultSelectedOptions, opt => opt.MapFrom(src => src.TextDefaultValue.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()));

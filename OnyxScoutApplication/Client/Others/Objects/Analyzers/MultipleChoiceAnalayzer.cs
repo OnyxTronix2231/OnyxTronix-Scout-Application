@@ -24,7 +24,6 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                         totalCount++;
                         foreach (var selectedOption in scoutFormData.SelectedOptions)
                         {
-                            Console.WriteLine("option: " + selectedOption);
                             if (optionsCount.ContainsKey(selectedOption))
                             {
                                 optionsCount[selectedOption] = optionsCount[scoutFormData.StringValue]++;
