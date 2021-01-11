@@ -51,7 +51,6 @@ namespace OnyxScoutApplication.Server
         public void ConfigureServices(IServiceCollection services)
         {
             Console.WriteLine($"Configuring services in {Env.EnvironmentName} mode");
-
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 string connectionString;
@@ -133,7 +132,7 @@ namespace OnyxScoutApplication.Server
             app.UseIdentityServer();
             if (!Env.IsDevelopment())
             {
-                app.Use((ctx, next) => { ctx.SetIdentityServerOrigin("https://scouter.onyxtronix.com"); return next(); });
+                app.Use((ctx, next) => { ctx.SetIdentityServerOrigin(Configuration.GetValue<string>("PublicOrigin")); return next(); });
             }
             app.UseAuthentication();
             app.UseAuthorization();
