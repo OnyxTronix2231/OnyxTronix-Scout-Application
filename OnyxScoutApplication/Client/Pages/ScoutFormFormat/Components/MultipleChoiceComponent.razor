@@ -9,7 +9,7 @@
     }
     <Syncfusion.Blazor.DropDowns.SfMultiSelect @bind-Value="CurrentValue" Mode="VisualMode.CheckBox"
                                                MaximumSelectionLength="Field.MaximumSelectionLength == 0 ? Field.Options.Count : Field.MaximumSelectionLength"
-                                               DataSource="this.Field.Options"  />
+                                               DataSource="this.Field.Options" />
 
     <ValidationMessage For="@ValueExpression" />
 </div>
@@ -24,6 +24,9 @@
         <label for="name">Max slsection option</label>
         <SfNumericTextBox @bind-Value="Field.MaximumSelectionLength"></SfNumericTextBox>
     </div>
+
+    <br />
+
     @foreach (var (item, index) in options.Select((x, i) => (x, i)))
     {
         var name = options[index];
@@ -35,6 +38,8 @@
         </div>
     }
     <ValidationMessage For="@(() => Field.Options)" />
+
+    <br />
 
     <div>
         <button type="button" class="btn btn-dark" @onclick="AddOption">Add option</button>

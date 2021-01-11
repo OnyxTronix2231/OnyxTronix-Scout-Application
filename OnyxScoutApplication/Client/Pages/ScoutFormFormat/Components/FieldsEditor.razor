@@ -21,7 +21,7 @@
         <ValidationMessage For="@(() => field.FieldType)" />
     </div>
     <br />
-    <div class="form-group">
+    <div class="form-group" style="padding-left:2em">
         @switch (field.FieldType)
         {
             case FieldType.None:
@@ -47,9 +47,9 @@
 
                 </BooleanFieldComponent>
 
-                <div class="form-group" style="padding-left:3em">
+                @*<div class="form-group" style="padding-left:1em">*@
                     <FieldsEditor Fields="field.CascadeFields"></FieldsEditor>
-                </div>
+                @*</div>*@
                 break;
             case FieldType.OptionSelect:
                 <OptionSelectFieldComponent Field="field" IsEditMode="true" @bind-Value="field.TextDefaultValue">

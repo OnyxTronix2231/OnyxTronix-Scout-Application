@@ -18,11 +18,14 @@
         <label for="matchName">Writer</label>
         <input class="form-control" type="text" id="matchNumber" value="@ScoutForm.WriterUserName" readonly="readonly" />
     </div>
-    <SectionEdit SectionData="ScoutForm.AutonomousData" SectionName="Autonomous"></SectionEdit>
 
-    <SectionEdit SectionData="ScoutForm.TeleoperatedData" SectionName="Teleoperated"></SectionEdit>
+    <div class="form-group col-sm-5">
+        <SectionEdit SectionData="ScoutForm.AutonomousData" SectionName="Autonomous"></SectionEdit>
 
-    <SectionEdit SectionData="ScoutForm.EndGameData" SectionName="End game"></SectionEdit>
+        <SectionEdit SectionData="ScoutForm.TeleoperatedData" SectionName="Teleoperated"></SectionEdit>
+
+        <SectionEdit SectionData="ScoutForm.EndGameData" SectionName="End game"></SectionEdit>
+    </div>
 
     <div><button type="submit" class="btn btn-primary">@(Type == FormType.Create ? "Add" : "Save")</button></div>
 </EditForm>

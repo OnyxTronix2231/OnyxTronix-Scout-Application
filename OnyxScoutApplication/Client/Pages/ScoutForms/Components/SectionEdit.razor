@@ -1,47 +1,47 @@
 ﻿<h3>@SectionName</h3>
 @foreach (var data in SectionData)
 {
-    <div class="form-group col-sm-5">
-        <label>@data.Field.Name</label>
-        @switch (data.Field.FieldType)
-        {
-            case FieldType.None:
-                break;
-            case FieldType.TextField:
-                <TextFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.StringValue">
+    <label>@data.Field.Name</label>
+    @switch (data.Field.FieldType)
+    {
+        case FieldType.None:
+            break;
+        case FieldType.TextField:
+            <TextFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.StringValue">
 
-                </TextFieldComponent>
-                break;
-            case FieldType.Numeric:
-                <NumricFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.NumricValue">
+            </TextFieldComponent>
+            break;
+        case FieldType.Numeric:
+            <NumricFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.NumricValue">
 
-                </NumricFieldComponent>
+            </NumricFieldComponent>
 
-                break;
-            case FieldType.Boolean:
-                <BooleanFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.BooleanValue">
+            break;
+        case FieldType.Boolean:
+            <BooleanFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.BooleanValue">
 
-                </BooleanFieldComponent>
-                break;
-            case FieldType.CascadeField:
-                <BooleanFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.BooleanValue">
+            </BooleanFieldComponent>
+            break;
+        case FieldType.CascadeField:
+            <BooleanFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.BooleanValue">
 
-                </BooleanFieldComponent>
-                if (data.BooleanValue)
-                {
+            </BooleanFieldComponent>
+            if (data.BooleanValue)
+            {
+                <div class="form-group" style="padding-left:1em">
                     <SectionEdit SectionData="data.CascadeData"></SectionEdit>
-                }
-                break;
-            case FieldType.OptionSelect:
-                <OptionSelectFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.StringValue"></OptionSelectFieldComponent>
-                break;
-            case FieldType.MultipleChoice:
-                <MultipleChoiceComponent Field="data.Field" IsEditMode="false" @bind-Value="data.SelectedOptions"></MultipleChoiceComponent>
-                break;
-            default:
-                break; 
-        }
-    </div>
+                </div>
+            }
+            break;
+        case FieldType.OptionSelect:
+            <OptionSelectFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.StringValue"></OptionSelectFieldComponent>
+            break;
+        case FieldType.MultipleChoice:
+            <MultipleChoiceComponent Field="data.Field" IsEditMode="false" @bind-Value="data.SelectedOptions"></MultipleChoiceComponent>
+            break;
+        default:
+            break;
+    }
 }
 
 @code {
