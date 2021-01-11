@@ -43,7 +43,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 {
                     count = optionsCount[key];
                 }
-                fieldAverage.OptionsAvarage.Add(key, count / totalCount);
+                fieldAverage.OptionsAvarage.Add(key, new Tuple<float, float>(count, totalCount));
             }
             return fieldAverage;
         }

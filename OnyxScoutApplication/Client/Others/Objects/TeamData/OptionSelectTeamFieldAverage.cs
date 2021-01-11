@@ -10,17 +10,17 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
     public class OptionSelectTeamFieldAverage : TeamFieldAverage
     {
 
-        public Dictionary<string, float> OptionsAvarage { get; set; }
+        public Dictionary<string, Tuple<float, float>> OptionsAvarage { get; set; }
 
         public OptionSelectTeamFieldAverage(FieldDto field) : base(field)
         {
-            OptionsAvarage = new Dictionary<string, float>();
+            OptionsAvarage = new Dictionary<string, Tuple<float, float>>();
         }
 
         public override MarkupString GetFormatedAverage()
         {
             return new MarkupString(string.Join("<br />",
-                OptionsAvarage.Select(i => $"{i.Key}: {(i.Value * 100).ToString("0.##") + "%"}")));
+                OptionsAvarage.Select(i => $"{i.Key}: {i.Value.Item1}/{i.Value.Item2}")));
         }
 
         public override int CompareTo(TeamFieldAverage other)
