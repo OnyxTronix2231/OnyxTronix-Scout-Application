@@ -2,24 +2,63 @@
 
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
-@if (notes != null)
+@if (endGameNotes != null)
 {
     <h3>Team @teamNumber</h3>
     <h4>@selectedEvent?.Name</h4>
     <div>
-        @for (int i = 0; i < notes.Length; i++)
+        <h5>Autonomous notes</h5>
+        <br />
+
+        @foreach (var textFieldAndWriter in autonomousNotes)
         {
-            <div>
-                <SfTextBox Value="@notes[i]" Width="100%" Readonly="true" Multiline="true"></SfTextBox>
-            </div>
-            <br />
+            foreach (var text in textFieldAndWriter.Item1)
+            {
+                <div>
+                    <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
+                    <span>@textFieldAndWriter.Item2</span>
+                </div>
+                <br />
+            }
+        }
+
+        <h5>Teleoperated notes</h5>
+        <br />
+
+        @foreach (var textFieldAndWriter in teleoperatedNotes)
+        {
+            foreach (var text in textFieldAndWriter.Item1)
+            {
+                <div>
+                    <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
+                    <span>@textFieldAndWriter.Item2</span>
+                </div>
+                <br />
+            }
+        }
+
+        <h5>End game notes</h5>
+        <br />
+
+        @foreach (var textFieldAndWriter in endGameNotes)
+        {
+            foreach (var text in textFieldAndWriter.Item1)
+            {
+                <div>
+                    <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
+                    <span>@textFieldAndWriter.Item2</span>
+                </div>
+                <br />
+            }
         }
     </div>
 }
 @code {
     [Parameter]
     public int teamNumber { get; set; }
-    private string[] notes;
+    private Tuple<ScoutFormDataDto[], string>[] autonomousNotes;
+    private Tuple<ScoutFormDataDto[], string>[] teleoperatedNotes;
+    private Tuple<ScoutFormDataDto[], string>[] endGameNotes;
     private Event selectedEvent;
 
     protected override async Task OnInitializedAsync()
@@ -32,9 +71,9 @@
 
         var result = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByTeam/" + teamNumber + "/" + selectedEvent.Key);
 
-        notes = result.Select(i => i.AutonomousData.Where(f => f.Field.FieldType == FieldType.TextField)).SelectMany(i => i).Select(i => i.StringValue).ToArray();
-        notes = notes.Concat(result.Select(i => i.TeleoperatedData.Where(f => f.Field.FieldType == FieldType.TextField)).SelectMany(i => i).Select(i => i.StringValue).ToArray()).ToArray();
-        notes = notes.Concat(result.Select(i => i.EndGameData.Where(f => f.Field.FieldType == FieldType.TextField)).SelectMany(i => i).Select(i => i.StringValue).ToArray()).ToArray();
+        autonomousNotes = result.Select(i => new Tuple<ScoutFormDataDto[], string>(i.AutonomousData.Where(f => f.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)).ToArray();
+        teleoperatedNotes = result.Select(i => new Tuple<ScoutFormDataDto[], string>(i.TeleoperatedData.Where(f => f.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)).ToArray();
+        endGameNotes = result.Select(i => new Tuple<ScoutFormDataDto[], string>(i.EndGameData.Where(f => f.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)).ToArray();
 
     }
 }
