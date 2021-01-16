@@ -8,7 +8,7 @@
             <div>
                 <SfDropDownList TItem="FieldDto" TValue="string" Placeholder="Select field name to sort by" DataSource="Fields" @bind-Value="@name" Width="250px">
                     <DropDownListFieldSettings Text="Name" Value="Name"></DropDownListFieldSettings>
-                    <DropDownListEvents TItem="FieldDto" TValue="string" ValueChange="OnSortValueChange"></DropDownListEvents>
+                    <DropDownListEvents TItem="FieldDto" TValue="string" ValueChange="e => OnSortValueChange(e)"></DropDownListEvents>
                 </SfDropDownList>
             </div>
         </div>
@@ -34,7 +34,7 @@
                         <Template>
                             @{
                                 var v = (TeamAverage)context;
-                                var s = v.TeamFieldAverage.First(i => i.Field.Name == Fields[index].Name).GetFormatedAverage();
+                                var s = v.TeamFieldAverage.First(i => i.Field.NameId == Fields[index].NameId).GetFormatedAverage();
                             }
                             <span>@s</span>
                         </Template>
@@ -77,14 +77,14 @@
     {
         OnTeamClicked.InvokeAsync(teamNumber);
     }
-
-    private void OnSortValueChange()
+    
+    private void OnSortValueChange(ChangeEventArgs<string, FieldDto> args)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
+        if (args.ItemData == null)
+        { 
             return;
         }
-        calculatedData = calculatedData.OrderByDescending(pair1 => pair1.TeamFieldAverage.Where(f => f.Field.Name == name).Single()).ToList();
+        calculatedData = calculatedData.OrderByDescending(pair1 => pair1.TeamFieldAverage.Where(f => f.Field.NameId == args.ItemData.NameId).Single()).ToList();
     }
 
     private class TeamAverage

@@ -43,5 +43,7 @@ namespace OnyxScoutApplication.Shared.Models
         public int MaximumSelectionLength { get; set; }
 
         public List<FieldDto> CascadeFields { get; set; } = new List<FieldDto>();
+
+        public string NameId => Name + FieldType.ToString();
     }
 }

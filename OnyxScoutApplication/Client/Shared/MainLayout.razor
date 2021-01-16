@@ -19,11 +19,15 @@
         <span>V0.1</span>
     </div>
     <div class="content px-4">
-        @Body
+        @if (finishedInit) 
+        {
+            @Body
+        }
     </div>
 </div>
 @code{
     bool updateReady;
+    bool finishedInit = false;
     protected override async Task OnInitializedAsync()
     {
         await JSRuntime
@@ -46,6 +50,7 @@
             events = events.OrderBy(i => i.StartDate).Where(i => string.Equals(i.Country, selectedEvent.Country, StringComparison.OrdinalIgnoreCase)).ToList();
             LocalStorage.SetItem("TheBlueAlliance.AllEvents", events);
         }
+        finishedInit = true;
     }
 
     [JSInvokable("onupdateavailable")]

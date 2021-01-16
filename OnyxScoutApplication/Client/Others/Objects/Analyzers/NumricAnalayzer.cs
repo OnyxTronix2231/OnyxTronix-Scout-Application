@@ -16,9 +16,9 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             int count = 0;
             foreach (var scoutForm in scoutForms)
             {
-                if (shouldCount(scoutForm))
+                if (shouldCount(scoutForm)) 
                 {
-                    ScoutFormDataDto scoutFormData = getTragetList(scoutForm).FirstOrDefault(i => i.Field.Name == field.Name);
+                    ScoutFormDataDto scoutFormData = getTragetList(scoutForm).FirstOrDefault(i => i.Field.NameId == field.NameId);
                     if (scoutFormData != null)
                     {
                         if (scoutFormData.NumricValue != null)
