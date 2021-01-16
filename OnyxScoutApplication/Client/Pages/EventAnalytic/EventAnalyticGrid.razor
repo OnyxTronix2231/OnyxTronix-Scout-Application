@@ -2,11 +2,11 @@
 <div>
     @if (Fields != null)
     {
-        string s = (250 + Fields.Count * 100).ToString() + "px";
-        Console.WriteLine(s);
+        string s = (250 + Fields.Count * 200).ToString() + "px";
+        List<FieldDto> allFields = Fields.ConcatAllCascadeFields();
         <div>
             <div>
-                <SfDropDownList TItem="FieldDto" TValue="string" Placeholder="Select field name to sort by" DataSource="Fields" @bind-Value="@name" Width="250px">
+                <SfDropDownList TItem="FieldDto" TValue="string" Placeholder="Select field name to sort by" DataSource="allFields" @bind-Value="@name" Width="250px">
                     <DropDownListFieldSettings Text="Name" Value="Name"></DropDownListFieldSettings>
                     <DropDownListEvents TItem="FieldDto" TValue="string" ValueChange="e => OnSortValueChange(e)"></DropDownListEvents>
                 </SfDropDownList>
@@ -25,16 +25,15 @@
                         }
                     </Template>
                 </GridColumn>
-
-                @for (int i = 0; i < Fields.Count; i++)
+                @for (int i = 0; i < allFields.Count; i++)
                 {
                     int index = i;
-                    string width = Fields[index].FieldType == FieldType.OptionSelect ? "10px" : "5px";
-                    <GridColumn HeaderText="@Fields[index].Name" AllowResizing="true" TextAlign="Fields[index].FieldType == FieldType.OptionSelect ? TextAlign.Left : TextAlign.Left" Width="@width">
+                    string width = allFields[index].FieldType == FieldType.OptionSelect ? "10px" : "5px";
+                    <GridColumn HeaderText="@allFields[index].Name" AllowResizing="true" TextAlign="allFields[index].FieldType == FieldType.OptionSelect ? TextAlign.Left : TextAlign.Left" Width="@width">
                         <Template>
                             @{
                                 var v = (TeamAverage)context;
-                                var s = v.TeamFieldAverage.First(i => i.Field.NameId == Fields[index].NameId).GetFormatedAverage();
+                                var s = v.TeamFieldAverage.First(i => i.Field.NameId == allFields[index].NameId).GetFormatedAverage();
                             }
                             <span>@s</span>
                         </Template>

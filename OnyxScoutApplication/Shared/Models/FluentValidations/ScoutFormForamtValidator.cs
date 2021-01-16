@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using OnyxScoutApplication.Shared.Other;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,17 +22,9 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
 
         private bool UniqueName(List<FieldDto> fields)
         {
-            return !ConcatAllFields(fields).GroupBy(f => f.Name).Where(x => x.Skip(1).Any()).Any();
+            return !fields.ConcatAllCascadeFields().GroupBy(f => f.Name).Where(x => x.Skip(1).Any()).Any();
         }
-
-        private List<FieldDto> ConcatAllFields(List<FieldDto> fields)
-        {
-            if(fields.Count == 0)
-            {
-                return fields;
-            }
-            return fields.Concat(ConcatAllFields(fields.SelectMany(i => i.CascadeFields).ToList())).ToList();
-        }
+        
     }
 }
   
