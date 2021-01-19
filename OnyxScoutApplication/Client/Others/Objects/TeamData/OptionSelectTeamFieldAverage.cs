@@ -31,5 +31,10 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
             }
             throw new ArgumentException($"Cannot compare {nameof(NumricTeamFieldAverage)} type to {other.GetType()}");
         }
+
+        public override double GetRelativeValue()
+        {
+            return 0;
+        }
     }
 }

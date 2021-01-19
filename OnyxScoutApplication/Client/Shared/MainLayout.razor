@@ -47,8 +47,11 @@
             LocalStorage.SetItem("ScoutForms.All", scoutForms);
 
             var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
-            events = events.OrderBy(i => i.StartDate).Where(i => string.Equals(i.Country, selectedEvent.Country, StringComparison.OrdinalIgnoreCase)).ToList();
-            LocalStorage.SetItem("TheBlueAlliance.AllEvents", events);
+            if (events != null) //user is probably not authorized 
+            {
+                events = events.OrderBy(i => i.StartDate).Where(i => string.Equals(i.Country, selectedEvent.Country, StringComparison.OrdinalIgnoreCase)).ToList();
+                LocalStorage.SetItem("TheBlueAlliance.AllEvents", events);
+            }
         }
         finishedInit = true;
     }

@@ -18,6 +18,8 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
 
         public abstract MarkupString GetFormatedAverage();
 
+        public abstract double GetRelativeValue();
+
         public abstract int CompareTo(TeamFieldAverage other);
     }
 }

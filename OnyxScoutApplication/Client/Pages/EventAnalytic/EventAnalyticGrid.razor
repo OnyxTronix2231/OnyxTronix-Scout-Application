@@ -1,46 +1,38 @@
-﻿@inject TeamDataAnalyzer TeamDataAnalyzer
+﻿@using System.Dynamic
+@inject TeamDataAnalyzer TeamDataAnalyzer
 <div>
     @if (Fields != null)
     {
         string s = (250 + Fields.Count * 200).ToString() + "px";
-        List<FieldDto> allFields = Fields.ConcatAllCascadeFields();
-        <div>
-            <div>
-                <SfDropDownList TItem="FieldDto" TValue="string" Placeholder="Select field name to sort by" DataSource="allFields" @bind-Value="@name" Width="250px">
-                    <DropDownListFieldSettings Text="Name" Value="Name"></DropDownListFieldSettings>
-                    <DropDownListEvents TItem="FieldDto" TValue="string" ValueChange="e => OnSortValueChange(e)"></DropDownListEvents>
-                </SfDropDownList>
-            </div>
-        </div>
-
-
-        <SfGrid DataSource="@calculatedData" AllowFiltering="true" AllowExcelExport="true" ShowColumnChooser="true" Toolbar=@toolbarItems AllowResizing="true" AllowSorting="true" AllowMultiSorting="true" Width="@s">
-            <GridColumns>
-                <GridColumn Field="Team.TeamNumber" HeaderText="Team" Width="10px">
+    <SfGrid DataSource="@calculatedData" AllowReordering="true" AllowFiltering="true" ShowColumnChooser="true" Toolbar=@toolbarItems AllowResizing="true" AllowSorting="true" Width="@s">
+        <GridColumns>
+            <GridColumn Field="TeamNumber" HeaderText="Team" Width="10px">
+                <Template>
+                    @{
+                        var v = (dynamic)context;
+                        <div><span class="clickable" @onclick="() => OnTeamGridClicked(v.TeamNumber)"> @(v.Nickname)</span></div>
+                        <div><span class="clickable" @onclick="() => OnTeamGridClicked(v.TeamNumber)">@(v.TeamNumber)</span></div>
+                    }
+                </Template>
+            </GridColumn>
+            @for (int i = 0; i < allFields.Count; i++)
+            {
+                int index = i;
+                string width = allFields[index].FieldType == FieldType.OptionSelect ? "10px" : "5px";
+                string name = allFields[index].NameId;
+                string rawValue = "RawValue" + name;
+                <GridColumn HeaderText="@allFields[index].Name" Field="@rawValue" AllowReordering="true" AllowResizing="true" TextAlign="allFields[index].FieldType == FieldType.OptionSelect ? TextAlign.Left : TextAlign.Left" Width="@width">
                     <Template>
                         @{
-                            var v = (TeamAverage)context;
-                            <div><span class="clickable" @onclick="() => OnTeamGridClicked(v.Team.TeamNumber)"> @(v.Team.Nickname)</span></div>
-                            <div><span class="clickable" @onclick="() => OnTeamGridClicked(v.Team.TeamNumber)">@(v.Team.TeamNumber)</span></div>
+                            var v = (IDictionary<string, object>)context;
+                            var s = new MarkupString(v[name].ToString());
                         }
+                        <span>@s</span>
                     </Template>
                 </GridColumn>
-                @for (int i = 0; i < allFields.Count; i++)
-                {
-                    int index = i;
-                    string width = allFields[index].FieldType == FieldType.OptionSelect ? "10px" : "5px";
-                    <GridColumn HeaderText="@allFields[index].Name" AllowResizing="true" TextAlign="allFields[index].FieldType == FieldType.OptionSelect ? TextAlign.Left : TextAlign.Left" Width="@width">
-                        <Template>
-                            @{
-                                var v = (TeamAverage)context;
-                                var s = v.TeamFieldAverage.First(i => i.Field.NameId == allFields[index].NameId).GetFormatedAverage();
-                            }
-                            <span>@s</span>
-                        </Template>
-                    </GridColumn>
-                }
-            </GridColumns>
-        </SfGrid>
+            }
+        </GridColumns>
+    </SfGrid>
     }
 </div>
 
@@ -55,19 +47,30 @@
     public Func<ScoutFormDto, List<ScoutFormDataDto>> GetTragetList { get; set; }
     [Parameter]
     public EventCallback<int> OnTeamClicked { get; set; }
-    private List<TeamAverage> calculatedData;
-    private string name = "";
-    private string[] toolbarItems = new string[] { "ColumnChooser", "ExcelExport" };
+    private List<FieldDto> allFields;
+    private List<ExpandoObject> calculatedData;
+    private string[] toolbarItems = new string[] { "ColumnChooser" };
 
     protected override void OnParametersSet()
     {
-        List<TeamAverage> data = new List<TeamAverage>();
+        allFields = Fields.ConcatAllCascadeFields();
+
+        var data = new List<ExpandoObject>();
+
         foreach (var team in Teams)
         {
             List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(Fields, ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), GetTragetList, s => true).ToList();
+            dynamic row = new ExpandoObject();
+            ((IDictionary<String, Object>)row).Add("TeamNumber", team.TeamNumber);
+            ((IDictionary<String, Object>)row).Add("Nickname", team.Nickname);
 
-            // avgs.ForEach(i => i.Average = float.IsNormal(i.Average) ? i.Average : 0); //TODO: Remove when support for Nan is added in syncfution
-            data.Add(new TeamAverage { Team = team, TeamFieldAverage = avgs });
+            foreach (var field in allFields)
+            {
+                var teamAvg = avgs.First(i => i.Field.NameId == field.NameId);
+                ((IDictionary<String, Object>)row).Add(field.NameId, teamAvg.GetFormatedAverage().Value);
+                ((IDictionary<String, Object>)row).Add("RawValue" + field.NameId, teamAvg.GetRelativeValue());
+            }
+            data.Add(row);
         }
         calculatedData = data;
     }
@@ -75,15 +78,6 @@
     private void OnTeamGridClicked(int teamNumber)
     {
         OnTeamClicked.InvokeAsync(teamNumber);
-    }
-    
-    private void OnSortValueChange(ChangeEventArgs<string, FieldDto> args)
-    {
-        if (args.ItemData == null)
-        { 
-            return;
-        }
-        calculatedData = calculatedData.OrderByDescending(pair1 => pair1.TeamFieldAverage.Where(f => f.Field.NameId == args.ItemData.NameId).Single()).ToList();
     }
 
     private class TeamAverage

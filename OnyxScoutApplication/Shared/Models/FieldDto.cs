@@ -30,6 +30,8 @@ namespace OnyxScoutApplication.Shared.Models
 
         public FieldType FieldType { get; set; }
 
+        public FieldStageType FieldStageType { get; set; }
+
         public int MaxValue { get; set; } = 9999;
 
         public int MinValue { get; set; } = 0;
@@ -44,6 +46,6 @@ namespace OnyxScoutApplication.Shared.Models
 
         public List<FieldDto> CascadeFields { get; set; } = new List<FieldDto>();
 
-        public string NameId => Name + FieldType.ToString();
+        public string NameId => Name + FieldStageType.ToString();
     }
 }
