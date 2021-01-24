@@ -21,6 +21,13 @@
         </AuthorizeView>
         <AuthorizeView Roles="@(Roles.Admin)">
             <li class="nav-item px-3">
+                <NavLink class="nav-link" href="EventAnalytics/Settings">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Event analytics settings
+                </NavLink>
+            </li>
+        </AuthorizeView>
+        <AuthorizeView Roles="@(Roles.Admin)">
+            <li class="nav-item px-3">
                 <NavLink class="nav-link" href="ScoutFormFormats">
                     <span class="oi oi-list-rich" aria-hidden="true"></span> Scout form formats
                 </NavLink>

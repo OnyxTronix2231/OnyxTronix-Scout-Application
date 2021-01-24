@@ -1,0 +1,102 @@
+﻿@page "/EventAnalytics/Settings"
+@inject ILocalStorageService LocalStorage
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
+@inject NotificationManager NotificationManager
+@attribute [Authorize(Roles = Roles.Admin)]
+
+<h3>Select numric field to show combined result</h3>
+
+
+<br />
+@if (analyticSettings != null)
+{
+    @foreach (var combinedField in analyticSettings.CombinedFields)
+    {
+        <div>
+            @for (int i = 0; i < combinedField.Fields.Count; i++)
+            {
+                FieldDto field = combinedField.Fields[i];
+                int index = i;
+                <div>
+                    <SfDropDownList TItem="FieldDto" TValue="int" Placeholder="Select field" DataSource="fields" @bind-Value="@field.Id" Width="250px">
+                        <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
+                        <DropDownListEvents TItem="FieldDto" TValue="int" ValueChange="e => OnFieldSelected(e, combinedField.Fields, index)"></DropDownListEvents>
+                    </SfDropDownList>
+                    <SfButton CssClass="e-danger" @onclick="() => combinedField.Fields.Remove(field)">Remove this column</SfButton>
+                </div>
+                <br />
+            }
+            <SfButton @onclick="() => AddField(combinedField)">Add column</SfButton>
+        </div>
+        <br />
+    }
+
+
+    <br />
+    <SfButton @onclick="AddCombinedField">Add combined columns</SfButton>
+
+    <br />
+
+    <br />
+
+    <SfButton CssClass="e-success" @onclick="SaveSettings">Save</SfButton>
+}
+
+
+@code {
+    private Event selectedEvent;
+    private ScoutFormFormatDto format = new ScoutFormFormatDto();
+    private EventAnalyticSettingsDto analyticSettings;
+    private List<FieldDto> fields = new List<FieldDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        if (selectedEvent == null)
+        {
+            NotificationManager.Notify("Please select an event first", "", NotificationType.Warning);
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+        format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
+        {
+            analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
+        }
+        else
+        {
+            analyticSettings = new EventAnalyticSettingsDto();
+        }
+        fields = format.AutonomousFields.Concat(format.TeleoperatedFields).Concat(format.EndGameFields).Where(i => i.FieldType != FieldType.TextField).ToList().ConcatAllCascadeFields();
+        fields.RemoveAll(i => i.FieldType != FieldType.Numeric);
+    }
+
+    private void AddCombinedField()
+    {
+        analyticSettings.CombinedFields.Add(new CombinedFieldsDto());
+    }
+
+    private void AddField(CombinedFieldsDto combinedFields)
+    {
+        combinedFields.Fields.Add(new FieldDto());
+    }
+
+    private void OnFieldSelected(ChangeEventArgs<int, FieldDto> args, List<FieldDto> fields, int index)
+    {
+        if (args.ItemData == null)
+        {
+            return;
+        }
+        fields[index] = args.ItemData;
+        analyticSettings.CombinedFields.ForEach(i => i.Fields.ForEach(ii => Console.WriteLine(ii.Name)));
+    }
+
+    private async Task SaveSettings()
+    {
+        analyticSettings.CombinedFields.ForEach(i => i.Fields.RemoveAll(i => string.IsNullOrEmpty(i.Name)));
+        analyticSettings.CombinedFields.RemoveAll(i => i.Fields.Count <= 1);
+        await LocalStorage.SetItemAsync("EventAnalyticSettings/" + selectedEvent.Key, analyticSettings);
+        NavigationManager.NavigateTo("EventAnalytics");
+    }
+}
