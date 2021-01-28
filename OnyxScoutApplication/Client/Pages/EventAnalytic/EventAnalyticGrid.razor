@@ -1,10 +1,10 @@
 ﻿@using System.Dynamic
-@inject TeamDataAnalyzer TeamDataAnalyzer
+@inherits TeamsAnalyzer
 <div>
-    @if (Fields != null)
+    @if (CalculatedTeamsData != null)
     {
-        string s = (250 + Fields.Count * 200).ToString() + "px";
-        <SfGrid DataSource="@calculatedData" AllowReordering="true" AllowFiltering="true" ShowColumnChooser="true" Toolbar=@toolbarItems AllowResizing="true" AllowSorting="true" Width="@s">
+        string s = (250 + ColumnsFields.Count * 200).ToString() + "px";
+        <SfGrid DataSource="@CalculatedTeamsData" AllowReordering="true" AllowFiltering="true" ShowColumnChooser="true" Toolbar=@toolbarItems AllowResizing="true" AllowSorting="true" Width="@s">
             <GridColumns>
                 <GridColumn Field="TeamNumber" HeaderText="Team" Width="10px">
                     <Template>
@@ -15,13 +15,13 @@
                         }
                     </Template>
                 </GridColumn>
-                @for (int i = 0; i < Fields.Count; i++)
+                @for (int i = 0; i < ColumnsFields.Count; i++)
                 {
                     int index = i;
-                    string width = Fields[index].FieldType == FieldType.OptionSelect ? "10px" : "5px";
-                    string name = Fields[index].NameId;
+                    string width = ColumnsFields[index].FieldType == FieldType.OptionSelect ? "10px" : "5px";
+                    string name = ColumnsFields[index].NameId;
                     string rawValue = "RawValue" + name;
-                    <GridColumn HeaderText="@Fields[index].Name" Field="@rawValue" AllowReordering="true" AllowResizing="true" TextAlign="Fields[index].FieldType == FieldType.OptionSelect ? TextAlign.Left : TextAlign.Left" Width="@width">
+                    <GridColumn HeaderText="@ColumnsFields[index].Name" Field="@rawValue" AllowReordering="true" AllowResizing="true" Width="@width">
                         <Template>
                             @{
                                 var v = (IDictionary<string, object>)context;
@@ -38,81 +38,10 @@
 
 @code {
     [Parameter]
-    public List<ScoutFormDto> ScoutForms { get; set; }
-    [Parameter]
-    public List<Team> Teams { get; set; }
-    [Parameter]
-    public List<FieldDto> Fields { get; set; }
-    [Parameter]
-    public Func<ScoutFormDto, List<ScoutFormDataDto>> GetTragetList { get; set; }
-    [Parameter]
     public EventCallback<int> OnTeamClicked { get; set; }
-    [Parameter]
-    public EventAnalyticSettingsDto eventAnalyticSettings { get; set; }
     // private List<FieldDto> allFields;
-    private List<ExpandoObject> calculatedData;
     private string[] toolbarItems = new string[] { "ColumnChooser" };
 
-    protected override void OnParametersSet()
-    {
-        var data = new List<ExpandoObject>();
-        List<FieldDto> combinedFields = new List<FieldDto>();
-        List<FieldDto> fieldsToCalculate = new List<FieldDto>(Fields);
-        if (eventAnalyticSettings != null)
-        {
-            foreach (var combinedField in eventAnalyticSettings.CombinedFields)
-            {
-                FieldDto newField = new FieldDto();
-                FieldDto lastField = null;
-                string fieldName = "";
-                foreach (var field in combinedField.Fields)
-                {
-                    fieldName += field.NameId;
-                    lastField = field;
-                }
-                newField.Name = fieldName;
-                combinedFields.Add(newField); 
-                Fields.Insert(Fields.IndexOf(Fields.FirstOrDefault(i => i.NameId == lastField.NameId)) + 1, newField);
-            }
-        }
-
-
-        foreach (var team in Teams)
-        {
-            List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(fieldsToCalculate, ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), GetTragetList, s => true).ToList();
-
-            IDictionary<String, Object> row = new ExpandoObject();
-
-            row.Add("TeamNumber", team.TeamNumber);
-            row.Add("Nickname", team.Nickname);
-
-            foreach (var field in fieldsToCalculate)
-            {
-
-                var teamAvg = avgs.First(i => i.Field.NameId == field.NameId);
-                row.Add(field.NameId, teamAvg.GetFormatedAverage().Value);
-                row.Add("RawValue" + field.NameId, teamAvg.GetRelativeValue());
-            }
-            if (eventAnalyticSettings != null)
-            {
-                foreach (var combinedField in eventAnalyticSettings.CombinedFields)
-                {
-                    double sumAvg = 0;
-                    string fieldName = "";
-                    foreach (var field in combinedField.Fields)
-                    {
-                        sumAvg += (double)row["RawValue" + field.NameId];
-                        fieldName += field.NameId;
-                    }
-                    sumAvg /= combinedField.Fields.Count;
-                    row.Add(fieldName, sumAvg);
-                    row.Add("RawValue" + fieldName, sumAvg);
-                }
-            }
-            data.Add(row as ExpandoObject);
-        }
-        calculatedData = data;
-    }
 
     private void OnTeamGridClicked(int teamNumber)
     {

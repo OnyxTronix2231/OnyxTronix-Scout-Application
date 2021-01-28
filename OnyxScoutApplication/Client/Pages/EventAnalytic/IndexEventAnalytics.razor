@@ -7,8 +7,8 @@
 
 @if (fields != null)
 {
-    <EventAnalyticGrid Teams="teams" Fields="fields" ScoutForms="scoutForms" GetTragetList="s => s.AutonomousData.Concat(s.TeleoperatedData).Concat(s.EndGameData).ToList()"
-                       OnTeamClicked="OnTeamClicked" eventAnalyticSettings="analyticSettings" />
+    <EventAnalyticGrid Teams="teams" ColumnsFields="fields" ScoutForms="scoutForms" GetTragetList="s => s.AutonomousData.Concat(s.TeleoperatedData).Concat(s.EndGameData).ToList()"
+                       OnTeamClicked="OnTeamClicked" EventAnalyticSettings="analyticSettings" />
 }
 
 @code {
