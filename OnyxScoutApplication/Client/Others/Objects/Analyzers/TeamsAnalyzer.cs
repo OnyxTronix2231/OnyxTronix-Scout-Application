@@ -52,8 +52,16 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                     string fieldName = "";
                     foreach (var field in combinedField.Fields)
                     {
+                        if (ColumnsFields.Any(i => i.NameId == field.NameId))
+                        {
                             fieldName += field.NameId;
                             lastField = field;
+                        }
+                        else
+                        {
+                            NavigationManager.NavigateTo("EventAnalytics/Settings");
+                            NotificationManager.Notify("Please update the event settings", $"Missing scout forms field: {field.NameId}", NotificationType.Warning);
+                        }
                     }
                     if (combinedField.Fields.Count > 1)
                     {
