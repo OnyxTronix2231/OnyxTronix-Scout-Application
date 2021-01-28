@@ -16,7 +16,7 @@ namespace OnyxScoutApplication.Shared.Models
         [JsonIgnore]
         public ScoutFormFormat ScoutFormForamt { get; set; }
 
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
         public string TextDefaultValue { get; set; }
 
@@ -46,6 +46,6 @@ namespace OnyxScoutApplication.Shared.Models
 
         public List<FieldDto> CascadeFields { get; set; } = new List<FieldDto>();
 
-        public string NameId => Name + FieldStageType?.ToString();
+        public virtual string NameId => Name + FieldStageType?.ToString();
     }
 }

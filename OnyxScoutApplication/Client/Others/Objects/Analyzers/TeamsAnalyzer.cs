@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
@@ -27,7 +26,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
         public List<ScoutFormDto> ScoutForms { get; set; }
 
         [Parameter]
-        public List<FieldDto> ColumnsFields { get; set; }
+        public List<FieldDto> Fields { get; set; }
 
         [Parameter]
         public Func<ScoutFormDto, List<ScoutFormDataDto>> GetTragetList { get; set; }
@@ -37,24 +36,25 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 
         public List<ExpandoObject> CalculatedTeamsData { get; set; }
 
-        private List<FieldDto> scoutFormFieldsToCalculate;
+        public List<ColumnField> ColumnsFields { get; set; }
+
+       // private List<FieldDto> scoutFormFieldsToCalculate;
 
         protected override void OnParametersSet()
         {
-            List<FieldDto> combinedFields = new List<FieldDto>();
-            scoutFormFieldsToCalculate = new List<FieldDto>(ColumnsFields);
+            //List<FieldDto> combinedFields = new List<FieldDto>();
+            // scoutFormFieldsToCalculate = new List<FieldDto>(Fields);
+            ColumnsFields = Fields.Select(i => new ColumnField() { Name = i.Name, MarupName = new MarkupString(i.Name), NameId = i.NameId } ).ToList();
             if (EventAnalyticSettings != null)
             {
                 foreach (var combinedField in EventAnalyticSettings.CombinedFields)
                 {
-                    FieldDto newField = new FieldDto();
+                    ColumnField newColumnField = new ColumnField();
                     FieldDto lastField = null;
-                    string fieldName = "";
                     foreach (var field in combinedField.Fields)
                     {
-                        if (ColumnsFields.Any(i => i.NameId == field.NameId))
+                        if (Fields.Any(i => i.NameId == field.NameId))
                         {
-                            fieldName += field.NameId;
                             lastField = field;
                         }
                         else
@@ -65,9 +65,11 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                     }
                     if (combinedField.Fields.Count > 1)
                     {
-                        newField.Name = fieldName;
-                        combinedFields.Add(newField);
-                        ColumnsFields.Insert(ColumnsFields.IndexOf(ColumnsFields.FirstOrDefault(i => i.NameId == lastField.NameId)) + 1, newField);
+                        newColumnField.Name = combinedField.Name;
+                        newColumnField.MarupName = combinedField.MarupName;
+                        newColumnField.NameId = combinedField.NameId;
+                        //combinedFields.Add(newColumnField);
+                        ColumnsFields.Insert(ColumnsFields.IndexOf(ColumnsFields.FirstOrDefault(i => i.NameId == lastField.NameId)) + 1, newColumnField);
                     }
                 }
             }
@@ -78,14 +80,14 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             var data = new List<ExpandoObject>();
             foreach (var team in Teams)
             {
-                List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(scoutFormFieldsToCalculate, ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), GetTragetList, s => true).ToList();
+                List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(Fields, ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), GetTragetList, s => true).ToList();
 
                 IDictionary<String, Object> row = new ExpandoObject();
 
                 row.Add("TeamNumber", team.TeamNumber);
                 row.Add("Nickname", team.Nickname);
 
-                foreach (var field in scoutFormFieldsToCalculate)
+                foreach (var field in Fields)
                 {
 
                     var teamAvg = avgs.First(i => i.Field.NameId == field.NameId);
@@ -123,5 +125,14 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             CalculatedTeamsData = data;
         }
 
+    }
+
+    public class ColumnField
+    {
+        public string Name { get; set; }
+
+        public MarkupString MarupName { get; set; }
+
+        public string NameId { get; set; }
     }
 }

@@ -4,7 +4,7 @@
     @if (CalculatedTeamsData != null)
     {
         string s = (250 + ColumnsFields.Count * 200).ToString() + "px";
-        <SfGrid DataSource="@CalculatedTeamsData" AllowReordering="true" AllowFiltering="true" ShowColumnChooser="true" Toolbar=@toolbarItems AllowResizing="true" AllowSorting="true" Width="@s">
+        <SfGrid @ref="@dataGrid"  AllowTextWrap="true" DataSource="@CalculatedTeamsData" AllowReordering="true" AllowFiltering="true" ShowColumnChooser="true" Toolbar=@toolbarItems AllowResizing="true" AllowSorting="true" Width="@s">
             <GridColumns>
                 <GridColumn Field="TeamNumber" HeaderText="Team" Width="10px">
                     <Template>
@@ -18,14 +18,19 @@
                 @for (int i = 0; i < ColumnsFields.Count; i++)
                 {
                     int index = i;
-                    string width = ColumnsFields[index].FieldType == FieldType.OptionSelect ? "10px" : "5px";
-                    string name = ColumnsFields[index].NameId;
-                    string rawValue = "RawValue" + name;
-                    <GridColumn HeaderText="@ColumnsFields[index].Name" Field="@rawValue" AllowReordering="true" AllowResizing="true" Width="@width">
+                    string nameId = ColumnsFields[index].NameId;
+                    string name = ColumnsFields[index].Name;
+                    string rawValue = "RawValue" + nameId;
+                    <GridColumn HeaderText="@name" Field="@rawValue" AllowReordering="true" AllowResizing="true" Width="10px">
+                        <HeaderTemplate>
+                            <div>
+                                <span>@ColumnsFields[index].MarupName</span>
+                            </div>
+                        </HeaderTemplate>
                         <Template>
                             @{
                                 var v = (IDictionary<string, object>)context;
-                                var s = new MarkupString(v[name].ToString());
+                                var s = new MarkupString(v[nameId].ToString());
                             }
                             <span>@s</span>
                         </Template>
@@ -41,7 +46,12 @@
     public EventCallback<int> OnTeamClicked { get; set; }
     // private List<FieldDto> allFields;
     private string[] toolbarItems = new string[] { "ColumnChooser" };
+    private SfGrid<ExpandoObject> dataGrid;
 
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+    }
 
     private void OnTeamGridClicked(int teamNumber)
     {
