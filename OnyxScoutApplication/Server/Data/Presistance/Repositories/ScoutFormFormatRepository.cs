@@ -52,6 +52,8 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             {
                 return new NotFoundObjectResult("No scout form format found with the id of: " + id);
             }
+            
+            result.Fields = result.Fields.OrderBy(i => i.Index).ToList();
             return mapper.Map<ScoutFormFormatDto>(result);
         }
 
@@ -62,6 +64,8 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             {
                 return new NotFoundObjectResult("No scout form format found for year - " + year);
             }
+            
+            result.Fields = result.Fields.OrderBy(i => i.Index).ToList();
             return mapper.Map<ScoutFormFormatDto>(result);
         }
 

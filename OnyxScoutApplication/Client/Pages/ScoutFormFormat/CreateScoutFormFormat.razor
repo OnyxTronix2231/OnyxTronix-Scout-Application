@@ -7,7 +7,7 @@
 @attribute [Authorize(Roles = Roles.Admin)]
 
 <h3>Create</h3>
-<ScoutFormFormatComponent ScoutFormFormat="@scoutFormFormat" Type="FormType.Create" OnValidSubmit="@Create">
+<ScoutFormFormatComponent ScoutFormFormat="@scoutFormFormat" Type="FormType.Create" OnSubmit="@Create">
 
 </ScoutFormFormatComponent>
 @code {
@@ -15,9 +15,6 @@
 
     private async Task Create()
     {
-        scoutFormFormat.AutonomousFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
-        scoutFormFormat.TeleoperatedFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
-        scoutFormFormat.EndGameFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
         if (await Http.TryPostJson("ScoutFormFormat", scoutFormFormat))
         {
             NavigationManager.NavigateTo("ScoutFormFormats");

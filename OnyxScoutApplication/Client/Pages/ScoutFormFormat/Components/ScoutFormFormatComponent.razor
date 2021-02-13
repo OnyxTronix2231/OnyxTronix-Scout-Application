@@ -26,7 +26,28 @@
     [Parameter]
     public ScoutFormFormatDto ScoutFormFormat { get; set; }
     [Parameter]
-    public EventCallback OnValidSubmit { get; set; }
+    public EventCallback OnSubmit { get; set; }
     [Parameter]
     public FormType Type { get; set; }
+
+    private void OnValidSubmit()
+    {
+        ScoutFormFormat.AutonomousFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
+        ScoutFormFormat.TeleoperatedFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
+        ScoutFormFormat.EndGameFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
+        
+        UpdateFieldIndex(ScoutFormFormat.AutonomousFields);
+        UpdateFieldIndex(ScoutFormFormat.TeleoperatedFields);
+        UpdateFieldIndex(ScoutFormFormat.EndGameFields);
+        OnSubmit.InvokeAsync(this);
+    }
+
+    private void UpdateFieldIndex(List<FieldDto> fields)
+    {
+        for (var i = 0; i < fields.Count; i++)
+        {
+            fields[i].Index = i;
+            UpdateFieldIndex(fields[i].CascadeFields);
+        }
+    }  
 }

@@ -46,6 +46,8 @@ namespace OnyxScoutApplication.Shared.Models
 
         public List<FieldDto> CascadeFields { get; set; } = new List<FieldDto>();
 
+        public int Index { get; set; }
+        
         public virtual string NameId => Name + FieldStageType?.ToString();
     }
 }

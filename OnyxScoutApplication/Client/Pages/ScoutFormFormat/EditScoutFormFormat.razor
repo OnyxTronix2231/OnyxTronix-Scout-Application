@@ -7,7 +7,7 @@
 <h3>Edit</h3>
 @if (scoutFormForamt != null)
 {
-    <ScoutFormFormatComponent ScoutFormFormat="@scoutFormForamt" Type="FormType.Update" OnValidSubmit="@Update">
+    <ScoutFormFormatComponent ScoutFormFormat="@scoutFormForamt" Type="FormType.Update" OnSubmit="@Update">
 
     </ScoutFormFormatComponent>
 }
@@ -23,9 +23,6 @@
 
     private async Task Update()
     {
-        scoutFormForamt.AutonomousFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
-        scoutFormForamt.TeleoperatedFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
-        scoutFormForamt.EndGameFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
         if (await Http.TryPutJson("ScoutFormFormat/" + id, scoutFormForamt))
         {
             NavigationManager.NavigateTo("ScoutFormFormats");
