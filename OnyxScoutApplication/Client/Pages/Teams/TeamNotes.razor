@@ -4,19 +4,19 @@
 @inject ILocalStorageService LocalStorage
 @if (endGameNotes != null)
 {
-    <h3>Team @teamNumber</h3>
-    <h4>@selectedEvent?.Name</h4>
+    <h3>Team @TeamNumber</h3>
+    <h4>@selectedEvent?.Name</h4> 
     <div>
         <h5>Autonomous notes</h5>
         <br />
 
-        @foreach (var textFieldAndWriter in autonomousNotes)
-        {
-            foreach (var text in textFieldAndWriter.Item1)
+        @foreach (var (scoutFormData, writer) in autonomousNotes)
+        { 
+            foreach (var text in scoutFormData)
             {
                 <div>
                     <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
-                    <span>@textFieldAndWriter.Item2</span>
+                    <span>@writer</span>
                 </div>
                 <br />
             }
@@ -25,13 +25,13 @@
         <h5>Teleoperated notes</h5>
         <br />
 
-        @foreach (var textFieldAndWriter in teleoperatedNotes)
+        @foreach (var (scoutFormData, writer) in teleoperatedNotes)
         {
-            foreach (var text in textFieldAndWriter.Item1)
+            foreach (var text in scoutFormData)
             {
                 <div>
                     <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
-                    <span>@textFieldAndWriter.Item2</span>
+                    <span>@writer</span>
                 </div>
                 <br />
             }
@@ -40,13 +40,13 @@
         <h5>End game notes</h5>
         <br />
 
-        @foreach (var textFieldAndWriter in endGameNotes)
+        @foreach (var (scoutFormData, writer) in endGameNotes)
         {
-            foreach (var text in textFieldAndWriter.Item1)
+            foreach (var text in scoutFormData)
             {
                 <div>
                     <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
-                    <span>@textFieldAndWriter.Item2</span>
+                    <span>@writer</span>
                 </div>
                 <br />
             }
@@ -55,7 +55,7 @@
 }
 @code {
     [Parameter]
-    public int teamNumber { get; set; }
+    public int TeamNumber { get; set; }
     private Tuple<ScoutFormDataDto[], string>[] autonomousNotes;
     private Tuple<ScoutFormDataDto[], string>[] teleoperatedNotes;
     private Tuple<ScoutFormDataDto[], string>[] endGameNotes;
@@ -69,7 +69,7 @@
             return;
         }
 
-        var result = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByTeam/" + teamNumber + "/" + selectedEvent.Key);
+        var result = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
 
         autonomousNotes = result.Select(i => new Tuple<ScoutFormDataDto[], string>(i.AutonomousData.Where(f => f.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)).ToArray();
         teleoperatedNotes = result.Select(i => new Tuple<ScoutFormDataDto[], string>(i.TeleoperatedData.Where(f => f.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)).ToArray();
