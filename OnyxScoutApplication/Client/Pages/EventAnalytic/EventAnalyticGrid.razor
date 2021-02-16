@@ -7,7 +7,7 @@
         string s = (250 + ColumnsFields.Count * 200).ToString() + "px";
         <SfGrid @ref="@dataGrid" AllowTextWrap="true" DataSource="@CalculatedTeamsData" AllowReordering="true"
                  AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true"
-                 Toolbar="@toolbarItems" Width="100%">
+                 Toolbar="@toolbarItems" ShowColumnChooser="true" Width="100%">
             <GridFilterSettings Type ="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
             <GridColumns> 
                 <GridColumn HeaderText="Team" Field="TeamNumber" AllowFiltering="true" 
