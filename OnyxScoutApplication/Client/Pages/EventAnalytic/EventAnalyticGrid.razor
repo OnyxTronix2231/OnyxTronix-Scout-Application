@@ -6,9 +6,8 @@
     {
         string s = (250 + ColumnsFields.Count * 200).ToString() + "px";
         <SfGrid @ref="@dataGrid" AllowTextWrap="true" DataSource="@CalculatedTeamsData" AllowReordering="true"
-                 AllowFiltering="true" ShowColumnChooser="true" AllowResizing="true"
-                 AllowSorting="true" AllowMultiSorting="true"
-                 Width="100%">
+                 AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true"
+                 Toolbar="@toolbarItems" Width="100%">
             <GridFilterSettings Type ="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
             <GridColumns> 
                 <GridColumn HeaderText="Team" Field="TeamNumber" AllowFiltering="true" 
@@ -55,7 +54,7 @@
     [Parameter]
     public EventCallback<int> OnTeamClicked { get; set; }
     // private List<FieldDto> allFields;
-    private string[] toolbarItems = new string[] { "ColumnChooser" };
+    private string[] toolbarItems = { "ColumnChooser" };
     private SfGrid<ExpandoObject> dataGrid;
     private string width;
     
