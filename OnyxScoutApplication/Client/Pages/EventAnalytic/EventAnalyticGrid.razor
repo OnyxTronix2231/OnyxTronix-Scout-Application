@@ -1,17 +1,26 @@
 ﻿@using System.Dynamic
+@using Newtonsoft.Json
 @inherits TeamsAnalyzer
 <div>
     @if (CalculatedTeamsData != null)
     {
         string s = (250 + ColumnsFields.Count * 200).ToString() + "px";
-        <SfGrid @ref="@dataGrid"  AllowTextWrap="true" DataSource="@CalculatedTeamsData" AllowReordering="true" AllowFiltering="true" ShowColumnChooser="true" Toolbar=@toolbarItems AllowResizing="true" AllowSorting="true" Width="@s">
-            <GridColumns>
-                <GridColumn Field="TeamNumber" HeaderText="Team" Width="10px">
-                    <Template>
-                        @{
-                            var v = (dynamic)context;
-                            <div><span class="clickable" @onclick="() => OnTeamGridClicked(v.TeamNumber)"> @(v.Nickname)</span></div>
-                            <div><span class="clickable" @onclick="() => OnTeamGridClicked(v.TeamNumber)">@(v.TeamNumber)</span></div>
+        <SfGrid @ref="@dataGrid" AllowTextWrap="true" DataSource="@CalculatedTeamsData" AllowReordering="true"
+                 AllowFiltering="true" ShowColumnChooser="true" AllowResizing="true"
+                 AllowSorting="true" AllowMultiSorting="true"
+                 Width="100%">
+            <GridFilterSettings Type ="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+            <GridColumns> 
+                <GridColumn HeaderText="Team" Field="TeamNumber" AllowFiltering="true" 
+                            FilterSettings="@(new FilterSettings{Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"  
+                            Width="100px">
+                    <Template> 
+                        @{ 
+                            var v = (dynamic) context;
+                            <div><span class="clickable"
+                                       @onclick="() => OnTeamGridClicked(v.TeamNumber)"> @(v.Nickname)</span></div>
+                            <div><span class="clickable"
+                                       @onclick="() => OnTeamGridClicked(v.TeamNumber)">@(v.TeamNumber)</span></div>
                         }
                     </Template>
                 </GridColumn>
@@ -21,7 +30,8 @@
                     string nameId = ColumnsFields[index].NameId;
                     string name = ColumnsFields[index].Name;
                     string rawValue = "RawValue" + nameId;
-                    <GridColumn HeaderText="@name" Field="@rawValue" AllowReordering="true" AllowResizing="true" Width="10px">
+                    <GridColumn HeaderText="@name" Field="@rawValue" AutoFit="true" AllowReordering="true" 
+                                AllowResizing="true" Type="ColumnType.Number">
                         <HeaderTemplate>
                             <div>
                                 <span>@ColumnsFields[index].MarupName</span>
@@ -29,7 +39,7 @@
                         </HeaderTemplate>
                         <Template>
                             @{
-                                var v = (IDictionary<string, object>)context;
+                                var v = (IDictionary<string, object>) context;
                                 var s = new MarkupString(v[nameId].ToString());
                             }
                             <span>@s</span>
@@ -47,17 +57,13 @@
     // private List<FieldDto> allFields;
     private string[] toolbarItems = new string[] { "ColumnChooser" };
     private SfGrid<ExpandoObject> dataGrid;
-
-    protected override void OnParametersSet()
+    private string width;
+    
+    private async Task OnTeamGridClicked(int teamNumber)
     {
-        base.OnParametersSet();
+        await OnTeamClicked.InvokeAsync(teamNumber);
     }
-
-    private void OnTeamGridClicked(int teamNumber)
-    {
-        OnTeamClicked.InvokeAsync(teamNumber);
-    }
-
+    
     private class TeamAverage
     {
         public Team Team { get; set; }

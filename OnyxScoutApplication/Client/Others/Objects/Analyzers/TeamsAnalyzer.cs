@@ -82,17 +82,17 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             {
                 List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(Fields, ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), GetTragetList, s => true).ToList();
 
-                IDictionary<String, Object> row = new ExpandoObject();
+                IDictionary<String, Object> rows = new ExpandoObject();
 
-                row.Add("TeamNumber", team.TeamNumber);
-                row.Add("Nickname", team.Nickname);
+                rows.Add("TeamNumber", team.TeamNumber);
+                rows.Add("Nickname", team.Nickname);
 
                 foreach (var field in Fields)
                 {
 
                     var teamAvg = avgs.First(i => i.Field.NameId == field.NameId);
-                    row.Add(field.NameId, teamAvg.GetFormatedAverage().Value);
-                    row.Add("RawValue" + field.NameId, teamAvg.GetRelativeValue());
+                    rows.Add(field.NameId, teamAvg.GetFormatedAverage().Value);
+                    rows.Add("RawValue" + field.NameId, teamAvg.GetRelativeValue());
                 }
 
                 if (EventAnalyticSettings != null)
@@ -104,9 +104,9 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                         int index = 0;
                         foreach (var field in combinedField.Fields)
                         {
-                            if (row.ContainsKey("RawValue" + field.NameId))
+                            if (rows.ContainsKey("RawValue" + field.NameId))
                             {
-                                sumAvg += (double)row["RawValue" + field.NameId];
+                                sumAvg += (double)rows["RawValue" + field.NameId];
                                 fieldName += field.NameId;
                                 index++;
                             }
@@ -116,11 +116,11 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                             }
                         }
                         sumAvg /= index;
-                        row.Add(fieldName, sumAvg);
-                        row.Add("RawValue" + fieldName, sumAvg);
+                        rows.Add(fieldName, sumAvg);
+                        rows.Add("RawValue" + fieldName, sumAvg);
                     }
                 }
-                data.Add(row as ExpandoObject);
+                data.Add(rows as ExpandoObject);
             }
             CalculatedTeamsData = data;
         }
