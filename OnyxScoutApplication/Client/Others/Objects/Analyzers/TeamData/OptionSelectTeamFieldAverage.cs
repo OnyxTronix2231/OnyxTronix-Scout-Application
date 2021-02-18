@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData;
 
 namespace OnyxScoutApplication.Client.Others.Objects.TeamData
 {
@@ -17,7 +18,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
             OptionsAvarage = new Dictionary<string, Tuple<float, float>>();
         }
 
-        public override MarkupString GetFormatedAverage()
+        public override MarkupString GetFormattedAverage()
         {
             return new MarkupString(string.Join("<br />",
                 OptionsAvarage.Select(i => $"{i.Key}: {i.Value.Item1}/{i.Value.Item2}")));
@@ -29,7 +30,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
             {
                 throw new NotImplementedException("Option select sorting not implemented yet!");
             }
-            throw new ArgumentException($"Cannot compare {nameof(NumricTeamFieldAverage)} type to {other.GetType()}");
+            throw new ArgumentException($"Cannot compare {nameof(NumericTeamFieldAverage)} type to {other.GetType()}");
         }
 
         public override double GetRelativeValue()

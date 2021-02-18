@@ -1,4 +1,5 @@
-﻿<div>
+﻿@using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
+<div>
     <SfGrid DataSource="@CalculatedData" AllowResizing="true" Width="100%">
         <GridColumns>
             <GridColumn HeaderText="Name" AllowResizing="true" Width="25%">
@@ -12,32 +13,32 @@
                 <Template>
                     @{
                         var f = (TeamFieldAverage)context;
-                        var text = f.GetFormatedAverage();
+                        var text = f.GetFormattedAverage();
                     }
                     <span>@text</span>
                 </Template>
             </GridColumn>
             <GridColumn HeaderText="Min" AllowResizing="true" Width="10%">
                 <Template>
-                    @if (context is NumricTeamFieldAverage numricTeamFieldAverage)
+                    @if (context is NumericTeamFieldAverage numricTeamFieldAverage)
                     {
-                    <span>@numricTeamFieldAverage.GetFormatedLowValuesByCount(1)</span>
+                    <span>@numricTeamFieldAverage.GetFormattedLowValuesByCount(1)</span>
                     }
                 </Template>
             </GridColumn>
             <GridColumn HeaderText="Max" AllowResizing="true" Width="10%">
                 <Template>
-                    @if (context is NumricTeamFieldAverage numricTeamFieldAverage)
+                    @if (context is NumericTeamFieldAverage numricTeamFieldAverage)
                     {
-                        <span>@numricTeamFieldAverage.GetFormatedHighValuesByCount(1)</span>
+                        <span>@numricTeamFieldAverage.GetFormattedHighValuesByCount(1)</span>
                     }
                 </Template>
             </GridColumn>
             <GridColumn HeaderText="Top 3" AllowResizing="true" Width="20%">
                 <Template>
-                    @if (context is NumricTeamFieldAverage numricTeamFieldAverage)
+                    @if (context is NumericTeamFieldAverage numricTeamFieldAverage)
                     {
-                        <span>@numricTeamFieldAverage.GetFormatedHighValuesByCount(3)</span>
+                        <span>@numricTeamFieldAverage.GetFormattedHighValuesByCount(3)</span>
                     }
                 </Template>
             </GridColumn>

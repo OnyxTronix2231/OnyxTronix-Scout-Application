@@ -11,8 +11,9 @@ using FluentValidation;
 using OnyxScoutApplication.Shared.Models;
 using OnyxScoutApplication.Shared.Models.FluentValidations;
 using Blazored.LocalStorage;
+using OnyxScoutApplication.Client.Others.Extensions;
 using OnyxScoutApplication.Client.Others.Objects;
-using OnyxScoutApplication.Server.Data.Extensions;
+using OnyxScoutApplication.Client.Others.Objects.Analyzers;
 
 namespace OnyxScoutApplication.Client
 {

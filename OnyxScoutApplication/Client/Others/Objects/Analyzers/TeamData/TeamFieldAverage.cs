@@ -16,7 +16,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
             Field = field;
         }
 
-        public abstract MarkupString GetFormatedAverage();
+        public abstract MarkupString GetFormattedAverage();
 
         public abstract double GetRelativeValue();
 

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData;
 
 namespace OnyxScoutApplication.Client.Others.Objects.TeamData
 {
@@ -24,7 +25,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
             return TrueCount / (float) TotalCount;
         }
 
-        public override MarkupString GetFormatedAverage()
+        public override MarkupString GetFormattedAverage()
         {
             return new MarkupString((GetAverage() * 100).ToString("0.##") + "%" + "<br />" + $"{TrueCount}/{TotalCount}");
         }
@@ -35,7 +36,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
             {
                 return GetAverage().CompareTo(booleanTeamFieldAverage.GetAverage());
             }
-            throw new ArgumentException($"Cannot compare {nameof(NumricTeamFieldAverage)} type to {other.GetType()}");
+            throw new ArgumentException($"Cannot compare {nameof(NumericTeamFieldAverage)} type to {other.GetType()}");
         }
 
         public override double GetRelativeValue()

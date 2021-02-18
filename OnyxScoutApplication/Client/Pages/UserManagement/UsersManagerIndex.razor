@@ -1,6 +1,7 @@
 ﻿@page "/UsersManager"
 <h3>Users manager</h3>
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore.Internal
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "Owner")]
@@ -23,12 +24,10 @@ else
             {
             <tr>
                 <td>@applicationUser.UserName</td>
-                @{string roles = "";}
-                @foreach (ApplicationUserRoleDto identityRole in applicationUser.UserRoles)
-                {
-                    roles += ", " + identityRole.Role.NormalizedName;
+
+                @{
+                    string roles = string.Join(", ", applicationUser.UserRoles.Select(i => i.Role.NormalizedName));
                 }
-                @{roles = roles.Length != 0 ? roles.Remove(0, 2) : roles;}
                 <td>
                     @roles
                 </td>

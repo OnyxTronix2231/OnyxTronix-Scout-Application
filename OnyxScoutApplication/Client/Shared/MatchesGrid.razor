@@ -85,16 +85,15 @@
             classes += "clickable ";
         }
 
-        if (SubmittedForms != null)
+        if (SubmittedForms == null) return classes;
+        
+        if (SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == matchName))
         {
-            if (SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == matchName))
-            {
-                classes += "filledTeamForm ";
-            }
-            else
-            {
-                classes += "notFilledTeamForm ";
-            }
+            classes += "filledTeamForm ";
+        }
+        else
+        {
+            classes += "notFilledTeamForm ";
         }
         return classes;
     }

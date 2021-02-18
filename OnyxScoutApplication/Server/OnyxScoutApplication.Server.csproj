@@ -27,7 +27,7 @@
     <Watch Include="..\**\*.scss" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SetupScripts\**" CopyToPublishDirectory="PreserveNewest"/>
+    <Content Include="SetupScripts\**" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.10" />

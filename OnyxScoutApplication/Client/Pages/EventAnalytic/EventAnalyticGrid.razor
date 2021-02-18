@@ -4,7 +4,6 @@
 <div>
     @if (CalculatedTeamsData != null)
     {
-        string s = (250 + ColumnsFields.Count * 200).ToString() + "px";
         <SfGrid @ref="@dataGrid" AllowTextWrap="true" DataSource="@CalculatedTeamsData" AllowReordering="true"
                  AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true"
                  Toolbar="@toolbarItems" ShowColumnChooser="true" Width="100%">
@@ -33,7 +32,7 @@
                                 AllowResizing="true" Type="ColumnType.Number">
                         <HeaderTemplate>
                             <div>
-                                <span>@ColumnsFields[index].MarupName</span>
+                                <span>@ColumnsFields[index].MarkupName</span>
                             </div>
                         </HeaderTemplate>
                         <Template>
@@ -53,7 +52,6 @@
 @code {
     [Parameter]
     public EventCallback<int> OnTeamClicked { get; set; }
-    // private List<FieldDto> allFields;
     private string[] toolbarItems = { "ColumnChooser" };
     private SfGrid<ExpandoObject> dataGrid;
     private string width;

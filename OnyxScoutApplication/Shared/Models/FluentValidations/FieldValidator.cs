@@ -11,15 +11,15 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
         public FieldValidator()
         {
             RuleFor(x => x.Name).Must(s => !string.IsNullOrWhiteSpace(s)).WithMessage("Please write a valid field name");
-            RuleFor(x => x.NumricDefaultValue).Must((model, s) => BeNumberBetween(model, s)).
+            RuleFor(x => x.NumricDefaultValue).Must(BeNumberBetween).
                 WithMessage((model, s) => "Default value must be a number between " + model.MinValue + " and " + model.MaxValue).When(c => c.FieldType == FieldType.Numeric);
             RuleFor(x => x.Options).Must((v) => v.Count >= 2).
                WithMessage("At least two options are required").When(c => c.FieldType == FieldType.OptionSelect);
-            RuleFor(x => x.Options).Must((v) => !v.Any(i => string.IsNullOrEmpty(i))).
+            RuleFor(x => x.Options).Must((v) => !v.Any(string.IsNullOrEmpty)).
                WithMessage("Make sure all options are not empty").When(c => c.FieldType == FieldType.OptionSelect);
         }
 
-        private bool BeNumberBetween(FieldDto model, int? value)
+        private static bool BeNumberBetween(FieldDto model, int? value)
         {
             if (value == null)
             {

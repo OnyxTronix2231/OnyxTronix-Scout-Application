@@ -11,11 +11,9 @@ namespace OnyxScoutApplication.Shared.Other
 
         public static List<FieldDto> ConcatAllCascadeFields(this List<FieldDto> fields)
         {
-            if (fields.Count == 0)
-            {
-                return fields;
-            }
-            return fields.Concat(ConcatAllCascadeFields(fields.SelectMany(i => i.CascadeFields).ToList())).ToList();
+            return fields.Count == 0 ? 
+                fields : fields.Concat(ConcatAllCascadeFields(fields.SelectMany(i => i.CascadeFields)
+                    .ToList())).ToList();
         }
     }
 }

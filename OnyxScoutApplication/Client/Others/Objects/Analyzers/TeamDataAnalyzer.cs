@@ -1,57 +1,60 @@
-﻿using OnyxScoutApplication.Client.Others.Objects.Analyzers;
-using OnyxScoutApplication.Client.Others.Objects.TeamData;
-using OnyxScoutApplication.Shared.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
+using OnyxScoutApplication.Client.Others.Objects.TeamData;
+using OnyxScoutApplication.Shared.Models;
 
-namespace OnyxScoutApplication.Client.Others.Objects
+namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
     public class TeamDataAnalyzer
     {
-        public List<TeamFieldAverage> CalculateDataFor(List<FieldDto> fields, List<ScoutFormDto> scoutForms, Func<ScoutFormDto, List<ScoutFormDataDto>> getTragetList, Func<ScoutFormDto, bool> shouldCount)
+        public List<TeamFieldAverage> CalculateDataFor(IEnumerable<FieldDto> fields, List<ScoutFormDto> scoutForms,
+            Func<ScoutFormDto, List<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
         {
-            List<TeamFieldAverage> averagaes = new List<TeamFieldAverage>();
-            for (int i = 0; i < fields.Count; i++)
+            List<TeamFieldAverage> averages = new List<TeamFieldAverage>();
+            foreach (var field in fields.Where(field => field.FieldType != FieldType.TextField))
             {
-                if (fields[i].FieldType != FieldType.TextField)
-                {
-                    averagaes.Add(GetAvgFor(fields[i], scoutForms, getTragetList, shouldCount));
-                    if (fields[i].FieldType == FieldType.CascadeField)
-                    {
-                        Func<ScoutFormDto, ScoutFormDataDto> getScoutFormData = scoutForm => getTragetList(scoutForm).FirstOrDefault(f => f.Field.NameId == fields[i].NameId);
-                        averagaes.AddRange(CalculateDataFor(fields[i].CascadeFields, scoutForms, scoutForm => getScoutFormData(scoutForm).CascadeData, 
-                            scoutForm => getScoutFormData(scoutForm) != null && getScoutFormData(scoutForm).BooleanValue));
-                    }
-                }
+                averages.Add(GetAvgFor(field, scoutForms, getTargetList, shouldCount));
+
+                if (field.FieldType != FieldType.CascadeField)
+                    continue;
+
+                ScoutFormDataDto GetScoutFormData(ScoutFormDto scoutForm) => getTargetList(scoutForm)
+                    .FirstOrDefault(f => f.Field.NameId == field.NameId);
+
+                averages.AddRange(CalculateDataFor(field.CascadeFields, scoutForms,
+                    scoutForm => GetScoutFormData(scoutForm).CascadeData,
+                    scoutForm =>
+                        GetScoutFormData(scoutForm) != null && GetScoutFormData(scoutForm).BooleanValue));
             }
-            return averagaes;
+
+            return averages;
         }
 
-        private TeamFieldAverage GetAvgFor(FieldDto field, List<ScoutFormDto> data, Func<ScoutFormDto, List<ScoutFormDataDto>> getTragetList, Func<ScoutFormDto, bool> shouldCount)
+        private TeamFieldAverage GetAvgFor(FieldDto field, List<ScoutFormDto> data,
+            Func<ScoutFormDto, List<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
         {
             if (field.FieldType == FieldType.Numeric)
             {
-                NumricAnalayzer numricAnalayzer = new NumricAnalayzer();
-                return numricAnalayzer.Analyze(data, field, getTragetList, shouldCount);
+                NumericalAnalyzer numericAnalyzer = new NumericalAnalyzer();
+                return numericAnalyzer.Analyze(data, field, getTargetList, shouldCount);
             }
             else if (field.FieldType == FieldType.Boolean || field.FieldType == FieldType.CascadeField)
             {
-                BooleanAnalayzer booleanAnalayzer = new BooleanAnalayzer();
-                return booleanAnalayzer.Analyze(data, field, getTragetList, shouldCount);
-            } 
-            else if(field.FieldType == FieldType.OptionSelect)
+                BooleanAnalyzer booleanAnalyzer = new BooleanAnalyzer();
+                return booleanAnalyzer.Analyze(data, field, getTargetList, shouldCount);
+            }
+            else if (field.FieldType == FieldType.OptionSelect)
             {
-                OptionSelectAnalayzer optionSelectAnalayzer = new OptionSelectAnalayzer();
-                return optionSelectAnalayzer.Analyze(data, field, getTragetList, shouldCount);
+                OptionSelectAnalyzer optionSelectAnalyzer = new OptionSelectAnalyzer();
+                return optionSelectAnalyzer.Analyze(data, field, getTargetList, shouldCount);
             }
             else if (field.FieldType == FieldType.MultipleChoice)
             {
-                MultipleChoiceAnalayzer multipleChoiceAnalayzer = new MultipleChoiceAnalayzer();
-                return multipleChoiceAnalayzer.Analyze(data, field, getTragetList, shouldCount);
+                MultipleChoiceAnalyzer multipleChoiceAnalyzer = new MultipleChoiceAnalyzer();
+                return multipleChoiceAnalyzer.Analyze(data, field, getTargetList, shouldCount);
             }
+
             return null;
         }
     }

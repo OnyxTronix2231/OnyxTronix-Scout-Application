@@ -29,14 +29,14 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
         public List<FieldDto> Fields { get; set; }
 
         [Parameter]
-        public Func<ScoutFormDto, List<ScoutFormDataDto>> GetTragetList { get; set; }
+        public Func<ScoutFormDto, List<ScoutFormDataDto>> GetTargetList { get; set; }
 
         [Parameter]
         public EventAnalyticSettingsDto EventAnalyticSettings { get; set; }
 
-        public List<ExpandoObject> CalculatedTeamsData { get; set; }
+        protected List<ExpandoObject> CalculatedTeamsData { get; private set; }
 
-        public List<ColumnField> ColumnsFields { get; set; }
+        protected List<ColumnField> ColumnsFields { get; private set; }
 
        // private List<FieldDto> scoutFormFieldsToCalculate;
 
@@ -44,7 +44,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
         {
             //List<FieldDto> combinedFields = new List<FieldDto>();
             // scoutFormFieldsToCalculate = new List<FieldDto>(Fields);
-            ColumnsFields = Fields.Select(i => new ColumnField() { Name = i.Name, MarupName = new MarkupString(i.Name), NameId = i.NameId } ).ToList();
+            ColumnsFields = Fields.Select(i => new ColumnField() { Name = i.Name, MarkupName = new MarkupString(i.Name), NameId = i.NameId } ).ToList();
             if (EventAnalyticSettings != null)
             {
                 foreach (var combinedField in EventAnalyticSettings.CombinedFields)
@@ -60,27 +60,31 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                         else
                         {
                             NavigationManager.NavigateTo("EventAnalytics/Settings");
-                            NotificationManager.Notify("Please update the event settings", $"Missing scout forms field: {field.NameId}", NotificationType.Warning);
+                            NotificationManager.Notify("Please update the event settings",
+                                $"Missing scout forms field: {field.NameId}", NotificationType.Warning);
                         }
                     }
-                    if (combinedField.Fields.Count > 1)
-                    {
-                        newColumnField.Name = combinedField.Name;
-                        newColumnField.MarupName = combinedField.MarupName;
-                        newColumnField.NameId = combinedField.NameId;
-                        //combinedFields.Add(newColumnField);
-                        ColumnsFields.Insert(ColumnsFields.IndexOf(ColumnsFields.FirstOrDefault(i => i.NameId == lastField.NameId)) + 1, newColumnField);
-                    }
+
+                    if (combinedField.Fields.Count <= 1) continue;
+
+                    newColumnField.Name = combinedField.Name;
+                    newColumnField.MarkupName = combinedField.MarupName;
+                    newColumnField.NameId = combinedField.NameId;
+                    //combinedFields.Add(newColumnField);
+                    ColumnsFields.Insert(
+                        ColumnsFields.IndexOf(ColumnsFields.FirstOrDefault(i => i.NameId == lastField?.NameId)) + 1,
+                        newColumnField);
+
                 }
             }
             CalculateData();
         }
 
-        public void CalculateData() { 
+        private void CalculateData() { 
             var data = new List<ExpandoObject>();
             foreach (var team in Teams)
             {
-                List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(Fields, ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), GetTragetList, s => true).ToList();
+                List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(Fields, ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), GetTargetList, s => true).ToList();
 
                 IDictionary<String, Object> rows = new ExpandoObject();
 
@@ -91,7 +95,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 {
 
                     var teamAvg = avgs.First(i => i.Field.NameId == field.NameId);
-                    rows.Add(field.NameId, teamAvg.GetFormatedAverage().Value);
+                    rows.Add(field.NameId, teamAvg.GetFormattedAverage().Value);
                     rows.Add("RawValue" + field.NameId, teamAvg.GetRelativeValue());
                 }
 
@@ -120,7 +124,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                         rows.Add("RawValue" + fieldName, sumAvg);
                     }
                 }
-                data.Add(rows as ExpandoObject);
+                data.Add((ExpandoObject) rows);
             }
             CalculatedTeamsData = data;
         }
@@ -131,7 +135,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
     {
         public string Name { get; set; }
 
-        public MarkupString MarupName { get; set; }
+        public MarkupString MarkupName { get; set; }
 
         public string NameId { get; set; }
     }
