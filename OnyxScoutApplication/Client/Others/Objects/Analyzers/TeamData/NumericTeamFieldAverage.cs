@@ -45,12 +45,12 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
         {
             return Average;
         }
-        
+
         private IEnumerable<float> GetSortedValues()
         {
             return Values.OrderByDescending(i => i).ToArray();
         }
-        
+
         private static string GetFormattedValues(params float[] values)
         {
             return string.Join(" ", values);

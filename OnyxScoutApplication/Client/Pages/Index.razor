@@ -7,18 +7,28 @@
 
 <h1>Events</h1>
 
-<div><EventSelector OnEventSelctionChange="UpdateMatchTable"></EventSelector></div>
+<div>
+    <EventSelector OnEventSelctionChange="UpdateMatchTable"></EventSelector>
+</div>
 
-<div><MatchesGrid Matches="qMatches" SubmittedForms="scoutForms" Height="400" OnTeamClicked="OnTeamClicked"></MatchesGrid></div>
+<div>
+    <MatchesGrid Matches="qMatches" SubmittedForms="scoutForms" Height="400" OnTeamClicked="OnTeamClicked"></MatchesGrid>
+</div>
 
-<br />
-<div><MatchesGrid Matches="qfMatches" SubmittedForms="scoutForms" OnTeamClicked="OnTeamClicked"></MatchesGrid></div>
+<br/>
+<div>
+    <MatchesGrid Matches="qfMatches" SubmittedForms="scoutForms" OnTeamClicked="OnTeamClicked"></MatchesGrid>
+</div>
 
-<br />
-<div><MatchesGrid Matches="sfMatches" SubmittedForms="scoutForms" OnTeamClicked="OnTeamClicked"></MatchesGrid></div>
+<br/>
+<div>
+    <MatchesGrid Matches="sfMatches" SubmittedForms="scoutForms" OnTeamClicked="OnTeamClicked"></MatchesGrid>
+</div>
 
-<br />
-<div><MatchesGrid Matches="fMatches" SubmittedForms="scoutForms" OnTeamClicked="OnTeamClicked"></MatchesGrid></div>
+<br/>
+<div>
+    <MatchesGrid Matches="fMatches" SubmittedForms="scoutForms" OnTeamClicked="OnTeamClicked"></MatchesGrid>
+</div>
 
 @code {
     private List<Match> qMatches;
@@ -66,5 +76,5 @@
             NavigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber);
         }
     }
-}
 
+}

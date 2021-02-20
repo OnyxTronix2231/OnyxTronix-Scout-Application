@@ -8,11 +8,15 @@
     <h3>ScoutForm</h3>
     <ScoutFromComponent ScoutForm="scoutForm" Type="FormType.Update" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
 }
+
 @code {
+
     [Parameter]
     public int Id { get; set; }
+
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
+
     private ScoutFormDto scoutForm;
 
     protected override async Task OnInitializedAsync()
@@ -32,4 +36,5 @@
             NavigationManager.NavigateTo("/");
         }
     }
+
 }

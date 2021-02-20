@@ -24,7 +24,5 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
         {
             return !fields.ConcatAllCascadeFields().GroupBy(f => f.Name).Any(x => x.Skip(1).Any());
         }
-        
     }
 }
-  

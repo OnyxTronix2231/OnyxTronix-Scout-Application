@@ -11,21 +11,24 @@
     <h4>@selectedEvent?.Name</h4>
     <a href="/TeamDetails/Notes/@teamNumber">Notes</a>
 
-    <br />
+    <br/>
     <h5>Autonomous</h5>
     <TeamAnalyticGrid CalculatedData="autoCalculatedData"></TeamAnalyticGrid>
-    <br />
+    <br/>
     <h5>Teleoperated</h5>
     <TeamAnalyticGrid CalculatedData="teleopCalculatedData"></TeamAnalyticGrid>
-    <br />
+    <br/>
     <h5>End game</h5>
     <TeamAnalyticGrid CalculatedData="endGameCalculatedData"></TeamAnalyticGrid>
-    <br />
+    <br/>
     <MatchesGrid Matches="matches" TeamNumber="teamNumber" SubmittedForms="data" OnTeamClicked="OnTeamClicked"></MatchesGrid>
 }
+
 @code {
+
     [Parameter]
     public int teamNumber { get; set; }
+
     private Event selectedEvent;
     private List<ScoutFormDto> data;
     private List<TeamFieldAverage> autoCalculatedData;
@@ -57,4 +60,5 @@
             NavigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber, true);
         }
     }
+
 }

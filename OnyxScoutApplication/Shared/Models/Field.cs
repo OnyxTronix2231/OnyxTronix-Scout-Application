@@ -23,6 +23,7 @@ namespace OnyxScoutApplication.Shared.Models
         Teleoperated,
         EndGame
     }
+
     public class Field
     {
         public int Id { get; set; }

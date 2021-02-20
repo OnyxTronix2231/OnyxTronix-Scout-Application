@@ -12,7 +12,7 @@
             <GridColumn HeaderText="Avarge/Success rate" AllowResizing="true" Width="25%">
                 <Template>
                     @{
-                        var f = (TeamFieldAverage)context;
+                        var f = (TeamFieldAverage) context;
                         var text = f.GetFormattedAverage();
                     }
                     <span>@text</span>
@@ -22,7 +22,7 @@
                 <Template>
                     @if (context is NumericTeamFieldAverage numricTeamFieldAverage)
                     {
-                    <span>@numricTeamFieldAverage.GetFormattedLowValuesByCount(1)</span>
+                        <span>@numricTeamFieldAverage.GetFormattedLowValuesByCount(1)</span>
                     }
                 </Template>
             </GridColumn>
@@ -45,7 +45,10 @@
         </GridColumns>
     </SfGrid>
 </div>
+
 @code {
+
     [Parameter]
     public List<TeamFieldAverage> CalculatedData { get; set; }
+
 }

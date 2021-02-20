@@ -9,9 +9,12 @@
     <h3>ScoutForm</h3>
     <ScoutFromComponent ScoutForm="scoutForm" Type="FormType.Create" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
 }
+
 @code {
+
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
+
     private TeamInMatch teamInMatch;
     private ScoutFormDto scoutForm;
 
@@ -40,4 +43,5 @@
             NavigationManager.NavigateTo("/");
         }
     }
+
 }

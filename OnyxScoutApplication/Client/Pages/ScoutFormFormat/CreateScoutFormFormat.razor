@@ -10,6 +10,7 @@
 <ScoutFormFormatComponent ScoutFormFormat="@scoutFormFormat" Type="FormType.Create" OnSubmit="@Create">
 
 </ScoutFormFormatComponent>
+
 @code {
     private ScoutFormFormatDto scoutFormFormat = new ScoutFormFormatDto();
 
@@ -20,4 +21,5 @@
             NavigationManager.NavigateTo("ScoutFormFormats");
         }
     }
+
 }

@@ -9,7 +9,7 @@ namespace OnyxScoutApplication.Shared.Models
     public class ScoutFormData
     {
         public int Id { get; set; }
-        
+
         public int ScoutFormId { get; set; }
 
         public int? ScoutFormDataId { get; set; }
@@ -19,7 +19,7 @@ namespace OnyxScoutApplication.Shared.Models
 
         public Field Field { get; set; }
 
-        public string Value {get; set; }
+        public string Value { get; set; }
 
         public List<ScoutFormData> CascadeData { get; set; } = new List<ScoutFormData>();
     }

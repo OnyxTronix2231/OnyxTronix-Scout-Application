@@ -22,6 +22,7 @@ namespace OnyxScoutApplication.Server.Controllers
     public class ApplicationUserController : Controller
     {
         private readonly IApplicationUserUnitOfWork unitOfWork;
+
         public ApplicationUserController(IApplicationUserUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
@@ -49,7 +50,8 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpPut("{name}")]
-        public async Task<ActionResult> UpdateScoutFormFormat(string name, [FromBody] ApplicationUserDto applicationUserDto)
+        public async Task<ActionResult> UpdateScoutFormFormat(string name,
+            [FromBody] ApplicationUserDto applicationUserDto)
         {
             var response = await unitOfWork.ApplicationUser.Update(name, applicationUserDto);
             await unitOfWork.Complete();

@@ -28,9 +28,9 @@ namespace OnyxScoutApplication.Server.Data
             base.OnModelCreating(builder);
 
             builder.Entity<ApplicationUser>()
-            .HasMany(x => x.UserRoles)
-            .WithOne(x => x.User)
-            .HasForeignKey(ur => ur.UserId)
+                .HasMany(x => x.UserRoles)
+                .WithOne(x => x.User)
+                .HasForeignKey(ur => ur.UserId)
                 .IsRequired();
         }
     }

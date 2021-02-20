@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+
 namespace OnyxScoutApplication.Shared.Models
 {
     public class EventAnalyticSettingsDto
@@ -16,26 +17,17 @@ namespace OnyxScoutApplication.Shared.Models
 
         public string Name
         {
-            get
-            {
-                return string.Concat(Fields.Select(i => i.Name));
-            }
+            get { return string.Concat(Fields.Select(i => i.Name)); }
         }
 
         public MarkupString MarkupName
         {
-            get
-            {
-                return new MarkupString(string.Join("<br />", Fields.Select(i => i.Name)));
-            }
+            get { return new MarkupString(string.Join("<br />", Fields.Select(i => i.Name))); }
         }
 
         public string NameId
         {
-            get
-            {
-                return string.Concat(Fields.Select(i => i.NameId));
-            }
+            get { return string.Concat(Fields.Select(i => i.NameId)); }
         }
     }
 }

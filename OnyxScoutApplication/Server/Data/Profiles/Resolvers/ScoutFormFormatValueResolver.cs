@@ -16,7 +16,8 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             this.mapper = mapper;
         }
 
-        public List<Field> Resolve(ScoutFormFormatDto source, ScoutFormFormat destination, List<Field> destMember, ResolutionContext context)
+        public List<Field> Resolve(ScoutFormFormatDto source, ScoutFormFormat destination, List<Field> destMember,
+            ResolutionContext context)
         {
             destination.Fields.Clear();
             List<Field> autonomousFields = mapper.Map<List<Field>>(source.AutonomousFields);
@@ -27,7 +28,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             teleoperatedFields.ForEach(i => i.FieldStageType = FieldStageType.Teleoperated);
             destination.Fields.AddRange(teleoperatedFields);
 
-            List<Field>endGameFields = mapper.Map<List<Field>>(source.EndGameFields);
+            List<Field> endGameFields = mapper.Map<List<Field>>(source.EndGameFields);
             endGameFields.ForEach(i => i.FieldStageType = FieldStageType.EndGame);
             destination.Fields.AddRange(endGameFields);
             return destination.Fields;

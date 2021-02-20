@@ -13,8 +13,8 @@
     FieldDto field = Fields[i];
     <div>
         <label for="name">Field name</label>
-        <InputText class="form-control" @bind-Value="field.Name" />
-        <ValidationMessage For="@(() => field.Name)" />
+        <InputText class="form-control" @bind-Value="field.Name"/>
+        <ValidationMessage For="@(() => field.Name)"/>
     </div>
     <div>
         <label for="type">Field type</label>
@@ -24,9 +24,9 @@
                 <option value="@type">@type</option>
             }
         </select>
-        <ValidationMessage For="@(() => field.FieldType)" />
+        <ValidationMessage For="@(() => field.FieldType)"/>
     </div>
-    <br />
+    <br/>
     <div class="form-group" style="padding-left:2em">
         @switch (field.FieldType)
         {
@@ -54,7 +54,7 @@
                 </BooleanFieldComponent>
 
                 @*<div class="form-group" style="padding-left:1em">*@
-                    <FieldsEditor Fields="field.CascadeFields"></FieldsEditor>
+                <FieldsEditor Fields="field.CascadeFields"></FieldsEditor>
                 @*</div>*@
                 break;
             case FieldType.OptionSelect:
@@ -75,7 +75,9 @@
 <div>
     <button type="button" class="btn btn-dark" @onclick="AddField">Add field</button>
 </div>
+
 @code{
+
     [Parameter]
     public List<FieldDto> Fields { get; set; }
 
@@ -103,13 +105,14 @@
         Fields.RemoveAt(index);
         Fields.Insert(index - 1, field);
     }
-    
+
     private void MoveDown(int index)
     {
         var field = Fields[index];
         Fields.RemoveAt(index);
         Fields.Insert(index + 1, field);
     }
+
 }
 
 

@@ -16,7 +16,8 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             this.mapper = mapper;
         }
 
-        public List<ScoutFormData> Resolve(ScoutFormDto source, ScoutForm destination, List<ScoutFormData> destMember, ResolutionContext context)
+        public List<ScoutFormData> Resolve(ScoutFormDto source, ScoutForm destination, List<ScoutFormData> destMember,
+            ResolutionContext context)
         {
             destination.Data.Clear();
             List<ScoutFormData> autonomousFields = mapper.Map<List<ScoutFormData>>(source.AutonomousData);

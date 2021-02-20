@@ -50,7 +50,8 @@ namespace OnyxScoutApplication.Server.Controllers
 
         [Authorize(Roles = Roles.Admin)]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateScoutFormFormat(int id, [FromBody] ScoutFormFormatDto scoutFormForamtModel)
+        public async Task<ActionResult> UpdateScoutFormFormat(int id,
+            [FromBody] ScoutFormFormatDto scoutFormForamtModel)
         {
             var response = await unitOfWork.ScoutFormFormats.Update(id, scoutFormForamtModel);
             await unitOfWork.Complete();
@@ -67,6 +68,7 @@ namespace OnyxScoutApplication.Server.Controllers
                 await unitOfWork.Complete();
                 return response;
             }
+
             return ResultCode(System.Net.HttpStatusCode.BadRequest, "Invalid inputs!");
         }
     }

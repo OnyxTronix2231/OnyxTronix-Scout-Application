@@ -64,6 +64,7 @@ namespace OnyxScoutApplication.Server.Controllers
                 await unitOfWork.Complete();
                 return response;
             }
+
             return ResultCode(System.Net.HttpStatusCode.BadRequest, "Invalid inputs!");
         }
 

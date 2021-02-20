@@ -18,7 +18,8 @@ namespace OnyxScoutApplication.Server.Areas.Identity.Pages.Account
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
 
-        public LoginWithRecoveryCodeModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginWithRecoveryCodeModel> logger)
+        public LoginWithRecoveryCodeModel(SignInManager<ApplicationUser> signInManager,
+            ILogger<LoginWithRecoveryCodeModel> logger)
         {
             _signInManager = signInManager;
             _logger = logger;
@@ -74,6 +75,7 @@ namespace OnyxScoutApplication.Server.Areas.Identity.Pages.Account
                 _logger.LogInformation("User with ID '{UserId}' logged in with a recovery code.", user.Id);
                 return LocalRedirect(returnUrl ?? Url.Content("~/"));
             }
+
             if (result.IsLockedOut)
             {
                 _logger.LogWarning("User with ID '{UserId}' account locked out.", user.Id);

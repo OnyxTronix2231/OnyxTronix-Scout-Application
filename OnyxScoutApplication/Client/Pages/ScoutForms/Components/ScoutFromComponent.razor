@@ -1,22 +1,22 @@
 ﻿<h3>ScoutFromComponent</h3>
 
 <EditForm Model="@ScoutForm" OnValidSubmit="@OnValidSubmit">
-    <FluentValidationValidator />
+    <FluentValidationValidator/>
     <div class="form-group col-sm-5">
         <label for="teamNumber">Team number</label>
-        <input class="form-control" type="number" id="teamNumber" value="@ScoutForm.TeamNumber" readonly="readonly" />
+        <input class="form-control" type="number" id="teamNumber" value="@ScoutForm.TeamNumber" readonly="readonly"/>
     </div>
     <div class="form-group col-sm-5">
         <label for="year">Year</label>
-        <input class="form-control" type="number" id="year" value="@ScoutForm.Year" readonly="readonly" />
+        <input class="form-control" type="number" id="year" value="@ScoutForm.Year" readonly="readonly"/>
     </div>
     <div class="form-group col-sm-5">
         <label for="matchName">Match name</label>
-        <input class="form-control" type="text" id="matchName" value="@ScoutForm.MatchName" readonly="readonly" />
+        <input class="form-control" type="text" id="matchName" value="@ScoutForm.MatchName" readonly="readonly"/>
     </div>
     <div class="form-group col-sm-5">
         <label for="matchName">Writer</label>
-        <input class="form-control" type="text" id="matchNumber" value="@ScoutForm.WriterUserName" readonly="readonly" />
+        <input class="form-control" type="text" id="matchNumber" value="@ScoutForm.WriterUserName" readonly="readonly"/>
     </div>
 
     <div class="form-group col-sm-5">
@@ -27,14 +27,20 @@
         <SectionEdit SectionData="ScoutForm.EndGameData" SectionName="End game"></SectionEdit>
     </div>
 
-    <div><button type="submit" class="btn btn-primary">@(Type == FormType.Create ? "Add" : "Save")</button></div>
+    <div>
+        <button type="submit" class="btn btn-primary">@(Type == FormType.Create ? "Add" : "Save")</button>
+    </div>
 </EditForm>
 
 @code {
+
     [Parameter]
     public ScoutFormDto ScoutForm { get; set; }
+
     [Parameter]
     public EventCallback OnValidSubmit { get; set; }
+
     [Parameter]
     public FormType Type { get; set; }
+
 }

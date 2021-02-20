@@ -8,7 +8,7 @@
 <h3>Select numric field to show combined result</h3>
 
 
-<br />
+<br/>
 @if (analyticSettings != null)
 {
     @foreach (var combinedField in analyticSettings.CombinedFields)
@@ -25,20 +25,20 @@
                     </SfDropDownList>
                     <SfButton CssClass="e-danger" @onclick="() => combinedField.Fields.Remove(field)">Remove this column</SfButton>
                 </div>
-                <br />
+                <br/>
             }
             <SfButton @onclick="() => AddField(combinedField)">Add column</SfButton>
         </div>
-        <br />
+        <br/>
     }
 
 
-    <br />
+    <br/>
     <SfButton @onclick="AddCombinedField">Add combined columns</SfButton>
 
-    <br />
+    <br/>
 
-    <br />
+    <br/>
 
     <SfButton CssClass="e-success" @onclick="SaveSettings">Save</SfButton>
 }
@@ -99,4 +99,5 @@
         await LocalStorage.SetItemAsync("EventAnalyticSettings/" + selectedEvent.Key, analyticSettings);
         NavigationManager.NavigateTo("EventAnalytics");
     }
+
 }

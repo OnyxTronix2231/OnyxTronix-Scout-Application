@@ -11,9 +11,12 @@
 
     </ScoutFormFormatComponent>
 }
+
 @code {
+
     [Parameter]
     public int id { get; set; }
+
     private ScoutFormFormatDto scoutFormForamt;
 
     protected override async Task OnInitializedAsync()
@@ -28,4 +31,5 @@
             NavigationManager.NavigateTo("ScoutFormFormats");
         }
     }
+
 }

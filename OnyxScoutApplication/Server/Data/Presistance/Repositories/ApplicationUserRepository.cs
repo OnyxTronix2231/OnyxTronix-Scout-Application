@@ -21,16 +21,14 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
 
         public async Task<ActionResult<List<ApplicationUserDto>>> GetAllWithRoles()
         {
-             var v = await ScoutAppContext.Users.
-               Include(u => u.UserRoles).ThenInclude(i => i.Role).
-                ToListAsync();
-            return  mapper.Map<List<ApplicationUserDto>>(v);
+            var v = await ScoutAppContext.Users.Include(u => u.UserRoles).ThenInclude(i => i.Role).ToListAsync();
+            return mapper.Map<List<ApplicationUserDto>>(v);
         }
 
         public async Task<ActionResult<ApplicationUserDto>> GetByNameWithRoles(string name)
         {
-            var v = await ScoutAppContext.Users.
-               Include(u => u.UserRoles).ThenInclude(i => i.Role).FirstOrDefaultAsync(i => i.UserName == name);
+            var v = await ScoutAppContext.Users.Include(u => u.UserRoles).ThenInclude(i => i.Role)
+                .FirstOrDefaultAsync(i => i.UserName == name);
             return mapper.Map<ApplicationUserDto>(v);
         }
 
@@ -42,12 +40,13 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
 
         public async Task<ActionResult> Update(string name, ApplicationUserDto applicationUserDto)
         {
-            var result = await ScoutAppContext.Users.
-               Include(u => u.UserRoles).ThenInclude(i => i.Role).FirstOrDefaultAsync(i => i.UserName == name);
+            var result = await ScoutAppContext.Users.Include(u => u.UserRoles).ThenInclude(i => i.Role)
+                .FirstOrDefaultAsync(i => i.UserName == name);
             if (result == null)
             {
                 return new BadRequestObjectResult($"No user with name: {name} found to update!");
             }
+
             return await Update(result, applicationUserDto);
         }
 
@@ -58,6 +57,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             {
                 userRole.Role = null;
             }
+
             context.Update(applicationUser);
             return await Task.Run(() => new OkResult());
         }
@@ -65,12 +65,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
 
         private ApplicationDbContext ScoutAppContext
         {
-            get
-            {
-                return context as ApplicationDbContext;
-            }
+            get { return context as ApplicationDbContext; }
         }
-
-        
     }
 }

@@ -22,15 +22,18 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
         {
             if (await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Year == scoutFormForamt.Year))
             {
-                return ResultCode(System.Net.HttpStatusCode.BadRequest, "This scout format already exists for this year!");
+                return ResultCode(System.Net.HttpStatusCode.BadRequest,
+                    "This scout format already exists for this year!");
             }
+
             ScoutFormFormatDto clone = new ScoutFormFormatDto()
             {
                 Year = scoutFormForamt.Year
             };
             await base.Add(clone);
             await context.SaveChangesAsync();
-            var result = await ScoutAppContext.ScoutFormFormats.FirstOrDefaultAsync(i => i.Year == scoutFormForamt.Year);
+            var result =
+                await ScoutAppContext.ScoutFormFormats.FirstOrDefaultAsync(i => i.Year == scoutFormForamt.Year);
             scoutFormForamt.Id = result.Id;
             return await Update(result.Id, scoutFormForamt);
         }
@@ -38,44 +41,49 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
         public async Task<ActionResult<ScoutFormDto>> GetTemplateScoutFormByYear(int year)
         {
             var result = await GetWithFieldsByYear(year);
-            if(result.Value == null)
+            if (result.Value == null)
             {
                 return new NotFoundObjectResult("No scout form format found for year - " + year);
             }
+
             return mapper.Map<ScoutFormDto>(result.Value);
         }
 
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFields(int id)
         {
-            var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.Fields).ThenInclude(f => f.CascadeFields).FirstOrDefaultAsync(i => i.Id == id);
-            if(result == null)
+            var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.Fields).ThenInclude(f => f.CascadeFields)
+                .FirstOrDefaultAsync(i => i.Id == id);
+            if (result == null)
             {
                 return new NotFoundObjectResult("No scout form format found with the id of: " + id);
             }
-            
+
             result.Fields = result.Fields.OrderBy(i => i.Index).ToList();
             return mapper.Map<ScoutFormFormatDto>(result);
         }
 
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFieldsByYear(int year)
         {
-            var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.Fields).ThenInclude(f => f.CascadeFields).FirstOrDefaultAsync(i => i.Year == year);
+            var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.Fields).ThenInclude(f => f.CascadeFields)
+                .FirstOrDefaultAsync(i => i.Year == year);
             if (result == null)
             {
                 return new NotFoundObjectResult("No scout form format found for year - " + year);
             }
-            
+
             result.Fields = result.Fields.OrderBy(i => i.Index).ToList();
             return mapper.Map<ScoutFormFormatDto>(result);
         }
 
         public async Task<ActionResult> Update(int id, ScoutFormFormatDto scoutFormForamtDto)
         {
-            var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.Fields).ThenInclude(f => f.CascadeFields).FirstOrDefaultAsync(i => i.Id == id);
+            var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.Fields).ThenInclude(f => f.CascadeFields)
+                .FirstOrDefaultAsync(i => i.Id == id);
             if (result == null)
             {
                 return new BadRequestObjectResult("No scout from format found to update!");
             }
+
             return await Update(result, scoutFormForamtDto);
         }
 
@@ -99,10 +107,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
 
         private ApplicationDbContext ScoutAppContext
         {
-            get
-            {
-                return context as ApplicationDbContext;
-            }
+            get { return context as ApplicationDbContext; }
         }
     }
 }

@@ -41,7 +41,8 @@ namespace OnyxScoutApplication.Server.Areas.Identity.Pages.Account.Manage
             if (!isTwoFactorEnabled)
             {
                 var userId = await _userManager.GetUserIdAsync(user);
-                throw new InvalidOperationException($"Cannot generate recovery codes for user with ID '{userId}' because they do not have 2FA enabled.");
+                throw new InvalidOperationException(
+                    $"Cannot generate recovery codes for user with ID '{userId}' because they do not have 2FA enabled.");
             }
 
             return Page();
@@ -59,7 +60,8 @@ namespace OnyxScoutApplication.Server.Areas.Identity.Pages.Account.Manage
             var userId = await _userManager.GetUserIdAsync(user);
             if (!isTwoFactorEnabled)
             {
-                throw new InvalidOperationException($"Cannot generate recovery codes for user with ID '{userId}' as they do not have 2FA enabled.");
+                throw new InvalidOperationException(
+                    $"Cannot generate recovery codes for user with ID '{userId}' as they do not have 2FA enabled.");
             }
 
             var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);

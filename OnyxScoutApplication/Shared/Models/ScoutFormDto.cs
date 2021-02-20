@@ -8,9 +8,9 @@ namespace OnyxScoutApplication.Shared.Models
     public class ScoutFormDto
     {
         public int Id { get; set; }
-        
+
         public int TeamNumber { get; set; }
-     
+
         public int Year { get; set; }
 
         public string MatchName { get; set; }

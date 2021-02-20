@@ -9,14 +9,14 @@ using OnyxScoutApplication.Server.Data;
 using OnyxScoutApplication.Server.Models;
 
 [assembly: HostingStartup(typeof(OnyxScoutApplication.Server.Areas.Identity.IdentityHostingStartup))]
+
 namespace OnyxScoutApplication.Server.Areas.Identity
 {
     public class IdentityHostingStartup : IHostingStartup
     {
         public void Configure(IWebHostBuilder builder)
         {
-            builder.ConfigureServices((context, services) => {
-            });
+            builder.ConfigureServices((context, services) => { });
         }
     }
 }

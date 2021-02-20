@@ -75,7 +75,9 @@ namespace OnyxScoutApplication.Server.Areas.Identity.Pages.Account.Manage
 
             // Request a redirect to the external login provider to link a login for the current user
             var redirectUrl = Url.Page("./ExternalLogins", pageHandler: "LinkLoginCallback");
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, _userManager.GetUserId(User));
+            var properties =
+                _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl,
+                    _userManager.GetUserId(User));
             return new ChallengeResult(provider, properties);
         }
 
@@ -90,13 +92,15 @@ namespace OnyxScoutApplication.Server.Areas.Identity.Pages.Account.Manage
             var info = await _signInManager.GetExternalLoginInfoAsync(user.Id);
             if (info == null)
             {
-                throw new InvalidOperationException($"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");
+                throw new InvalidOperationException(
+                    $"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");
             }
 
             var result = await _userManager.AddLoginAsync(user, info);
             if (!result.Succeeded)
             {
-                StatusMessage = "The external login was not added. External logins can only be associated with one account.";
+                StatusMessage =
+                    "The external login was not added. External logins can only be associated with one account.";
                 return RedirectToPage();
             }
 

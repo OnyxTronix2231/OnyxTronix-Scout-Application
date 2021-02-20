@@ -10,6 +10,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
     public class ScoutFormFromatToScoutFormConverter : ITypeConverter<ScoutFormFormatDto, ScoutFormDto>
     {
         private readonly IMapper mapper;
+
         public ScoutFormFromatToScoutFormConverter(IMapper mapper)
         {
             this.mapper = mapper;
@@ -32,12 +33,13 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             {
                 destination.EndGameData.Add(GetScoutFormDataFromField(field));
             }
+
             return destination;
         }
 
         private ScoutFormDataDto GetScoutFormDataFromField(FieldDto field)
         {
-            ScoutFormDataDto scoutFormData = new ScoutFormDataDto() { Field = field, FieldId = field.Id };
+            ScoutFormDataDto scoutFormData = new ScoutFormDataDto() {Field = field, FieldId = field.Id};
             switch (field.FieldType)
             {
                 case FieldType.None:
@@ -59,10 +61,12 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 default:
                     break;
             }
+
             foreach (var f in field.CascadeFields)
             {
                 scoutFormData.CascadeData.Add(GetScoutFormDataFromField(f));
             }
+
             return scoutFormData;
         }
     }

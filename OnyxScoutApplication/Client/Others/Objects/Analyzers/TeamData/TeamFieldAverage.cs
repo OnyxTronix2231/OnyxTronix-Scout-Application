@@ -10,7 +10,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
     public abstract class TeamFieldAverage : IComparable<TeamFieldAverage>
     {
         public FieldDto Field { get; }
-       
+
         public TeamFieldAverage(FieldDto field)
         {
             Field = field;

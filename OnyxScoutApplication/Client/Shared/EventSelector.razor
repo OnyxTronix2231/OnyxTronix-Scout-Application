@@ -10,19 +10,21 @@
 <SfDropDownList TValue="string" TItem="string" Width="200px" PopupHeight="200px" PopupWidth="200px" Placeholder="Select a country" Value="SelecteCountryFiltter" DataSource="@filtterCountries">
     <DropDownListEvents TItem="string" TValue="string" OnValueSelect="OnCountryFillterChange"></DropDownListEvents>
 </SfDropDownList>
-<br />
+<br/>
 @if (events != null)
 {
-<SfDropDownList TValue="string" TItem="Event" Width="355px" PopupHeight="355px" PopupWidth="355px" Placeholder="Select an event" Value="lastEventKey" DataSource="@events">
-    <DropDownListEvents TItem="Event" TValue="string" OnValueSelect="OnEventChange"></DropDownListEvents>
-    <DropDownListFieldSettings Text="Name" Value="Key"></DropDownListFieldSettings>
-</SfDropDownList>
+    <SfDropDownList TValue="string" TItem="Event" Width="355px" PopupHeight="355px" PopupWidth="355px" Placeholder="Select an event" Value="lastEventKey" DataSource="@events">
+        <DropDownListEvents TItem="Event" TValue="string" OnValueSelect="OnEventChange"></DropDownListEvents>
+        <DropDownListFieldSettings Text="Name" Value="Key"></DropDownListFieldSettings>
+    </SfDropDownList>
 }
 
 
 @code {
+
     [Parameter]
     public EventCallback<Event> OnEventSelctionChange { get; set; }
+
     public int? SelectedYearFiltter { get; set; } = 0;
     public string SelecteCountryFiltter { get; set; }
     public Event SelectedEvent { get; set; } = new Event();
@@ -50,8 +52,8 @@
         }
         else
         {
-            await OnYearFillterChange(new Syncfusion.Blazor.DropDowns.SelectEventArgs<int?>() { ItemData = DateTime.Now.Year });
-            await OnCountryFillterChange(new Syncfusion.Blazor.DropDowns.SelectEventArgs<string>() { ItemData = filtterCountries[0] });
+            await OnYearFillterChange(new Syncfusion.Blazor.DropDowns.SelectEventArgs<int?>() {ItemData = DateTime.Now.Year});
+            await OnCountryFillterChange(new Syncfusion.Blazor.DropDowns.SelectEventArgs<string>() {ItemData = filtterCountries[0]});
         }
     }
 
@@ -98,4 +100,5 @@
         lastEventKey = SelectedEvent.Key;
         StateHasChanged();
     }
+
 }

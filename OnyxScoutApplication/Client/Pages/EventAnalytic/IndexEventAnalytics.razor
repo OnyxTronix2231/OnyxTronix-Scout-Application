@@ -8,7 +8,7 @@
 @if (fields != null)
 {
     <EventAnalyticGrid Teams="teams" Fields="fields" ScoutForms="scoutForms" GetTargetList="s => s.AutonomousData.Concat(s.TeleoperatedData).Concat(s.EndGameData).ToList()"
-                       OnTeamClicked="OnTeamClicked" EventAnalyticSettings="analyticSettings" />
+                       OnTeamClicked="OnTeamClicked" EventAnalyticSettings="analyticSettings"/>
 }
 
 @code {
@@ -37,11 +37,11 @@
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
         fields = format.AutonomousFields.Concat(format.TeleoperatedFields).Concat(format.EndGameFields).Where(i => i.FieldType != FieldType.TextField).ToList().ConcatAllCascadeFields();
-
     }
 
     private void OnTeamClicked(int teamNumber)
     {
         NavigationManager.NavigateTo("TeamDetails/" + teamNumber);
     }
+
 }

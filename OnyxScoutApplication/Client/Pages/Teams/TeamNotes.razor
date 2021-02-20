@@ -5,25 +5,25 @@
 @if (endGameNotes != null)
 {
     <h3>Team @TeamNumber</h3>
-    <h4>@selectedEvent?.Name</h4> 
+    <h4>@selectedEvent?.Name</h4>
     <div>
         <h5>Autonomous notes</h5>
-        <br />
+        <br/>
 
         @foreach (var (scoutFormData, writer) in autonomousNotes)
-        { 
+        {
             foreach (var text in scoutFormData)
             {
                 <div>
                     <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
                     <span>@writer</span>
                 </div>
-                <br />
+                <br/>
             }
         }
 
         <h5>Teleoperated notes</h5>
-        <br />
+        <br/>
 
         @foreach (var (scoutFormData, writer) in teleoperatedNotes)
         {
@@ -33,12 +33,12 @@
                     <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
                     <span>@writer</span>
                 </div>
-                <br />
+                <br/>
             }
         }
 
         <h5>End game notes</h5>
-        <br />
+        <br/>
 
         @foreach (var (scoutFormData, writer) in endGameNotes)
         {
@@ -48,14 +48,17 @@
                     <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
                     <span>@writer</span>
                 </div>
-                <br />
+                <br/>
             }
         }
     </div>
 }
+
 @code {
+
     [Parameter]
     public int TeamNumber { get; set; }
+
     private Tuple<ScoutFormDataDto[], string>[] autonomousNotes;
     private Tuple<ScoutFormDataDto[], string>[] teleoperatedNotes;
     private Tuple<ScoutFormDataDto[], string>[] endGameNotes;
@@ -74,6 +77,6 @@
         autonomousNotes = result.Select(i => new Tuple<ScoutFormDataDto[], string>(i.AutonomousData.Where(f => f.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)).ToArray();
         teleoperatedNotes = result.Select(i => new Tuple<ScoutFormDataDto[], string>(i.TeleoperatedData.Where(f => f.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)).ToArray();
         endGameNotes = result.Select(i => new Tuple<ScoutFormDataDto[], string>(i.EndGameData.Where(f => f.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)).ToArray();
-
     }
+
 }

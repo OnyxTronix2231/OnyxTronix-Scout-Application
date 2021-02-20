@@ -7,28 +7,30 @@
     {
         <label for="name">Field default value</label>
     }
-    <SfNumericTextBox @bind-Value="CurrentValue" />
-    <ValidationMessage For="@ValueExpression" />
+    <SfNumericTextBox @bind-Value="CurrentValue"/>
+    <ValidationMessage For="@ValueExpression"/>
 </div>
 @if (IsEditMode)
 {
     <div>
-        <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required" />
-        <ValidationMessage For="@(() => Field.Required)" />
+        <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required"/>
+        <ValidationMessage For="@(() => Field.Required)"/>
     </div>
 
     <div>
         <label for="name">Min value</label>
-        <SfNumericTextBox @bind-Value="@Field.MinValue" />
-        <ValidationMessage For="@(() => Field.MinValue)" />
+        <SfNumericTextBox @bind-Value="@Field.MinValue"/>
+        <ValidationMessage For="@(() => Field.MinValue)"/>
     </div>
     <div>
         <label for="name">Max value</label>
-        <SfNumericTextBox @bind-Value="@Field.MaxValue" />
-        <ValidationMessage For="@(() => Field.MaxValue)" />
+        <SfNumericTextBox @bind-Value="@Field.MaxValue"/>
+        <ValidationMessage For="@(() => Field.MaxValue)"/>
     </div>
 }
+
 @code {
+
     protected override bool TryParseValueFromString(string value, out int? result, [NotNullWhen(false)] out string validationErrorMessage)
     {
         validationErrorMessage = null;
@@ -42,7 +44,8 @@
         {
             validationErrorMessage = "Value has to be a number";
         }
-        result = (int?)val;
+        result = (int?) val;
         return success;
     }
+
 }

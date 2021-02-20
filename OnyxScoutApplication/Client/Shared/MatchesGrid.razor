@@ -44,15 +44,21 @@
         </GridColumns>
     </SfGrid>
 }
+
 @code {
+
     [Parameter]
     public List<Match> Matches { get; set; }
+
     [Parameter]
     public int TeamNumber { get; set; }
+
     [Parameter]
     public List<ScoutFormDto> SubmittedForms { get; set; }
+
     [Parameter]
     public string Height { get; set; } = "100%";
+
     [Parameter]
     public EventCallback<TeamInMatch> OnTeamClicked { get; set; }
 
@@ -60,20 +66,19 @@
     {
         if (args.Column.HeaderText.Contains("Blue")) //Cell color based on alliance color
         {
-            args.Cell.AddClass(new string[] { "blue" });
+            args.Cell.AddClass(new string[] {"blue"});
         }
         else if (args.Column.HeaderText.Contains("Red"))
         {
-            args.Cell.AddClass(new string[] { "red" });
-
+            args.Cell.AddClass(new string[] {"red"});
         }
         else if (args.Column.HeaderText == "Winning alliance") //"WinningAlliance" Cell color
         {
-            args.Cell.AddClass(new string[] { args.Data.WinningAlliance });
+            args.Cell.AddClass(new string[] {args.Data.WinningAlliance});
         }
     }
 
-    private string GetTeamTextStyle(int teamNumber, string matchName)  //Team's text style (bold, color and clickable)
+    private string GetTeamTextStyle(int teamNumber, string matchName) //Team's text style (bold, color and clickable)
     {
         string classes = "";
         if (teamNumber == TeamNumber)
@@ -86,7 +91,7 @@
         }
 
         if (SubmittedForms == null) return classes;
-        
+
         if (SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == matchName))
         {
             classes += "filledTeamForm ";
@@ -101,8 +106,9 @@
     private void OnGridTeamClicked(Match match, int teamNumber)
     {
         bool isFormExists = SubmittedForms != null && SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == match.Key);
-        OnTeamClicked.InvokeAsync(new TeamInMatch { TeamNumber = teamNumber, Match = match, IsFormExists = isFormExists });
+        OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match, IsFormExists = isFormExists});
     }
+
 }
 
 <style>

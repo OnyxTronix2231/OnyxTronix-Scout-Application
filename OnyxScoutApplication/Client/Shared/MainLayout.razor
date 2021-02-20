@@ -6,35 +6,37 @@
 @inject HttpClientManager Http
 @inject ISyncLocalStorageService LocalStorage
 
-@inject IJSRuntime  JSRuntime
+@inject IJSRuntime JSRuntime
 
 <div class="sidebar">
-    <NavMenu />
+    <NavMenu/>
 </div>
 <Toast></Toast>
 
 <div class="main">
     <div class="top-row px-4 auth">
-        <LoginDisplay />
+        <LoginDisplay/>
         <span>V0.2</span>
     </div>
     <div class="content px-4">
-        @if (finishedInit) 
+        @if (finishedInit)
         {
             @Body
         }
     </div>
 </div>
+
 @code{
     bool updateReady;
     bool finishedInit = false;
+
     protected override async Task OnInitializedAsync()
     {
         await JSRuntime
-          .InvokeAsync<object>(
-            "blazorFuncs.registerClient",
-            new object[] { DotNetObjectReference.Create(this) }
-          );
+            .InvokeAsync<object>(
+                "blazorFuncs.registerClient",
+                new object[] {DotNetObjectReference.Create(this)}
+            );
 
         if (LocalStorage.ContainKey("EventSelector/SelectedEventKey"))
         {
@@ -63,7 +65,7 @@
         updateReady = true;
         StateHasChanged();
         NotificationManager.Notify("Update available", "Please refresh the page", NotificationType.Warning, 0,
-            new Syncfusion.Blazor.Notifications.ToastButton() { Content = "Refresh", OnClick = EventCallback.Factory.Create(this, RefreshPage) });
+            new Syncfusion.Blazor.Notifications.ToastButton() {Content = "Refresh", OnClick = EventCallback.Factory.Create(this, RefreshPage)});
         return await Task.FromResult("Alerted client");
     }
 
@@ -71,4 +73,5 @@
     {
         NavigationManager.NavigateTo("/", true);
     }
+
 }

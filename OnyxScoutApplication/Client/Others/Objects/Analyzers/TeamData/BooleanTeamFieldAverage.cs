@@ -10,7 +10,6 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
 {
     public class BooleanTeamFieldAverage : TeamFieldAverage
     {
-
         public int TrueCount { get; set; }
 
         public int TotalCount { get; set; }
@@ -27,7 +26,8 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
 
         public override MarkupString GetFormattedAverage()
         {
-            return new MarkupString((GetAverage() * 100).ToString("0.##") + "%" + "<br />" + $"{TrueCount}/{TotalCount}");
+            return new MarkupString(
+                (GetAverage() * 100).ToString("0.##") + "%" + "<br />" + $"{TrueCount}/{TotalCount}");
         }
 
         public override int CompareTo(TeamFieldAverage other)
@@ -36,6 +36,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
             {
                 return GetAverage().CompareTo(booleanTeamFieldAverage.GetAverage());
             }
+
             throw new ArgumentException($"Cannot compare {nameof(NumericTeamFieldAverage)} type to {other.GetType()}");
         }
 

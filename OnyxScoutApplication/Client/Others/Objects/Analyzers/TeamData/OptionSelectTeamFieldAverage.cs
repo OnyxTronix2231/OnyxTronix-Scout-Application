@@ -10,7 +10,6 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
 {
     public class OptionSelectTeamFieldAverage : TeamFieldAverage
     {
-
         public Dictionary<string, Tuple<float, float>> OptionsAvarage { get; set; }
 
         public OptionSelectTeamFieldAverage(FieldDto field) : base(field)
@@ -30,6 +29,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
             {
                 throw new NotImplementedException("Option select sorting not implemented yet!");
             }
+
             throw new ArgumentException($"Cannot compare {nameof(NumericTeamFieldAverage)} type to {other.GetType()}");
         }
 

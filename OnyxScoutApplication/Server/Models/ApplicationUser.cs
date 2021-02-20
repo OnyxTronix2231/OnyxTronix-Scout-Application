@@ -15,14 +15,20 @@ namespace OnyxScoutApplication.Server.Models
 
     public class ApplicationRole : IdentityRole
     {
-       // public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
+        // public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
     }
 
     public class ApplicationUserRole : IdentityUserRole<string>
     {
         public ApplicationUser User { get; set; }
+
         [ForeignKey("ApplicationRoleId")]
         public ApplicationRole Role { get; set; }
-        public string ApplicationRoleId { get => RoleId; set => RoleId = value; }
+
+        public string ApplicationRoleId
+        {
+            get => RoleId;
+            set => RoleId = value;
+        }
     }
 }

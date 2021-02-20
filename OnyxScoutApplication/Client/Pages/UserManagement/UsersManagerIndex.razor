@@ -14,14 +14,14 @@ else
 {
     <table class="table">
         <thead>
-            <tr>
-                <th>User name</th>
-                <th>Roles</th>
-            </tr>
+        <tr>
+            <th>User name</th>
+            <th>Roles</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var applicationUser in applicationUsers)
-            {
+        @foreach (var applicationUser in applicationUsers)
+        {
             <tr>
                 <td>@applicationUser.UserName</td>
 
@@ -33,10 +33,11 @@ else
                 </td>
                 <SfButton CssClass="e-warning" @onclick="() => edit(applicationUser)">Edit</SfButton>
             </tr>
-            }
+        }
         </tbody>
     </table>
 }
+
 @code {
     private List<ApplicationUserDto> applicationUsers;
 
@@ -49,4 +50,5 @@ else
     {
         NavigationManager.NavigateTo("/UsersManager/Edit/" + applicationUserDto.UserName);
     }
+
 }

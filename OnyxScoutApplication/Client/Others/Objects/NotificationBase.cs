@@ -6,7 +6,6 @@ using System.Linq;
 
 namespace OnyxScoutApplication.Client.Others.Objects
 {
-
     public class NotificationBase : ComponentBase
     {
         [Inject]
@@ -25,7 +24,8 @@ namespace OnyxScoutApplication.Client.Others.Objects
             NotificationManager.OnHide += OnHide;
         }
 
-        public virtual void OnShow(string title, string message, NotificationType notificationType, int timeout, params ToastButton[] toastButtons)
+        public virtual void OnShow(string title, string message, NotificationType notificationType, int timeout,
+            params ToastButton[] toastButtons)
         {
             Title = title;
             Message = message;

@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 
 namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
 {
-    public class Repository<DbEntity, DtoEntity> : IRepository<DbEntity, DtoEntity> where DbEntity : class where DtoEntity : class
+    public class Repository<DbEntity, DtoEntity> : IRepository<DbEntity, DtoEntity>
+        where DbEntity : class where DtoEntity : class
     {
         protected readonly DbContext context;
         protected readonly IMapper mapper;
@@ -28,6 +29,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             {
                 return new NotFoundResult();
             }
+
             return mapper.Map<DtoEntity>(entity);
         }
 
@@ -56,6 +58,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             {
                 return new NotFoundResult();
             }
+
             context.Set<DbEntity>().Remove(mapper.Map<DbEntity>(entity));
             return new OkResult();
         }

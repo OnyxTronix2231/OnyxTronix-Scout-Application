@@ -9,7 +9,8 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 {
     public class ScoutFormDataValueConverter : IValueResolver<ScoutFormDataDto, ScoutFormData, string>
     {
-        public string Resolve(ScoutFormDataDto source, ScoutFormData destination, string destMember, ResolutionContext context)
+        public string Resolve(ScoutFormDataDto source, ScoutFormData destination, string destMember,
+            ResolutionContext context)
         {
             switch (source.Field.FieldType)
             {
@@ -31,10 +32,12 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                     {
                         destination.Value = string.Join(";", source.SelectedOptions);
                     }
+
                     break;
                 default:
                     break;
             }
+
             return destination.Value;
         }
     }

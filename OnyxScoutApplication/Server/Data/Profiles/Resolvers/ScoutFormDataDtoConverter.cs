@@ -10,6 +10,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
     public class ScoutFormDataDtoConverter : ITypeConverter<ScoutFormData, ScoutFormDataDto>
     {
         private readonly IMapper mapper;
+
         public ScoutFormDataDtoConverter(IMapper mapper)
         {
             this.mapper = mapper;
@@ -41,6 +42,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                     {
                         destination.NumericValue = int.Parse(source.Value);
                     }
+
                     break;
                 case FieldType.MultipleChoice:
                     destination.SelectedOptions = source.Value?.Split(';').ToList();
@@ -48,6 +50,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 default:
                     break;
             }
+
             return destination;
         }
     }

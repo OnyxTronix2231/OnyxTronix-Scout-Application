@@ -1,14 +1,14 @@
 ﻿<EditForm Model="@ScoutFormFormat" OnValidSubmit="@OnValidSubmit">
-    <FluentValidationValidator DisableAssemblyScanning="@true" />
+    <FluentValidationValidator DisableAssemblyScanning="@true"/>
     <ValidationSummary/>
 
     <div class="form-group col-sm-5">
         <div>
             <label for="year">Year</label>
-            <InputNumber class="form-control" @bind-Value="ScoutFormFormat.Year" />
-            <ValidationMessage For="@(() => ScoutFormFormat.Year)" />
+            <InputNumber class="form-control" @bind-Value="ScoutFormFormat.Year"/>
+            <ValidationMessage For="@(() => ScoutFormFormat.Year)"/>
         </div>
-        <br />
+        <br/>
         <h3>Autonomous</h3>
         <FieldsEditor Fields="ScoutFormFormat.AutonomousFields"></FieldsEditor>
         <h3>Teleoperated</h3>
@@ -16,17 +16,20 @@
         <h3>End-game</h3>
         <FieldsEditor Fields="ScoutFormFormat.EndGameFields"></FieldsEditor>
     </div>
-   
-    <br />
-    @{var v = (Type == FormType.Create ? "Add" : "Save");}
+
+    <br/>
+    @{ var v = (Type == FormType.Create ? "Add" : "Save"); }
     <button type="submit" class="btn btn-primary">@v</button>
 </EditForm>
 
 @code {
+
     [Parameter]
     public ScoutFormFormatDto ScoutFormFormat { get; set; }
+
     [Parameter]
     public EventCallback OnSubmit { get; set; }
+
     [Parameter]
     public FormType Type { get; set; }
 
@@ -35,7 +38,7 @@
         ScoutFormFormat.AutonomousFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
         ScoutFormFormat.TeleoperatedFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
         ScoutFormFormat.EndGameFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
-        
+
         UpdateFieldIndex(ScoutFormFormat.AutonomousFields);
         UpdateFieldIndex(ScoutFormFormat.TeleoperatedFields);
         UpdateFieldIndex(ScoutFormFormat.EndGameFields);
@@ -49,5 +52,6 @@
             fields[i].Index = i;
             UpdateFieldIndex(fields[i].CascadeFields);
         }
-    }  
+    }
+
 }

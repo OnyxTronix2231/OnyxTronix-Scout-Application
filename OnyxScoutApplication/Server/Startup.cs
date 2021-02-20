@@ -62,6 +62,7 @@ namespace OnyxScoutApplication.Server
                 {
                     connectionString = Configuration.GetConnectionString("DefaultConnection");
                 }
+
                 options.UseSqlServer(connectionString);
             });
 
@@ -78,12 +79,12 @@ namespace OnyxScoutApplication.Server
                     options.PublicOrigin = Configuration.GetValue<string>("PublicOrigin");
                 }
             }).AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
-                 {
-                     options.IdentityResources["openid"].UserClaims.Add("name");
-                     options.ApiResources.Single().UserClaims.Add("name");
-                     options.IdentityResources["openid"].UserClaims.Add("role");
-                     options.ApiResources.Single().UserClaims.Add("role");
-                 });
+            {
+                options.IdentityResources["openid"].UserClaims.Add("name");
+                options.ApiResources.Single().UserClaims.Add("name");
+                options.IdentityResources["openid"].UserClaims.Add("role");
+                options.ApiResources.Single().UserClaims.Add("role");
+            });
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("role");
 
             services.AddAuthentication()
@@ -104,7 +105,8 @@ namespace OnyxScoutApplication.Server
             services.AddScoped<IApplicationUserUnitOfWork, ApplicationUserUnitOfWork>();
 
             services.AddAutoMapper(typeof(ScoutFormProfile));
-            services.AddSingleton<ITheBlueAllianceService>(new TheBlueAllianceService("bX9cxVNbMq3WzxTDiWjfblxrk58HZj65QyToW1hvXURrtjHtuuXsFujFC5j6iPus"));
+            services.AddSingleton<ITheBlueAllianceService>(
+                new TheBlueAllianceService("bX9cxVNbMq3WzxTDiWjfblxrk58HZj65QyToW1hvXURrtjHtuuXsFujFC5j6iPus"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -132,8 +134,13 @@ namespace OnyxScoutApplication.Server
             app.UseIdentityServer();
             if (!Env.IsDevelopment())
             {
-                app.Use((ctx, next) => { ctx.SetIdentityServerOrigin(Configuration.GetValue<string>("PublicOrigin")); return next(); });
+                app.Use((ctx, next) =>
+                {
+                    ctx.SetIdentityServerOrigin(Configuration.GetValue<string>("PublicOrigin"));
+                    return next();
+                });
             }
+
             app.UseAuthentication();
             app.UseAuthorization();
 

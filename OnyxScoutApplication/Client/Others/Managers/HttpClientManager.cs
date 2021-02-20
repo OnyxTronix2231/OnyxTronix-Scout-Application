@@ -29,18 +29,22 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 if (response.IsSuccessStatusCode)
                 {
                     string json = await response.Content.ReadAsStringAsync();
-                    result = JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                    result = JsonSerializer.Deserialize<T>(json,
+                        new JsonSerializerOptions() {PropertyNameCaseInsensitive = true});
                 }
                 else
                 {
-                    notificationService.Notify("Error fetching data: " + response.StatusCode, await response.Content.ReadAsStringAsync(), NotificationType.Danger);
+                    notificationService.Notify("Error fetching data: " + response.StatusCode,
+                        await response.Content.ReadAsStringAsync(), NotificationType.Danger);
                 }
+
                 return result;
             }
             catch (AccessTokenNotAvailableException exception)
             {
                 exception.Redirect();
             }
+
             return null;
         }
 
@@ -51,18 +55,21 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 var respons = await httpClient.PutAsync(command, Serialize(objectToPut));
                 if (!respons.IsSuccessStatusCode)
                 {
-                    notificationService.Notify("Error", await respons.Content.ReadAsStringAsync(), NotificationType.Danger);
+                    notificationService.Notify("Error", await respons.Content.ReadAsStringAsync(),
+                        NotificationType.Danger);
                 }
                 else
                 {
                     notificationService.Notify("Success", "Updated successfully", NotificationType.Success);
                 }
+
                 return respons.IsSuccessStatusCode;
             }
             catch (AccessTokenNotAvailableException exception)
             {
                 exception.Redirect();
             }
+
             return false;
         }
 
@@ -73,18 +80,21 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 var respons = await httpClient.PostAsync(command, Serialize(objectToPopst));
                 if (!respons.IsSuccessStatusCode)
                 {
-                    notificationService.Notify("Error", await respons.Content.ReadAsStringAsync(), NotificationType.Danger);
+                    notificationService.Notify("Error", await respons.Content.ReadAsStringAsync(),
+                        NotificationType.Danger);
                 }
                 else
                 {
                     notificationService.Notify("Success", "Created successfully", NotificationType.Success);
                 }
+
                 return respons.IsSuccessStatusCode;
             }
             catch (AccessTokenNotAvailableException exception)
             {
                 exception.Redirect();
             }
+
             return false;
         }
 

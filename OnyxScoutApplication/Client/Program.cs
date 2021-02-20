@@ -23,7 +23,7 @@ namespace OnyxScoutApplication.Client
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
-           
+
             ConfigureServices(builder.Services, builder);
 
             await builder.Build().RunAsync();
@@ -31,18 +31,21 @@ namespace OnyxScoutApplication.Client
 
         private static void ConfigureServices(IServiceCollection services, WebAssemblyHostBuilder builder)
         {
-            services.AddHttpClient("OnyxScoutApplication.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-               .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+            services.AddHttpClient("OnyxScoutApplication.ServerAPI",
+                    client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+                .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
             // Supply HttpClient instances that include access tokens when making requests to the server project
-            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("OnyxScoutApplication.ServerAPI"));
+            services.AddTransient(sp =>
+                sp.GetRequiredService<IHttpClientFactory>().CreateClient("OnyxScoutApplication.ServerAPI"));
 
             builder.Services.AddApiAuthorization()
-               .AddAccountClaimsPrincipalFactory<RolesClaimsPrincipalFactory>();
+                .AddAccountClaimsPrincipalFactory<RolesClaimsPrincipalFactory>();
 
 
             services.AddSyncfusionBlazor();
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzgwMDc5QDMxMzgyZTM0MmUzMFM2RGdsNWJYWDRvR3RQdVdzd1BmOGM0djYxMlNTVWk4RWE0TUxVM3BjVTg9");
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(
+                "MzgwMDc5QDMxMzgyZTM0MmUzMFM2RGdsNWJYWDRvR3RQdVdzd1BmOGM0djYxMlNTVWk4RWE0TUxVM3BjVTg9");
             services.AddTransient<HttpClientManager>();
             services.AddTransient<TeamDataAnalyzer>();
             services.AddSingleton<NotificationManager>();
