@@ -5,7 +5,7 @@
 <div>
     @if (IsEditMode)
     {
-        <label for="name">Field default value</label>
+        <label>Field default value</label>
     }
     <SfNumericTextBox @bind-Value="CurrentValue"/>
     <ValidationMessage For="@ValueExpression"/>
@@ -18,12 +18,12 @@
     </div>
 
     <div>
-        <label for="name">Min value</label>
+        <label>Min value</label>
         <SfNumericTextBox @bind-Value="@Field.MinValue"/>
         <ValidationMessage For="@(() => Field.MinValue)"/>
     </div>
     <div>
-        <label for="name">Max value</label>
+        <label>Max value</label>
         <SfNumericTextBox @bind-Value="@Field.MaxValue"/>
         <ValidationMessage For="@(() => Field.MaxValue)"/>
     </div>
@@ -44,7 +44,7 @@
         {
             validationErrorMessage = "Value has to be a number";
         }
-        result = (int?) val;
+        result = val;
         return success;
     }
 

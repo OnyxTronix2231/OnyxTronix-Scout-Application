@@ -6,7 +6,7 @@
 <div class="form-group">
     <a class="btn btn-primary" href="ScoutFormFormat/Create">Add scout form format</a>
 </div>
-@if (scoutFormForamts == null)
+@if (scoutFormFormats == null)
 {
     <p>
         <em>Loading...</em>
@@ -21,11 +21,11 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var scoutFormFormat in scoutFormForamts)
+        @foreach (var scoutFormFormat in scoutFormFormats)
         {
             <tr>
                 <td>@scoutFormFormat.Year</td>
-                <SfButton CssClass="e-warning" @onclick="() => nav(scoutFormFormat)">Edit</SfButton>
+                <SfButton CssClass="e-warning" @onclick="() => Edit(scoutFormFormat)">Edit</SfButton>
             </tr>
         }
         </tbody>
@@ -33,16 +33,16 @@ else
 }
 
 @code {
-    private List<ScoutFormFormatDto> scoutFormForamts;
+    private List<ScoutFormFormatDto> scoutFormFormats;
 
-    private void nav(ScoutFormFormatDto scoutFormFormat)
+    private void Edit(ScoutFormFormatDto scoutFormFormat)
     {
         NavigationManager.NavigateTo("ScoutFormFormat/Edit/" + scoutFormFormat.Id);
     }
 
     protected override async Task OnInitializedAsync()
     {
-        scoutFormForamts = await Http.GetJson<List<ScoutFormFormatDto>>("ScoutFormFormat");
+        scoutFormFormats = await Http.GetJson<List<ScoutFormFormatDto>>("ScoutFormFormat");
     }
 
 }

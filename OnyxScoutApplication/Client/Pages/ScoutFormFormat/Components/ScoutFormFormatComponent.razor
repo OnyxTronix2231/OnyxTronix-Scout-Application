@@ -4,7 +4,7 @@
 
     <div class="form-group col-sm-5">
         <div>
-            <label for="year">Year</label>
+            <label>Year</label>
             <InputNumber class="form-control" @bind-Value="ScoutFormFormat.Year"/>
             <ValidationMessage For="@(() => ScoutFormFormat.Year)"/>
         </div>
@@ -18,7 +18,7 @@
     </div>
 
     <br/>
-    @{ var v = (Type == FormType.Create ? "Add" : "Save"); }
+    @{ var v = Type == FormType.Create ? "Add" : "Save"; }
     <button type="submit" class="btn btn-primary">@v</button>
 </EditForm>
 

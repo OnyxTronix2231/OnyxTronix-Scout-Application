@@ -13,14 +13,14 @@
 @code {
 
     [CascadingParameter]
-    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    public Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
     private TeamInMatch teamInMatch;
     private ScoutFormDto scoutForm;
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await authenticationStateTask;
+        var authState = await AuthenticationStateTask;
         var user = authState.User;
 
         teamInMatch = await LocalStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");

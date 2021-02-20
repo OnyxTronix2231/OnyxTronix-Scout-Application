@@ -17,7 +17,7 @@
                 <GridColumn HeaderText="@headName" Width="120">
                     <Template>
                         @{
-                            var match = context as Match;
+                            var match = (Match) context;
                             var teamNumber = match.Alliances.Blue.GetTeamAt(index);
                             <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
                         }
@@ -33,7 +33,7 @@
                 <GridColumn HeaderText="@headName" Width="120">
                     <Template>
                         @{
-                            var match = context as Match;
+                            var match = (Match) context;
                             var teamNumber = match.Alliances.Red.GetTeamAt(index);
                             <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
                         }
@@ -61,22 +61,6 @@
 
     [Parameter]
     public EventCallback<TeamInMatch> OnTeamClicked { get; set; }
-
-    public void CustomizeCell(QueryCellInfoEventArgs<Match> args)
-    {
-        if (args.Column.HeaderText.Contains("Blue")) //Cell color based on alliance color
-        {
-            args.Cell.AddClass(new string[] {"blue"});
-        }
-        else if (args.Column.HeaderText.Contains("Red"))
-        {
-            args.Cell.AddClass(new string[] {"red"});
-        }
-        else if (args.Column.HeaderText == "Winning alliance") //"WinningAlliance" Cell color
-        {
-            args.Cell.AddClass(new string[] {args.Data.WinningAlliance});
-        }
-    }
 
     private string GetTeamTextStyle(int teamNumber, string matchName) //Team's text style (bold, color and clickable)
     {
@@ -107,6 +91,22 @@
     {
         bool isFormExists = SubmittedForms != null && SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == match.Key);
         OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match, IsFormExists = isFormExists});
+    }
+
+    private static void CustomizeCell(QueryCellInfoEventArgs<Match> args)
+    {
+        if (args.Column.HeaderText.Contains("Blue")) //Cell color based on alliance color
+        {
+            args.Cell.AddClass(new[] {"blue"});
+        }
+        else if (args.Column.HeaderText.Contains("Red"))
+        {
+            args.Cell.AddClass(new[] {"red"});
+        }
+        else if (args.Column.HeaderText == "Winning alliance") //"WinningAlliance" Cell color
+        {
+            args.Cell.AddClass(new[] {args.Data.WinningAlliance});
+        }
     }
 
 }

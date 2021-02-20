@@ -5,7 +5,7 @@
 <div>
     @if (IsEditMode)
     {
-        <label for="name">Field default value</label>
+        <label>Field default value</label>
     }
     <Syncfusion.Blazor.DropDowns.SfMultiSelect @bind-Value="CurrentValue" Mode="VisualMode.CheckBox"
                                                 MaximumSelectionLength="Field.MaximumSelectionLength == 0 ? Field.Options.Count : Field.MaximumSelectionLength"
@@ -21,7 +21,7 @@
     </div>
 
     <div>
-        <label for="name">Max slsection option</label>
+        <label>Max slsection option</label>
         <SfNumericTextBox @bind-Value="Field.MaximumSelectionLength"></SfNumericTextBox>
     </div>
 
@@ -29,10 +29,9 @@
 
     @foreach (var (item, index) in options.Select((x, i) => (x, i)))
     {
-        var name = options[index];
         <div>
             <button type="button" class="btn btn-danger" @onclick="() => RemoveOption(index)">Remove option</button>
-            @{ var v = name; }
+            @{ var v = item; }
             <SfTextBox Value="@v" Input="a => UpdateOption(a, index)"></SfTextBox>
 
         </div>
@@ -48,19 +47,16 @@
 
 @code {
     private List<string> options = new List<string>();
-    //private List<string> selectedOptions = new List<string>();
 
     protected override Task OnInitializedAsync()
     {
         options = Field.Options.ToList();
-    //selectedOptions = Field.SelectedOptions;
         return base.OnInitializedAsync();
     }
 
     protected override bool TryParseValueFromString(string value, out List<string> result, [NotNullWhen(false)] out string validationErrorMessage)
     {
         validationErrorMessage = null;
-    //result = value;
         result = new List<string>();
         return true;
     }

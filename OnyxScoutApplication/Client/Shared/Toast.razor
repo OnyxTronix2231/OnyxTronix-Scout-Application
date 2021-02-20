@@ -1,6 +1,6 @@
 ﻿@using Syncfusion.Blazor.Notifications
 @inherits NotificationBase
-<SfToast @ref="ToastObj" Title="@Title" Content="@Message" CssClass="@ToastTypeString" Timeout="@Timeout" ExtendedTimeout="Timeout" ShowCloseButton="Timeout == 0"
+<SfToast @ref="toastObj" Title="@Title" Content="@Message" CssClass="@ToastTypeString" Timeout="@Timeout" ExtendedTimeout="Timeout" ShowCloseButton="Timeout == 0"
           ActionButtons="ToastButtons?.ToList()">
     <ToastPosition X="Center"></ToastPosition>
 
@@ -8,7 +8,7 @@
 
 @code {
 
-    public string ToastTypeString
+    private string ToastTypeString
     {
         get
         {
@@ -18,24 +18,24 @@
                 NotificationType.Success => "e-toast-success",
                 NotificationType.Danger => "e-toast-danger",
                 NotificationType.Info => "e-toast-info",
-                _ => "",
+                _ => ""
                 };
         }
     }
 
-    private SfToast ToastObj;
+    private SfToast toastObj;
 
     public override void OnShow(string title, string message, NotificationType type, int timeout, params ToastButton[] toastButtons)
     {
         base.OnShow(title, message, type, timeout, toastButtons);
-        ToastObj.Show();
+        toastObj.Show();
         StateHasChanged();
     }
 
     public override void OnHide()
     {
         base.OnHide();
-        ToastObj.Hide();
+        toastObj.Hide();
     }
 
 }

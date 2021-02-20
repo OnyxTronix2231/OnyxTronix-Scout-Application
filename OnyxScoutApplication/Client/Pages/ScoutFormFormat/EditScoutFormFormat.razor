@@ -5,9 +5,9 @@
 @attribute [Authorize(Roles = Roles.Admin)]
 
 <h3>Edit</h3>
-@if (scoutFormForamt != null)
+@if (scoutFormFormat != null)
 {
-    <ScoutFormFormatComponent ScoutFormFormat="@scoutFormForamt" Type="FormType.Update" OnSubmit="@Update">
+    <ScoutFormFormatComponent ScoutFormFormat="@scoutFormFormat" Type="FormType.Update" OnSubmit="@Update">
 
     </ScoutFormFormatComponent>
 }
@@ -15,18 +15,18 @@
 @code {
 
     [Parameter]
-    public int id { get; set; }
+    public int Id { get; set; }
 
-    private ScoutFormFormatDto scoutFormForamt;
+    private ScoutFormFormatDto scoutFormFormat;
 
     protected override async Task OnInitializedAsync()
     {
-        scoutFormForamt = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/" + id);
+        scoutFormFormat = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/" + Id);
     }
 
     private async Task Update()
     {
-        if (await Http.TryPutJson("ScoutFormFormat/" + id, scoutFormForamt))
+        if (await Http.TryPutJson("ScoutFormFormat/" + Id, scoutFormFormat))
         {
             NavigationManager.NavigateTo("ScoutFormFormats");
         }

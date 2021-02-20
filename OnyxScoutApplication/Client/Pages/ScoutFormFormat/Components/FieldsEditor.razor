@@ -12,12 +12,12 @@
     </div>
     FieldDto field = Fields[i];
     <div>
-        <label for="name">Field name</label>
+        <label>Field name</label>
         <InputText class="form-control" @bind-Value="field.Name"/>
         <ValidationMessage For="@(() => field.Name)"/>
     </div>
     <div>
-        <label for="type">Field type</label>
+        <label>Field type</label>
         <select class="form-control" @bind="field.FieldType">
             @foreach (var type in Enum.GetValues(typeof(FieldType)))
             {
@@ -85,7 +85,7 @@
     {
         if (Fields.Count <= 24)
         {
-            Fields.Add(new FieldDto() {Index = Fields.Count});
+            Fields.Add(new FieldDto {Index = Fields.Count});
         }
     }
 
@@ -94,7 +94,7 @@
         Fields.RemoveAt(index);
     }
 
-    private void OnOptionSelect(Microsoft.AspNetCore.Components.ChangeEventArgs e, int index)
+    private void OnOptionSelect(ChangeEventArgs e, int index)
     {
         Fields[index].FieldType = Enum.Parse<FieldType>(e.Value.ToString());
     }

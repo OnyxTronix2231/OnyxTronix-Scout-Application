@@ -28,7 +28,7 @@ else
                 <td>@scoutForm.Year</td>
                 <td>@scoutForm.MatchName</td>
                 <td>@scoutForm.WriterUserName</td>
-                <SfButton CssClass="e-warning" @onclick="() => nav(scoutForm)">Edit</SfButton>
+                <SfButton CssClass="e-warning" @onclick="() => Edit(scoutForm)">Edit</SfButton>
             </tr>
         }
         </tbody>
@@ -43,7 +43,7 @@ else
         scoutForms = await Http.GetJson<List<ScoutFormDto>>("ScoutForm");
     }
 
-    private void nav(ScoutFormDto scoutForm)
+    private void Edit(ScoutFormDto scoutForm)
     {
         NavigationManager.NavigateTo("ScoutForm/Edit/" + scoutForm.Id);
     }

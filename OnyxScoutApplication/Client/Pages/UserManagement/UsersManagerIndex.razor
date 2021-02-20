@@ -31,7 +31,7 @@ else
                 <td>
                     @roles
                 </td>
-                <SfButton CssClass="e-warning" @onclick="() => edit(applicationUser)">Edit</SfButton>
+                <SfButton CssClass="e-warning" @onclick="() => Edit(applicationUser)">Edit</SfButton>
             </tr>
         }
         </tbody>
@@ -46,7 +46,7 @@ else
         applicationUsers = await Http.GetJson<List<ApplicationUserDto>>("ApplicationUser");
     }
 
-    private void edit(ApplicationUserDto applicationUserDto)
+    private void Edit(ApplicationUserDto applicationUserDto)
     {
         NavigationManager.NavigateTo("/UsersManager/Edit/" + applicationUserDto.UserName);
     }

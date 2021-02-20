@@ -1,4 +1,4 @@
-﻿@page "/TeamDetails/{teamNumber:int}"
+﻿@page "/TeamDetails/{TeamNumber:int}"
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
 @inject TeamDataAnalyzer TeamDataAnalyzer
@@ -7,9 +7,9 @@
 
 @if (endGameCalculatedData != null)
 {
-    <h3>Team @teamNumber</h3>
+    <h3>Team @TeamNumber</h3>
     <h4>@selectedEvent?.Name</h4>
-    <a href="/TeamDetails/Notes/@teamNumber">Notes</a>
+    <a href="/TeamDetails/Notes/@TeamNumber">Notes</a>
 
     <br/>
     <h5>Autonomous</h5>
@@ -21,13 +21,13 @@
     <h5>End game</h5>
     <TeamAnalyticGrid CalculatedData="endGameCalculatedData"></TeamAnalyticGrid>
     <br/>
-    <MatchesGrid Matches="matches" TeamNumber="teamNumber" SubmittedForms="data" OnTeamClicked="OnTeamClicked"></MatchesGrid>
+    <MatchesGrid Matches="matches" TeamNumber="TeamNumber" SubmittedForms="data" OnTeamClicked="OnTeamClicked"></MatchesGrid>
 }
 
 @code {
 
     [Parameter]
-    public int teamNumber { get; set; }
+    public int TeamNumber { get; set; }
 
     private Event selectedEvent;
     private List<ScoutFormDto> data;
@@ -43,19 +43,20 @@
         {
             return;
         }
-        var formate = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
-        var result = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByTeam/" + teamNumber + "/" + selectedEvent.Key);
+        var format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        var result = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
         data = result.OrderBy(i => i.MatchName).ToList();
-        var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetMatchesByTeamAndEvent/" + teamNumber + "/" + selectedEvent.Key);
-        this.matches = matches.OrderBy(i => i.Date).ToList();
-        autoCalculatedData = TeamDataAnalyzer.CalculateDataFor(formate.AutonomousFields, result, scoutForm => scoutForm.AutonomousData, s => true);
-        teleopCalculatedData = TeamDataAnalyzer.CalculateDataFor(formate.TeleoperatedFields, result, scoutForm => scoutForm.TeleoperatedData, s => true);
-        endGameCalculatedData = TeamDataAnalyzer.CalculateDataFor(formate.EndGameFields, result, scoutForm => scoutForm.EndGameData, s => true);
+        matches = (await Http.GetJson<List<Match>>
+            ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))
+            .OrderBy(i => i.Date).ToList();
+        autoCalculatedData = TeamDataAnalyzer.CalculateDataFor(format.AutonomousFields, result, scoutForm => scoutForm.AutonomousData, s => true);
+        teleopCalculatedData = TeamDataAnalyzer.CalculateDataFor(format.TeleoperatedFields, result, scoutForm => scoutForm.TeleoperatedData, s => true);
+        endGameCalculatedData = TeamDataAnalyzer.CalculateDataFor(format.EndGameFields, result, scoutForm => scoutForm.EndGameData, s => true);
     }
 
     private void OnTeamClicked(TeamInMatch teamInMatch)
     {
-        if (teamInMatch.TeamNumber != teamNumber)
+        if (teamInMatch.TeamNumber != TeamNumber)
         {
             NavigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber, true);
         }

@@ -15,7 +15,7 @@
     public int Id { get; set; }
 
     [CascadingParameter]
-    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    public Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
     private ScoutFormDto scoutForm;
 
@@ -25,7 +25,6 @@
         if (scoutForm == null)
         {
             NavigationManager.NavigateTo("/");
-            return;
         }
     }
 

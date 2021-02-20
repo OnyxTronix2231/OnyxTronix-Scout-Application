@@ -5,28 +5,26 @@
 <div>
     @if (IsEditMode)
     {
-        <label for="name">Field default value</label>
+        <label>Field default value</label>
     }
-    <Syncfusion.Blazor.DropDowns.SfDropDownList TValue="string" TItem="string" DataSource="this.Field.Options" @bind-Value="CurrentValue"/>
-    <ValidationMessage For="@ValueExpression"/>
+    <syncfusion.blazor.dropdowns.sfdropdownlist TValue="string" TItem="string" DataSource="this.Field.Options" @bind-Value="CurrentValue"/>
+    <validationmessage For="@ValueExpression"/>
 </div>
 @if (IsEditMode)
 {
     <div>
         <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required"/>
-        <ValidationMessage For="@(() => Field.Required)"/>
+        <validationmessage For="@(() => Field.Required)"/>
     </div>
     @foreach (var (item, index) in options.Select((x, i) => (x, i)))
     {
-        var name = options[index];
         <div>
             <button type="button" class="btn btn-danger" @onclick="() => RemoveOption(index)">Remove option</button>
-            @{ var v = name.OptionText; }
+            @{ var v = item.OptionText; }
             <SfTextBox Value="@v" Input="a => Update(a, index)"></SfTextBox >
-
         </div>
     }
-    <ValidationMessage For="@(() => Field.Options)"/>
+    <validationmessage For="@(() => Field.Options)"/>
     <br/>
     <div>
         <button type="button" class="btn btn-dark" @onclick="AddOption">Add option</button>
@@ -38,7 +36,7 @@
 
     protected override Task OnInitializedAsync()
     {
-        options = Field.Options.Select(i => new Option() {OptionText = i}).ToList();
+        options = Field.Options.Select(i => new Option {OptionText = i}).ToList();
         return base.OnInitializedAsync();
     }
 
