@@ -21,8 +21,8 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 select getTargetList(scoutForm).FirstOrDefault(i => i.Field.NameId == field.NameId)
                 into scoutFormData
                 where scoutFormData != null
-                where scoutFormData.NumricValue != null
-                select (int) scoutFormData.NumricValue)
+                where scoutFormData.NumericValue != null
+                select (int) scoutFormData.NumericValue)
             {
                 average += value;
                 count++;

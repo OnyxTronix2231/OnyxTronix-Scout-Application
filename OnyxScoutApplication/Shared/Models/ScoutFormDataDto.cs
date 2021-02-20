@@ -16,13 +16,13 @@ namespace OnyxScoutApplication.Shared.Models
         public int? ScoutFormDataId { get; set; }
 
         [ForeignKey("Field")]
-        public int FieldID { get; set; }
+        public int FieldId { get; set; }
 
         public FieldDto Field { get; set; }
 
         public string StringValue {get; set; }
 
-        public int? NumricValue {get; set; }
+        public int? NumericValue {get; set; }
 
         public bool BooleanValue {get; set; }
 

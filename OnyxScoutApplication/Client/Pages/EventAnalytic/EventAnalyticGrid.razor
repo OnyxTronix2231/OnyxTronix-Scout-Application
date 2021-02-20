@@ -13,7 +13,7 @@
                             FilterSettings="@(new FilterSettings{Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"  
                             Width="100px">
                     <Template> 
-                        @{ 
+                        @{  
                             var v = (dynamic) context;
                             <div><span class="clickable"
                                        @onclick="() => OnTeamGridClicked(v.TeamNumber)"> @(v.Nickname)</span></div>

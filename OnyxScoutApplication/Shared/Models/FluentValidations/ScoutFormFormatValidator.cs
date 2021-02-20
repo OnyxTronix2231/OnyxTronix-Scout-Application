@@ -7,9 +7,9 @@ using System.Text;
 
 namespace OnyxScoutApplication.Shared.Models.FluentValidations
 {
-    public class ScoutFormForamtValidator : AbstractValidator<ScoutFormFormatDto>
+    public class ScoutFormFormatValidator : AbstractValidator<ScoutFormFormatDto>
     {
-        public ScoutFormForamtValidator()
+        public ScoutFormFormatValidator()
         {
             RuleFor(x => x.Year).GreaterThanOrEqualTo(2000).LessThanOrEqualTo(2099);
             RuleForEach(x => x.AutonomousFields).SetValidator(new FieldValidator());

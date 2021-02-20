@@ -46,8 +46,10 @@ namespace OnyxScoutApplication.Client
             services.AddTransient<HttpClientManager>();
             services.AddTransient<TeamDataAnalyzer>();
             services.AddSingleton<NotificationManager>();
-            services.AddTransient<IValidator<ScoutFormFormatDto>, ScoutFormForamtValidator>();
+            services.AddTransient<IValidator<ScoutFormFormatDto>, ScoutFormFormatValidator>();
             services.AddTransient<IValidator<FieldDto>, FieldValidator>();
+            services.AddTransient<IValidator<ApplicationUserDto>, ApplicationUserValidator>();
+            services.AddTransient<IValidator<ScoutFormDto>, ScoutFormValidator>();
             services.AddBlazoredLocalStorage();
         }
     }

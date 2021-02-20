@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication.Internal;
 
 namespace OnyxScoutApplication.Client.Others.Extensions
 {
-    public abstract class RolesClaimsPrincipalFactory : AccountClaimsPrincipalFactory<RemoteUserAccount>
+    public class RolesClaimsPrincipalFactory : AccountClaimsPrincipalFactory<RemoteUserAccount>
     {
-        protected RolesClaimsPrincipalFactory(IAccessTokenProviderAccessor accessor) : base(accessor)
+        public RolesClaimsPrincipalFactory(IAccessTokenProviderAccessor accessor) : base(accessor)
         {
         }
 

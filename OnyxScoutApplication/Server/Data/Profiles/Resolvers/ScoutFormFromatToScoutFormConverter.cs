@@ -37,7 +37,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 
         private ScoutFormDataDto GetScoutFormDataFromField(FieldDto field)
         {
-            ScoutFormDataDto scoutFormData = new ScoutFormDataDto() { Field = field, FieldID = field.Id };
+            ScoutFormDataDto scoutFormData = new ScoutFormDataDto() { Field = field, FieldId = field.Id };
             switch (field.FieldType)
             {
                 case FieldType.None:
@@ -51,7 +51,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                     scoutFormData.StringValue = field.TextDefaultValue;
                     break;
                 case FieldType.Numeric:
-                    scoutFormData.NumricValue = field.NumricDefaultValue;
+                    scoutFormData.NumericValue = field.NumericDefaultValue;
                     break;
                 case FieldType.MultipleChoice:
                     scoutFormData.SelectedOptions = field.DefaultSelectedOptions;

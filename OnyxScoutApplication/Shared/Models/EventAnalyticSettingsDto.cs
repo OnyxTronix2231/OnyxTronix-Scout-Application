@@ -7,13 +7,12 @@ namespace OnyxScoutApplication.Shared.Models
 {
     public class EventAnalyticSettingsDto
     {
-        public int Id { get; set; }
-        public List<CombinedFieldsDto> CombinedFields { get; set; } = new List<CombinedFieldsDto>();
+        public List<CombinedFieldsDto> CombinedFields { get; } = new List<CombinedFieldsDto>();
     }
 
     public class CombinedFieldsDto
     {
-        public List<FieldDto> Fields { get; set; } = new List<FieldDto>();
+        public List<FieldDto> Fields { get; } = new List<FieldDto>();
 
         public string Name
         {
@@ -23,7 +22,7 @@ namespace OnyxScoutApplication.Shared.Models
             }
         }
 
-        public MarkupString MarupName
+        public MarkupString MarkupName
         {
             get
             {

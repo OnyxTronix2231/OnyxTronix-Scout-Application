@@ -20,7 +20,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             destination = new ScoutFormDataDto
             {
                 Field = mapper.Map<FieldDto>(source.Field),
-                FieldID = source.FieldID,
+                FieldId = source.FieldId,
                 Id = source.Id
             };
 
@@ -39,7 +39,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 case FieldType.Numeric:
                     if (!string.IsNullOrWhiteSpace(source.Value))
                     {
-                        destination.NumricValue = int.Parse(source.Value);
+                        destination.NumericValue = int.Parse(source.Value);
                     }
                     break;
                 case FieldType.MultipleChoice:

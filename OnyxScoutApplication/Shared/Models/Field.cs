@@ -21,18 +21,18 @@ namespace OnyxScoutApplication.Shared.Models
     {
         Autonomous,
         Teleoperated,
-        EndGame,
+        EndGame
     }
     public class Field
     {
         public int Id { get; set; }
 
-        public int ScoutFormForamtId { get; set; }
+        public int ScoutFormFormatId { get; set; }
 
         public int? FieldId { get; set; }
 
         [JsonIgnore]
-        public ScoutFormFormat ScoutFormForamt { get; set; }
+        public ScoutFormFormat ScoutFormFormat { get; set; }
 
         public string Name { get; set; }
 
@@ -40,7 +40,7 @@ namespace OnyxScoutApplication.Shared.Models
 
         public bool BoolDefaultValue { get; set; }
 
-        public int? NumricDefaultValue { get; set; }
+        public int? NumericDefaultValue { get; set; }
 
         public bool CascadeConditionDefaultValue { get; set; }
 
@@ -50,9 +50,9 @@ namespace OnyxScoutApplication.Shared.Models
 
         public int MaxValue { get; set; } = 9999;
 
-        public int MinValue { get; set; } = 0;
+        public int MinValue { get; set; }
 
-        public bool Required { get; set; } = false;
+        public bool Required { get; set; }
 
         public string Options { get; set; } = "";
 

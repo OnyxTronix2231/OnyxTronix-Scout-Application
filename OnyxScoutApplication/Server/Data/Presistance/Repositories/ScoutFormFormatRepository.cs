@@ -92,7 +92,7 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
         {
             foreach (Field aField in fields)
             {
-                aField.ScoutFormForamtId = id;
+                aField.ScoutFormFormatId = id;
                 RecursivelySetScoutFormForamtId(id, aField.CascadeFields);
             }
         }

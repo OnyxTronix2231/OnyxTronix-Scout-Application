@@ -68,9 +68,8 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                     if (combinedField.Fields.Count <= 1) continue;
 
                     newColumnField.Name = combinedField.Name;
-                    newColumnField.MarkupName = combinedField.MarupName;
+                    newColumnField.MarkupName = combinedField.MarkupName;
                     newColumnField.NameId = combinedField.NameId;
-                    //combinedFields.Add(newColumnField);
                     ColumnsFields.Insert(
                         ColumnsFields.IndexOf(ColumnsFields.FirstOrDefault(i => i.NameId == lastField?.NameId)) + 1,
                         newColumnField);
@@ -86,7 +85,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             {
                 List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(Fields, ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), GetTargetList, s => true).ToList();
 
-                IDictionary<String, Object> rows = new ExpandoObject();
+                IDictionary<string, object> rows = new ExpandoObject();
 
                 rows.Add("TeamNumber", team.TeamNumber);
                 rows.Add("Nickname", team.Nickname);

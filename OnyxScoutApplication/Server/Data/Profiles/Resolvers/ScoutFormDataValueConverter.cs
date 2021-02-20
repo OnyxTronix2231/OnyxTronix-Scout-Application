@@ -24,7 +24,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                     destination.Value = source.StringValue;
                     break;
                 case FieldType.Numeric:
-                    destination.Value = source.NumricValue.ToString();
+                    destination.Value = source.NumericValue.ToString();
                     break;
                 case FieldType.MultipleChoice:
                     if (source.SelectedOptions != null)

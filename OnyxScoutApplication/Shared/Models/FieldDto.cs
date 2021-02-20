@@ -10,19 +10,18 @@ namespace OnyxScoutApplication.Shared.Models
     {
         public int Id { get; set; }
 
-        //[ForeignKey("ScoutFormForamt")]
-        public int ScoutFormForamtId { get; set; }
+        public int ScoutFormFormatId { get; set; }
 
         [JsonIgnore]
-        public ScoutFormFormat ScoutFormForamt { get; set; }
+        public ScoutFormFormat ScoutFormFormat { get; set; }
 
-        public virtual string Name { get; set; }
+        public string Name { get; set; }
 
         public string TextDefaultValue { get; set; }
 
         public bool BoolDefaultValue { get; set; }
 
-        public int? NumricDefaultValue { get; set; }
+        public int? NumericDefaultValue { get; set; }
 
         public bool CascadeConditionDefaultValue { get; set; }
 
@@ -34,9 +33,9 @@ namespace OnyxScoutApplication.Shared.Models
 
         public int MaxValue { get; set; } = 9999;
 
-        public int MinValue { get; set; } = 0;
+        public int MinValue { get; set; }
 
-        public bool Required { get; set; } = false;
+        public bool Required { get; set; }
 
         public List<string> Options { get; set; } = new List<string>();
 
@@ -48,6 +47,6 @@ namespace OnyxScoutApplication.Shared.Models
 
         public int Index { get; set; }
         
-        public virtual string NameId => Name + FieldStageType?.ToString();
+        public string NameId => Name + FieldStageType;
     }
 }
