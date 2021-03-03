@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OnyxScoutApplication.Server.Data.Presistance.Repositories.Interfaces;
 using OnyxScoutApplication.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
 using static OnyxScoutApplication.Server.Data.Extensions.Result;
 
-namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
+namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
     public class ScoutFormFormatRepository : Repository<ScoutFormFormat, ScoutFormFormatDto>, IScoutFormFormatRepository
     {

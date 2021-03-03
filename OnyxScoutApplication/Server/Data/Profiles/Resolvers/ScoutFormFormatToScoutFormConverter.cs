@@ -7,15 +7,8 @@ using System.Threading.Tasks;
 
 namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 {
-    public class ScoutFormFromatToScoutFormConverter : ITypeConverter<ScoutFormFormatDto, ScoutFormDto>
+    public class ScoutFormFormatToScoutFormConverter : ITypeConverter<ScoutFormFormatDto, ScoutFormDto>
     {
-        private readonly IMapper mapper;
-
-        public ScoutFormFromatToScoutFormConverter(IMapper mapper)
-        {
-            this.mapper = mapper;
-        }
-
         public ScoutFormDto Convert(ScoutFormFormatDto source, ScoutFormDto destination, ResolutionContext context)
         {
             destination = new ScoutFormDto();
@@ -37,9 +30,9 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             return destination;
         }
 
-        private ScoutFormDataDto GetScoutFormDataFromField(FieldDto field)
+        private static ScoutFormDataDto GetScoutFormDataFromField(FieldDto field)
         {
-            ScoutFormDataDto scoutFormData = new ScoutFormDataDto() {Field = field, FieldId = field.Id};
+            ScoutFormDataDto scoutFormData = new ScoutFormDataDto {Field = field, FieldId = field.Id};
             switch (field.FieldType)
             {
                 case FieldType.None:
@@ -59,7 +52,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                     scoutFormData.SelectedOptions = field.DefaultSelectedOptions;
                     break;
                 default:
-                    break;
+                    throw new ArgumentOutOfRangeException();
             }
 
             foreach (var f in field.CascadeFields)

@@ -36,7 +36,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             return destination.Data;
         }
 
-        private void DeleteFieldRefRecursively(List<ScoutFormData> data)
+        private static void DeleteFieldRefRecursively(List<ScoutFormData> data)
         {
             data.ForEach(i => i.Field = null);
             data.ForEach(i => DeleteFieldRefRecursively(i.CascadeData));

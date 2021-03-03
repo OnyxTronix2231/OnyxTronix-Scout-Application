@@ -44,7 +44,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles
                 opt => opt.MapFrom<ScoutFormFormatValueConverter>());
 
             CreateMap<ScoutFormDataDto, ScoutFormData>()
-                .ForMember((des) => des.Value, opt => opt.MapFrom<ScoutFormDataValueConverter>());
+                .ForMember(des => des.Value, opt => opt.MapFrom<ScoutFormDataValueConverter>());
             CreateMap<ScoutFormData, ScoutFormDataDto>().ConvertUsing<ScoutFormDataDtoConverter>();
 
             CreateMap<ScoutForm, ScoutForm>();
@@ -59,7 +59,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles
                 .ForMember(src => src.EndGameData,
                     opt => opt.MapFrom(des => des.Data.Where(i => i.Field.FieldStageType == FieldStageType.EndGame)));
 
-            CreateMap<ScoutFormFormatDto, ScoutFormDto>().ConvertUsing<ScoutFormFromatToScoutFormConverter>();
+            CreateMap<ScoutFormFormatDto, ScoutFormDto>().ConvertUsing<ScoutFormFormatToScoutFormConverter>();
 
             CreateMap<IdentityRole, IdentityRoleDto>();
             CreateMap<IdentityRoleDto, IdentityRole>();

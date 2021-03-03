@@ -1,10 +1,8 @@
-﻿using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 
-namespace OnyxScoutApplication.Shared.Data.Presistance.TheBlueAlliance
+namespace OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance
 {
     public interface ITheBlueAllianceService
     {

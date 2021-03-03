@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using OnyxScoutApplication.Server.Data.Presistance.UnitsOfWork.interfaces;
+using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
 using OnyxScoutApplication.Shared.Models;
 using static OnyxScoutApplication.Server.Data.Extensions.Result;
 using OnyxScoutApplication.Shared.Other;

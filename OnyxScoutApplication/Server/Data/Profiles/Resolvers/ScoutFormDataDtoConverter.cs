@@ -47,8 +47,10 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 case FieldType.MultipleChoice:
                     destination.SelectedOptions = source.Value?.Split(';').ToList();
                     break;
+                case FieldType.None:
+                    throw new ArgumentOutOfRangeException();
                 default:
-                    break;
+                    throw new ArgumentOutOfRangeException();
             }
 
             return destination;

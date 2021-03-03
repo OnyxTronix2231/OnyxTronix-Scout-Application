@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace OnyxScoutApplication.Server.Data.Presistance.Repositories.Interfaces
+namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 {
     public interface IRepository<DbEntity, DtoEntity> where DbEntity : class where DtoEntity : class
     {

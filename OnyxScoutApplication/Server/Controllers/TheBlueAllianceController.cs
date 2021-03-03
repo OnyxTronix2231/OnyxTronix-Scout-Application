@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnyxScoutApplication.Shared.Data.Presistance.TheBlueAlliance;
+using OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance;
 using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 
 namespace OnyxScoutApplication.Server.Controllers

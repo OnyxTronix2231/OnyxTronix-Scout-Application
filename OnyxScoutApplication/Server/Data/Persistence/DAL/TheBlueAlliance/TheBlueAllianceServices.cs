@@ -1,14 +1,11 @@
-﻿using OnyxScoutApplication.Shared.Data.Presistance.TheBlueAlliance;
-using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 
-namespace OnyxScoutApplication.Server.Data.Presistance.TheBlueAlliance
+namespace OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance
 {
     public class TheBlueAllianceService : ITheBlueAllianceService
     {

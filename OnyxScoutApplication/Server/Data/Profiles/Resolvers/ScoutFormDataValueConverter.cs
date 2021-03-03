@@ -14,8 +14,6 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
         {
             switch (source.Field.FieldType)
             {
-                case FieldType.None:
-                    break;
                 case FieldType.CascadeField:
                 case FieldType.Boolean:
                     destination.Value = source.BooleanValue.ToString();
@@ -32,10 +30,11 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                     {
                         destination.Value = string.Join(";", source.SelectedOptions);
                     }
-
                     break;
+                case FieldType.None:
+                    throw new ArgumentOutOfRangeException();
                 default:
-                    break;
+                    throw new ArgumentOutOfRangeException();
             }
 
             return destination.Value;

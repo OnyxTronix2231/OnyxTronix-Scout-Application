@@ -1,20 +1,20 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OnyxScoutApplication.Server.Data.Presistance.Repositories.Interfaces;
 using OnyxScoutApplication.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
 using static OnyxScoutApplication.Server.Data.Extensions.Result;
 
-namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
+namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
     public class ScoutFormRepository : Repository<ScoutForm, ScoutFormDto>, IScoutFormRepository
     {
-        public ScoutFormRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
+        public ScoutFormRepository(DbContext context, IMapper mapper) : base(context, mapper)
         {
         }
 
@@ -78,22 +78,13 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             return await Update(result, scoutFormDto);
         }
 
-        public async Task<ActionResult> Update(ScoutForm scoutForm, ScoutFormDto scoutFormDto)
+        private async Task<ActionResult> Update(ScoutForm scoutForm, ScoutFormDto scoutFormDto)
         {
             var updated = mapper.Map<ScoutForm>(scoutFormDto);
             scoutForm = mapper.Map(updated, scoutForm);
             RecursivelySetScoutFormId(scoutForm.Id, scoutForm.Data);
             context.Update(scoutForm);
             return await Task.Run(() => new OkResult());
-        }
-
-        private void RecursivelySetScoutFormId(int id, List<ScoutFormData> data)
-        {
-            foreach (ScoutFormData aData in data)
-            {
-                aData.ScoutFormId = id;
-                RecursivelySetScoutFormId(id, aData.CascadeData);
-            }
         }
 
         public async Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByEvent(string eventKey)
@@ -110,9 +101,15 @@ namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
             return mapper.Map<List<ScoutFormDto>>(scoutForm);
         }
 
-        private ApplicationDbContext ScoutAppContext
+        private static void RecursivelySetScoutFormId(int id, IEnumerable<ScoutFormData> data)
         {
-            get { return context as ApplicationDbContext; }
+            foreach (ScoutFormData aData in data)
+            {
+                aData.ScoutFormId = id;
+                RecursivelySetScoutFormId(id, aData.CascadeData);
+            }
         }
+
+        private ApplicationDbContext ScoutAppContext => context as ApplicationDbContext;
     }
 }

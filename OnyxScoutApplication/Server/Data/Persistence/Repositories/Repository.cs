@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OnyxScoutApplication.Server.Data.Presistance.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
 
-namespace OnyxScoutApplication.Server.Data.Presistance.Repositories
+namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
     public class Repository<DbEntity, DtoEntity> : IRepository<DbEntity, DtoEntity>
         where DbEntity : class where DtoEntity : class

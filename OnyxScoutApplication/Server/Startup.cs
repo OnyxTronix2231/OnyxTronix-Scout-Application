@@ -13,15 +13,13 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using OnyxScoutApplication.Server.Data;
 using OnyxScoutApplication.Server.Models;
-using OnyxScoutApplication.Server.Data.Presistance.Repositories;
-using OnyxScoutApplication.Server.Data.Presistance.Repositories.Interfaces;
-using OnyxScoutApplication.Server.Data.Presistance.UnitsOfWork;
-using OnyxScoutApplication.Server.Data.Presistance.UnitsOfWork.interfaces;
+using OnyxScoutApplication.Server.Data.Persistence.Repositories;
+using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
+using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork;
+using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
 using AutoMapper;
 using System;
 using OnyxScoutApplication.Server.Data.Profiles;
-using OnyxScoutApplication.Shared.Data.Presistance.TheBlueAlliance;
-using OnyxScoutApplication.Server.Data.Presistance.TheBlueAlliance;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -32,37 +30,29 @@ using IdentityServer4.AspNetIdentity;
 using IdentityServer4.Services;
 using OnyxScoutApplication.Server.Data.Extensions;
 using IdentityServer4.Extensions;
+using OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance;
 
 namespace OnyxScoutApplication.Server
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
-        public IWebHostEnvironment Env { get; }
+        private readonly IConfiguration configuration;
+        private readonly IWebHostEnvironment env;
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
-            Configuration = configuration;
-            Env = env;
+            this.configuration = configuration;
+            this.env = env;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            Console.WriteLine($"Configuring services in {Env.EnvironmentName} mode");
+            Console.WriteLine($"Configuring services in {env.EnvironmentName} mode");
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                string connectionString;
-                if (Env.IsDevelopment())
-                {
-                    connectionString = Configuration.GetConnectionString("LocalConnection");
-                }
-                else
-                {
-                    connectionString = Configuration.GetConnectionString("DefaultConnection");
-                }
-
+                var connectionString = configuration.GetConnectionString(env.IsDevelopment() ? "LocalConnection" : "DefaultConnection");
                 options.UseSqlServer(connectionString);
             });
 
@@ -74,9 +64,9 @@ namespace OnyxScoutApplication.Server
             services.AddTransient<IProfileService, ProfileService>();
             services.AddIdentityServer(options =>
             {
-                if (!Env.IsDevelopment())
+                if (!env.IsDevelopment())
                 {
-                    options.PublicOrigin = Configuration.GetValue<string>("PublicOrigin");
+                    options.PublicOrigin = configuration.GetValue<string>("PublicOrigin");
                 }
             }).AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
             {
@@ -112,7 +102,7 @@ namespace OnyxScoutApplication.Server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
-            if (Env.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
@@ -132,11 +122,11 @@ namespace OnyxScoutApplication.Server
             app.UseRouting();
 
             app.UseIdentityServer();
-            if (!Env.IsDevelopment())
+            if (!env.IsDevelopment())
             {
                 app.Use((ctx, next) =>
                 {
-                    ctx.SetIdentityServerOrigin(Configuration.GetValue<string>("PublicOrigin"));
+                    ctx.SetIdentityServerOrigin(configuration.GetValue<string>("PublicOrigin"));
                     return next();
                 });
             }

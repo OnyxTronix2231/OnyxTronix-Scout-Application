@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnyxScoutApplication.Server.Data.Presistance.Repositories.Interfaces
+namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 {
     public interface IScoutFormRepository : IRepository<ScoutForm, ScoutFormDto>
     {
