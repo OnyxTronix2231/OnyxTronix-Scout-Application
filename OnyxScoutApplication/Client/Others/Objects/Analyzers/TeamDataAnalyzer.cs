@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OnyxScoutApplication.Client.Others.Objects.TeamData;
+using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData;
 using OnyxScoutApplication.Shared.Models;
 
 namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
-    public class TeamDataAnalyzer
+    public static class TeamDataAnalyzer
     {
-        public List<TeamFieldAverage> CalculateDataFor(IEnumerable<FieldDto> fields, List<ScoutFormDto> scoutForms,
+        public static List<TeamFieldAverage> CalculateDataFor(IEnumerable<FieldDto> fields, List<ScoutFormDto> scoutForms,
             Func<ScoutFormDto, List<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
         {
             List<TeamFieldAverage> averages = new List<TeamFieldAverage>();
@@ -31,31 +31,33 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             return averages;
         }
 
-        private TeamFieldAverage GetAvgFor(FieldDto field, List<ScoutFormDto> data,
+        private static TeamFieldAverage GetAvgFor(FieldDto field, IEnumerable<ScoutFormDto> data,
             Func<ScoutFormDto, List<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
         {
-            if (field.FieldType == FieldType.Numeric)
+            IFieldAnalyzer analyzer;
+            switch (field.FieldType)
             {
-                NumericalAnalyzer numericAnalyzer = new NumericalAnalyzer();
-                return numericAnalyzer.Analyze(data, field, getTargetList, shouldCount);
+                case FieldType.Numeric:
+                    analyzer = new NumericalAnalyzer();
+                    break;
+                case FieldType.Boolean:
+                case FieldType.CascadeField:
+                    analyzer = new BooleanAnalyzer();
+                    break;
+                case FieldType.OptionSelect:
+                    analyzer = new OptionSelectAnalyzer();
+                    break;
+                case FieldType.MultipleChoice:
+                    analyzer = new MultipleChoiceAnalyzer();
+                    break;
+                case FieldType.None:
+                    throw new NotSupportedException();
+                case FieldType.TextField:
+                    throw new NotSupportedException();
+                default:
+                    throw new NotSupportedException();
             }
-            else if (field.FieldType == FieldType.Boolean || field.FieldType == FieldType.CascadeField)
-            {
-                BooleanAnalyzer booleanAnalyzer = new BooleanAnalyzer();
-                return booleanAnalyzer.Analyze(data, field, getTargetList, shouldCount);
-            }
-            else if (field.FieldType == FieldType.OptionSelect)
-            {
-                OptionSelectAnalyzer optionSelectAnalyzer = new OptionSelectAnalyzer();
-                return optionSelectAnalyzer.Analyze(data, field, getTargetList, shouldCount);
-            }
-            else if (field.FieldType == FieldType.MultipleChoice)
-            {
-                MultipleChoiceAnalyzer multipleChoiceAnalyzer = new MultipleChoiceAnalyzer();
-                return multipleChoiceAnalyzer.Analyze(data, field, getTargetList, shouldCount);
-            }
-
-            return null;
+            return analyzer.Analyze(data, field, getTargetList, shouldCount);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 {
                     string json = await response.Content.ReadAsStringAsync();
                     result = JsonSerializer.Deserialize<T>(json,
-                        new JsonSerializerOptions() {PropertyNameCaseInsensitive = true});
+                        new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
                 }
                 else
                 {
@@ -52,10 +52,10 @@ namespace OnyxScoutApplication.Client.Others.Managers
         {
             try
             {
-                var respons = await httpClient.PutAsync(command, Serialize(objectToPut));
-                if (!respons.IsSuccessStatusCode)
+                var response = await httpClient.PutAsync(command, Serialize(objectToPut));
+                if (!response.IsSuccessStatusCode)
                 {
-                    notificationService.Notify("Error", await respons.Content.ReadAsStringAsync(),
+                    notificationService.Notify("Error", await response.Content.ReadAsStringAsync(),
                         NotificationType.Danger);
                 }
                 else
@@ -63,7 +63,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
                     notificationService.Notify("Success", "Updated successfully", NotificationType.Success);
                 }
 
-                return respons.IsSuccessStatusCode;
+                return response.IsSuccessStatusCode;
             }
             catch (AccessTokenNotAvailableException exception)
             {
@@ -73,14 +73,14 @@ namespace OnyxScoutApplication.Client.Others.Managers
             return false;
         }
 
-        public async Task<bool> TryPostJson(string command, object objectToPopst)
+        public async Task<bool> TryPostJson(string command, object objectToPost)
         {
             try
             {
-                var respons = await httpClient.PostAsync(command, Serialize(objectToPopst));
-                if (!respons.IsSuccessStatusCode)
+                var response = await httpClient.PostAsync(command, Serialize(objectToPost));
+                if (!response .IsSuccessStatusCode)
                 {
-                    notificationService.Notify("Error", await respons.Content.ReadAsStringAsync(),
+                    notificationService.Notify("Error", await response .Content.ReadAsStringAsync(),
                         NotificationType.Danger);
                 }
                 else
@@ -88,7 +88,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
                     notificationService.Notify("Success", "Created successfully", NotificationType.Success);
                 }
 
-                return respons.IsSuccessStatusCode;
+                return response .IsSuccessStatusCode;
             }
             catch (AccessTokenNotAvailableException exception)
             {
@@ -98,7 +98,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
             return false;
         }
 
-        private HttpContent Serialize(object objectToSerialize)
+        private static HttpContent Serialize(object objectToSerialize)
         {
             var inputJson = JsonSerializer.Serialize(objectToSerialize);
             return new StringContent(inputJson, Encoding.UTF8, "application/json");

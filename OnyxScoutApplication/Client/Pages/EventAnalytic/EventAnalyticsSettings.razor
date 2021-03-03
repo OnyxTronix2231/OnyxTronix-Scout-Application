@@ -77,27 +77,27 @@
         analyticSettings.CombinedFields.Add(new CombinedFieldsDto());
     }
 
-    private void AddField(CombinedFieldsDto combinedFields)
-    {
-        combinedFields.Fields.Add(new FieldDto());
-    }
-
-    private void OnFieldSelected(ChangeEventArgs<int, FieldDto> args, List<FieldDto> fields, int index)
+    private void OnFieldSelected(ChangeEventArgs<int, FieldDto> args, IList<FieldDto> combinedFields, int index)
     {
         if (args.ItemData == null)
         {
             return;
         }
-        fields[index] = args.ItemData;
+        combinedFields[index] = args.ItemData;
         analyticSettings.CombinedFields.ForEach(i => i.Fields.ForEach(ii => Console.WriteLine(ii.Name)));
     }
 
     private async Task SaveSettings()
     {
-        analyticSettings.CombinedFields.ForEach(i => i.Fields.RemoveAll(i => string.IsNullOrEmpty(i.Name)));
+        analyticSettings.CombinedFields.ForEach(i => i.Fields.RemoveAll(f => string.IsNullOrEmpty(f.Name)));
         analyticSettings.CombinedFields.RemoveAll(i => i.Fields.Count <= 1);
         await LocalStorage.SetItemAsync("EventAnalyticSettings/" + selectedEvent.Key, analyticSettings);
         NavigationManager.NavigateTo("EventAnalytics");
+    }
+
+    private static void AddField(CombinedFieldsDto combinedFields)
+    {
+        combinedFields.Fields.Add(new FieldDto());
     }
 
 }

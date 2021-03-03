@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
-using OnyxScoutApplication.Client.Others.Objects.TeamData;
 using OnyxScoutApplication.Shared.Models;
 
 namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
@@ -33,9 +32,9 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 
         public override int CompareTo(TeamFieldAverage other)
         {
-            if (other is NumericTeamFieldAverage numricTeamFieldAverage)
+            if (other is NumericTeamFieldAverage numericTeamFieldAverage)
             {
-                return Average.CompareTo(numricTeamFieldAverage.Average);
+                return GetRelativeValue().CompareTo(numericTeamFieldAverage.GetRelativeValue());
             }
 
             throw new ArgumentException($"Cannot compare {nameof(NumericTeamFieldAverage)} type to {other.GetType()}");

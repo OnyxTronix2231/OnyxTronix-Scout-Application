@@ -39,6 +39,8 @@
         case FieldType.MultipleChoice:
             <MultipleChoiceComponent Field="data.Field" IsEditMode="false" @bind-Value="data.SelectedOptions"></MultipleChoiceComponent>
             break;
+        default:
+            throw new ArgumentOutOfRangeException();
     }
 }
 

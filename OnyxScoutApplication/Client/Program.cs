@@ -47,7 +47,6 @@ namespace OnyxScoutApplication.Client
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(
                 "MzgwMDc5QDMxMzgyZTM0MmUzMFM2RGdsNWJYWDRvR3RQdVdzd1BmOGM0djYxMlNTVWk4RWE0TUxVM3BjVTg9");
             services.AddTransient<HttpClientManager>();
-            services.AddTransient<TeamDataAnalyzer>();
             services.AddSingleton<NotificationManager>();
             services.AddTransient<IValidator<ScoutFormFormatDto>, ScoutFormFormatValidator>();
             services.AddTransient<IValidator<FieldDto>, FieldValidator>();

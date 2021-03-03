@@ -1,5 +1,4 @@
-﻿using OnyxScoutApplication.Client.Others.Objects.TeamData;
-using OnyxScoutApplication.Shared.Models;
+﻿using OnyxScoutApplication.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
     public class NumericalAnalyzer : IFieldAnalyzer
     {
-        public TeamFieldAverage Analyze(List<ScoutFormDto> scoutForms, FieldDto field,
+        public TeamFieldAverage Analyze(IEnumerable<ScoutFormDto> scoutForms, FieldDto field,
             Func<ScoutFormDto, List<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
         {
             NumericTeamFieldAverage fieldAverage = new NumericTeamFieldAverage(field);

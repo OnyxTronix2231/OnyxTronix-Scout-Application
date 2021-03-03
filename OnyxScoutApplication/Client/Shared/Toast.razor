@@ -25,17 +25,11 @@
 
     private SfToast toastObj;
 
-    public override void OnShow(string title, string message, NotificationType type, int timeout, params ToastButton[] toastButtons)
+    protected override void OnShow(string title, string message, NotificationType type, int timeout, params ToastButton[] toastButtons)
     {
         base.OnShow(title, message, type, timeout, toastButtons);
         toastObj.Show();
         StateHasChanged();
-    }
-
-    public override void OnHide()
-    {
-        base.OnHide();
-        toastObj.Hide();
     }
 
 }

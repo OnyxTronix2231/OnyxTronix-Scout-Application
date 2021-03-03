@@ -1,33 +1,31 @@
-﻿using Microsoft.AspNetCore.Components;
-using OnyxScoutApplication.Shared.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData;
+using Microsoft.AspNetCore.Components;
+using OnyxScoutApplication.Shared.Models;
 
-namespace OnyxScoutApplication.Client.Others.Objects.TeamData
+namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 {
     public class OptionSelectTeamFieldAverage : TeamFieldAverage
     {
-        public Dictionary<string, Tuple<float, float>> OptionsAvarage { get; set; }
+        public Dictionary<string, Tuple<float, float>> OptionsAverage { get; }
 
         public OptionSelectTeamFieldAverage(FieldDto field) : base(field)
         {
-            OptionsAvarage = new Dictionary<string, Tuple<float, float>>();
+            OptionsAverage = new Dictionary<string, Tuple<float, float>>();
         }
 
         public override MarkupString GetFormattedAverage()
         {
             return new MarkupString(string.Join("<br />",
-                OptionsAvarage.Select(i => $"{i.Key}: {i.Value.Item1}/{i.Value.Item2}")));
+                OptionsAverage.Select(i => $"{i.Key}: {i.Value.Item1}/{i.Value.Item2}")));
         }
 
         public override int CompareTo(TeamFieldAverage other)
         {
-            if (other is OptionSelectTeamFieldAverage booleanTeamFieldAverage)
+            if (other is OptionSelectTeamFieldAverage optionFieldAverage)
             {
-                throw new NotImplementedException("Option select sorting not implemented yet!");
+                return GetRelativeValue().CompareTo(optionFieldAverage.GetRelativeValue());
             }
 
             throw new ArgumentException($"Cannot compare {nameof(NumericTeamFieldAverage)} type to {other.GetType()}");
@@ -35,7 +33,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
 
         public override double GetRelativeValue()
         {
-            return 0;
+            return 0; //TODO: calculate relative value
         }
     }
 }

@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using OnyxScoutApplication.Shared.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData;
 
-namespace OnyxScoutApplication.Client.Others.Objects.TeamData
+namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 {
     public class BooleanTeamFieldAverage : TeamFieldAverage
     {
@@ -19,11 +15,6 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
         {
         }
 
-        public float GetAverage()
-        {
-            return TrueCount / (float) TotalCount;
-        }
-
         public override MarkupString GetFormattedAverage()
         {
             return new MarkupString(
@@ -34,7 +25,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
         {
             if (other is BooleanTeamFieldAverage booleanTeamFieldAverage)
             {
-                return GetAverage().CompareTo(booleanTeamFieldAverage.GetAverage());
+                return GetRelativeValue().CompareTo(booleanTeamFieldAverage.GetRelativeValue());
             }
 
             throw new ArgumentException($"Cannot compare {nameof(NumericTeamFieldAverage)} type to {other.GetType()}");
@@ -43,6 +34,11 @@ namespace OnyxScoutApplication.Client.Others.Objects.TeamData
         public override double GetRelativeValue()
         {
             return GetAverage();
+        }
+
+        private float GetAverage()
+        {
+            return TrueCount / (float) TotalCount;
         }
     }
 }

@@ -1,25 +1,24 @@
 ﻿using Microsoft.AspNetCore.Components;
 using OnyxScoutApplication.Client.Others.Managers;
-using OnyxScoutApplication.Client.Others.Objects.TeamData;
 using OnyxScoutApplication.Shared.Models;
 using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData;
 
 namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
     public abstract class TeamsAnalyzer : ComponentBase
     {
         [Inject]
-        TeamDataAnalyzer TeamDataAnalyzer { get; set; }
+        // ReSharper disable once UnusedAutoPropertyAccessor.Local
+        private NavigationManager NavigationManager { get; set; }
 
         [Inject]
-        NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        NotificationManager NotificationManager { get; set; }
+        // ReSharper disable once UnusedAutoPropertyAccessor.Local
+        private NotificationManager NotificationManager { get; set; }
 
         [Parameter]
         public List<Team> Teams { get; set; }
@@ -46,7 +45,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
         {
             //List<FieldDto> combinedFields = new List<FieldDto>();
             // scoutFormFieldsToCalculate = new List<FieldDto>(Fields);
-            ColumnsFields = Fields.Select(i => new ColumnField()
+            ColumnsFields = Fields.Select(i => new ColumnField
                 {Name = i.Name, MarkupName = new MarkupString(i.Name), NameId = i.NameId}).ToList();
             if (EventAnalyticSettings != null)
             {

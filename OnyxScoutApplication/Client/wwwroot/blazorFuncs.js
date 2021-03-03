@@ -3,7 +3,7 @@
         window['updateAvailable']
             .then(isAvailable => {
                 if (isAvailable) {
-                    caller.invokeMethodAsync("onupdateavailable").then(r => console.log(r));
+                    caller.invokeMethodAsync("onUpdateAvailable").then(r => console.log(r));
                 }
             });
     }

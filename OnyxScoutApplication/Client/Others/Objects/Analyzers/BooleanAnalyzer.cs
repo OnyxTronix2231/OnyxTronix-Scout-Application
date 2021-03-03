@@ -1,15 +1,15 @@
-﻿using OnyxScoutApplication.Client.Others.Objects.TeamData;
-using OnyxScoutApplication.Shared.Models;
+﻿using OnyxScoutApplication.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData;
 
 namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
     public class BooleanAnalyzer : IFieldAnalyzer
     {
-        public TeamFieldAverage Analyze(List<ScoutFormDto> scoutForms, FieldDto field,
+        public TeamFieldAverage Analyze(IEnumerable<ScoutFormDto> scoutForms, FieldDto field,
             Func<ScoutFormDto, List<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
         {
             BooleanTeamFieldAverage fieldAverage = new BooleanTeamFieldAverage(field);

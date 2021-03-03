@@ -8,23 +8,23 @@ namespace OnyxScoutApplication.Client.Others.Objects
 {
     public class NotificationBase : ComponentBase
     {
-        [Inject]
-        NotificationManager NotificationManager { get; set; }
+        [Inject] 
+        // ReSharper disable once UnusedAutoPropertyAccessor.Local
+        private NotificationManager NotificationManager { get; set; }
 
-        protected string Title { get; set; }
-        protected string Message { get; set; }
-        protected int Timeout { get; set; }
-        protected ToastButton[] ToastButtons { get; set; }
-        protected NotificationType NotificationType { get; set; }
-        protected bool IsVisible { get; set; }
+        protected string Title { get; private set; }
+        protected string Message { get; private set; }
+        protected int Timeout { get; private set; }
+        protected ToastButton[] ToastButtons { get; private set; }
+        protected NotificationType NotificationType { get; private set; }
+        //protected bool IsVisible { get; set; }
 
         protected override void OnInitialized()
         {
             NotificationManager.OnShow += OnShow;
-            NotificationManager.OnHide += OnHide;
         }
 
-        public virtual void OnShow(string title, string message, NotificationType notificationType, int timeout,
+        protected virtual void OnShow(string title, string message, NotificationType notificationType, int timeout,
             params ToastButton[] toastButtons)
         {
             Title = title;
@@ -32,13 +32,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
             NotificationType = notificationType;
             Timeout = timeout;
             ToastButtons = toastButtons;
-            IsVisible = true;
-            StateHasChanged();
-        }
-
-        public virtual void OnHide()
-        {
-            IsVisible = false;
+            //IsVisible = true;
             StateHasChanged();
         }
     }

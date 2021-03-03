@@ -1,7 +1,7 @@
 ﻿@page "/TeamDetails/{TeamNumber:int}"
+@using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
-@inject TeamDataAnalyzer TeamDataAnalyzer
 @inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = Roles.Scouter)]
 
