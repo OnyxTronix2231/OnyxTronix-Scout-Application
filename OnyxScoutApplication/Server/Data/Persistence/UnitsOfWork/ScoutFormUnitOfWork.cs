@@ -16,7 +16,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
             ScoutForms = new ScoutFormRepository(context, mapper);
         }
 
-        public IScoutFormRepository ScoutForms { get; private set; }
+        public IScoutFormRepository ScoutForms { get; }
 
         public async Task<int> Complete()
         {

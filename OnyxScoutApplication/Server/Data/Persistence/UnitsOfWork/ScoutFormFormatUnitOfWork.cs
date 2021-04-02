@@ -9,16 +9,14 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
     public class ScoutFormFormatUnitOfWork : IScoutFormFormatUnitOfWork
     {
         private readonly ApplicationDbContext context;
-        private readonly IMapper mapper;
 
         public ScoutFormFormatUnitOfWork(ApplicationDbContext context, IMapper mapper)
         {
             this.context = context;
-            this.mapper = mapper;
             ScoutFormFormats = new ScoutFormFormatRepository(context, mapper);
         }
 
-        public IScoutFormFormatRepository ScoutFormFormats { get; private set; }
+        public IScoutFormFormatRepository ScoutFormFormats { get; }
 
         public async Task<int> Complete()
         {

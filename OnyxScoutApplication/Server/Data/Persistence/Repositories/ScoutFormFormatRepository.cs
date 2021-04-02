@@ -14,28 +14,28 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
     public class ScoutFormFormatRepository : Repository<ScoutFormFormat, ScoutFormFormatDto>, IScoutFormFormatRepository
     {
-        public ScoutFormFormatRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
+        public ScoutFormFormatRepository(DbContext context, IMapper mapper) : base(context, mapper)
         {
         }
 
-        public override async Task<ActionResult> Add(ScoutFormFormatDto scoutFormForamt)
+        public override async Task<ActionResult> Add(ScoutFormFormatDto scoutFormFormat)
         {
-            if (await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Year == scoutFormForamt.Year))
+            if (await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Year == scoutFormFormat.Year))
             {
                 return ResultCode(System.Net.HttpStatusCode.BadRequest,
                     "This scout format already exists for this year!");
             }
 
-            ScoutFormFormatDto clone = new ScoutFormFormatDto()
+            ScoutFormFormatDto clone = new ScoutFormFormatDto
             {
-                Year = scoutFormForamt.Year
+                Year = scoutFormFormat.Year
             };
             await base.Add(clone);
-            await context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
             var result =
-                await ScoutAppContext.ScoutFormFormats.FirstOrDefaultAsync(i => i.Year == scoutFormForamt.Year);
-            scoutFormForamt.Id = result.Id;
-            return await Update(result.Id, scoutFormForamt);
+                await ScoutAppContext.ScoutFormFormats.FirstOrDefaultAsync(i => i.Year == scoutFormFormat.Year);
+            scoutFormFormat.Id = result.Id;
+            return await Update(result.Id, scoutFormFormat);
         }
 
         public async Task<ActionResult<ScoutFormDto>> GetTemplateScoutFormByYear(int year)
@@ -46,7 +46,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                 return new NotFoundObjectResult("No scout form format found for year - " + year);
             }
 
-            return mapper.Map<ScoutFormDto>(result.Value);
+            return Mapper.Map<ScoutFormDto>(result.Value);
         }
 
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFields(int id)
@@ -59,7 +59,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             }
 
             result.Fields = result.Fields.OrderBy(i => i.Index).ToList();
-            return mapper.Map<ScoutFormFormatDto>(result);
+            return Mapper.Map<ScoutFormFormatDto>(result);
         }
 
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFieldsByYear(int year)
@@ -72,10 +72,10 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             }
 
             result.Fields = result.Fields.OrderBy(i => i.Index).ToList();
-            return mapper.Map<ScoutFormFormatDto>(result);
+            return Mapper.Map<ScoutFormFormatDto>(result);
         }
 
-        public async Task<ActionResult> Update(int id, ScoutFormFormatDto scoutFormForamtDto)
+        public async Task<ActionResult> Update(int id, ScoutFormFormatDto scoutFormFormatDto)
         {
             var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.Fields).ThenInclude(f => f.CascadeFields)
                 .FirstOrDefaultAsync(i => i.Id == id);
@@ -84,30 +84,27 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                 return new BadRequestObjectResult("No scout from format found to update!");
             }
 
-            return await Update(result, scoutFormForamtDto);
+            return await Update(result, scoutFormFormatDto);
         }
 
-        public async Task<ActionResult> Update(ScoutFormFormat scoutFormFormat, ScoutFormFormatDto scoutFormForamtDto)
+        private async Task<ActionResult> Update(ScoutFormFormat scoutFormFormat, ScoutFormFormatDto scoutFormFormatDto)
         {
-            var updated = mapper.Map<ScoutFormFormat>(scoutFormForamtDto);
-            scoutFormFormat = mapper.Map(updated, scoutFormFormat);
-            RecursivelySetScoutFormForamtId(scoutFormFormat.Id, scoutFormFormat.Fields);
-            context.Update(scoutFormFormat);
+            var updated = Mapper.Map<ScoutFormFormat>(scoutFormFormatDto);
+            scoutFormFormat = Mapper.Map(updated, scoutFormFormat);
+            RecursivelySetScoutFormFormatId(scoutFormFormat.Id, scoutFormFormat.Fields);
+            Context.Update(scoutFormFormat);
             return await Task.Run(() => new OkResult());
         }
 
-        private void RecursivelySetScoutFormForamtId(int id, List<Field> fields)
+        private static void RecursivelySetScoutFormFormatId(int id, List<Field> fields)
         {
             foreach (Field aField in fields)
             {
                 aField.ScoutFormFormatId = id;
-                RecursivelySetScoutFormForamtId(id, aField.CascadeFields);
+                RecursivelySetScoutFormFormatId(id, aField.CascadeFields);
             }
         }
 
-        private ApplicationDbContext ScoutAppContext
-        {
-            get { return context as ApplicationDbContext; }
-        }
+        private ApplicationDbContext ScoutAppContext => Context as ApplicationDbContext;
     }
 }

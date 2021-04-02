@@ -7,10 +7,8 @@ namespace OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance
     public interface ITheBlueAllianceService
     {
         Task<List<Event>> GetEventsByYear(int year);
-        Task<List<string>> GetEventsKeysByTeamAndYear(int teamNumber, int year);
         Task<List<Match>> GetMatchesByEvent(string eventKey);
         Task<List<Match>> GetMatchesByTeamAndEvent(int teamNumber, string eventKey);
-        Task<List<string>> GetMatchesKeysByTeamAndEvent(int teamNumber, string evenmName);
         Task<List<Team>> GetTeamsByEvent(string eventKey);
     }
 }

@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 {
-    public interface IScoutFormRepository : IRepository<ScoutForm, ScoutFormDto>
+    public interface IScoutFormRepository : IRepository<ScoutFormDto>
     {
         Task<ActionResult<ScoutFormDto>> GetWithFields(int id);
 
-        Task<ActionResult<ScoutFormDto>> GetWithDataByYear(int year);
-        Task<ActionResult> Update(int id, ScoutFormDto scoutFormForamtDto);
+        Task<ActionResult> Update(int id, ScoutFormDto scoutFormFormatDto);
         Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey);
         Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByEvent(string eventKey);
     }

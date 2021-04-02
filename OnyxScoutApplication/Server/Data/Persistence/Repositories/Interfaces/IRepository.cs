@@ -8,15 +8,13 @@ using System.Threading.Tasks;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 {
-    public interface IRepository<DbEntity, DtoEntity> where DbEntity : class where DtoEntity : class
+    public interface IRepository<TDtoEntity> where TDtoEntity : class
     {
-        Task<ActionResult<DtoEntity>> Get(int id);
+        Task<ActionResult<TDtoEntity>> Get(int id);
 
-        Task<ActionResult<IEnumerable<DtoEntity>>> GetAll();
+        Task<ActionResult<IEnumerable<TDtoEntity>>> GetAll();
 
-        //Task<ActionResult<IEnumerable<DtoEntity>>> Find(Expression<Func<DtoEntity, bool>> predicate);
-
-        Task<ActionResult> Add(DtoEntity entity);
+        Task<ActionResult> Add(TDtoEntity scoutFormFormat);
 
         Task<ActionResult> Remove(int id);
     }

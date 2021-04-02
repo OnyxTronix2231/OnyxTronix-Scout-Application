@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 {
-    public interface IScoutFormFormatRepository : IRepository<ScoutFormFormat, ScoutFormFormatDto>
+    public interface IScoutFormFormatRepository : IRepository<ScoutFormFormatDto>
     {
         Task<ActionResult<ScoutFormDto>> GetTemplateScoutFormByYear(int year);
 
@@ -15,6 +15,6 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 
         Task<ActionResult<ScoutFormFormatDto>> GetWithFieldsByYear(int year);
 
-        Task<ActionResult> Update(int id, ScoutFormFormatDto scoutFormForamtDto);
+        Task<ActionResult> Update(int id, ScoutFormFormatDto scoutFormFormatDto);
     }
 }

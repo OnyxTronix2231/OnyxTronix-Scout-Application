@@ -10,39 +10,39 @@ using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
-    public class Repository<DbEntity, DtoEntity> : IRepository<DbEntity, DtoEntity>
-        where DbEntity : class where DtoEntity : class
+    public class Repository<TDbEntity, TDtoEntity> : IRepository<TDtoEntity>
+        where TDbEntity : class where TDtoEntity : class
     {
-        protected readonly DbContext context;
-        protected readonly IMapper mapper;
+        protected DbContext Context { get; }
+        protected IMapper Mapper { get; }
 
-        public Repository(DbContext context, IMapper mapper)
+        protected Repository(DbContext context, IMapper mapper)
         {
-            this.context = context;
-            this.mapper = mapper;
+            Context = context;
+            Mapper = mapper;
         }
 
-        public virtual async Task<ActionResult<DtoEntity>> Get(int id)
+        public virtual async Task<ActionResult<TDtoEntity>> Get(int id)
         {
-            var entity = await context.Set<DbEntity>().FindAsync(id);
+            var entity = await Context.Set<TDbEntity>().FindAsync(id);
             if (entity == null)
             {
                 return new NotFoundResult();
             }
 
-            return mapper.Map<DtoEntity>(entity);
+            return Mapper.Map<TDtoEntity>(entity);
         }
 
-        public virtual async Task<ActionResult<IEnumerable<DtoEntity>>> GetAll()
+        public virtual async Task<ActionResult<IEnumerable<TDtoEntity>>> GetAll()
         {
-            return new OkObjectResult(mapper.Map<IEnumerable<DtoEntity>>(await context.Set<DbEntity>().ToListAsync()));
+            return new OkObjectResult(Mapper.Map<IEnumerable<TDtoEntity>>(await Context.Set<TDbEntity>().ToListAsync()));
         }
 
-        public virtual async Task<ActionResult> Add(DtoEntity entity)
+        public virtual async Task<ActionResult> Add(TDtoEntity scoutFormFormat)
         {
             //DbEntity db = Activator.CreateInstance<DbEntity>();
-            var mapped = mapper.Map<DbEntity>(entity);
-            context.Set<DbEntity>().Add(mapped);
+            var mapped = Mapper.Map<TDbEntity>(scoutFormFormat);
+            await Context.Set<TDbEntity>().AddAsync(mapped);
             return await Task.Run(() => new OkResult());
         }
 
@@ -53,13 +53,13 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public virtual async Task<ActionResult> Remove(int id)
         {
-            var entity = await context.Set<DbEntity>().FindAsync(id);
+            var entity = await Context.Set<TDbEntity>().FindAsync(id.ToString());
             if (entity == null)
             {
                 return new NotFoundResult();
             }
 
-            context.Set<DbEntity>().Remove(mapper.Map<DbEntity>(entity));
+            Context.Set<TDbEntity>().Remove(Mapper.Map<TDbEntity>(entity));
             return new OkResult();
         }
     }

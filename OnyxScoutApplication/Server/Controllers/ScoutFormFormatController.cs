@@ -51,25 +51,24 @@ namespace OnyxScoutApplication.Server.Controllers
         [Authorize(Roles = Roles.Admin)]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateScoutFormFormat(int id,
-            [FromBody] ScoutFormFormatDto scoutFormForamtModel)
+            [FromBody] ScoutFormFormatDto scoutFormFormatModel)
         {
-            var response = await unitOfWork.ScoutFormFormats.Update(id, scoutFormForamtModel);
+            var response = await unitOfWork.ScoutFormFormats.Update(id, scoutFormFormatModel);
             await unitOfWork.Complete();
             return response;
         }
 
         [Authorize(Roles = Roles.Admin)]
         [HttpPost]
-        public async Task<ActionResult> CreateScoutFormFormat([FromBody] ScoutFormFormatDto scoutFormForamtModel)
+        public async Task<ActionResult> CreateScoutFormFormat([FromBody] ScoutFormFormatDto scoutFormFormatModel)
         {
-            if (ModelState.IsValid)
-            {
-                var response = await unitOfWork.ScoutFormFormats.Add(scoutFormForamtModel);
-                await unitOfWork.Complete();
-                return response;
-            }
+            if (!ModelState.IsValid)
+                return ResultCode(System.Net.HttpStatusCode.BadRequest, "Invalid inputs!");
+            
+            var response = await unitOfWork.ScoutFormFormats.Add(scoutFormFormatModel);
+            await unitOfWork.Complete();
+            return response;
 
-            return ResultCode(System.Net.HttpStatusCode.BadRequest, "Invalid inputs!");
         }
     }
 }

@@ -27,19 +27,19 @@ namespace OnyxScoutApplication.Server.Controllers
             return await theBlueAllianceService.GetEventsByYear(year);
         }
 
-        [HttpGet("GetAllMatches/{eventkey}")]
+        [HttpGet("GetAllMatches/{eventKey}")]
         public async Task<ActionResult<IEnumerable<Match>>> GetMatchesByEventKey(string eventKey)
         {
             return await theBlueAllianceService.GetMatchesByEvent(eventKey);
         }
 
-        [HttpGet("GetAllTeams/{eventkey}")]
+        [HttpGet("GetAllTeams/{eventKey}")]
         public async Task<ActionResult<IEnumerable<Team>>> GetTeamsByEventKey(string eventKey)
         {
             return await theBlueAllianceService.GetTeamsByEvent(eventKey);
         }
 
-        [HttpGet("GetMatchesByTeamAndEvent/{teamnumber}/{eventkey}")]
+        [HttpGet("GetMatchesByTeamAndEvent/{teamNumber}/{eventKey}")]
         public async Task<ActionResult<IEnumerable<Match>>> GetMatchesByTeamAndEventKey(int teamNumber, string eventKey)
         {
             return await theBlueAllianceService.GetMatchesByTeamAndEvent(teamNumber, eventKey);

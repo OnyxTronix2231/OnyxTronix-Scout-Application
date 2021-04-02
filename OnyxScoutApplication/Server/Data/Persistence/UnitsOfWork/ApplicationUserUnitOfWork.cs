@@ -9,16 +9,14 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
     public class ApplicationUserUnitOfWork : IApplicationUserUnitOfWork
     {
         private readonly ApplicationDbContext context;
-        private readonly IMapper mapper;
 
         public ApplicationUserUnitOfWork(ApplicationDbContext context, IMapper mapper)
         {
             this.context = context;
-            this.mapper = mapper;
             ApplicationUser = new ApplicationUserRepository(context, mapper);
         }
 
-        public IApplicationUserRepository ApplicationUser { get; private set; }
+        public IApplicationUserRepository ApplicationUser { get; }
 
         public async Task<int> Complete()
         {

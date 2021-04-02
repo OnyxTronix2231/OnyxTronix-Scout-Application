@@ -13,7 +13,7 @@ namespace OnyxScoutApplication.Server.Data.Extensions
         {
             StatusCode = (int) statusCode,
             Content = $"Status Code: {(int) statusCode}; {statusCode}; {reason}",
-            ContentType = "text/plain",
+            ContentType = "text/plain"
         };
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 {
-    public interface IApplicationUserRepository : IRepository<ApplicationUser, ApplicationUserDto>
+    public interface IApplicationUserRepository : IRepository<ApplicationUserDto>
     {
         Task<ActionResult<List<ApplicationRoleDto>>> GetAllRoles();
         Task<ActionResult<List<ApplicationUserDto>>> GetAllWithRoles();

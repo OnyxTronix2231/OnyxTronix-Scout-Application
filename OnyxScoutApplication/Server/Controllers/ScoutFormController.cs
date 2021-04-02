@@ -58,17 +58,16 @@ namespace OnyxScoutApplication.Server.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateScoutForm([FromBody] ScoutFormDto scoutFormModel)
         {
-            if (ModelState.IsValid)
-            {
-                var response = await unitOfWork.ScoutForms.Add(scoutFormModel);
-                await unitOfWork.Complete();
-                return response;
-            }
+            if (!ModelState.IsValid) 
+                return ResultCode(System.Net.HttpStatusCode.BadRequest, "Invalid inputs!");
+            
+            var response = await unitOfWork.ScoutForms.Add(scoutFormModel);
+            await unitOfWork.Complete();
+            return response;
 
-            return ResultCode(System.Net.HttpStatusCode.BadRequest, "Invalid inputs!");
         }
 
-        [HttpGet("GetAllByTeam/{teamNumber}/{eventkey}")]
+        [HttpGet("GetAllByTeam/{teamNumber}/{eventKey}")]
         public async Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByTeam(int teamNumber, string eventKey)
         {
             return await unitOfWork.ScoutForms.GetAllByTeamWithData(teamNumber, eventKey);
