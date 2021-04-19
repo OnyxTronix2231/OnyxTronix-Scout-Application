@@ -7,14 +7,14 @@
     {
         <label>Field default value</label>
     }
-    <syncfusion.blazor.dropdowns.sfdropdownlist TValue="string" TItem="string" DataSource="this.Field.Options" @bind-Value="CurrentValue"/>
+    <SfDropDownList TValue="string" TItem="string" DataSource="this.Field.Options" @bind-Value="CurrentValue"/>
     <validationmessage For="@ValueExpression"/>
 </div>
 @if (IsEditMode)
 {
     <div>
         <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required"/>
-        <validationmessage For="@(() => Field.Required)"/>
+        <ValidationMessage For="@(() => Field.Required)"/>
     </div>
     @foreach (var (item, index) in options.Select((x, i) => (x, i)))
     {
@@ -24,7 +24,7 @@
             <SfTextBox Value="@v" Input="a => Update(a, index)"></SfTextBox >
         </div>
     }
-    <validationmessage For="@(() => Field.Options)"/>
+    <ValidationMessage For="@(() => Field.Options)"/>
     <br/>
     <div>
         <button type="button" class="btn btn-dark" @onclick="AddOption">Add option</button>

@@ -15,7 +15,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
     public class ApplicationUserRepository : Repository<ApplicationUser, ApplicationUserDto>, IApplicationUserRepository
     {
-        public ApplicationUserRepository(DbContext context, IMapper mapper) : base(context, mapper)
+        public ApplicationUserRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
         }
 

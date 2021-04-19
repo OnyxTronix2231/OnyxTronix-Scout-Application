@@ -47,7 +47,7 @@
         }
     }
 
-    /*
+    
     private async Task UpdateMatchTable(Event selectedEvent)
     {
         var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
@@ -55,7 +55,7 @@
         scoutForms = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
         UpdateByMatches(matches);
     }
-*/
+
     private void UpdateByMatches(List<Match> matches)
     {
         matches = matches.OrderBy(i => i.Date).ToList();

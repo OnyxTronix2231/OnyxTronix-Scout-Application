@@ -14,7 +14,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
     public class ScoutFormFormatRepository : Repository<ScoutFormFormat, ScoutFormFormatDto>, IScoutFormFormatRepository
     {
-        public ScoutFormFormatRepository(DbContext context, IMapper mapper) : base(context, mapper)
+        public ScoutFormFormatRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
         }
 

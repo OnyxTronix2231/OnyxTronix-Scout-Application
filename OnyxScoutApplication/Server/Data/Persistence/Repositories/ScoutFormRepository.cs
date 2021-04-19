@@ -14,7 +14,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
     public class ScoutFormRepository : Repository<ScoutForm, ScoutFormDto>, IScoutFormRepository
     {
-        public ScoutFormRepository(DbContext context, IMapper mapper) : base(context, mapper)
+        public ScoutFormRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
         }
 
