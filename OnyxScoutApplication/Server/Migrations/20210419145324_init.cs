@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace OnyxScoutApplication.Server.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -230,19 +230,21 @@ namespace OnyxScoutApplication.Server.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ScoutFormForamtId = table.Column<int>(nullable: false),
+                    ScoutFormFormatId = table.Column<int>(nullable: false),
                     FieldId = table.Column<int>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     TextDefaultValue = table.Column<string>(nullable: true),
                     BoolDefaultValue = table.Column<bool>(nullable: false),
-                    NumricDefaultValue = table.Column<int>(nullable: true),
+                    NumericDefaultValue = table.Column<int>(nullable: true),
                     CascadeConditionDefaultValue = table.Column<bool>(nullable: false),
                     FieldType = table.Column<int>(nullable: false),
                     FieldStageType = table.Column<int>(nullable: true),
                     MaxValue = table.Column<int>(nullable: false),
                     MinValue = table.Column<int>(nullable: false),
                     Required = table.Column<bool>(nullable: false),
-                    Options = table.Column<string>(nullable: true)
+                    Options = table.Column<string>(nullable: true),
+                    MaximumSelectionLength = table.Column<int>(nullable: false),
+                    Index = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -254,8 +256,8 @@ namespace OnyxScoutApplication.Server.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Field_ScoutFormFormats_ScoutFormForamtId",
-                        column: x => x.ScoutFormForamtId,
+                        name: "FK_Field_ScoutFormFormats_ScoutFormFormatId",
+                        column: x => x.ScoutFormFormatId,
                         principalTable: "ScoutFormFormats",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -269,15 +271,15 @@ namespace OnyxScoutApplication.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ScoutFormId = table.Column<int>(nullable: false),
                     ScoutFormDataId = table.Column<int>(nullable: true),
-                    FieldID = table.Column<int>(nullable: false),
+                    FieldId = table.Column<int>(nullable: false),
                     Value = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ScoutFormData", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ScoutFormData_Field_FieldID",
-                        column: x => x.FieldID,
+                        name: "FK_ScoutFormData_Field_FieldId",
+                        column: x => x.FieldId,
                         principalTable: "Field",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -356,9 +358,9 @@ namespace OnyxScoutApplication.Server.Migrations
                 column: "FieldId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Field_ScoutFormForamtId",
+                name: "IX_Field_ScoutFormFormatId",
                 table: "Field",
-                column: "ScoutFormForamtId");
+                column: "ScoutFormFormatId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersistedGrants_Expiration",
@@ -371,9 +373,9 @@ namespace OnyxScoutApplication.Server.Migrations
                 columns: new[] { "SubjectId", "ClientId", "Type" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ScoutFormData_FieldID",
+                name: "IX_ScoutFormData_FieldId",
                 table: "ScoutFormData",
-                column: "FieldID");
+                column: "FieldId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScoutFormData_ScoutFormDataId",

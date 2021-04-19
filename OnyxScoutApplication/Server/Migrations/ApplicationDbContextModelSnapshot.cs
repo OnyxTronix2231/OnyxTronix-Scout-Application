@@ -350,7 +350,7 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("NumricDefaultValue")
+                    b.Property<int?>("NumericDefaultValue")
                         .HasColumnType("int");
 
                     b.Property<string>("Options")
@@ -359,7 +359,7 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<bool>("Required")
                         .HasColumnType("bit");
 
-                    b.Property<int>("ScoutFormForamtId")
+                    b.Property<int>("ScoutFormFormatId")
                         .HasColumnType("int");
 
                     b.Property<string>("TextDefaultValue")
@@ -369,7 +369,7 @@ namespace OnyxScoutApplication.Server.Migrations
 
                     b.HasIndex("FieldId");
 
-                    b.HasIndex("ScoutFormForamtId");
+                    b.HasIndex("ScoutFormFormatId");
 
                     b.ToTable("Field");
                 });
@@ -405,7 +405,7 @@ namespace OnyxScoutApplication.Server.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("FieldID")
+                    b.Property<int>("FieldId")
                         .HasColumnType("int");
 
                     b.Property<int?>("ScoutFormDataId")
@@ -419,7 +419,7 @@ namespace OnyxScoutApplication.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FieldID");
+                    b.HasIndex("FieldId");
 
                     b.HasIndex("ScoutFormDataId");
 
@@ -513,9 +513,9 @@ namespace OnyxScoutApplication.Server.Migrations
                         .WithMany("CascadeFields")
                         .HasForeignKey("FieldId");
 
-                    b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormat", "ScoutFormForamt")
+                    b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormat", "ScoutFormFormat")
                         .WithMany("Fields")
-                        .HasForeignKey("ScoutFormForamtId")
+                        .HasForeignKey("ScoutFormFormatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -524,7 +524,7 @@ namespace OnyxScoutApplication.Server.Migrations
                 {
                     b.HasOne("OnyxScoutApplication.Shared.Models.Field", "Field")
                         .WithMany()
-                        .HasForeignKey("FieldID")
+                        .HasForeignKey("FieldId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

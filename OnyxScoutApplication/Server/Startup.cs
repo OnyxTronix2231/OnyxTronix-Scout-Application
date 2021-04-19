@@ -31,6 +31,7 @@ using IdentityServer4.Services;
 using OnyxScoutApplication.Server.Data.Extensions;
 using IdentityServer4.Extensions;
 using OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance;
+using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Server
 {
@@ -100,7 +101,7 @@ namespace OnyxScoutApplication.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -140,6 +141,35 @@ namespace OnyxScoutApplication.Server
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
             });
+            CreateUserRoles(serviceProvider).Wait();
+        }
+        
+        private async Task CreateUserRoles(IServiceProvider serviceProvider)
+        {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            IdentityResult roleResult;
+            //Adding Admin Role
+            var roles = Enum.GetValues(typeof(Role)).Cast<Role>().ToList();
+            for (int i = 0; i < roles.Count(); i++)
+            {
+                var role = roles[i];
+                var roleCheck = await roleManager.RoleExistsAsync(role.ToString());
+                if (!roleCheck)
+                {
+                    //create the roles and seed them to the database
+                    roleResult = await roleManager.CreateAsync(new ApplicationRole
+                    {
+                        Id = i.ToString(), Name = role.ToString(), NormalizedName = role.ToString()
+                    });
+                }
+            }
+          
+            //Assign Admin role to the main User here we have given our newly registered 
+            //login id for Admin management
+            //ApplicationUser user = await userManager.FindByEmailAsync("v-nany@hotmail.com");
+            //await userManager.AddToRoleAsync(user, "Admin");
         }
     }
 }
