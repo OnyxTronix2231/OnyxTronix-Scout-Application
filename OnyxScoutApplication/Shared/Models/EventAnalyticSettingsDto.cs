@@ -8,12 +8,12 @@ namespace OnyxScoutApplication.Shared.Models
 {
     public class EventAnalyticSettingsDto
     {
-        public List<CombinedFieldsDto> CombinedFields { get; } = new List<CombinedFieldsDto>();
+        public List<CombinedFieldsDto> CombinedFields { get; set; } = new List<CombinedFieldsDto>();
     }
 
     public class CombinedFieldsDto
     {
-        public List<FieldDto> Fields { get; } = new List<FieldDto>();
+        public List<FieldDto> Fields { get; set;} = new List<FieldDto>();
 
         public string Name
         {
