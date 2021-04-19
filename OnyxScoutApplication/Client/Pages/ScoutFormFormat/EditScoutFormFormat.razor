@@ -2,7 +2,7 @@
 @using OnyxScoutApplication.Client.Pages.ScoutFormFormat.Components
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
-@attribute [Authorize(Roles = Roles.Admin)]
+@attribute [OnyxAuthorize(Role = Role.Admin)]
 
 <h3>Edit</h3>
 @if (scoutFormFormat != null)

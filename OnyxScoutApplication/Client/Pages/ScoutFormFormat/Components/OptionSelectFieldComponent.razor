@@ -8,7 +8,7 @@
         <label>Field default value</label>
     }
     <SfDropDownList TValue="string" TItem="string" DataSource="this.Field.Options" @bind-Value="CurrentValue"/>
-    <validationmessage For="@ValueExpression"/>
+    <ValidationMessage For="@ValueExpression"/>
 </div>
 @if (IsEditMode)
 {

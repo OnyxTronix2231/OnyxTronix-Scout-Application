@@ -3,7 +3,7 @@
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject NotificationManager NotificationManager
-@attribute [Authorize(Roles = Roles.Scouter)]
+@attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (fields != null)
 {

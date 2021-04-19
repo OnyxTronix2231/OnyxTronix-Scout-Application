@@ -76,7 +76,14 @@ namespace OnyxScoutApplication.Server.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser {UserName = Input.UserName};
-                user.UserRoles.Add(new ApplicationUserRole() {RoleId = "3", UserId = user.Id});
+                if (_userManager.Users.Any())
+                {
+                    user.UserRoles.Add(new ApplicationUserRole() {RoleId = "3", UserId = user.Id});
+                }
+                else
+                {
+                    user.UserRoles.Add(new ApplicationUserRole() {RoleId = "0", UserId = user.Id});
+                }
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

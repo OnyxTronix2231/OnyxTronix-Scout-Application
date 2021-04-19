@@ -4,7 +4,7 @@
 
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
-@attribute [Authorize(Roles = Roles.Admin)]
+@attribute [OnyxAuthorize(Role = Role.Admin)]
 
 <h3>Create</h3>
 <ScoutFormFormatComponent ScoutFormFormat="@scoutFormFormat" Type="FormType.Create" OnSubmit="@Create">

@@ -17,8 +17,8 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
             RuleFor(x => x.NumericValue).NotEmpty().WithMessage((model, s) => "Field required")
                 .When(m => m.Field.Required && m.Field.FieldType == FieldType.Numeric);
             RuleFor(x => x.StringValue).NotEmpty().WithMessage((model, s) => "Field required").When(m =>
-                m.Field.Required && m.Field.FieldType == FieldType.TextField ||
-                m.Field.FieldType == FieldType.OptionSelect);
+                m.Field.Required && (m.Field.FieldType == FieldType.TextField ||
+                                     m.Field.FieldType == FieldType.OptionSelect));
             RuleForEach(x => x.CascadeData).SetValidator(this)
                 .When(x => x.Field.FieldType == FieldType.CascadeField && x.BooleanValue);
         }

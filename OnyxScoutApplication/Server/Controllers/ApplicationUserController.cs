@@ -12,11 +12,12 @@ using OnyxScoutApplication.Server.Models;
 using OnyxScoutApplication.Server.Data;
 using IdentityModel;
 using Microsoft.EntityFrameworkCore;
+using OnyxScoutApplication.Server.Data.Extensions;
 using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Server.Controllers
 {
-    [Authorize(Roles = Roles.Owner)]
+    [OnyxAuthorize(Role = Role.Owner)]
     [ApiController]
     [Route("[controller]")]
     public class ApplicationUserController : Controller

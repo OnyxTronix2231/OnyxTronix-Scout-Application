@@ -3,7 +3,7 @@
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
-@attribute [Authorize(Roles = Roles.Scouter)]
+@attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (endGameCalculatedData != null)
 {

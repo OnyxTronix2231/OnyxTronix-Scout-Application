@@ -2,7 +2,7 @@
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
-@attribute [Authorize(Roles = Roles.Scouter)]
+@attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (scoutForm != null)
 {
