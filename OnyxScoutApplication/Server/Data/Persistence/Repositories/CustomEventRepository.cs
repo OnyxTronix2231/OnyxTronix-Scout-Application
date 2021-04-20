@@ -62,11 +62,11 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<IEnumerable<CustomEventDto>>> GetAllByYear(int year)
         {
-            var scoutForm = await ScoutAppContext.Events.Where(i => i.Year == year).ToListAsync();
-            return Mapper.Map<List<CustomEventDto>>(scoutForm);
+            var events = await ScoutAppContext.Events.Where(i => i.Year == year).ToListAsync();
+            return Mapper.Map<List<CustomEventDto>>(events);
         }
 
-        public async Task<ActionResult<IEnumerable<CustomMatch>>> GetMatchesByEventKey(string eventKey)
+        public async Task<ActionResult<IEnumerable<CustomMatchDto>>> GetMatchesByEventKey(string eventKey)
         {
             var result = await ScoutAppContext.Events.Include(i => i.Matches).FirstOrDefaultAsync(i => i.Key == eventKey);
             if (result == null)
@@ -74,7 +74,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                 return new BadRequestObjectResult($"No event found with key {eventKey} to update!");
             }
 
-            return result.Matches;
+            return Mapper.Map<List<CustomMatchDto>>(result.Matches);
         }
 
         public async Task<ActionResult<IEnumerable<Team>>> GetTeamsByEventKey(string eventKey)
@@ -82,7 +82,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<ActionResult<IEnumerable<CustomMatch>>> GetMatchesByTeamAndEventKey(int teamNumber, string eventKey)
+        public async Task<ActionResult<IEnumerable<CustomMatchDto>>> GetMatchesByTeamAndEventKey(int teamNumber, string eventKey)
         {
             var result = await ScoutAppContext.Events.Include(i => i.Matches.Where(m => 
                 m.Alliances.Blue.TeamKeys.Contains(teamNumber) || m.Alliances.Red.TeamKeys.Contains(teamNumber)))
@@ -92,7 +92,18 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                 return new BadRequestObjectResult($"No event found with key {eventKey} to update!");
             }
 
-            return result.Matches;
+            return Mapper.Map<List<CustomMatchDto>>(result.Matches);
+        }
+
+        public async Task<ActionResult<IEnumerable<CustomEventDto>>> GetEventByKey(string key)
+        {
+            var result = await ScoutAppContext.Events.Include(i => i.Matches).FirstOrDefaultAsync(i => i.Key == key);
+            if (result == null)
+            {
+                return new BadRequestObjectResult($"No event found with key {key} to update!");
+            }
+
+            return Mapper.Map<List<CustomEventDto>>(result);
         }
 
         private async Task<ActionResult> Update(CustomEvent eventToUpdate, CustomEventDto eventSource)

@@ -14,10 +14,12 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 
         Task<ActionResult<IEnumerable<CustomEventDto>>> GetAllByYear(int year);
 
-        Task<ActionResult<IEnumerable<CustomMatch>>> GetMatchesByEventKey(string eventKey);
+        Task<ActionResult<IEnumerable<CustomMatchDto>>> GetMatchesByEventKey(string eventKey);
 
         Task<ActionResult<IEnumerable<Team>>> GetTeamsByEventKey(string eventKey);
         
-        Task<ActionResult<IEnumerable<CustomMatch>>> GetMatchesByTeamAndEventKey(int teamNumber, string eventKey);
+        Task<ActionResult<IEnumerable<CustomMatchDto>>> GetMatchesByTeamAndEventKey(int teamNumber, string eventKey);
+        
+        Task<ActionResult<IEnumerable<CustomEventDto>>> GetEventByKey(string key);
     }
 }
