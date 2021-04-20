@@ -17,21 +17,21 @@ namespace OnyxScoutApplication.Server.Controllers
     public class TheBlueAllianceController : Controller
     {
         private readonly ITheBlueAllianceService theBlueAllianceService;
-        private readonly IEventRepository eventRepository;
+        private readonly ICustomEventRepository customEventRepository;
         private readonly IMapper mapper;
 
         public TheBlueAllianceController(ITheBlueAllianceService theBlueAllianceService, 
-            IEventRepository eventRepository, IMapper mapper)
+            ICustomEventRepository customEventRepository, IMapper mapper)
         {
             this.theBlueAllianceService = theBlueAllianceService;
-            this.eventRepository = eventRepository;
+            this.customEventRepository = customEventRepository;
             this.mapper = mapper;
         }
 
         [HttpGet("GetAllEvents/{year}")]
         public async Task<ActionResult<IEnumerable<Event>>> GetEventsByYear(int year)
         {
-            var customEvents = await eventRepository.GetAllByYear(year);
+            var customEvents = await customEventRepository.GetAllByYear(year);
             var tbaEvents = await theBlueAllianceService.GetEventsByYear(year);
             var mappedCustomEvents = mapper.Map<IEnumerable<Event>>(customEvents);
             return tbaEvents.Concat(mappedCustomEvents).ToList();
@@ -46,7 +46,7 @@ namespace OnyxScoutApplication.Server.Controllers
                 return results;
             }
             
-            var customMatches = await eventRepository.GetMatchesByEventKey(eventKey);
+            var customMatches = await customEventRepository.GetMatchesByEventKey(eventKey);
             results = mapper.Map<List<Match>>(customMatches);
             return results;
         }
@@ -60,7 +60,7 @@ namespace OnyxScoutApplication.Server.Controllers
                 return results;
             }
             
-            var customMatches = await eventRepository.GetTeamsByEventKey(eventKey);
+            var customMatches = await customEventRepository.GetTeamsByEventKey(eventKey);
             results = mapper.Map<List<Team>>(customMatches);
             return results;
         }
@@ -74,7 +74,7 @@ namespace OnyxScoutApplication.Server.Controllers
                 return results;
             }
             
-            var customMatches = await eventRepository.GetMatchesByTeamAndEventKey(teamNumber, eventKey);
+            var customMatches = await customEventRepository.GetMatchesByTeamAndEventKey(teamNumber, eventKey);
             results = mapper.Map<List<Match>>(customMatches);
             return results;
         }

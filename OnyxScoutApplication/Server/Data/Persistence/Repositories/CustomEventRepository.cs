@@ -13,9 +13,9 @@ using static OnyxScoutApplication.Server.Data.Extensions.Result;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
-    public class EventRepository : Repository<CustomEvent, CustomEventDto>, IEventRepository
+    public class CustomEventRepository : Repository<CustomEvent, CustomEventDto>, ICustomEventRepository
     {
-        public EventRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
+        public CustomEventRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
         }
 

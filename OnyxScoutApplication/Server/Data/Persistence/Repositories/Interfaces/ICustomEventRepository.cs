@@ -8,7 +8,7 @@ using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 {
-    public interface IEventRepository : IRepository<CustomEventDto>
+    public interface ICustomEventRepository : IRepository<CustomEventDto>
     {
         Task<ActionResult> Update(int id, CustomEventDto eventSource);
 
