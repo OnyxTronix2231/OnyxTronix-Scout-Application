@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
+using OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
 using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
@@ -10,10 +11,11 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
     {
         private readonly ApplicationDbContext context;
 
-        public CustomEventUnitOfWork(ApplicationDbContext context, IMapper mapper)
+        public CustomEventUnitOfWork(ApplicationDbContext context, ITheBlueAllianceService theBlueAllianceService, 
+            IMapper mapper)
         {
             this.context = context;
-            CustomEvents = new CustomEventRepository(context, mapper);
+            CustomEvents = new CustomEventRepository(context, theBlueAllianceService, mapper);
         }
 
         public ICustomEventRepository CustomEvents { get; }

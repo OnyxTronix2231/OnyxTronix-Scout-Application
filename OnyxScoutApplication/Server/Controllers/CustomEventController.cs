@@ -20,7 +20,7 @@ namespace OnyxScoutApplication.Server.Controllers
             this.unitOfWork = unitOfWork;
         }
 
-        [HttpGet("GetAllEvents/{year}")]
+        [HttpGet("GetAllEventsByYear/{year}")]
         public async Task<ActionResult<IEnumerable<CustomEventDto>>> GetEventsByYear(int year)
         {
             return await unitOfWork.CustomEvents.GetAllByYear(year);

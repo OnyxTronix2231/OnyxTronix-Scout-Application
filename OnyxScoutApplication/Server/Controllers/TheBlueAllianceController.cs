@@ -31,10 +31,10 @@ namespace OnyxScoutApplication.Server.Controllers
         [HttpGet("GetAllEvents/{year}")]
         public async Task<ActionResult<IEnumerable<Event>>> GetEventsByYear(int year)
         {
-            var customEvents = await customEventRepository.GetAllByYear(year);
+           // var customEvents = await customEventRepository.GetAllByYear(year);
             var tbaEvents = await theBlueAllianceService.GetEventsByYear(year);
-            var mappedCustomEvents = mapper.Map<IEnumerable<Event>>(customEvents);
-            return tbaEvents.Concat(mappedCustomEvents).ToList();
+           // var mappedCustomEvents = mapper.Map<IEnumerable<Event>>(customEvents);
+            return tbaEvents; //.Concat(mappedCustomEvents).ToList();
         }
 
         [HttpGet("GetAllMatches/{eventKey}")]
@@ -52,7 +52,7 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpGet("GetAllTeams/{eventKey}")]
-        public async Task<ActionResult<IEnumerable<Team>>> GetTeamsByEventKey(string eventKey)
+        public async Task<ActionResult<IEnumerable<Team>>> GetTeamsByEvent(string eventKey)
         {
             var results = await theBlueAllianceService.GetTeamsByEvent(eventKey);
             if (results != null && results.Any())
@@ -62,6 +62,13 @@ namespace OnyxScoutApplication.Server.Controllers
             
             var customMatches = await customEventRepository.GetTeamsByEventKey(eventKey);
             results = mapper.Map<List<Team>>(customMatches);
+            return results;
+        }
+        
+        [HttpGet("GetAllTeamsByDistrict/{districtKey}")]
+        public async Task<ActionResult<IEnumerable<Team>>> GetTeamsByDistrict(string districtKey)
+        {
+            var results = await theBlueAllianceService.GetTeamsByDistrict(districtKey);
             return results;
         }
 

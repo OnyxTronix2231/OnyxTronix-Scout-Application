@@ -48,6 +48,14 @@ namespace OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance
             return result;
         }
 
+        public async Task<List<Team>> GetTeamsByDistrict(string districtKeyS)
+        {
+            var response = await GetResponse(Path.Combine(PREFIX, "district", districtKeyS, "teams", "simple"));
+            var result = JsonSerializer.Deserialize<List<Team>>(response,
+                new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
+            return result;
+        }
+
         public async Task<List<Match>> GetMatchesByTeamAndEvent(int teamNumber, string eventKey)
         {
             var response = await GetResponse(Path.Combine(PREFIX, "team", "frc" + teamNumber, "event",

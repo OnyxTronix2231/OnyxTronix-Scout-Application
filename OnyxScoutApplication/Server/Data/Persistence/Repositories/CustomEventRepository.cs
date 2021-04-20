@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
 using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 using static OnyxScoutApplication.Server.Data.Extensions.Result;
@@ -15,16 +16,20 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
     public class CustomEventRepository : Repository<CustomEvent, CustomEventDto>, ICustomEventRepository
     {
-        public CustomEventRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
+        private readonly ITheBlueAllianceService allianceService;
+
+        public CustomEventRepository(ApplicationDbContext context, ITheBlueAllianceService allianceService,
+            IMapper mapper) : base(context, mapper)
         {
+            this.allianceService = allianceService;
         }
 
         public override async Task<ActionResult> Add(CustomEventDto eventToAdd)
         {
             eventToAdd.Key = eventToAdd.Year + eventToAdd.Country + eventToAdd.Name;
-            foreach (var match in eventToAdd.Matches)
+            foreach (var customMatch in eventToAdd.Matches)
             {
-                match.Key = eventToAdd.Key + match.Level + match.MatchNumber;
+                customMatch.Key = eventToAdd.Key + customMatch.Level + customMatch.MatchNumber;
             }
             if (await ScoutAppContext.Events.AnyAsync(i => i.Key == eventToAdd.Key))
             {
@@ -85,11 +90,12 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public async Task<ActionResult<IEnumerable<CustomMatchDto>>> GetMatchesByTeamAndEventKey(int teamNumber, string eventKey)
         {
             var result = await ScoutAppContext.Events.Include(i => i.Matches.Where(m => 
-                m.Alliances.Blue.TeamKeys.Contains(teamNumber) || m.Alliances.Red.TeamKeys.Contains(teamNumber)))
+                m.Alliances.Blue.Teams.Any(t => t.TeamNumber == teamNumber) || 
+                m.Alliances.Red.Teams.Any(t => t.TeamNumber == teamNumber)))
                 .FirstOrDefaultAsync(i => i.Key == eventKey);
             if (result == null)
             {
-                return new BadRequestObjectResult($"No event found with key {eventKey} to update!");
+                return new BadRequestObjectResult($"No mathces found for team {teamNumber} and event {eventKey}!");
             }
 
             return Mapper.Map<List<CustomMatchDto>>(result.Matches);

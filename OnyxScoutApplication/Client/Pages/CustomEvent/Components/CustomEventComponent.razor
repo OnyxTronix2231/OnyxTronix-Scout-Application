@@ -1,0 +1,150 @@
+@inject HttpClientManager http
+@inject ILocalStorageService LocalStorage
+<h3>CustomEventComponent</h3>
+
+<EditForm Model="@CustomEvent" OnValidSubmit="@OnValidSubmit">
+    <FluentValidationValidator/>
+    <div class="form-group col-sm-5">
+        <label class="form-label">Year</label>
+        <SfNumericTextBox @bind-Value="@CustomEvent.Year" Readonly="@true"/>
+    </div>
+   
+    <div class="form-group col-sm-5">
+        <label class="form-label">Country</label>
+        <SfTextBox @bind-Value="@CustomEvent.Country" Readonly="@true"/>
+    </div>
+   
+    <div class="form-group col-sm-5">
+        <label class="form-label">Name</label>
+        <SfTextBox @bind-Value="@CustomEvent.Name"/>
+    </div>
+    <div class="form-group">
+        @foreach (var customMatchesByStage in CustomEvent.Matches.GroupBy(i => i.Level))
+        {
+            <h4>@customMatchesByStage.Key</h4>
+            <br><br/>
+            var matches = customMatchesByStage.ToList();
+            for (int i = 0; i < matches.Count; i++)
+            {
+                var currentIndex = i;
+                var customMatch = matches[currentIndex];
+               
+                <div class="container">
+                    <div class="form-group col-sm-5">
+                        <label class="form-label">Stage</label>
+                        <SfTextBox @bind-Value="@customMatch.Level" Readonly="@true"/>
+                    </div>
+                    <div class="form-group col-sm-5">
+                        <label class="form-label">Match number</label>
+                        <SfNumericTextBox @bind-Value="@currentIndex" Readonly="@true"/>
+                    </div>
+                    <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveMatch(customMatch)">Remove</SfButton>
+                    <div class="row align-items-end">
+                        <div class="form-group col-sm-5">
+                            <h5>Blue team</h5>
+                            @for (int j = 0; j < customMatch.Alliances.Blue.Teams.Count; j++)
+                            {
+                                var currentTeamIndex = j;
+                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Width="250px">
+                                    <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
+                                    <DropDownListEvents TItem="CustomTeamDto" TValue="int" ValueChange="e => OnTeamSelected(e, customMatch.Alliances.Blue.Teams, currentTeamIndex)"></DropDownListEvents>
+                                </SfDropDownList>
+                            }
+                        </div>
+
+                        <div class="form-group col-sm-5">
+                            <h5>Red team</h5>
+                            @for (int j = 0; j < customMatch.Alliances.Red.Teams.Count; j++)
+                            {
+                                var currentTeamIndex = j;
+                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Width="250px">
+                                    <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
+                                    <DropDownListEvents TItem="CustomTeamDto" TValue="int" ValueChange="e => OnTeamSelected(e, customMatch.Alliances.Red.Teams, currentTeamIndex)"></DropDownListEvents>
+                                </SfDropDownList>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            <SfButton type="button" @onclick="() => AddMatch(customMatchesByStage.Key)">Add match</SfButton>
+        }
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary">@(Type == FormType.Create ? "Add" : "Save")</button>
+    </div>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public CustomEventDto CustomEvent { get; set; }
+
+    [Parameter]
+    public EventCallback OnValidSubmitCallBack { get; set; }
+
+    [Parameter]
+    public FormType Type { get; set; }
+
+    private List<CustomTeamDto> teams;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var selectedYear = await LocalStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
+        teams = await http.GetJson<List<CustomTeamDto>>("TheBlueAlliance/GetAllTeamsByDistrict/" + selectedYear + "isr"); //TODO: districts names handling
+        CustomEvent.Matches.Add(CreateCustomMatch("qm"));
+        CustomEvent.Matches.Add(CreateCustomMatch("qf"));
+        CustomEvent.Matches.Add(CreateCustomMatch("sf"));
+        CustomEvent.Matches.Add(CreateCustomMatch("f"));
+    }
+    
+    private CustomMatchDto CreateCustomMatch(string level)
+    {
+        CustomMatchDto customMatch = new CustomMatchDto()
+        {
+            Level = level,
+            Alliances = new CustomAlliancesDto()
+            {
+                Blue = new CustomAllianceDto(),
+                Red = new CustomAllianceDto()
+            }
+        };
+        customMatch.Alliances.Blue.Teams.Add(new CustomTeamDto());
+        customMatch.Alliances.Blue.Teams.Add(new CustomTeamDto());
+        customMatch.Alliances.Blue.Teams.Add(new CustomTeamDto());
+        
+        customMatch.Alliances.Red.Teams.Add(new CustomTeamDto());
+        customMatch.Alliances.Red.Teams.Add(new CustomTeamDto());
+        customMatch.Alliances.Red.Teams.Add(new CustomTeamDto());
+        return customMatch;
+    }
+
+    private async Task OnValidSubmit()
+    {
+        for (int i = 0; i < CustomEvent.Matches.Count; i++)
+        {
+            var customMatch = CustomEvent.Matches[i];
+            customMatch.MatchNumber = i;
+        }
+        await OnValidSubmitCallBack.InvokeAsync(this);
+    }
+    
+    private void AddMatch(string stage)
+    {
+        CustomEvent.Matches.Add(CreateCustomMatch(stage));
+    }
+
+    private void RemoveMatch(CustomMatchDto customMatch)
+    {
+        CustomEvent.Matches.Remove(customMatch);
+    }
+
+    private void OnTeamSelected(ChangeEventArgs<int, CustomTeamDto> changeEventArgs, List<CustomTeamDto> teamsInAlliance, int currentTeamIndex)
+    {
+        if (changeEventArgs.ItemData == null)
+        {
+            return;
+        }
+        teamsInAlliance[currentTeamIndex] = changeEventArgs.ItemData;
+    }
+
+}

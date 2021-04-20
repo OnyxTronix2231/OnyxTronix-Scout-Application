@@ -88,16 +88,20 @@ namespace OnyxScoutApplication.Server
             services.AddRazorPages();
 
             services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatRepository>();
+            services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFormatUnitOfWork>();
+            
             services.AddScoped<IScoutFormRepository, ScoutFormRepository>();
+            services.AddScoped<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
+            
+            services.AddScoped<ICustomEventRepository, CustomEventRepository>();
+            services.AddScoped<ICustomEventUnitOfWork, CustomEventUnitOfWork>();
 
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
-            services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFormatUnitOfWork>();
-            services.AddScoped<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
             services.AddScoped<IApplicationUserUnitOfWork, ApplicationUserUnitOfWork>();
 
             services.AddAutoMapper(typeof(ScoutFormProfile));
             services.AddSingleton<ITheBlueAllianceService>(
-                new TheBlueAllianceService("bX9cxVNbMq3WzxTDiWjfblxrk58HZj65QyToW1hvXURrtjHtuuXsFujFC5j6iPus"));
+                    new TheBlueAllianceService("bX9cxVNbMq3WzxTDiWjfblxrk58HZj65QyToW1hvXURrtjHtuuXsFujFC5j6iPus"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -10,5 +10,6 @@ namespace OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance
         Task<List<Match>> GetMatchesByEvent(string eventKey);
         Task<List<Match>> GetMatchesByTeamAndEvent(int teamNumber, string eventKey);
         Task<List<Team>> GetTeamsByEvent(string eventKey);
+        Task<List<Team>> GetTeamsByDistrict(string districtKey);
     }
 }

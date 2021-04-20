@@ -1,0 +1,40 @@
+@page "/CustomEvents/Create"
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+
+@attribute [OnyxAuthorize(Role = Role.Admin)]
+<h3>EditCustomEvent</h3>
+
+@if (customEvent != null)
+{
+    <CustomEventComponent CustomEvent="@customEvent" Type="FormType.Create" OnValidSubmitCallBack="OnValidSubmit"></CustomEventComponent>
+}
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    private CustomEventDto customEvent;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateTask;
+        var user = authState.User;
+
+        var selectedYear = await LocalStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
+        var selectedCountry = await LocalStorage.GetItemAsync<string>("EventSelector/SelectedCountryFilter");
+        customEvent = new CustomEventDto()
+        {
+            Year = selectedYear,
+            Country = selectedCountry,
+        };
+    }
+
+    private async Task OnValidSubmit()
+    {
+        if (await Http.TryPutJson("CustomEvent", customEvent))
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

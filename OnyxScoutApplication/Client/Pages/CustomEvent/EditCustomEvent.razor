@@ -1,0 +1,30 @@
+@page "/CustomEvent/Edit/{Id:int}"
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
+@attribute [OnyxAuthorize(Role = Role.Admin)]
+<h3>EditCustomEvent</h3>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    
+    private CustomEventDto customEvent;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        customEvent = await Http.GetJson<CustomEventDto>("CustomEvent/ " + Id);
+        if (customEvent == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private async Task OnValidSubmit()
+    {
+        if (await Http.TryPutJson("CustomEvent/" + Id, customEvent))
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}
