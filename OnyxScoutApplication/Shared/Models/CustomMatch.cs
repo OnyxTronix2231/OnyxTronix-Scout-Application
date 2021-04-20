@@ -11,27 +11,27 @@ namespace OnyxScoutApplication.Shared.Models
         public CustomEvent Event { get; set; }
         public int MatchNumber { get; set; }
         public string WinningAlliance { get; set; }
-        public Alliances Alliances { get; set; }
+        public CustomAlliances Alliances { get; set; }
         public string Level { get; set; }
         public string Key { get; set; }
         public DateTime Date { get; set; }
     }
 
-    public class Alliances
+    public class CustomAlliances
     {
-        public Alliance Blue { get; set; }
-        public Alliance Red { get; set; }
+        public CustomAlliance Blue { get; set; }
+        public CustomAlliance Red { get; set; }
     }
 
-    public class Alliance
+    public class CustomAlliance
     {
         public int Score { get; set; }
 
-        public List<string> TeamKeys { get; set; } = new List<string>();
+        public List<int> TeamKeys { get; set; } = new List<int>();
 
         public int GetTeamAt(int index)
         {
-            return int.Parse(TeamKeys[index].Replace("frc", ""));
+            return TeamKeys[index];
         }
     }
 }

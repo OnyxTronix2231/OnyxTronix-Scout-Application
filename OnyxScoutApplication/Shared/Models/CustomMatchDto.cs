@@ -11,19 +11,19 @@ namespace OnyxScoutApplication.Shared.Models
         public CustomEvent Event { get; set; }
         public int MatchNumber { get; set; }
         public string WinningAlliance { get; set; }
-        public Alliances Alliances { get; set; }
+        public CustomAlliancesDto Alliances { get; set; }
         public string Level { get; set; }
         public string Key { get; set; }
         public DateTime Date { get; set; }
     }
 
-    public class AlliancesDto
+    public class CustomAlliancesDto
     {
-        public Alliance Blue { get; set; }
-        public Alliance Red { get; set; }
+        public CustomAllianceDto Blue { get; set; }
+        public CustomAllianceDto Red { get; set; }
     }
 
-    public class AllianceDto
+    public class CustomAllianceDto
     {
         public int Score { get; set; }
 

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance;
+using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
 using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 
 namespace OnyxScoutApplication.Server.Controllers
@@ -15,34 +17,66 @@ namespace OnyxScoutApplication.Server.Controllers
     public class TheBlueAllianceController : Controller
     {
         private readonly ITheBlueAllianceService theBlueAllianceService;
+        private readonly IEventRepository eventRepository;
+        private readonly IMapper mapper;
 
-        public TheBlueAllianceController(ITheBlueAllianceService theBlueAllianceService)
+        public TheBlueAllianceController(ITheBlueAllianceService theBlueAllianceService, 
+            IEventRepository eventRepository, IMapper mapper)
         {
             this.theBlueAllianceService = theBlueAllianceService;
+            this.eventRepository = eventRepository;
+            this.mapper = mapper;
         }
 
         [HttpGet("GetAllEvents/{year}")]
         public async Task<ActionResult<IEnumerable<Event>>> GetEventsByYear(int year)
         {
-            return await theBlueAllianceService.GetEventsByYear(year);
+            var customEvents = await eventRepository.GetAllByYear(year);
+            var tbaEvents = await theBlueAllianceService.GetEventsByYear(year);
+            var mappedCustomEvents = mapper.Map<IEnumerable<Event>>(customEvents);
+            return tbaEvents.Concat(mappedCustomEvents).ToList();
         }
 
         [HttpGet("GetAllMatches/{eventKey}")]
         public async Task<ActionResult<IEnumerable<Match>>> GetMatchesByEventKey(string eventKey)
         {
-            return await theBlueAllianceService.GetMatchesByEvent(eventKey);
+            var results = await theBlueAllianceService.GetMatchesByEvent(eventKey);
+            if (results != null && results.Any())
+            {
+                return results;
+            }
+            
+            var customMatches = await eventRepository.GetMatchesByEventKey(eventKey);
+            results = mapper.Map<List<Match>>(customMatches);
+            return results;
         }
 
         [HttpGet("GetAllTeams/{eventKey}")]
         public async Task<ActionResult<IEnumerable<Team>>> GetTeamsByEventKey(string eventKey)
         {
-            return await theBlueAllianceService.GetTeamsByEvent(eventKey);
+            var results = await theBlueAllianceService.GetTeamsByEvent(eventKey);
+            if (results != null && results.Any())
+            {
+                return results;
+            }
+            
+            var customMatches = await eventRepository.GetTeamsByEventKey(eventKey);
+            results = mapper.Map<List<Team>>(customMatches);
+            return results;
         }
 
         [HttpGet("GetMatchesByTeamAndEvent/{teamNumber}/{eventKey}")]
         public async Task<ActionResult<IEnumerable<Match>>> GetMatchesByTeamAndEventKey(int teamNumber, string eventKey)
         {
-            return await theBlueAllianceService.GetMatchesByTeamAndEvent(teamNumber, eventKey);
+            var results = await theBlueAllianceService.GetMatchesByTeamAndEvent(teamNumber, eventKey);
+            if (results != null && results.Any())
+            {
+                return results;
+            }
+            
+            var customMatches = await eventRepository.GetMatchesByTeamAndEventKey(teamNumber, eventKey);
+            results = mapper.Map<List<Match>>(customMatches);
+            return results;
         }
     }
 }

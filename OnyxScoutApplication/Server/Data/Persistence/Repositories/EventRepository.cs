@@ -66,6 +66,35 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return Mapper.Map<List<CustomEventDto>>(scoutForm);
         }
 
+        public async Task<ActionResult<IEnumerable<CustomMatch>>> GetMatchesByEventKey(string eventKey)
+        {
+            var result = await ScoutAppContext.Events.Include(i => i.Matches).FirstOrDefaultAsync(i => i.Key == eventKey);
+            if (result == null)
+            {
+                return new BadRequestObjectResult($"No event found with key {eventKey} to update!");
+            }
+
+            return result.Matches;
+        }
+
+        public async Task<ActionResult<IEnumerable<Team>>> GetTeamsByEventKey(string eventKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ActionResult<IEnumerable<CustomMatch>>> GetMatchesByTeamAndEventKey(int teamNumber, string eventKey)
+        {
+            var result = await ScoutAppContext.Events.Include(i => i.Matches.Where(m => 
+                m.Alliances.Blue.TeamKeys.Contains(teamNumber) || m.Alliances.Red.TeamKeys.Contains(teamNumber)))
+                .FirstOrDefaultAsync(i => i.Key == eventKey);
+            if (result == null)
+            {
+                return new BadRequestObjectResult($"No event found with key {eventKey} to update!");
+            }
+
+            return result.Matches;
+        }
+
         private async Task<ActionResult> Update(CustomEvent eventToUpdate, CustomEventDto eventSource)
         {
             var updated = Mapper.Map<ScoutForm>(eventSource);
