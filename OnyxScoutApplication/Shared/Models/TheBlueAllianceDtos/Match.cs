@@ -43,13 +43,11 @@ namespace OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos
     public class Alliance
     {
         public int Score { get; set; }
-
-        [JsonPropertyName("team_keys")]
-        public List<string> TeamKeys { get; set; } = new List<string>();
+        public List<int> TeamKeys { get; set; } = new List<int>();
 
         public int GetTeamAt(int index)
         {
-            return int.Parse(TeamKeys[index].Replace("frc", ""));
+            return TeamKeys[index];
         }
     }
 }

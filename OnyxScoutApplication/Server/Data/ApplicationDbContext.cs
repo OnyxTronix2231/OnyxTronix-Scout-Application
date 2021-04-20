@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OnyxScoutApplication.Shared.Models;
+using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 
 namespace OnyxScoutApplication.Server.Data
 {
@@ -22,6 +23,8 @@ namespace OnyxScoutApplication.Server.Data
         public DbSet<ScoutFormFormat> ScoutFormFormats { get; set; }
 
         public DbSet<ScoutForm> ScoutForms { get; set; }
+        
+        public DbSet<CustomEvent> Events { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
