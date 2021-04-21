@@ -7,18 +7,28 @@
     <div class="form-group col-sm-5">
         <label class="form-label">Year</label>
         <SfNumericTextBox @bind-Value="@CustomEvent.Year" Readonly="@true"/>
+        <ValidationMessage For="() => CustomEvent.Year" />
+
     </div>
    
     <div class="form-group col-sm-5">
         <label class="form-label">Country</label>
         <SfTextBox @bind-Value="@CustomEvent.Country" Readonly="@true"/>
-    </div>
+        <ValidationMessage For="() => CustomEvent.Country" />
+ </div>
    
     <div class="form-group col-sm-5">
         <label class="form-label">Name</label>
         <SfTextBox @bind-Value="@CustomEvent.Name"/>
+        <ValidationMessage For="() => CustomEvent.Name" />
+    </div> 
+    <div class="form-group col-sm-5">
+        <label class="form-label">Start date</label>
+        <SfDatePicker Format="dd/MM/yyyy" @bind-Value="@CustomEvent.StartDate"/>
+        <ValidationMessage For="() => CustomEvent.StartDate" />
     </div>
     <div class="form-group">
+        <ValidationMessage For="() => CustomEvent.Matches" />
         @foreach (var customMatchesByStage in CustomEvent.Matches.GroupBy(i => i.Level))
         {
             <h4>@customMatchesByStage.Key</h4>
@@ -38,10 +48,16 @@
                         <label class="form-label">Match number</label>
                         <SfNumericTextBox @bind-Value="@currentIndex" Readonly="@true"/>
                     </div>
+                    <div class="form-group col-sm-5">
+                        <label class="form-label">Date</label>
+                        <SfDatePicker Format="dd/MM/yyyy" @bind-Value="@customMatch.Date"/>
+                        <ValidationMessage For="() => customMatch.Date" />
+                    </div>
                     <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveMatch(customMatch)">Remove</SfButton>
                     <div class="row align-items-end">
                         <div class="form-group col-sm-5">
                             <h5>Blue team</h5>
+                            <ValidationMessage For="() => customMatch.Alliances.Blue" />
                             @for (int j = 0; j < customMatch.Alliances.Blue.Teams.Count; j++)
                             {
                                 var currentTeamIndex = j;
@@ -54,6 +70,7 @@
 
                         <div class="form-group col-sm-5">
                             <h5>Red team</h5>
+                            <ValidationMessage For="() => customMatch.Alliances.Red" />
                             @for (int j = 0; j < customMatch.Alliances.Red.Teams.Count; j++)
                             {
                                 var currentTeamIndex = j;
@@ -99,9 +116,10 @@
     
     private CustomMatchDto CreateCustomMatch(string level)
     {
-        CustomMatchDto customMatch = new CustomMatchDto()
+        CustomMatchDto customMatch = new CustomMatchDto
         {
             Level = level,
+            Event = CustomEvent,
             Alliances = new CustomAlliancesDto()
             {
                 Blue = new CustomAllianceDto(),
@@ -130,7 +148,9 @@
     
     private void AddMatch(string stage)
     {
-        CustomEvent.Matches.Add(CreateCustomMatch(stage));
+        var newMatch = CreateCustomMatch(stage);
+        newMatch.Date = CustomEvent.Matches.FirstOrDefault(i => i.Level == stage)!.Date;
+        CustomEvent.Matches.Add(newMatch);
     }
 
     private void RemoveMatch(CustomMatchDto customMatch)

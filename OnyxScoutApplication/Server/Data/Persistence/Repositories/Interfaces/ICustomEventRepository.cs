@@ -11,6 +11,8 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
     public interface ICustomEventRepository : IRepository<CustomEventDto>
     {
         Task<ActionResult> Update(int id, CustomEventDto eventSource);
+        
+        Task<ActionResult<bool>> GetEventExists(string eventKey);
 
         Task<ActionResult<IEnumerable<CustomEventDto>>> GetAllByYear(int year);
 

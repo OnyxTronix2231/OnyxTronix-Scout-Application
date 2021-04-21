@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 
 namespace OnyxScoutApplication.Shared.Models
@@ -9,7 +9,7 @@ namespace OnyxScoutApplication.Shared.Models
     public class CustomMatch
     {
         public int Id { get; set; }
-        [Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
         public CustomEvent Event { get; set; }
         public int MatchNumber { get; set; }
         public string WinningAlliance { get; set; }

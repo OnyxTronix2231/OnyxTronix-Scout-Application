@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 
 namespace OnyxScoutApplication.Server.Data.Profiles
 {
@@ -73,6 +74,32 @@ namespace OnyxScoutApplication.Server.Data.Profiles
             CreateMap<ApplicationUser, ApplicationUser>();
             CreateMap<ApplicationUser, ApplicationUserDto>();
             CreateMap<ApplicationUserDto, ApplicationUser>();
+            
+            CreateMap<CustomEvent, CustomEvent>();
+            CreateMap<CustomEvent, CustomEventDto>();
+            CreateMap<CustomEventDto, CustomEvent>();
+            CreateMap<CustomEventDto, Event>();
+            
+            CreateMap<CustomMatch, CustomMatch>();
+            CreateMap<CustomMatch, CustomMatchDto>();
+            CreateMap<CustomMatchDto, CustomMatch>();
+            CreateMap<CustomMatchDto, Match>();
+            
+            CreateMap<CustomAlliances, CustomAlliances>();
+            CreateMap<CustomAlliances, CustomAlliancesDto>();
+            CreateMap<CustomAlliancesDto, CustomAlliances>();
+            CreateMap<CustomAlliancesDto, Alliances>();
+            
+            CreateMap<CustomAlliance, CustomAlliance>();
+            CreateMap<CustomAlliance, CustomAllianceDto>();
+            CreateMap<CustomAllianceDto, CustomAlliance>();
+            CreateMap<CustomAllianceDto, Alliance>().ForMember(des => des.TeamKeys, opt =>
+                opt.MapFrom(src => src.Teams.Select(i => "frc" + i.TeamNumber)));;
+            
+            CreateMap<CustomTeam, CustomTeam>();
+            CreateMap<CustomTeam, CustomTeamDto>();
+            CreateMap<CustomTeamDto, CustomTeam>();
+            CreateMap<CustomTeamDto, Team>();
         }
     }
 }

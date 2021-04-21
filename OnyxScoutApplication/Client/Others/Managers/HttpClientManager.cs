@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+﻿using System;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace OnyxScoutApplication.Client.Others.Managers
 {
@@ -29,8 +31,12 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 if (response.IsSuccessStatusCode)
                 {
                     string json = await response.Content.ReadAsStringAsync();
-                    result = JsonSerializer.Deserialize<T>(json,
-                        new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
+                    Console.WriteLine(json);
+                    result = JsonConvert.DeserializeObject<T>(json,
+                        new JsonSerializerSettings
+                        {
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        });
                 }
                 else
                 {
@@ -100,7 +106,10 @@ namespace OnyxScoutApplication.Client.Others.Managers
 
         private static HttpContent Serialize(object objectToSerialize)
         {
-            var inputJson = JsonSerializer.Serialize(objectToSerialize);
+            var inputJson = JsonConvert.SerializeObject(objectToSerialize, new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            });
             return new StringContent(inputJson, Encoding.UTF8, "application/json");
         }
     }

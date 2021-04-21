@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace OnyxScoutApplication.Shared.Models
 {
     public class CustomMatchDto
     {
         public int Id { get; set; }
-        [Newtonsoft.Json.JsonIgnore]
-        public CustomEvent Event { get; set; }
+        public CustomEventDto Event { get; set; } 
         public int MatchNumber { get; set; }
         public string WinningAlliance { get; set; }
         public CustomAlliancesDto Alliances { get; set; }
         public string Level { get; set; }
         public string Key { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } = DateTime.Today;
     }
 
     public class CustomAlliancesDto
@@ -40,10 +39,10 @@ namespace OnyxScoutApplication.Shared.Models
     public class CustomTeamDto
     {
         public int Id { get; set; }
-        [JsonPropertyName("team_number")]
+        [JsonProperty("team_number")]
         public int TeamNumber { get; set; }
         public string Nickname { get; set; }
         [NotMapped]
-        public string NameWithNumber => Nickname  + " " + TeamNumber;
+        public string NameWithNumber => TeamNumber + " " + Nickname;
     }
 }

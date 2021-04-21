@@ -30,6 +30,7 @@ using IdentityServer4.AspNetIdentity;
 using IdentityServer4.Services;
 using OnyxScoutApplication.Server.Data.Extensions;
 using IdentityServer4.Extensions;
+using Newtonsoft.Json;
 using OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance;
 using OnyxScoutApplication.Shared.Other;
 
@@ -84,7 +85,7 @@ namespace OnyxScoutApplication.Server
             services.Configure<IdentityOptions>(options =>
                 options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddNewtonsoftJson( settings => settings.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
             services.AddRazorPages();
 
             services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatRepository>();
