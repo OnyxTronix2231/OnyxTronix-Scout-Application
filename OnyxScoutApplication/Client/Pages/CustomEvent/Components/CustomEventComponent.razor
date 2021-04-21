@@ -37,7 +37,7 @@
             {
                 var currentIndex = i;
                 var customMatch = matches[currentIndex];
-               
+                
                 <div class="container">
                     <div class="form-group col-sm-5">
                         <label class="form-label">Stage</label>
@@ -49,12 +49,13 @@
                     </div>
                     <div class="form-group col-sm-5">
                         <label class="form-label">Date</label>
-                        <SfDatePicker Format="dd/MM/yyyy" @bind-Value="@customMatch.Date"/>
+                        <SfDateTimePicker Format="dd/MM/yyyy HH:mm" TimeFormat="HH:mm" Time @bind-Value="@customMatch.Date"/>
                         <ValidationMessage For="() => customMatch.Date" />
                     </div>
                     <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveMatch(customMatch)">Remove</SfButton>
-                    <div class="row align-items-end">
-                        <div class="form-group col-sm-5">
+                    <ValidationMessage For="() => customMatch.Alliances" />
+                    <div class="row">
+                        <div class="form-group col-sm-4">
                             <h5>Blue team</h5>
                             <ValidationMessage For="() => customMatch.Alliances.Blue" />
                             
@@ -62,21 +63,21 @@
                             {
                                 var currentTeamIndex = j;
                                 var team = customMatch.Alliances.Blue.Teams[j];
-                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber"  Width="250px">
+                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber" CssClass="maxWidth">
                                     <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
                                     <DropDownListEvents TItem="CustomTeamDto" TValue="int" ValueChange="e => OnTeamSelected(e, customMatch.Alliances.Blue.Teams, currentTeamIndex)"></DropDownListEvents>
                                 </SfDropDownList>
                             }
                         </div> 
 
-                        <div class="form-group col-sm-5"> 
+                        <div class="form-group col-sm-4"> 
                             <h5>Red team</h5>
                             <ValidationMessage For="() => customMatch.Alliances.Red" />
                             @for (int j = 0; j < customMatch.Alliances.Red.Teams.Count; j++)
                             {
                                 var currentTeamIndex = j;
                                 var team = customMatch.Alliances.Red.Teams[j];
-                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber" Width="250px">
+                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber" CssClass="maxWidth">
                                     <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
                                     <DropDownListEvents TItem="CustomTeamDto" TValue="int" ValueChange="e => OnTeamSelected(e, customMatch.Alliances.Red.Teams, currentTeamIndex)"></DropDownListEvents>
                                 </SfDropDownList>
@@ -113,13 +114,13 @@
         if (CustomEvent.Matches.Any())
         {
             return;
-        } 
+        }
         CustomEvent.Matches.Add(CreateCustomMatch("qm"));
         CustomEvent.Matches.Add(CreateCustomMatch("qf"));
         CustomEvent.Matches.Add(CreateCustomMatch("sf"));
         CustomEvent.Matches.Add(CreateCustomMatch("f"));
     }
-    
+
     private CustomMatchDto CreateCustomMatch(string level)
     {
         CustomMatchDto customMatch = new CustomMatchDto
@@ -135,7 +136,7 @@
         customMatch.Alliances.Blue.Teams.Add(new CustomTeamDto());
         customMatch.Alliances.Blue.Teams.Add(new CustomTeamDto());
         customMatch.Alliances.Blue.Teams.Add(new CustomTeamDto());
-        
+
         customMatch.Alliances.Red.Teams.Add(new CustomTeamDto());
         customMatch.Alliances.Red.Teams.Add(new CustomTeamDto());
         customMatch.Alliances.Red.Teams.Add(new CustomTeamDto());
@@ -151,7 +152,7 @@
         }
         await OnValidSubmitCallBack.InvokeAsync(this);
     }
-    
+
     private void AddMatch(string stage)
     {
         var newMatch = CreateCustomMatch(stage);
@@ -174,3 +175,8 @@
     }
 
 }
+<style>
+    .maxWidth {
+    max-width: 250px;
+    }
+</style>
