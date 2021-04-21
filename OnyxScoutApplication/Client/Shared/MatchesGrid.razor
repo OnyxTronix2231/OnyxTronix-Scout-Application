@@ -1,16 +1,19 @@
 ﻿@using Syncfusion.Blazor.Grids
 @using System.Linq
 @inject NavigationManager NavigationManager
-@if (Matches != null && Matches.Count != 0)
+@inject ILocalStorageService StorageService
+@if (Matches != null)
 {
-    <SfGrid DataSource="@Matches" AllowSorting="true" AllowFiltering="true" Height="@Height">
+    <SfButton OnClick="SavePageNumber">Save page number</SfButton> 
+
+    <SfGrid @ref="grid" DataSource="@Matches" AllowSorting="true" AllowFiltering="true" Height="@Height" AllowPaging="true">
         <GridPageSettings PageSize="10"></GridPageSettings>
         <GridEvents QueryCellInfo="CustomizeCell" TValue="Match"></GridEvents>
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
             <GridColumn Field=@nameof(Match.MatchNumber) HeaderText="Match number" Width="120"></GridColumn>
             <GridColumn Field=@nameof(Match.Date) HeaderText="Match date" Format="dd/MM/yyyy HH:mm" Type="ColumnType.DateTime" Width="150"></GridColumn>
-            @for (int i = 0; i < Matches[0].Alliances.Blue.TeamKeys.Count; i++)
+            @for (int i = 0; i < 3; i++)
             {
                 var headName = "Blue team " + (i + 1);
                 int index = i;
@@ -26,7 +29,7 @@
             }
             <GridColumn Field="Alliances.Blue.Score" HeaderText="Blue Score" TextAlign="TextAlign.Right" Width="120"></GridColumn>
             <GridColumn Field="Alliances.Red.Score" HeaderText="Red Score" TextAlign="TextAlign.Left" Width="120"></GridColumn>
-            @for (int i = 0; i < Matches[0].Alliances.Red.TeamKeys.Count; i++)
+            @for (int i = 0; i < 3; i++)
             {
                 var headName = "Red team " + (i + 1);
                 int index = i;
@@ -61,6 +64,14 @@
 
     [Parameter]
     public EventCallback<TeamInMatch> OnTeamClicked { get; set; }
+
+    private SfGrid<Match> grid;
+
+    private void SavePageNumber()
+    {
+        StorageService.SetItemAsync("MatchGridPage.T", grid.PageSettings.CurrentPage);
+    }
+    
 
     private string GetTeamTextStyle(int teamNumber, string matchName) //Team's text style (bold, color and clickable)
     {

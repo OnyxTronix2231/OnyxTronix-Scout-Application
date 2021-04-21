@@ -5,7 +5,7 @@
 @inject NavigationManager NavigationManager
 @inject HttpClientManager Http
 @inject ISyncLocalStorageService LocalStorage
-
+@inject ISyncSessionStorageService SessionStorage
 @inject IJSRuntime JsRuntime
 
 <div class="sidebar">
@@ -42,16 +42,16 @@
             Event selectedEvent = LocalStorage.GetItem<Event>("EventSelector/SelectedEventKey");
 
             var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
-            LocalStorage.SetItem("TheBlueAlliance.AllMatches", matches);
+            SessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
 
             var scoutForms = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
-            LocalStorage.SetItem("ScoutForms.All", scoutForms);
+            SessionStorage.SetItem("ScoutForms.All", scoutForms);
 
             var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
             if (events != null) //user is probably not authorized 
             {
                 events = events.OrderBy(i => i.StartDate).Where(i => string.Equals(i.Country, selectedEvent.Country, StringComparison.OrdinalIgnoreCase)).ToList();
-                LocalStorage.SetItem("TheBlueAlliance.AllEvents", events);
+                SessionStorage.SetItem("TheBlueAlliance.AllEvents", events);
             }
         }
         finishedInit = true;

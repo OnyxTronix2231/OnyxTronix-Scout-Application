@@ -11,6 +11,7 @@ using FluentValidation;
 using OnyxScoutApplication.Shared.Models;
 using OnyxScoutApplication.Shared.Models.FluentValidations;
 using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using OnyxScoutApplication.Client.Others.Extensions;
 using OnyxScoutApplication.Client.Others.Objects;
 using OnyxScoutApplication.Client.Others.Objects.Analyzers;
@@ -53,6 +54,7 @@ namespace OnyxScoutApplication.Client
             services.AddTransient<IValidator<ApplicationUserDto>, ApplicationUserValidator>();
             services.AddTransient<IValidator<ScoutFormDto>, ScoutFormValidator>();
             services.AddBlazoredLocalStorage();
+            services.AddBlazoredSessionStorage();
         }
     }
 }

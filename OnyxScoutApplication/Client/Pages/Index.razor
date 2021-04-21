@@ -2,7 +2,7 @@
 @inject ISyncLocalStorageService SyncLocalStorage
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
-@inject ILocalStorageService LocalStorage
+@inject ISessionStorageService SessionStorage
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 <h1>Events</h1>
@@ -12,7 +12,7 @@
 </div>
 
 <div>
-    <MatchesGrid Matches="qMatches" SubmittedForms="scoutForms" Height="400" OnTeamClicked="OnTeamClicked"></MatchesGrid>
+     <MatchesGrid Matches="qMatches" SubmittedForms="scoutForms" Height="400" OnTeamClicked="OnTeamClicked"></MatchesGrid>
 </div>
 
 <br/>
@@ -31,18 +31,19 @@
 </div>
 
 @code {
-    private List<Match> qMatches;
-    private List<Match> qfMatches;
-    private List<Match> sfMatches;
-    private List<Match> fMatches;
+    private List<Match> qMatches = new List<Match>();
+    private List<Match> qfMatches = new List<Match>();
+    private List<Match> sfMatches = new List<Match>();
+    private List<Match> fMatches = new List<Match>();
     private List<ScoutFormDto> scoutForms;
 
     protected override async Task OnInitializedAsync()
     {
-        if (await LocalStorage.ContainKeyAsync("TheBlueAlliance.AllMatches"))
+        if (await SessionStorage.ContainKeyAsync("TheBlueAlliance.AllMatches"))
         {
-            var matches = await LocalStorage.GetItemAsync<List<Match>>("TheBlueAlliance.AllMatches");
-            scoutForms = await LocalStorage.GetItemAsync<List<ScoutFormDto>>("ScoutForms.All");
+            var matches = await SessionStorage.GetItemAsync<List<Match>>("TheBlueAlliance.AllMatches");
+            scoutForms = await SessionStorage.GetItemAsync<List<ScoutFormDto>>("ScoutForms.All");
+            Console.WriteLine("Loaded!");
             UpdateByMatches(matches);
         }
     }
@@ -51,7 +52,7 @@
     private async Task UpdateMatchTable(Event selectedEvent)
     {
         var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
-        await LocalStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
+        await SessionStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
         scoutForms = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
         UpdateByMatches(matches);
     }
@@ -63,6 +64,8 @@
         qfMatches = matches.Where(i => i.Level == "qf").ToList();
         sfMatches = matches.Where(i => i.Level == "sf").ToList();
         fMatches = matches.Where(i => i.Level == "f").ToList();
+        Console.WriteLine("Finished!");
+
     }
 
     private void OnTeamClicked(TeamInMatch teamInMatch)
