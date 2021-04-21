@@ -18,7 +18,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 
         Task<ActionResult<IEnumerable<CustomMatchDto>>> GetMatchesByEventKey(string eventKey);
 
-        Task<ActionResult<IEnumerable<Team>>> GetTeamsByEventKey(string eventKey);
+        Task<ActionResult<IEnumerable<CustomTeamDto>>> GetTeamsByEventKey(string eventKey);
         
         Task<ActionResult<IEnumerable<CustomMatchDto>>> GetMatchesByTeamAndEventKey(int teamNumber, string eventKey);
         

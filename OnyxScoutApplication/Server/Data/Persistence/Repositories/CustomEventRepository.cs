@@ -90,9 +90,21 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return Mapper.Map<List<CustomMatchDto>>(result.Matches);
         }
 
-        public async Task<ActionResult<IEnumerable<Team>>> GetTeamsByEventKey(string eventKey)
+        public async Task<ActionResult<IEnumerable<CustomTeamDto>>> GetTeamsByEventKey(string eventKey)
         {
-            throw new NotImplementedException();
+            var result = await ScoutAppContext.Events.Include(i => i.Matches).ThenInclude(i => i.Alliances)
+                .Include(i => i.Matches).ThenInclude(i => i.Alliances).ThenInclude(i => i.Blue).ThenInclude(i => i.Teams)
+                .Include(i => i.Matches).ThenInclude(i => i.Alliances).ThenInclude(i => i.Red).ThenInclude(i => i.Teams)
+                .FirstOrDefaultAsync(i => i.Key == eventKey);
+           
+            if (result == null)
+            {
+                return new BadRequestObjectResult($"No event found with key {eventKey}!");
+            }
+
+            var teams = result.Matches.SelectMany(i => i.Alliances.Blue.Teams.Concat(i.Alliances.Red.Teams))
+                .Distinct(new TeamsEqualityComparer() );
+            return Mapper.Map<List<CustomTeamDto>>(teams);
         }
 
         public async Task<ActionResult<IEnumerable<CustomMatchDto>>> GetMatchesByTeamAndEventKey(int teamNumber,
@@ -102,14 +114,14 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                 .Include(i => i.Matches).ThenInclude(i => i.Alliances).ThenInclude(i => i.Blue).ThenInclude(i => i.Teams)
                 .Include(i => i.Matches).ThenInclude(i => i.Alliances).ThenInclude(i => i.Red).ThenInclude(i => i.Teams)
                 .FirstOrDefaultAsync(i => i.Key == eventKey);
-            result.Matches = result.Matches.Where(i => i.Alliances.Blue.Teams.Any(t => t.TeamNumber == teamNumber) ||
-                                                       i.Alliances.Red.Teams.Any(t => t.TeamNumber == teamNumber) )
-                .ToList();
+           
             if (result == null)
             {
                 return new BadRequestObjectResult($"No mathces found for team {teamNumber} and event {eventKey}!");
             }
-
+            result.Matches = result.Matches.Where(i => i.Alliances.Blue.Teams.Any(t => t.TeamNumber == teamNumber) ||
+                                                       i.Alliances.Red.Teams.Any(t => t.TeamNumber == teamNumber) )
+                .ToList();
             return Mapper.Map<List<CustomMatchDto>>(result.Matches);
         }
 
@@ -133,5 +145,22 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         }
 
         private ApplicationDbContext ScoutAppContext => Context as ApplicationDbContext;
+    }
+
+    public class TeamsEqualityComparer : IEqualityComparer<CustomTeam>
+    {
+        public bool Equals(CustomTeam x, CustomTeam y)
+        {
+            if (ReferenceEquals(x, y)) return true;
+            if (ReferenceEquals(x, null)) return false;
+            if (ReferenceEquals(y, null)) return false;
+            if (x.GetType() != y.GetType()) return false;
+            return x.TeamNumber == y.TeamNumber;
+        }
+
+        public int GetHashCode(CustomTeam obj)
+        {
+            return HashCode.Combine(obj.TeamNumber);
+        }
     }
 }
