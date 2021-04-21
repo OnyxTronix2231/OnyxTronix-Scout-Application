@@ -14,7 +14,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
         
         Task<ActionResult<bool>> GetEventExists(string eventKey);
 
-        Task<ActionResult<IEnumerable<CustomEventDto>>> GetAllByYear(int year);
+        Task<ActionResult<IEnumerable<CustomEventDto>>> GetAllEventsByYear(int year);
 
         Task<ActionResult<IEnumerable<CustomMatchDto>>> GetMatchesByEventKey(string eventKey);
 
@@ -22,6 +22,8 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
         
         Task<ActionResult<IEnumerable<CustomMatchDto>>> GetMatchesByTeamAndEventKey(int teamNumber, string eventKey);
         
-        Task<ActionResult<IEnumerable<CustomEventDto>>> GetEventByKey(string key);
+        Task<ActionResult<IEnumerable<CustomEventDto>>> GetEventWithMathesByKey(string key);
+        
+        Task<ActionResult<CustomEventDto>> GetEventWithMatchesById(int id);
     }
 }

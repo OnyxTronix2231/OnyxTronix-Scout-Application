@@ -17,9 +17,16 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
             RuleFor(i => i.Alliances).NotEmpty();
             RuleFor(i => i.Alliances.Blue).Must(BeFull).WithMessage("Missing team/s in blue alliance");
             RuleFor(i => i.Alliances.Red).Must(BeFull).WithMessage("Missing team/s in red alliance");
+            RuleFor(i => i.Alliances).Must(HaveDiffrentTeams).WithMessage("team in the same match!");
         }
 
-        private bool BeFull(CustomAllianceDto customAlliance)
+        private static bool HaveDiffrentTeams(CustomAlliancesDto customAlliances)
+        {
+            return !customAlliances.Blue.Teams.Concat(customAlliances.Red.Teams).GroupBy(i => i.TeamNumber).
+                Any(e => e.Count() > 1);
+        }
+
+        private static bool BeFull(CustomAllianceDto customAlliance)
         {
             if (customAlliance.Teams.Count != 3)
             {

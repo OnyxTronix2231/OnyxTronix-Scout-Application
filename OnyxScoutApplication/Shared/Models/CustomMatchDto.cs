@@ -19,6 +19,7 @@ namespace OnyxScoutApplication.Shared.Models
 
     public class CustomAlliancesDto
     {
+        public int Id { get; set; }
         public CustomAllianceDto Blue { get; set; }
         public CustomAllianceDto Red { get; set; }
     }

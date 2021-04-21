@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Server.Data.Extensions;
 using OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
 using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
@@ -56,7 +57,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         
         public async Task<ActionResult> Update(int id, CustomEventDto eventSource)
         {
-            var result = await ScoutAppContext.Events.Include(i => i.Matches).FirstOrDefaultAsync(i => i.Id == id);
+            var result = await ScoutAppContext.Events.WithAllMatches().FirstOrDefaultAsync(i => i.Id == id);
             if (result == null)
             {
                 return new BadRequestObjectResult("No event found to update!");
@@ -70,7 +71,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return await ScoutAppContext.Events.AnyAsync(i => i.Key == eventKey);
         }
 
-        public async Task<ActionResult<IEnumerable<CustomEventDto>>> GetAllByYear(int year)
+        public async Task<ActionResult<IEnumerable<CustomEventDto>>> GetAllEventsByYear(int year)
         {
             var events = await ScoutAppContext.Events.Where(i => i.Year == year).ToListAsync();
             return Mapper.Map<List<CustomEventDto>>(events);
@@ -78,10 +79,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<IEnumerable<CustomMatchDto>>> GetMatchesByEventKey(string eventKey)
         {
-            var result = await ScoutAppContext.Events
-                .Include(i => i.Matches).ThenInclude(i => i.Alliances).ThenInclude(i => i.Blue).ThenInclude(i => i.Teams)
-                .Include(i => i.Matches).ThenInclude(i => i.Alliances).ThenInclude(i => i.Red).ThenInclude(i => i.Teams)
-                .FirstOrDefaultAsync(i => i.Key == eventKey);
+            var result = await ScoutAppContext.Events.WithAllMatches().FirstOrDefaultAsync(i => i.Key == eventKey);
             if (result == null)
             {
                 return new BadRequestObjectResult($"No event found with key {eventKey} to update!");
@@ -92,10 +90,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<IEnumerable<CustomTeamDto>>> GetTeamsByEventKey(string eventKey)
         {
-            var result = await ScoutAppContext.Events.Include(i => i.Matches).ThenInclude(i => i.Alliances)
-                .Include(i => i.Matches).ThenInclude(i => i.Alliances).ThenInclude(i => i.Blue).ThenInclude(i => i.Teams)
-                .Include(i => i.Matches).ThenInclude(i => i.Alliances).ThenInclude(i => i.Red).ThenInclude(i => i.Teams)
-                .FirstOrDefaultAsync(i => i.Key == eventKey);
+            var result = await ScoutAppContext.Events.WithAllMatches().FirstOrDefaultAsync(i => i.Key == eventKey);
            
             if (result == null)
             {
@@ -110,30 +105,39 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public async Task<ActionResult<IEnumerable<CustomMatchDto>>> GetMatchesByTeamAndEventKey(int teamNumber,
             string eventKey)
         {
-            var result = await ScoutAppContext.Events.Include(i => i.Matches).ThenInclude(i => i.Alliances)
-                .Include(i => i.Matches).ThenInclude(i => i.Alliances).ThenInclude(i => i.Blue).ThenInclude(i => i.Teams)
-                .Include(i => i.Matches).ThenInclude(i => i.Alliances).ThenInclude(i => i.Red).ThenInclude(i => i.Teams)
-                .FirstOrDefaultAsync(i => i.Key == eventKey);
-           
+            var result = await ScoutAppContext.Events.WithAllMatches().FirstOrDefaultAsync(i => i.Key == eventKey);
+
             if (result == null)
             {
                 return new BadRequestObjectResult($"No mathces found for team {teamNumber} and event {eventKey}!");
             }
+
             result.Matches = result.Matches.Where(i => i.Alliances.Blue.Teams.Any(t => t.TeamNumber == teamNumber) ||
-                                                       i.Alliances.Red.Teams.Any(t => t.TeamNumber == teamNumber) )
+                                                       i.Alliances.Red.Teams.Any(t => t.TeamNumber == teamNumber))
                 .ToList();
             return Mapper.Map<List<CustomMatchDto>>(result.Matches);
         }
 
-        public async Task<ActionResult<IEnumerable<CustomEventDto>>> GetEventByKey(string key)
+        public async Task<ActionResult<IEnumerable<CustomEventDto>>> GetEventWithMathesByKey(string key)
         {
-            var result = await ScoutAppContext.Events.Include(i => i.Matches).FirstOrDefaultAsync(i => i.Key == key);
+            var result = await ScoutAppContext.Events.WithAllMatches().FirstOrDefaultAsync(i => i.Key == key);
             if (result == null)
             {
                 return new BadRequestObjectResult($"No event found with key {key} to update!");
             }
 
             return Mapper.Map<List<CustomEventDto>>(result);
+        }
+
+        public async Task<ActionResult<CustomEventDto>> GetEventWithMatchesById(int id)
+        {
+            var result = await ScoutAppContext.Events.WithAllMatches().FirstOrDefaultAsync(i => i.Id == id);
+            if (result == null)
+            {
+                return new BadRequestObjectResult($"No event found with id {id}!");
+            }
+
+            return Mapper.Map<CustomEventDto>(result);
         }
 
         private async Task<ActionResult> Update(CustomEvent eventToUpdate, CustomEventDto eventSource)
@@ -146,6 +150,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         private ApplicationDbContext ScoutAppContext => Context as ApplicationDbContext;
     }
+    
 
     public class TeamsEqualityComparer : IEqualityComparer<CustomTeam>
     {

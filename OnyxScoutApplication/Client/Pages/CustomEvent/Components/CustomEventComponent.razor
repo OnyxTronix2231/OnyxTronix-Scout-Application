@@ -61,7 +61,8 @@
                             @for (int j = 0; j < customMatch.Alliances.Blue.Teams.Count; j++)
                             {
                                 var currentTeamIndex = j;
-                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Width="250px">
+                                var team = customMatch.Alliances.Red.Teams[j];
+                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber"  Width="250px">
                                     <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
                                     <DropDownListEvents TItem="CustomTeamDto" TValue="int" ValueChange="e => OnTeamSelected(e, customMatch.Alliances.Blue.Teams, currentTeamIndex)"></DropDownListEvents>
                                 </SfDropDownList>
@@ -74,7 +75,8 @@
                             @for (int j = 0; j < customMatch.Alliances.Red.Teams.Count; j++)
                             {
                                 var currentTeamIndex = j;
-                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Width="250px">
+                                var team = customMatch.Alliances.Red.Teams[j];
+                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber" Width="250px">
                                     <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
                                     <DropDownListEvents TItem="CustomTeamDto" TValue="int" ValueChange="e => OnTeamSelected(e, customMatch.Alliances.Red.Teams, currentTeamIndex)"></DropDownListEvents>
                                 </SfDropDownList>
@@ -108,6 +110,10 @@
     {
         var selectedYear = await LocalStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
         teams = await http.GetJson<List<CustomTeamDto>>("TheBlueAlliance/GetAllTeamsByDistrict/" + selectedYear + "isr"); //TODO: districts names handling
+        if (CustomEvent.Matches.Any())
+        {
+            return;
+        } 
         CustomEvent.Matches.Add(CreateCustomMatch("qm"));
         CustomEvent.Matches.Add(CreateCustomMatch("qf"));
         CustomEvent.Matches.Add(CreateCustomMatch("sf"));

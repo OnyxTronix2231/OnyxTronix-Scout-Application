@@ -4,6 +4,10 @@
 @attribute [OnyxAuthorize(Role = Role.Admin)]
 <h3>EditCustomEvent</h3>
 
+@if (customEvent != null)
+{
+    <CustomEventComponent CustomEvent="@customEvent" Type="FormType.Create" OnValidSubmitCallBack="OnValidSubmit"></CustomEventComponent>
+}
 
 @code {
     [Parameter]
@@ -13,7 +17,7 @@
     
     protected override async Task OnInitializedAsync()
     {
-        customEvent = await Http.GetJson<CustomEventDto>("CustomEvent/ " + Id);
+        customEvent = await Http.GetJson<CustomEventDto>("CustomEvent/" + Id);
         if (customEvent == null)
         {
             NavigationManager.NavigateTo("/");

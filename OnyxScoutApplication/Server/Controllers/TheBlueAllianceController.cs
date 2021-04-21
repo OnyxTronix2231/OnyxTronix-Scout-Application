@@ -31,7 +31,7 @@ namespace OnyxScoutApplication.Server.Controllers
         [HttpGet("GetAllEvents/{year}")]
         public async Task<ActionResult<IEnumerable<Event>>> GetEventsByYear(int year)
         {
-            var customEvents = await customEventRepository.GetAllByYear(year);
+            var customEvents = await customEventRepository.GetAllEventsByYear(year);
             var tbaEvents = await theBlueAllianceService.GetEventsByYear(year);
             var mappedCustomEvents = mapper.Map<IEnumerable<Event>>(customEvents.Value);
             return tbaEvents.Concat(mappedCustomEvents).ToList();

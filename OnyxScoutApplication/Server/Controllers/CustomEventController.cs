@@ -26,19 +26,32 @@ namespace OnyxScoutApplication.Server.Controllers
             var response = await unitOfWork.CustomEvents.Add(customEvent);
             await unitOfWork.Complete();
             return response;
+        }
+        
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateCustomEvent(int id, [FromBody] CustomEventDto scoutFormModel)
+        {
+            var response = await unitOfWork.CustomEvents.Update(id, scoutFormModel);
+            await unitOfWork.Complete();
+            return response;
+        }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CustomEventDto>> GetById(int id)
+        {
+            return await unitOfWork.CustomEvents.GetEventWithMatchesById(id);
+        }
+        
+        [HttpGet("GetEventByKey/{key}")]
+        public async Task<ActionResult<IEnumerable<CustomEventDto>>> GetEventByKey(string key)
+        {
+            return await unitOfWork.CustomEvents.GetEventWithMathesByKey(key);
         }
 
         [HttpGet("GetAllEventsByYear/{year}")]
         public async Task<ActionResult<IEnumerable<CustomEventDto>>> GetEventsByYear(int year)
         {
-            return await unitOfWork.CustomEvents.GetAllByYear(year);
-        }
-
-        [HttpGet("GetEventByKey/{key}")]
-        public async Task<ActionResult<IEnumerable<CustomEventDto>>> GetEventsByYearKey(string key)
-        {
-            return await unitOfWork.CustomEvents.GetEventByKey(key);
+            return await unitOfWork.CustomEvents.GetAllEventsByYear(year);
         }
     }
 }
