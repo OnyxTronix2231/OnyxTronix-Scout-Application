@@ -1,6 +1,5 @@
 @inject HttpClientManager http
 @inject ILocalStorageService LocalStorage
-<h3>CustomEventComponent</h3>
 
 <EditForm Model="@CustomEvent" OnValidSubmit="@OnValidSubmit">
     <FluentValidationValidator/>
@@ -58,18 +57,19 @@
                         <div class="form-group col-sm-5">
                             <h5>Blue team</h5>
                             <ValidationMessage For="() => customMatch.Alliances.Blue" />
+                            
                             @for (int j = 0; j < customMatch.Alliances.Blue.Teams.Count; j++)
                             {
                                 var currentTeamIndex = j;
-                                var team = customMatch.Alliances.Red.Teams[j];
+                                var team = customMatch.Alliances.Blue.Teams[j];
                                 <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber"  Width="250px">
                                     <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
                                     <DropDownListEvents TItem="CustomTeamDto" TValue="int" ValueChange="e => OnTeamSelected(e, customMatch.Alliances.Blue.Teams, currentTeamIndex)"></DropDownListEvents>
                                 </SfDropDownList>
                             }
-                        </div>
+                        </div> 
 
-                        <div class="form-group col-sm-5">
+                        <div class="form-group col-sm-5"> 
                             <h5>Red team</h5>
                             <ValidationMessage For="() => customMatch.Alliances.Red" />
                             @for (int j = 0; j < customMatch.Alliances.Red.Teams.Count; j++)

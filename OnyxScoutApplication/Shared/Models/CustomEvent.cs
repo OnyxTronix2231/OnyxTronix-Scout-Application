@@ -11,6 +11,6 @@ namespace OnyxScoutApplication.Shared.Models
         public string Key { get; set; }
         public int Year { get; set; }
         public DateTime StartDate { get; set; }
-        public List<CustomMatch> Matches { get; set; }
+        public List<CustomMatch> Matches { get; set; } = new List<CustomMatch>();
     }
 }
