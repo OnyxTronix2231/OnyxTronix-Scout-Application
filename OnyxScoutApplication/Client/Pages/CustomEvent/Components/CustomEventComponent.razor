@@ -61,7 +61,6 @@
                             
                             @for (int j = 0; j < customMatch.Alliances.Blue.Teams.Count; j++)
                             {
-                                var currentTeamIndex = j;
                                 var team = customMatch.Alliances.Blue.Teams[j];
                                 <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber" CssClass="maxWidth">
                                     <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
@@ -75,7 +74,6 @@
                             <ValidationMessage For="() => customMatch.Alliances.Red" />
                             @for (int j = 0; j < customMatch.Alliances.Red.Teams.Count; j++)
                             {
-                                var currentTeamIndex = j;
                                 var team = customMatch.Alliances.Red.Teams[j];
                                 <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber" CssClass="maxWidth">
                                     <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
@@ -106,14 +104,11 @@
     public FormType Type { get; set; }
 
     private List<CustomTeamDto> teams = new List<CustomTeamDto>();
-    private List<int> teamsNumbers = new List<int>(); 
 
     protected override async Task OnInitializedAsync()
     {
         var selectedYear = await LocalStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
         teams = await http.GetJson<List<CustomTeamDto>>("TheBlueAlliance/GetAllTeamsByDistrict/" + selectedYear + "isr"); //TODO: districts names handling
-        teamsNumbers = teams.Select(i => i.TeamNumber).ToList();
-        Console.WriteLine("Inittt!");
         if (CustomEvent.Matches.Any())
         {
             return;
