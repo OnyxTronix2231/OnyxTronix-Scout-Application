@@ -2,7 +2,7 @@
 @inject ILocalStorageService LocalStorage
 
 <EditForm Model="@CustomEvent" OnValidSubmit="@OnValidSubmit">
-    <FluentValidationValidator/>
+    <FluentValidationValidator DisableAssemblyScanning="@true"/>
     <div class="form-group col-sm-5">
         <label class="form-label">Year</label>
         <SfNumericTextBox @bind-Value="@CustomEvent.Year" Readonly="@true"/>

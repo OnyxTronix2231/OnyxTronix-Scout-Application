@@ -78,8 +78,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles
             CreateMap<CustomEvent, CustomEvent>();
             CreateMap<CustomEventDto, CustomEventDto>();
             CreateMap<CustomEvent, CustomEventDto>();
-            CreateMap<CustomEventDto, CustomEvent>()               
-                .ForMember(des => des.Matches, opt => opt.MapFrom<CustomEventMatchesResolver>());
+            CreateMap<CustomEventDto, CustomEvent>();          
 
             CreateMap<CustomEventDto, Event>();
             
@@ -110,7 +109,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles
         }
     }
 
-    public class CustomEventMatchesResolver : IValueResolver<CustomEventDto, CustomEvent, List<CustomMatch>>
+    public class CustomEventMatchesResolver : IValueResolver<CustomEvent, CustomEvent, List<CustomMatch>>
     {
         private readonly IMapper mapper;
 
@@ -119,11 +118,10 @@ namespace OnyxScoutApplication.Server.Data.Profiles
             this.mapper = mapper;
         }
         
-        public List<CustomMatch> Resolve(CustomEventDto source, CustomEvent destination, List<CustomMatch> destMember, ResolutionContext context)
+        public List<CustomMatch> Resolve(CustomEvent source, CustomEvent destination, List<CustomMatch> destMember, ResolutionContext context)
         {
             destination.Matches.Clear();
-            destination.Matches = mapper.Map<List<CustomMatch>>(source.Matches);
-            return destination.Matches;          
+            return source.Matches;          
         }
     }
 }

@@ -57,13 +57,14 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         
         public async Task<ActionResult> Update(int id, CustomEventDto eventSource)
         {
-            var result = await ScoutAppContext.Events.WithAllMatches().FirstOrDefaultAsync(i => i.Id == id);
-            if (result == null)
-            {
-                return new BadRequestObjectResult("No event found to update!");
-            }
+            // var result = await ScoutAppContext.Events.WithAllMatches().FirstOrDefaultAsync(i => i.Id == id);
+            // if (result == null)
+            // {
+            //     return new BadRequestObjectResult("No event found to update!");
+            // }
+            return await Update(eventSource);
 
-            return await Update(result, eventSource);
+            //return await Update(result, eventSource);
         }
 
         public async Task<ActionResult<bool>> GetEventExists(string eventKey)
@@ -145,6 +146,12 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             var updated = Mapper.Map<CustomEvent>(eventSource);
             eventToUpdate = Mapper.Map(updated, eventToUpdate);
             Context.Update(eventToUpdate);
+            return await Task.Run(() => new OkResult());
+        }
+        
+        private async Task<ActionResult> Update(CustomEventDto eventSource)
+        {
+            Context.Update(Mapper.Map<CustomEvent>(eventSource));
             return await Task.Run(() => new OkResult());
         }
 
