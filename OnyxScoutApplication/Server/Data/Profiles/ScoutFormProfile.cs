@@ -78,50 +78,34 @@ namespace OnyxScoutApplication.Server.Data.Profiles
             CreateMap<CustomEvent, CustomEvent>();
             CreateMap<CustomEventDto, CustomEventDto>();
             CreateMap<CustomEvent, CustomEventDto>();
-            CreateMap<CustomEventDto, CustomEvent>();          
+            CreateMap<CustomEventDto, CustomEvent>();
 
             CreateMap<CustomEventDto, Event>();
-            
+
             CreateMap<CustomMatch, CustomMatch>();
             CreateMap<CustomMatchDto, CustomMatchDto>();
             CreateMap<CustomMatch, CustomMatchDto>();
             CreateMap<CustomMatchDto, CustomMatch>();
             CreateMap<CustomMatchDto, Match>();
-            
+
             CreateMap<CustomAlliances, CustomAlliances>();
             CreateMap<CustomAlliancesDto, CustomAlliancesDto>();
             CreateMap<CustomAlliances, CustomAlliancesDto>();
             CreateMap<CustomAlliancesDto, CustomAlliances>();
             CreateMap<CustomAlliancesDto, Alliances>();
-            
+
             CreateMap<CustomAlliance, CustomAlliance>();
             CreateMap<CustomAllianceDto, CustomAllianceDto>();
             CreateMap<CustomAlliance, CustomAllianceDto>();
             CreateMap<CustomAllianceDto, CustomAlliance>();
             CreateMap<CustomAllianceDto, Alliance>().ForMember(des => des.TeamKeys, opt =>
-                opt.MapFrom(src => src.Teams.Select(i => "frc" + i.TeamNumber)));;
-            
+                opt.MapFrom(src => src.Teams.Select(i => "frc" + i.TeamNumber)));
+
             CreateMap<CustomTeam, CustomTeam>();
             CreateMap<CustomTeamDto, CustomTeamDto>();
             CreateMap<CustomTeam, CustomTeamDto>();
             CreateMap<CustomTeamDto, CustomTeam>();
             CreateMap<CustomTeamDto, Team>();
-        }
-    }
-
-    public class CustomEventMatchesResolver : IValueResolver<CustomEvent, CustomEvent, List<CustomMatch>>
-    {
-        private readonly IMapper mapper;
-
-        public CustomEventMatchesResolver(IMapper mapper)
-        {
-            this.mapper = mapper;
-        }
-        
-        public List<CustomMatch> Resolve(CustomEvent source, CustomEvent destination, List<CustomMatch> destMember, ResolutionContext context)
-        {
-            destination.Matches.Clear();
-            return source.Matches;          
         }
     }
 }

@@ -57,14 +57,12 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         
         public async Task<ActionResult> Update(int id, CustomEventDto eventSource)
         {
-            // var result = await ScoutAppContext.Events.WithAllMatches().FirstOrDefaultAsync(i => i.Id == id);
-            // if (result == null)
-            // {
-            //     return new BadRequestObjectResult("No event found to update!");
-            // }
+            eventSource.Matches.ForEach(i =>
+            {
+                i.Alliances.Blue.Teams.ForEach(ii => ii.CustomAllianceId = i.Alliances.Blue.Id);
+                i.Alliances.Red.Teams.ForEach(ii => ii.CustomAllianceId = i.Alliances.Red.Id);
+            });
             return await Update(eventSource);
-
-            //return await Update(result, eventSource);
         }
 
         public async Task<ActionResult<bool>> GetEventExists(string eventKey)
