@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 
 namespace OnyxScoutApplication.Shared.Models
@@ -17,10 +18,7 @@ namespace OnyxScoutApplication.Shared.Models
 
         public string WriterUserName { get; set; }
 
-        public List<ScoutFormDataDto> AutonomousData { get; set; } = new List<ScoutFormDataDto>();
-
-        public List<ScoutFormDataDto> TeleoperatedData { get; set; } = new List<ScoutFormDataDto>();
-
-        public List<ScoutFormDataDto> EndGameData { get; set; } = new List<ScoutFormDataDto>();
+        public Dictionary<string, List<ScoutFormDataDto>> DataByStages { get; set; } =
+            new Dictionary<string, List<ScoutFormDataDto>>();
     }
 }

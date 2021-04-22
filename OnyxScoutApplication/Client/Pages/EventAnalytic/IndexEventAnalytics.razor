@@ -7,7 +7,7 @@
 
 @if (fields != null)
 {
-    <EventAnalyticGrid Teams="teams" Fields="fields" ScoutForms="scoutForms" GetTargetList="s => s.AutonomousData.Concat(s.TeleoperatedData).Concat(s.EndGameData).ToList()"
+    <EventAnalyticGrid Teams="teams" Fields="fields" ScoutForms="scoutForms" GetTargetList="s => s.DataByStages.Concat(s.TeleoperatedData).Concat(s.EndGameData).ToList()"
                        OnTeamClicked="OnTeamClicked" EventAnalyticSettings="analyticSettings"/>
 }
 
@@ -36,7 +36,7 @@
         {
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
-        fields = format.AutonomousFields.Concat(format.TeleoperatedFields).Concat(format.EndGameFields).Where(i => i.FieldType != FieldType.TextField).ToList().ConcatAllCascadeFields();
+        fields = format.FieldsByStages.Concat(format.TeleoperatedFields).Concat(format.EndGameFields).Where(i => i.FieldType != FieldType.TextField).ToList().ConcatAllCascadeFields();
     }
 
     private void OnTeamClicked(int teamNumber)

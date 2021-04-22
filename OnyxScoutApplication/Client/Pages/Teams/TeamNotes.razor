@@ -10,7 +10,7 @@
         <h5>Autonomous notes</h5>
         <br/>
 
-        @foreach (var (scoutFormData, writer) in autonomousNotes)
+        @foreach (var (scoutFormData, writer) in notesByStage)
         {
             foreach (var text in scoutFormData)
             {
@@ -59,9 +59,7 @@
     [Parameter]
     public int TeamNumber { get; set; }
 
-    private Tuple<ScoutFormDataDto[], string>[] autonomousNotes;
-    private Tuple<ScoutFormDataDto[], string>[] teleoperatedNotes;
-    private Tuple<ScoutFormDataDto[], string>[] endGameNotes;
+    private Dictionary<string, List<Tuple<ScoutFormDataDto[], string>>> notesByStage;
     private Event selectedEvent;
 
     protected override async Task OnInitializedAsync()
@@ -74,9 +72,17 @@
 
         var result = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
 
-        autonomousNotes = result.Select(i => new Tuple<ScoutFormDataDto[], string>(i.AutonomousData.Where(f => f.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)).ToArray();
-        teleoperatedNotes = result.Select(i => new Tuple<ScoutFormDataDto[], string>(i.TeleoperatedData.Where(f => f.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)).ToArray();
-        endGameNotes = result.Select(i => new Tuple<ScoutFormDataDto[], string>(i.EndGameData.Where(f => f.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)).ToArray();
+        foreach (var form in result)
+        {
+            
+        }
+
+    /*
+           SelectMany(i => i.Value).
+            Where(i => i.Field.FieldType == FieldType.TextField).ToArray().ToLookup(i => i.Field.FieldStage).
+            ToDictionary(ii => ii.Key, iii => new Tuple<ScoutFormDataDto[], string>(iii.ToArray(), i.WriterUserName))).ToDictionary(i => i.Key, i=> i.Value);
+
+
     }
 
 }

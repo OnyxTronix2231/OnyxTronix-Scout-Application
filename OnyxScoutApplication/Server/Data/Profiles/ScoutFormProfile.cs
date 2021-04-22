@@ -34,13 +34,10 @@ namespace OnyxScoutApplication.Server.Data.Profiles
 
             CreateMap<ScoutFormFormat, ScoutFormFormat>();
             CreateMap<ScoutFormFormatDto, ScoutFormFormatDto>();
-            CreateMap<ScoutFormFormat, ScoutFormFormatDto>()
-                .ForMember(des => des.AutonomousFields,
-                    opt => opt.MapFrom(src => src.Fields.Where(i => i.FieldStageType == FieldStageType.Autonomous)))
-                .ForMember(src => src.TeleoperatedFields,
-                    opt => opt.MapFrom(des => des.Fields.Where(i => i.FieldStageType == FieldStageType.Teleoperated)))
-                .ForMember(src => src.EndGameFields,
-                    opt => opt.MapFrom(des => des.Fields.Where(i => i.FieldStageType == FieldStageType.EndGame)));
+            CreateMap<ScoutFormFormat, ScoutFormFormatDto>().ForMember(des => des.FieldsByStages,
+                    opt => opt.MapFrom(src => src.Fields.ToLookup(i => i.FieldStage, i => i).
+                        ToDictionary(i => i.Key, i => i.ToList())));
+            
             CreateMap<ScoutFormFormatDto, ScoutFormFormat>().ForMember(des => des.Fields,
                 opt => opt.MapFrom<ScoutFormFormatValueConverter>());
 
@@ -52,13 +49,9 @@ namespace OnyxScoutApplication.Server.Data.Profiles
             CreateMap<ScoutFormDto, ScoutForm>()
                 .ForMember(des => des.Data, opt => opt.MapFrom<ScoutFormValueConverter>());
             CreateMap<ScoutForm, ScoutFormDto>()
-                .ForMember(des => des.AutonomousData,
-                    opt => opt.MapFrom(src => src.Data.Where(i => i.Field.FieldStageType == FieldStageType.Autonomous)))
-                .ForMember(src => src.TeleoperatedData,
-                    opt => opt.MapFrom(
-                        des => des.Data.Where(i => i.Field.FieldStageType == FieldStageType.Teleoperated)))
-                .ForMember(src => src.EndGameData,
-                    opt => opt.MapFrom(des => des.Data.Where(i => i.Field.FieldStageType == FieldStageType.EndGame)));
+                .ForMember(des => des.DataByStages,
+                    opt => opt.MapFrom(src => src.Data.ToLookup(i => i.Field.FieldStage, i => i).
+                        ToDictionary(i => i.Key, i => i.ToList())));
 
             CreateMap<ScoutFormFormatDto, ScoutFormDto>().ConvertUsing<ScoutFormFormatToScoutFormConverter>();
 

@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using Syncfusion.ExcelExport;
 
 namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 {
@@ -11,21 +13,11 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
     {
         public ScoutFormDto Convert(ScoutFormFormatDto source, ScoutFormDto destination, ResolutionContext context)
         {
-            destination = new ScoutFormDto();
-            foreach (var field in source.AutonomousFields)
+            destination = new ScoutFormDto
             {
-                destination.AutonomousData.Add(GetScoutFormDataFromField(field));
-            }
-
-            foreach (var field in source.TeleoperatedFields)
-            {
-                destination.TeleoperatedData.Add(GetScoutFormDataFromField(field));
-            }
-
-            foreach (var field in source.EndGameFields)
-            {
-                destination.EndGameData.Add(GetScoutFormDataFromField(field));
-            }
+                DataByStages = source.FieldsByStages.ToDictionary(i => i.Key,
+                    i => i.Value.Select(GetScoutFormDataFromField).ToList())
+            };
 
             return destination;
         }

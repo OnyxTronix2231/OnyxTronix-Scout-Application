@@ -29,7 +29,7 @@ namespace OnyxScoutApplication.Shared.Models
 
         public FieldType FieldType { get; set; }
 
-        public FieldStageType? FieldStageType { get; set; }
+        public string FieldStage { get; set; }
 
         public int MaxValue { get; set; } = 9999;
 
@@ -47,6 +47,6 @@ namespace OnyxScoutApplication.Shared.Models
 
         public int Index { get; set; }
 
-        public string NameId => Name + FieldStageType;
+        public string NameId => Name + FieldStage;
     }
 }

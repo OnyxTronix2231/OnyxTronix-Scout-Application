@@ -20,17 +20,8 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             ResolutionContext context)
         {
             destination.Fields.Clear();
-            List<Field> autonomousFields = mapper.Map<List<Field>>(source.AutonomousFields);
-            autonomousFields.ForEach(i => i.FieldStageType = FieldStageType.Autonomous);
-            destination.Fields.AddRange(autonomousFields);
-
-            List<Field> teleoperatedFields = mapper.Map<List<Field>>(source.TeleoperatedFields);
-            teleoperatedFields.ForEach(i => i.FieldStageType = FieldStageType.Teleoperated);
-            destination.Fields.AddRange(teleoperatedFields);
-
-            List<Field> endGameFields = mapper.Map<List<Field>>(source.EndGameFields);
-            endGameFields.ForEach(i => i.FieldStageType = FieldStageType.EndGame);
-            destination.Fields.AddRange(endGameFields);
+            List<Field> fields = mapper.Map<List<Field>>(source.FieldsByStages.SelectMany(i => i.Value));
+            destination.Fields.AddRange(fields);
             return destination.Fields;
         }
     }

@@ -14,7 +14,7 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
             RuleFor(x => x.MatchName).NotEmpty();
             RuleFor(x => x.TeamNumber).NotEmpty().GreaterThanOrEqualTo(1).LessThanOrEqualTo(9999);
             RuleFor(x => x.WriterUserName).NotEmpty();
-            RuleForEach(x => x.AutonomousData).SetValidator(new ScoutFormDataValidator());
+            RuleForEach(x => x.DataByStages).SetValidator(new ScoutFormDataValidator());
             RuleForEach(x => x.TeleoperatedData).SetValidator(new ScoutFormDataValidator());
             RuleForEach(x => x.EndGameData).SetValidator(new ScoutFormDataValidator());
         }

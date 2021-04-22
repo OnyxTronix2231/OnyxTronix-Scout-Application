@@ -10,7 +10,7 @@
         </div>
         <br/>
         <h3>Autonomous</h3>
-        <FieldsEditor Fields="ScoutFormFormat.AutonomousFields"></FieldsEditor>
+        <FieldsEditor Fields="ScoutFormFormat.FieldsByStages"></FieldsEditor>
         <h3>Teleoperated</h3>
         <FieldsEditor Fields="ScoutFormFormat.TeleoperatedFields"></FieldsEditor>
         <h3>End-game</h3>
@@ -35,11 +35,11 @@
 
     private void OnValidSubmit()
     {
-        ScoutFormFormat.AutonomousFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
+        ScoutFormFormat.FieldsByStages.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
         ScoutFormFormat.TeleoperatedFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
         ScoutFormFormat.EndGameFields.RemoveAll(i => i.FieldType == FieldType.None || string.IsNullOrWhiteSpace(i.Name));
 
-        UpdateFieldIndex(ScoutFormFormat.AutonomousFields);
+        UpdateFieldIndex(ScoutFormFormat.FieldsByStages);
         UpdateFieldIndex(ScoutFormFormat.TeleoperatedFields);
         UpdateFieldIndex(ScoutFormFormat.EndGameFields);
         OnSubmit.InvokeAsync(this);

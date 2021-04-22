@@ -68,7 +68,7 @@
         {
             analyticSettings = new EventAnalyticSettingsDto();
         }
-        fields = format.AutonomousFields.Concat(format.TeleoperatedFields).Concat(format.EndGameFields).Where(i => i.FieldType != FieldType.TextField).ToList().ConcatAllCascadeFields();
+        fields = format.FieldsByStages.Concat(format.TeleoperatedFields).Concat(format.EndGameFields).Where(i => i.FieldType != FieldType.TextField).ToList().ConcatAllCascadeFields();
         fields.RemoveAll(i => i.FieldType != FieldType.Numeric);
     }
 

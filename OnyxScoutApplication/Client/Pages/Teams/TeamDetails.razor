@@ -5,21 +5,19 @@
 @inject NavigationManager NavigationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
-@if (endGameCalculatedData != null)
+@if (calculatedDataByStages != null)
 {
     <h3>Team @TeamNumber</h3>
     <h4>@selectedEvent?.Name</h4>
     <a href="/TeamDetails/Notes/@TeamNumber">Notes</a>
+    <br/>
+    foreach (var (key, value) in calculatedDataByStages)
+    {
+        <h5>@key</h5>
+        <TeamAnalyticGrid CalculatedData="@value"></TeamAnalyticGrid>
+        <br/>
+ }
 
-    <br/>
-    <h5>Autonomous</h5>
-    <TeamAnalyticGrid CalculatedData="autoCalculatedData"></TeamAnalyticGrid>
-    <br/>
-    <h5>Teleoperated</h5>
-    <TeamAnalyticGrid CalculatedData="teleopCalculatedData"></TeamAnalyticGrid>
-    <br/>
-    <h5>End game</h5>
-    <TeamAnalyticGrid CalculatedData="endGameCalculatedData"></TeamAnalyticGrid>
     <br/>
     <MatchesGrid Matches="matches" OnTeamClicked="OnTeamClicked">
         <MatchGridSettings SubmittedForms = "@data" TeamNumber = "@TeamNumber" ></MatchGridSettings>
@@ -33,9 +31,7 @@
 
     private Event selectedEvent;
     private List<ScoutFormDto> data;
-    private List<TeamFieldAverage> autoCalculatedData;
-    private List<TeamFieldAverage> teleopCalculatedData;
-    private List<TeamFieldAverage> endGameCalculatedData;
+    private Dictionary<string, List<TeamFieldAverage>> calculatedDataByStages;
     private List<Match> matches;
 
     protected override async Task OnInitializedAsync()
@@ -51,9 +47,13 @@
         matches = (await Http.GetJson<List<Match>>
             ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))
             .OrderBy(i => i.Date).ToList();
-        autoCalculatedData = TeamDataAnalyzer.CalculateDataFor(format.AutonomousFields, result, scoutForm => scoutForm.AutonomousData, s => true);
-        teleopCalculatedData = TeamDataAnalyzer.CalculateDataFor(format.TeleoperatedFields, result, scoutForm => scoutForm.TeleoperatedData, s => true);
-        endGameCalculatedData = TeamDataAnalyzer.CalculateDataFor(format.EndGameFields, result, scoutForm => scoutForm.EndGameData, s => true);
+        calculatedDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
+        foreach (var (key, value) in format.FieldsByStages)
+        {
+            calculatedDataByStages.Add(key, TeamDataAnalyzer.CalculateDataFor(value, result,
+                scoutForm => scoutForm.DataByStages[key], s => true));
+        }
+       
     }
 
     private void OnTeamClicked(TeamInMatch teamInMatch)

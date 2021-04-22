@@ -17,13 +17,6 @@ namespace OnyxScoutApplication.Shared.Models
         MultipleChoice
     }
 
-    public enum FieldStageType
-    {
-        Autonomous,
-        Teleoperated,
-        EndGame
-    }
-
     public class Field
     {
         public int Id { get; set; }
@@ -47,7 +40,7 @@ namespace OnyxScoutApplication.Shared.Models
 
         public FieldType FieldType { get; set; }
 
-        public FieldStageType? FieldStageType { get; set; }
+        public string FieldStage { get; set; }
 
         public int MaxValue { get; set; } = 9999;
 
