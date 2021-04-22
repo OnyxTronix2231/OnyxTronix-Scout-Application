@@ -1,14 +1,15 @@
-﻿@using Syncfusion.Blazor.Grids
-@using System.Linq
-@inject NavigationManager NavigationManager
+﻿@inject NavigationManager NavigationManager
 @inject ILocalStorageService StorageService
-@if (Matches != null)
+@if (Matches != null && Settings != null)
 {
-    <SfButton OnClick="SavePageNumber">Save page number</SfButton> 
+    if (!string.IsNullOrWhiteSpace(Settings.PagingScopeName))
+    {
+        <SfButton OnClick="SavePageNumber">Save page number</SfButton>
+    }
 
-    <SfGrid @ref="grid" DataSource="@Matches" AllowSorting="true" AllowFiltering="true" Height="@Height" AllowPaging="true">
+    <SfGrid @ref="grid" DataSource="@Matches" AllowSorting="true" AllowFiltering="true" Height="@Settings.Height" AllowPaging="@Settings.AllowPaging">
         <GridPageSettings PageSize="10"></GridPageSettings>
-        <GridEvents QueryCellInfo="CustomizeCell" TValue="Match"></GridEvents>
+        <GridEvents OnLoad="OnLoad" QueryCellInfo="CustomizeCell" TValue="Match"></GridEvents>
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
             <GridColumn Field=@nameof(Match.MatchNumber) HeaderText="Match number" Width="120"></GridColumn>
@@ -46,37 +47,48 @@
             <GridColumn HeaderText="Winning alliance" Width="120"></GridColumn>
         </GridColumns>
     </SfGrid>
+    
 }
 
-@code {
 
+<CascadingValue Value="this" IsFixed="true">
+    @ChildContent
+</CascadingValue>
+@code {
     [Parameter]
     public List<Match> Matches { get; set; }
 
     [Parameter]
-    public int TeamNumber { get; set; }
-
-    [Parameter]
-    public List<ScoutFormDto> SubmittedForms { get; set; }
-
-    [Parameter]
-    public string Height { get; set; } = "100%";
+    public MatchGridSettings Settings { get; set; }
 
     [Parameter]
     public EventCallback<TeamInMatch> OnTeamClicked { get; set; }
+    
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
 
     private SfGrid<Match> grid;
 
+    private async Task OnLoad(object obj)
+    {
+        if (!string.IsNullOrWhiteSpace(Settings.PagingScopeName) &&
+            await StorageService.ContainKeyAsync("MatchGridPage." + Settings.PagingScopeName))
+        {
+            var v = await StorageService.GetItemAsync<int>("MatchGridPage." + Settings.PagingScopeName);
+            await grid.GoToPage(v);
+        }
+    }
+
     private void SavePageNumber()
     {
-        StorageService.SetItemAsync("MatchGridPage.T", grid.PageSettings.CurrentPage);
+        StorageService.SetItemAsync("MatchGridPage." + Settings.PagingScopeName, grid.PageSettings.CurrentPage);
     }
-    
+
 
     private string GetTeamTextStyle(int teamNumber, string matchName) //Team's text style (bold, color and clickable)
     {
         string classes = "";
-        if (teamNumber == TeamNumber)
+        if (teamNumber == Settings.TeamNumber)
         {
             classes += "targetTeam ";
         }
@@ -85,9 +97,9 @@
             classes += "clickable ";
         }
 
-        if (SubmittedForms == null) return classes;
+        if (Settings.SubmittedForms == null) return classes;
 
-        if (SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == matchName))
+        if (Settings.SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == matchName))
         {
             classes += "filledTeamForm ";
         }
@@ -100,7 +112,9 @@
 
     private void OnGridTeamClicked(Match match, int teamNumber)
     {
-        bool isFormExists = SubmittedForms != null && SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == match.Key);
+        bool isFormExists =
+            Settings.SubmittedForms != null &&
+            Settings.SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == match.Key);
         OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match, IsFormExists = isFormExists});
     }
 
@@ -119,7 +133,6 @@
             args.Cell.AddClass(new[] {args.Data.WinningAlliance});
         }
     }
-
 }
 
 <style>

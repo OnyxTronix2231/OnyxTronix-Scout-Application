@@ -12,22 +12,30 @@
 </div>
 
 <div>
-     <MatchesGrid Matches="qMatches" SubmittedForms="scoutForms" Height="400" OnTeamClicked="OnTeamClicked"></MatchesGrid>
+    <MatchesGrid Matches="qMatches" OnTeamClicked="OnTeamClicked">
+        <MatchGridSettings SubmittedForms = "@scoutForms" AllowPaging = "true" PagingScopeName = "qMatches" ></MatchGridSettings>
+    </MatchesGrid>
 </div>
 
 <br/>
 <div>
-    <MatchesGrid Matches="qfMatches" SubmittedForms="scoutForms" OnTeamClicked="OnTeamClicked"></MatchesGrid>
+     <MatchesGrid Matches="qfMatches" OnTeamClicked="OnTeamClicked">
+         <MatchGridSettings SubmittedForms = "@scoutForms" ></MatchGridSettings>
+     </MatchesGrid>
 </div>
 
 <br/>
 <div>
-    <MatchesGrid Matches="sfMatches" SubmittedForms="scoutForms" OnTeamClicked="OnTeamClicked"></MatchesGrid>
+    <MatchesGrid Matches="sfMatches" OnTeamClicked="OnTeamClicked">
+        <MatchGridSettings SubmittedForms = "@scoutForms" ></MatchGridSettings>
+    </MatchesGrid>
 </div>
 
 <br/>
 <div>
-    <MatchesGrid Matches="fMatches" SubmittedForms="scoutForms" OnTeamClicked="OnTeamClicked"></MatchesGrid>
+    <MatchesGrid Matches="fMatches" OnTeamClicked="OnTeamClicked">
+        <MatchGridSettings SubmittedForms = "@scoutForms"></MatchGridSettings>
+    </MatchesGrid>
 </div>
 
 @code {
@@ -43,11 +51,9 @@
         {
             var matches = await SessionStorage.GetItemAsync<List<Match>>("TheBlueAlliance.AllMatches");
             scoutForms = await SessionStorage.GetItemAsync<List<ScoutFormDto>>("ScoutForms.All");
-            Console.WriteLine("Loaded!");
             UpdateByMatches(matches);
         }
     }
-
     
     private async Task UpdateMatchTable(Event selectedEvent)
     {
@@ -64,7 +70,6 @@
         qfMatches = matches.Where(i => i.Level == "qf").ToList();
         sfMatches = matches.Where(i => i.Level == "sf").ToList();
         fMatches = matches.Where(i => i.Level == "f").ToList();
-        Console.WriteLine("Finished!");
 
     }
 
@@ -80,5 +85,4 @@
             NavigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber);
         }
     }
-
 }

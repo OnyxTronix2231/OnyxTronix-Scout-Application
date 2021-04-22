@@ -21,7 +21,9 @@
     <h5>End game</h5>
     <TeamAnalyticGrid CalculatedData="endGameCalculatedData"></TeamAnalyticGrid>
     <br/>
-    <MatchesGrid Matches="matches" TeamNumber="TeamNumber" SubmittedForms="data" OnTeamClicked="OnTeamClicked"></MatchesGrid>
+    <MatchesGrid Matches="matches" OnTeamClicked="OnTeamClicked">
+        <MatchGridSettings SubmittedForms = "@data" TeamNumber = TeamNumber ></MatchGridSettings>
+    </MatchesGrid>
 }
 
 @code {
