@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Shared.Models
 {
@@ -8,7 +9,9 @@ namespace OnyxScoutApplication.Shared.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int Index { get; set; }
-        public List<FieldDto> Fields { get; set; }
+        public int? ScoutFormFormatId { get; set; }
+        public ScoutFormFormatDto ScoutFormFormat { get; set; }
+        public SortedList<FieldDto> Fields { get; set; }
 
         public int CompareTo(FieldsInStageDto other)
         {

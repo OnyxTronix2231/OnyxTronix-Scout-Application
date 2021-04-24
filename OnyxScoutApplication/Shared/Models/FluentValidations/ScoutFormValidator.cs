@@ -23,7 +23,7 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
     {
         public ScoutFormDataByStagesValidator()
         {
-            RuleForEach(x => x.Data).SetValidator(new ScoutFormDataValidator());
+            RuleForEach(x => x.FormData).SetValidator(new ScoutFormDataValidator());
         }
     }
 }

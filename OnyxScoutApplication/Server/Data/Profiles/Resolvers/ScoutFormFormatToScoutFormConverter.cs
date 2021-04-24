@@ -6,53 +6,79 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Syncfusion.ExcelExport;
+using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 {
     public class ScoutFormFormatToScoutFormConverter : ITypeConverter<ScoutFormFormatDto, ScoutFormDto>
     {
+        private readonly IMapper mapper;
+
+        public ScoutFormFormatToScoutFormConverter(IMapper mapper)
+        {
+            this.mapper = mapper;
+        }
+
         public ScoutFormDto Convert(ScoutFormFormatDto source, ScoutFormDto destination, ResolutionContext context)
         {
             destination = new ScoutFormDto
             {
-                DataByStages = source.FieldsesInByStages.ToDictionary(i => i.Key,
-                    i => i.Value.Select(GetScoutFormDataFromField).ToList())
+                FieldsInStages = source.FieldsInStages.Select(i => mapper.Map<FormDataInStageDto>(i)).ToSortedList()
             };
 
             return destination;
         }
 
-        private static ScoutFormDataDto GetScoutFormDataFromField(FieldDto field)
+        public class FieldToScoutFormDataConverter : ITypeConverter<FieldDto, ScoutFormDataDto>
         {
-            ScoutFormDataDto scoutFormData = new ScoutFormDataDto {Field = field, FieldId = field.Id};
-            switch (field.FieldType)
+            private readonly IMapper mapper;
+
+            public FieldToScoutFormDataConverter(IMapper mapper)
             {
-                case FieldType.None:
-                    break;
-                case FieldType.CascadeField:
-                case FieldType.Boolean:
-                    scoutFormData.BooleanValue = field.BoolDefaultValue;
-                    break;
-                case FieldType.OptionSelect:
-                case FieldType.TextField:
-                    scoutFormData.StringValue = field.TextDefaultValue;
-                    break;
-                case FieldType.Numeric:
-                    scoutFormData.NumericValue = field.NumericDefaultValue;
-                    break;
-                case FieldType.MultipleChoice:
-                    scoutFormData.SelectedOptions = field.DefaultSelectedOptions;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                this.mapper = mapper;
+            }
+            
+            public ScoutFormDataDto Convert(FieldDto source, ScoutFormDataDto destination, ResolutionContext context)
+            {
+                destination = new ScoutFormDataDto {Field = source, FieldId = source.Id};
+                return GetScoutFormDataFromField(destination, source);
             }
 
-            foreach (var f in field.CascadeFields)
+            private ScoutFormDataDto GetScoutFormDataFromField(ScoutFormDataDto scoutFormData, FieldDto field)
             {
-                scoutFormData.CascadeData.Add(GetScoutFormDataFromField(f));
+                switch (field.FieldType)
+                {
+                    case FieldType.None:
+                        break;
+                    case FieldType.CascadeField:
+                        scoutFormData.CascadeData = mapper.Map<SortedList<ScoutFormDataDto>>(field.CascadeFields);
+                        goto case FieldType.Boolean;
+                    case FieldType.Boolean:
+                        scoutFormData.BooleanValue = field.BoolDefaultValue;
+                        break;
+                    case FieldType.OptionSelect:
+                    case FieldType.TextField:
+                        scoutFormData.StringValue = field.TextDefaultValue;
+                        break;
+                    case FieldType.Numeric:
+                        scoutFormData.NumericValue = field.NumericDefaultValue;
+                        break;
+                    case FieldType.MultipleChoice:
+                        scoutFormData.SelectedOptions = field.DefaultSelectedOptions;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                foreach (var f in field.CascadeFields)
+                {
+                  //  scoutFormData.CascadeData.Add(GetScoutFormDataFromField(f));
+                }
+
+                return scoutFormData;
             }
 
-            return scoutFormData;
+           
         }
     }
 }

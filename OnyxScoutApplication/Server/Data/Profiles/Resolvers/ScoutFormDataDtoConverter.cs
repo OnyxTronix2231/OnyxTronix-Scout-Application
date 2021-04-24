@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 {
@@ -28,7 +29,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             switch (source.Field.FieldType)
             {
                 case FieldType.CascadeField:
-                    destination.CascadeData = mapper.Map<List<ScoutFormDataDto>>(source.CascadeData);
+                    destination.CascadeData = mapper.Map<SortedList<ScoutFormDataDto>>(source.CascadeData);
                     goto case FieldType.Boolean;
                 case FieldType.Boolean:
                     destination.BooleanValue = bool.Parse(source.Value);

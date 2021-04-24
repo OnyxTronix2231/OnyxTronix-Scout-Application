@@ -44,8 +44,11 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<ScoutFormDto>> GetWithFields(int id)
         {
-            var result = await ScoutAppContext.ScoutForms.Include(i => i.Data).ThenInclude(i => i.CascadeData)
-                .Include(i => i.Data).ThenInclude(i => i.Field).FirstOrDefaultAsync(i => i.Id == id);
+            var result = await ScoutAppContext.ScoutForms.
+                Include(i => i.FieldsInStages).ThenInclude(i => i.FormData)
+                .ThenInclude(i => i.CascadeData).ThenInclude(i => i.Field)
+                .Include(i => i.FieldsInStages).ThenInclude(i => i.FormData)
+                .ThenInclude(i => i.Field).FirstOrDefaultAsync(i => i.Id == id);
             if (result == null)
             {
                 return new NotFoundObjectResult("No scout form found with the id of: " + id);
@@ -56,36 +59,47 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult> Update(int id, ScoutFormDto scoutFormFormatDto)
         {
-            var result = await ScoutAppContext.ScoutForms.Include(i => i.Data).ThenInclude(i => i.CascadeData)
-                .FirstOrDefaultAsync(i => i.Id == id);
-            if (result == null)
-            {
-                return new BadRequestObjectResult("No scout from found to update!");
-            }
+            // var result = await ScoutAppContext.ScoutForms.Include(i => i.FieldsInStages).ThenInclude(i => i.FormData)
+            //     .ThenInclude(i => i.CascadeData).FirstOrDefaultAsync(i => i.Id == id);
+            // if (result == null)
+            // {
+            //     return new BadRequestObjectResult("No scout from found to update!");
+            // }
 
-            return await Update(result, scoutFormFormatDto);
+            return await Update(scoutFormFormatDto);
         }
 
         private async Task<ActionResult> Update(ScoutForm scoutForm, ScoutFormDto scoutFormFormatDto)
         {
-            var updated = Mapper.Map<ScoutForm>(scoutFormFormatDto);
-            scoutForm = Mapper.Map(updated, scoutForm);
-            RecursivelySetScoutFormId(scoutForm.Id, scoutForm.Data);
+          //  var updated = Mapper.Map<ScoutForm>(scoutFormFormatDto);
+           // scoutForm = Mapper.Map(updated, scoutForm);
+           // RecursivelySetScoutFormId(scoutForm.Id, scoutForm.Data);
             Context.Update(scoutForm);
+            return await Task.Run(() => new OkResult());
+        }
+        
+        private async Task<ActionResult> Update(ScoutFormDto scoutFormFormatDto)
+        {
+            //  var updated = Mapper.Map<ScoutForm>(scoutFormFormatDto);
+            // scoutForm = Mapper.Map(updated, scoutForm);
+            // RecursivelySetScoutFormId(scoutForm.Id, scoutForm.Data);
+            var entity = Mapper.Map<ScoutForm>(scoutFormFormatDto);
+            Context.Update(entity);
             return await Task.Run(() => new OkResult());
         }
 
         public async Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByEvent(string eventKey)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms.Include(i => i.Data).ThenInclude(sn => sn.Field)
-                .Where(i => i.MatchName.Contains(eventKey)).ToListAsync();
-            return Mapper.Map<List<ScoutFormDto>>(scoutForm);
+            var scoutForm = await ScoutAppContext.ScoutForms.Include(i => i.FieldsInStages).ThenInclude(i => i.FormData)
+                .ThenInclude(sn => sn.Field).Where(i => i.MatchName.Contains(eventKey)).ToListAsync();
+             return Mapper.Map<List<ScoutFormDto>>(scoutForm);
         }
 
         public async Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms.Include(i => i.Data).ThenInclude(sn => sn.Field)
-                .Where(i => i.TeamNumber == teamNumber && i.MatchName.Contains(eventKey)).ToListAsync();
+            var scoutForm = await ScoutAppContext.ScoutForms.Include(i => i.FieldsInStages).ThenInclude(i => i.FormData)
+                .ThenInclude(sn => sn.Field).Where(i => i.TeamNumber == teamNumber && i.MatchName.Contains(eventKey))
+                .ToListAsync();
             return Mapper.Map<List<ScoutFormDto>>(scoutForm);
         }
 

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace OnyxScoutApplication.Shared.Models
 {
-    public class FieldDto
+    public class FieldDto : IComparable<FieldDto>
     {
         public int Id { get; set; }
 
@@ -50,5 +50,12 @@ namespace OnyxScoutApplication.Shared.Models
         public int Index { get; set; }
 
         public string NameId => Name + FieldsInStage;
+        
+        public int CompareTo(FieldDto other)
+        {
+            if (ReferenceEquals(this, other)) return 0;
+            if (ReferenceEquals(null, other)) return 1;
+            return Index.CompareTo(other.Index);
+        }
     }
 }

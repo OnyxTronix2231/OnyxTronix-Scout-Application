@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Shared.Models
 {
@@ -18,6 +19,6 @@ namespace OnyxScoutApplication.Shared.Models
 
         public string WriterUserName { get; set; }
 
-        public List<FormDataInStageDto> FieldsInStages { get; set; } = new List<FormDataInStageDto>();
+        public SortedList<FormDataInStageDto> FieldsInStages { get; set; } = new SortedList<FormDataInStageDto>();
     }
 }

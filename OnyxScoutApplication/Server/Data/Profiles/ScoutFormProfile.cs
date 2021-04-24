@@ -34,29 +34,25 @@ namespace OnyxScoutApplication.Server.Data.Profiles
 
             CreateMap<ScoutFormFormat, ScoutFormFormat>();
             CreateMap<ScoutFormFormatDto, ScoutFormFormatDto>();
-            CreateMap<ScoutFormFormat, ScoutFormFormatDto>().ForMember(des => des.FieldsesInByStages,
-                    opt => opt.MapFrom(src => src.Fields.ToLookup(i => i.FieldInStage, i => i).
-                        ToDictionary(i => i.Key, i => i.ToList())));
-            
-            CreateMap<ScoutFormFormatDto, ScoutFormFormat>().ForMember(des => des.Fields,
-                opt => opt.MapFrom<ScoutFormFormatValueConverter>());
+            CreateMap<ScoutFormFormat, ScoutFormFormatDto>();
+
+            CreateMap<ScoutFormFormatDto, ScoutFormFormat>();
 
             CreateMap<ScoutFormDataDto, ScoutFormData>()
                 .ForMember(des => des.Value, opt => opt.MapFrom<ScoutFormDataValueConverter>());
             CreateMap<ScoutFormData, ScoutFormDataDto>().ConvertUsing<ScoutFormDataDtoConverter>();
 
             CreateMap<ScoutForm, ScoutForm>();
-            CreateMap<ScoutFormDto, ScoutForm>()
-                .ForMember(des => des.Data, opt => opt.MapFrom<ScoutFormValueConverter>());
-            CreateMap<ScoutForm, ScoutFormDto>()
-                .ForMember(des => des.DataByStages,
-                    opt => opt.MapFrom(src => src.Data.ToLookup(i => i.Field.FieldStage, i => i).
-                        ToDictionary(i => i.Key, i => i.ToList())));
+            CreateMap<ScoutFormDto, ScoutForm>();
+            CreateMap<ScoutForm, ScoutFormDto>();
 
             CreateMap<ScoutFormFormatDto, ScoutFormDto>().ConvertUsing<ScoutFormFormatToScoutFormConverter>();
 
-            CreateMap<Stage, StageDto>();
-            CreateMap<StageDto, Stage>();
+            CreateMap<FieldsInStage, FieldsInStageDto>();
+            CreateMap<FieldsInStageDto, FieldsInStage>();
+            
+            CreateMap<FormDataInStage, FormDataInStageDto>();
+            CreateMap<FormDataInStageDto, FormDataInStage>();
             
             CreateMap<IdentityRole, IdentityRoleDto>();
             CreateMap<IdentityRoleDto, IdentityRole>();

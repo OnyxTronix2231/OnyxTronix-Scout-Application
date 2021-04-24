@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Shared.Models
 {
-    public class ScoutFormDataDto
+    public class ScoutFormDataDto : IComparable<ScoutFormDataDto>
     {
         [Key]
         public int Id { get; set; }
@@ -16,9 +17,13 @@ namespace OnyxScoutApplication.Shared.Models
         public int? ScoutFormDataId { get; set; }
 
         [ForeignKey("Field")]
-        public int FieldId { get; set; }
+        public int? FieldId { get; set; }
 
         public FieldDto Field { get; set; }
+
+        public int? FormDataInStageId { get; set; }
+        
+        public FormDataInStageDto FormDataInStage { get; set; }
 
         public string StringValue { get; set; }
 
@@ -28,6 +33,13 @@ namespace OnyxScoutApplication.Shared.Models
 
         public List<string> SelectedOptions { get; set; } = new List<string>();
 
-        public List<ScoutFormDataDto> CascadeData { get; set; } = new List<ScoutFormDataDto>();
+        public SortedList<ScoutFormDataDto> CascadeData { get; set; } = new SortedList<ScoutFormDataDto>();
+        
+        public int CompareTo(ScoutFormDataDto other)
+        {
+            if (ReferenceEquals(this, other)) return 0;
+            if (ReferenceEquals(null, other)) return 1;
+            return Field.CompareTo(other.Field);
+        }
     }
 }
