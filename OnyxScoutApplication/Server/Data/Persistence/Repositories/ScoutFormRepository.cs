@@ -13,37 +13,37 @@ using static OnyxScoutApplication.Server.Data.Extensions.Result;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
-    public class ScoutFormRepository : Repository<ScoutForm, ScoutFormDto>, IScoutFormRepository
+    public class ScoutFormRepository : Repository<Form, FormDto>, IScoutFormRepository
     {
         public ScoutFormRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
         }
 
-        public override async Task<ActionResult> Add(ScoutFormDto scoutFormFormat)
+        public override async Task<ActionResult> Add(FormDto formFormat)
         {
             if (await ScoutAppContext.ScoutForms.AnyAsync(i =>
-                i.Year == scoutFormFormat.Year && i.MatchName == scoutFormFormat.MatchName && i.TeamNumber == scoutFormFormat.TeamNumber))
+                i.Year == formFormat.Year && i.MatchName == formFormat.MatchName && i.TeamNumber == formFormat.TeamNumber))
             {
                 Console.WriteLine("This scout form already exists!");
                 return ResultCode(System.Net.HttpStatusCode.BadRequest, "This scout form already exists!");
             }
 
-            ScoutFormDto clone = new ScoutFormDto
+            FormDto clone = new FormDto
             {
-                Year = scoutFormFormat.Year,
-                TeamNumber = scoutFormFormat.TeamNumber,
-                MatchName = scoutFormFormat.MatchName,
-                WriterUserName = scoutFormFormat.WriterUserName
+                Year = formFormat.Year,
+                TeamNumber = formFormat.TeamNumber,
+                MatchName = formFormat.MatchName,
+                WriterUserName = formFormat.WriterUserName
             };
             await base.Add(clone);
             await Context.SaveChangesAsync();
             var result = await ScoutAppContext.ScoutForms.FirstOrDefaultAsync(i =>
-                i.Year == scoutFormFormat.Year && i.MatchName == scoutFormFormat.MatchName && i.TeamNumber == scoutFormFormat.TeamNumber);
-            scoutFormFormat.Id = result.Id;
-            return await Update(result, scoutFormFormat);
+                i.Year == formFormat.Year && i.MatchName == formFormat.MatchName && i.TeamNumber == formFormat.TeamNumber);
+            formFormat.Id = result.Id;
+            return await Update(result, formFormat);
         }
 
-        public async Task<ActionResult<ScoutFormDto>> GetWithFields(int id)
+        public async Task<ActionResult<FormDto>> GetWithFields(int id)
         {
             var result = await ScoutAppContext.ScoutForms.
                 Include(i => i.FormDataInStages).ThenInclude(i => i.FormData)
@@ -55,10 +55,10 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                 return new NotFoundObjectResult("No scout form found with the id of: " + id);
             }
 
-            return Mapper.Map<ScoutFormDto>(result);
+            return Mapper.Map<FormDto>(result);
         }
 
-        public async Task<ActionResult> Update(int id, ScoutFormDto scoutFormFormatDto)
+        public async Task<ActionResult> Update(int id, FormDto formFormatDto)
         {
             // var result = await ScoutAppContext.ScoutForms.Include(i => i.FieldsInStages).ThenInclude(i => i.FormData)
             //     .ThenInclude(i => i.CascadeData).FirstOrDefaultAsync(i => i.Id == id);
@@ -67,46 +67,46 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             //     return new BadRequestObjectResult("No scout from found to update!");
             // }
 
-            return await Update(scoutFormFormatDto);
+            return await Update(formFormatDto);
         }
 
-        private async Task<ActionResult> Update(ScoutForm scoutForm, ScoutFormDto scoutFormFormatDto)
+        private async Task<ActionResult> Update(Form form, FormDto formFormatDto)
         {
           //  var updated = Mapper.Map<ScoutForm>(scoutFormFormatDto);
            // scoutForm = Mapper.Map(updated, scoutForm);
            // RecursivelySetScoutFormId(scoutForm.Id, scoutForm.Data);
-            Context.Update(scoutForm);
+            Context.Update(form);
             return await Task.Run(() => new OkResult());
         }
         
-        private async Task<ActionResult> Update(ScoutFormDto scoutFormFormatDto)
+        private async Task<ActionResult> Update(FormDto formFormatDto)
         {
             //  var updated = Mapper.Map<ScoutForm>(scoutFormFormatDto);
             // scoutForm = Mapper.Map(updated, scoutForm);
             // RecursivelySetScoutFormId(scoutForm.Id, scoutForm.Data);
-            var entity = Mapper.Map<ScoutForm>(scoutFormFormatDto);
+            var entity = Mapper.Map<Form>(formFormatDto);
             Context.Update(entity);
             return await Task.Run(() => new OkResult());
         }
 
-        public async Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByEvent(string eventKey)
+        public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey)
         {
             var scoutForm = await ScoutAppContext.ScoutForms.Include(i => i.FormDataInStages).ThenInclude(i => i.FormData)
                 .ThenInclude(sn => sn.Field).Where(i => i.MatchName.Contains(eventKey)).ToListAsync();
-             return Mapper.Map<List<ScoutFormDto>>(scoutForm);
+             return Mapper.Map<List<FormDto>>(scoutForm);
         }
 
-        public async Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey)
+        public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey)
         {
             var scoutForm = await ScoutAppContext.ScoutForms.Include(i => i.FormDataInStages).ThenInclude(i => i.FormData)
                 .ThenInclude(sn => sn.Field).Where(i => i.TeamNumber == teamNumber && i.MatchName.Contains(eventKey))
                 .ToListAsync();
-            return Mapper.Map<List<ScoutFormDto>>(scoutForm);
+            return Mapper.Map<List<FormDto>>(scoutForm);
         }
 
-        private static void RecursivelySetScoutFormId(int id, IEnumerable<ScoutFormData> data)
+        private static void RecursivelySetScoutFormId(int id, IEnumerable<FormData> data)
         {
-            foreach (ScoutFormData aData in data)
+            foreach (FormData aData in data)
             {
                 aData.ScoutFormId = id;
                 RecursivelySetScoutFormId(id, aData.CascadeData);

@@ -8,12 +8,12 @@ using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 {
-    public interface IScoutFormRepository : IRepository<ScoutFormDto>
+    public interface IScoutFormRepository : IRepository<FormDto>
     {
-        Task<ActionResult<ScoutFormDto>> GetWithFields(int id);
+        Task<ActionResult<FormDto>> GetWithFields(int id);
 
-        Task<ActionResult> Update(int id, ScoutFormDto scoutFormFormatDto);
-        Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey);
-        Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByEvent(string eventKey);
+        Task<ActionResult> Update(int id, FormDto formFormatDto);
+        Task<ActionResult<IEnumerable<FormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey);
+        Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey);
     }
 }

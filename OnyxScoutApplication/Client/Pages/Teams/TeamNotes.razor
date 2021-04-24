@@ -44,7 +44,7 @@
             return;
         }
 
-        var result = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
+        var result = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
 
         //var v = result.Select(i => i.DataByStages.ToDictionary(ii => ii.Key, ii => 
        //     new Tuple<ScoutFormDataDto[], string>(ii.Value.Where(d => d.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)));

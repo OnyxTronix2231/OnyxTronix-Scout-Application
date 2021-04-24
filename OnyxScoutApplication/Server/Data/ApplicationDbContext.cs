@@ -25,7 +25,7 @@ namespace OnyxScoutApplication.Server.Data
 
         public DbSet<ScoutFormFormat> ScoutFormFormats { get; set; }
 
-        public DbSet<ScoutForm> ScoutForms { get; set; }
+        public DbSet<Form> ScoutForms { get; set; }
         
         public DbSet<CustomEvent> Events { get; set; }
 

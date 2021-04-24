@@ -10,8 +10,8 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
     public static class TeamDataAnalyzer
     {
-        public static List<TeamFieldAverage> CalculateDataFor(IEnumerable<FieldDto> fields, List<ScoutFormDto> scoutForms,
-            Func<ScoutFormDto, List<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
+        public static List<TeamFieldAverage> CalculateDataFor(IEnumerable<FieldDto> fields, List<FormDto> scoutForms,
+            Func<FormDto, List<FormDataDto>> getTargetList, Func<FormDto, bool> shouldCount)
         {
             List<TeamFieldAverage> averages = new List<TeamFieldAverage>();
             foreach (var field in fields.Where(field => field.FieldType != FieldType.TextField))
@@ -21,7 +21,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 if (field.FieldType != FieldType.CascadeField)
                     continue;
 
-                ScoutFormDataDto GetScoutFormData(ScoutFormDto scoutForm) => getTargetList(scoutForm)
+                FormDataDto GetScoutFormData(FormDto scoutForm) => getTargetList(scoutForm)
                     .FirstOrDefault(f => f.Field.NameId == field.NameId);
 
                 averages.AddRange(CalculateDataFor(field.CascadeFields, scoutForms,
@@ -33,8 +33,8 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             return averages;
         }
 
-        private static TeamFieldAverage GetAvgFor(FieldDto field, List<ScoutFormDto> data,
-            Func<ScoutFormDto, List<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
+        private static TeamFieldAverage GetAvgFor(FieldDto field, List<FormDto> data,
+            Func<FormDto, List<FormDataDto>> getTargetList, Func<FormDto, bool> shouldCount)
         {
             IFieldAnalyzer analyzer;
             switch (field.FieldType)

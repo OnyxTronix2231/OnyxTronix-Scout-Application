@@ -55,7 +55,7 @@ namespace OnyxScoutApplication.Client
             services.AddTransient<IValidator<ScoutFormFormatDto>, ScoutFormFormatValidator>();
             services.AddTransient<IValidator<FieldDto>, FieldValidator>();
             services.AddTransient<IValidator<ApplicationUserDto>, ApplicationUserValidator>();
-            services.AddTransient<IValidator<ScoutFormDto>, ScoutFormValidator>();
+            services.AddTransient<IValidator<FormDto>, ScoutFormValidator>();
             services.AddTransient<IValidator<CustomEventDto>, CustomEventValidator>();
             services.AddBlazoredLocalStorage();
             services.AddBlazoredSessionStorage();

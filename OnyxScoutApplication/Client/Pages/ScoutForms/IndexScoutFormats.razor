@@ -37,16 +37,16 @@ else
 }
 
 @code {
-    private List<ScoutFormDto> scoutForms;
+    private List<FormDto> scoutForms;
 
     protected override async Task OnInitializedAsync()
     {
-        scoutForms = await Http.GetJson<List<ScoutFormDto>>("ScoutForm");
+        scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm");
     }
 
-    private void Edit(ScoutFormDto scoutForm)
+    private void Edit(FormDto form)
     {
-        NavigationManager.NavigateTo("ScoutForm/Edit/" + scoutForm.Id);
+        NavigationManager.NavigateTo("ScoutForm/Edit/" + form.Id);
     }
 
 }

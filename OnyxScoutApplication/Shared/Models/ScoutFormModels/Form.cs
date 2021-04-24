@@ -2,7 +2,7 @@
 
 namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 {
-    public class ScoutForm
+    public class Form
     {
         public int Id { get; set; }
 

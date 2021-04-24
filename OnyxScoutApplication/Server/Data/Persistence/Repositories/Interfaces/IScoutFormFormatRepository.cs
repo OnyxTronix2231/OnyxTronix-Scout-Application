@@ -11,7 +11,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 {
     public interface IScoutFormFormatRepository : IRepository<ScoutFormFormatDto>
     {
-        Task<ActionResult<ScoutFormDto>> GetTemplateScoutFormByYear(int year);
+        Task<ActionResult<FormDto>> GetTemplateScoutFormByYear(int year);
 
         Task<ActionResult<ScoutFormFormatDto>> GetWithFields(int id);
 

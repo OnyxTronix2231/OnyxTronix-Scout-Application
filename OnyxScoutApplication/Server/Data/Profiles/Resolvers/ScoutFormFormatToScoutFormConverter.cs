@@ -12,7 +12,7 @@ using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 {
-    public class ScoutFormFormatToScoutFormConverter : ITypeConverter<ScoutFormFormatDto, ScoutFormDto>
+    public class ScoutFormFormatToScoutFormConverter : ITypeConverter<ScoutFormFormatDto, FormDto>
     {
         private readonly IMapper mapper;
 
@@ -21,9 +21,9 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             this.mapper = mapper;
         }
 
-        public ScoutFormDto Convert(ScoutFormFormatDto source, ScoutFormDto destination, ResolutionContext context)
+        public FormDto Convert(ScoutFormFormatDto source, FormDto destination, ResolutionContext context)
         {
-            destination = new ScoutFormDto
+            destination = new FormDto
             {
                 FormDataInStages = source.FieldsInStages.Select(i => mapper.Map<FormDataInStageDto>(i)).ToList()
             };
@@ -31,7 +31,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             return destination;
         }
 
-        public class FieldToScoutFormDataConverter : ITypeConverter<FieldDto, ScoutFormDataDto>
+        public class FieldToScoutFormDataConverter : ITypeConverter<FieldDto, FormDataDto>
         {
             private readonly IMapper mapper;
 
@@ -40,33 +40,33 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 this.mapper = mapper;
             }
             
-            public ScoutFormDataDto Convert(FieldDto source, ScoutFormDataDto destination, ResolutionContext context)
+            public FormDataDto Convert(FieldDto source, FormDataDto destination, ResolutionContext context)
             {
-                destination = new ScoutFormDataDto {Field = source, FieldId = source.Id};
+                destination = new FormDataDto {Field = source, FieldId = source.Id};
                 return GetScoutFormDataFromField(destination, source);
             }
 
-            private ScoutFormDataDto GetScoutFormDataFromField(ScoutFormDataDto scoutFormData, FieldDto field)
+            private FormDataDto GetScoutFormDataFromField(FormDataDto formData, FieldDto field)
             {
                 switch (field.FieldType)
                 {
                     case FieldType.None:
                         break;
                     case FieldType.CascadeField:
-                        scoutFormData.CascadeData = mapper.Map<List<ScoutFormDataDto>>(field.CascadeFields);
+                        formData.CascadeData = mapper.Map<List<FormDataDto>>(field.CascadeFields);
                         goto case FieldType.Boolean;
                     case FieldType.Boolean:
-                        scoutFormData.BooleanValue = field.BoolDefaultValue;
+                        formData.BooleanValue = field.BoolDefaultValue;
                         break;
                     case FieldType.OptionSelect:
                     case FieldType.TextField:
-                        scoutFormData.StringValue = field.TextDefaultValue;
+                        formData.StringValue = field.TextDefaultValue;
                         break;
                     case FieldType.Numeric:
-                        scoutFormData.NumericValue = field.NumericDefaultValue;
+                        formData.NumericValue = field.NumericDefaultValue;
                         break;
                     case FieldType.MultipleChoice:
-                        scoutFormData.SelectedOptions = field.DefaultSelectedOptions;
+                        formData.SelectedOptions = field.DefaultSelectedOptions;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -77,7 +77,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                   //  scoutFormData.CascadeData.Add(GetScoutFormDataFromField(f));
                 }
 
-                return scoutFormData;
+                return formData;
             }
 
            

@@ -4,10 +4,10 @@
 @inject NavigationManager NavigationManager
 @attribute [OnyxAuthorize(Role = Role.Admin)]
 
-@if (scoutForm != null)
+@if (form != null)
 {
     <h3>ScoutForm</h3>
-    <ScoutFromComponent ScoutForm="scoutForm" Type="FormType.Update" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
+    <ScoutFromComponent Form="form" Type="FormType.Update" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
 }
 
 @code {
@@ -18,12 +18,12 @@
     [CascadingParameter]
     public Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
-    private ScoutFormDto scoutForm;
+    private FormDto form;
 
     protected override async Task OnInitializedAsync()
     {
-        scoutForm = await Http.GetJson<ScoutFormDto>("ScoutForm/ " + Id);
-        if (scoutForm == null)
+        form = await Http.GetJson<FormDto>("ScoutForm/ " + Id);
+        if (form == null)
         {
             NavigationManager.NavigateTo("/");
         }
@@ -31,7 +31,7 @@
 
     private async Task OnValidSubmit()
     {
-        if (await Http.TryPutJson("ScoutForm/" + Id, scoutForm))
+        if (await Http.TryPutJson("ScoutForm/" + Id, form))
         {
             NavigationManager.NavigateTo("/");
         }

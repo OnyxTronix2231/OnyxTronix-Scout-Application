@@ -4,7 +4,7 @@ using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 
 namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 {
-    public class ScoutFormData
+    public class FormData
     {
         public int Id { get; set; }
 
@@ -23,6 +23,6 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 
         public string Value { get; set; }
 
-        public List<ScoutFormData> CascadeData { get; set; } = new List<ScoutFormData>();
+        public List<FormData> CascadeData { get; set; } = new List<FormData>();
     }
 }

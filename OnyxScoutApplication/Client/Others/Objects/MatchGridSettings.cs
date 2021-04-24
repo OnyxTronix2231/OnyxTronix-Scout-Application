@@ -17,7 +17,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
         public int TeamNumber { get; set; }
 
         [Parameter]
-        public List<ScoutFormDto> SubmittedForms { get; set; }
+        public List<FormDto> SubmittedForms { get; set; }
         
         [Parameter]
         public string Height { get; set; } = "100%";
@@ -45,7 +45,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
                         TeamNumber = (int) parameter.Value;
                         break;
                     case nameof(SubmittedForms):
-                        SubmittedForms = (List<ScoutFormDto>) parameter.Value;
+                        SubmittedForms = (List<FormDto>) parameter.Value;
                         break;
                     case nameof(Height):
                         Height = (string) parameter.Value;

@@ -26,13 +26,13 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
         public List<Team> Teams { get; set; }
 
         [Parameter]
-        public List<ScoutFormDto> ScoutForms { get; set; }
+        public List<FormDto> ScoutForms { get; set; }
 
         [Parameter]
         public List<FieldDto> Fields { get; set; }
 
         [Parameter]
-        public Func<ScoutFormDto, List<ScoutFormDataDto>> GetTargetList { get; set; }
+        public Func<FormDto, List<FormDataDto>> GetTargetList { get; set; }
 
         [Parameter]
         public EventAnalyticSettingsDto EventAnalyticSettings { get; set; }

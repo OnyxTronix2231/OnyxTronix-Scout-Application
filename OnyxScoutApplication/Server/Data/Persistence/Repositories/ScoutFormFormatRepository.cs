@@ -40,7 +40,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return await Update(result.Id, scoutFormFormat);
         }
 
-        public async Task<ActionResult<ScoutFormDto>> GetTemplateScoutFormByYear(int year)
+        public async Task<ActionResult<FormDto>> GetTemplateScoutFormByYear(int year)
         {
             var result = await GetWithFieldsByYear(year);
             if (result.Value == null)
@@ -48,7 +48,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                 return new NotFoundObjectResult("No scout form format found for year - " + year);
             }
 
-            return Mapper.Map<ScoutFormDto>(result.Value);
+            return Mapper.Map<FormDto>(result.Value);
         }
 
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFields(int id)

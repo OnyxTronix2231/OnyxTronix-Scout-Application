@@ -5,10 +5,10 @@
 @inject ILocalStorageService LocalStorage
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
-@if (scoutForm != null)
+@if (form != null)
 {
     <h3>ScoutForm</h3>
-    <ScoutFromComponent ScoutForm="scoutForm" Type="FormType.Create" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
+    <ScoutFromComponent Form="form" Type="FormType.Create" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
 }
 
 @code {
@@ -17,7 +17,7 @@
     public Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
     private TeamInMatch teamInMatch;
-    private ScoutFormDto scoutForm;
+    private FormDto form;
 
     protected override async Task OnInitializedAsync()
     {
@@ -25,21 +25,21 @@
         var user = authState.User;
 
         teamInMatch = await LocalStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
-        scoutForm = await Http.GetJson<ScoutFormDto>("ScoutFormFormat/TemplateScoutFormByYear/ " + teamInMatch.Match.Date.Year);
-        if (scoutForm == null)
+        form = await Http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/ " + teamInMatch.Match.Date.Year);
+        if (form == null)
         {
             NavigationManager.NavigateTo("/");
             return;
         }
-        scoutForm.TeamNumber = teamInMatch.TeamNumber;
-        scoutForm.Year = teamInMatch.Match.Date.Year;
-        scoutForm.MatchName = teamInMatch.Match.Key;
-        scoutForm.WriterUserName = user.Identity.Name;
+        form.TeamNumber = teamInMatch.TeamNumber;
+        form.Year = teamInMatch.Match.Date.Year;
+        form.MatchName = teamInMatch.Match.Key;
+        form.WriterUserName = user.Identity.Name;
     }
 
     private async Task OnValidSubmit()
     {
-        if (await Http.TryPostJson("ScoutForm", scoutForm))
+        if (await Http.TryPostJson("ScoutForm", form))
         {
             NavigationManager.NavigateTo("/");
         }

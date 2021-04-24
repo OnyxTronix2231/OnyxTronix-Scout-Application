@@ -32,7 +32,7 @@
     public int TeamNumber { get; set; }
 
     private Event selectedEvent;
-    private List<ScoutFormDto> data;
+    private List<FormDto> data;
     private Dictionary<string, List<TeamFieldAverage>> calculatedDataByStages;
     private List<Match> matches;
 
@@ -44,7 +44,7 @@
             return;
         }
         var format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
-        var result = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
+        var result = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
         data = result.OrderBy(i => i.MatchName).ToList();
         matches = (await Http.GetJson<List<Match>>
             ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))

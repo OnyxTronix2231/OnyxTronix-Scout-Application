@@ -9,9 +9,9 @@ using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 
 namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 {
-    public class ScoutFormDataValueConverter : IValueResolver<ScoutFormDataDto, ScoutFormData, string>
+    public class ScoutFormDataValueConverter : IValueResolver<FormDataDto, FormData, string>
     {
-        public string Resolve(ScoutFormDataDto source, ScoutFormData destination, string destMember,
+        public string Resolve(FormDataDto source, FormData destination, string destMember,
             ResolutionContext context)
         {
             switch (source.Field.FieldType)

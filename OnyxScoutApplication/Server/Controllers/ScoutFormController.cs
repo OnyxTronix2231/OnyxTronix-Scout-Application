@@ -26,19 +26,19 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ScoutFormDto>>> Get()
+        public async Task<ActionResult<IEnumerable<FormDto>>> Get()
         {
             return await unitOfWork.ScoutForms.GetAll();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ScoutFormDto>> Get(int id)
+        public async Task<ActionResult<FormDto>> Get(int id)
         {
             return await unitOfWork.ScoutForms.GetWithFields(id);
         }
 
         [HttpGet("GetAllByEvent/{eventKey}")]
-        public async Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByEvent(string eventKey)
+        public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey)
         {
             return await unitOfWork.ScoutForms.GetAllByEvent(eventKey);
         }
@@ -50,27 +50,27 @@ namespace OnyxScoutApplication.Server.Controllers
         //}
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateScoutForm(int id, [FromBody] ScoutFormDto scoutFormModel)
+        public async Task<ActionResult> UpdateScoutForm(int id, [FromBody] FormDto formModel)
         {
-            var response = await unitOfWork.ScoutForms.Update(id, scoutFormModel);
+            var response = await unitOfWork.ScoutForms.Update(id, formModel);
             await unitOfWork.Complete();
             return response;
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateScoutForm([FromBody] ScoutFormDto scoutFormModel)
+        public async Task<ActionResult> CreateScoutForm([FromBody] FormDto formModel)
         {
             if (!ModelState.IsValid) 
                 return ResultCode(System.Net.HttpStatusCode.BadRequest, "Invalid inputs!");
             
-            var response = await unitOfWork.ScoutForms.Add(scoutFormModel);
+            var response = await unitOfWork.ScoutForms.Add(formModel);
             await unitOfWork.Complete();
             return response;
 
         }
 
         [HttpGet("GetAllByTeam/{teamNumber}/{eventKey}")]
-        public async Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByTeam(int teamNumber, string eventKey)
+        public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByTeam(int teamNumber, string eventKey)
         {
             return await unitOfWork.ScoutForms.GetAllByTeamWithData(teamNumber, eventKey);
         }

@@ -8,7 +8,7 @@ using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 
 namespace OnyxScoutApplication.Shared.Models.FluentValidations
 {
-    public class ScoutFormValidator : AbstractValidator<ScoutFormDto>
+    public class ScoutFormValidator : AbstractValidator<FormDto>
     {
         public ScoutFormValidator()
         {

@@ -8,7 +8,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
         public string Name { get; set; }
         public int Index { get; set; }
         public int? ScoutFormId { get; set; }
-        public ScoutForm ScoutForm { get; set; }
-        public List<ScoutFormDataDto> FormData { get; set; } = new List<ScoutFormDataDto>();
+        public Form Form { get; set; }
+        public List<FormDataDto> FormData { get; set; } = new List<FormDataDto>();
     }
 }

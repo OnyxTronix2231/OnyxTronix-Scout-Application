@@ -8,7 +8,7 @@ using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 
 namespace OnyxScoutApplication.Shared.Models.FluentValidations
 {
-    public class ScoutFormDataValidator : AbstractValidator<ScoutFormDataDto>
+    public class ScoutFormDataValidator : AbstractValidator<FormDataDto>
     {
         public ScoutFormDataValidator()
         {
@@ -25,7 +25,7 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
                 .When(x => x.Field.FieldType == FieldType.CascadeField && x.BooleanValue);
         }
 
-        private static bool BeNumberBetween(ScoutFormDataDto model, int? value)
+        private static bool BeNumberBetween(FormDataDto model, int? value)
         {
             if (value == null)
             {

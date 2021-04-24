@@ -44,14 +44,14 @@
     private List<Match> qfMatches = new List<Match>();
     private List<Match> sfMatches = new List<Match>();
     private List<Match> fMatches = new List<Match>();
-    private List<ScoutFormDto> scoutForms;
+    private List<FormDto> scoutForms;
 
     protected override async Task OnInitializedAsync()
     {
         if (await SessionStorage.ContainKeyAsync("TheBlueAlliance.AllMatches"))
         {
             var matches = await SessionStorage.GetItemAsync<List<Match>>("TheBlueAlliance.AllMatches");
-            scoutForms = await SessionStorage.GetItemAsync<List<ScoutFormDto>>("ScoutForms.All");
+            scoutForms = await SessionStorage.GetItemAsync<List<FormDto>>("ScoutForms.All");
             UpdateByMatches(matches);
         }
     }
@@ -60,7 +60,7 @@
     {
         var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
         await SessionStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
-        scoutForms = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+        scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
         UpdateByMatches(matches);
     }
 

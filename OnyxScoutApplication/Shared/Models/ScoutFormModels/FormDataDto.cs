@@ -5,7 +5,7 @@ using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 
 namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 {
-    public class ScoutFormDataDto
+    public class FormDataDto
     {
         [Key]
         public int Id { get; set; }
@@ -19,6 +19,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 
         public FieldDto Field { get; set; }
 
+        [ForeignKey("FormDataInStage")]
         public int? FormDataInStageId { get; set; }
         
         public FormDataInStageDto FormDataInStage { get; set; }
@@ -31,6 +32,6 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 
         public List<string> SelectedOptions { get; set; } = new List<string>();
 
-        public List<ScoutFormDataDto> CascadeData { get; set; } = new List<ScoutFormDataDto>();
+        public List<FormDataDto> CascadeData { get; set; } = new List<FormDataDto>();
     }
 }

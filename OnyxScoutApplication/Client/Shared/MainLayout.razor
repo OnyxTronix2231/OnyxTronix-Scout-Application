@@ -45,7 +45,7 @@
             var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
             SessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
 
-            var scoutForms = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+            var scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
         //    SessionStorage.SetItem("ScoutForms.All", scoutForms);
 
             var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
