@@ -10,7 +10,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
     public class NumericalAnalyzer : IFieldAnalyzer
     {
         public TeamFieldAverage Analyze(IEnumerable<ScoutFormDto> scoutForms, FieldDto field,
-            Func<ScoutFormDto, List<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
+            Func<ScoutFormDto, IEnumerable<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
         {
             NumericTeamFieldAverage fieldAverage = new NumericTeamFieldAverage(field);
             float average = 0;

@@ -10,7 +10,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
     public class BooleanAnalyzer : IFieldAnalyzer
     {
         public TeamFieldAverage Analyze(IEnumerable<ScoutFormDto> scoutForms, FieldDto field,
-            Func<ScoutFormDto, List<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
+            Func<ScoutFormDto, IEnumerable<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
         {
             BooleanTeamFieldAverage fieldAverage = new BooleanTeamFieldAverage(field);
             int trueCount = 0;

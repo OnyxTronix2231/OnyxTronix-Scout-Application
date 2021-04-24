@@ -68,8 +68,9 @@
         {
             analyticSettings = new EventAnalyticSettingsDto();
         }
-        fields = format.FieldsesInByStages.SelectMany(i => i.Value.ConcatAllCascadeFields()).ToList();
-        fields.RemoveAll(i => i.FieldType != FieldType.Numeric);
+        throw new NotImplementedException();
+        //fields = format.FieldsesInByStages.SelectMany(i => i.Value.ConcatAllCascadeFields()).ToList();
+      //  fields.RemoveAll(i => i.FieldType != FieldType.Numeric);
     }
 
     private void AddCombinedField()

@@ -7,7 +7,7 @@ using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Shared.Models
 {
-    public class ScoutFormDataDto : IComparable<ScoutFormDataDto>
+    public class ScoutFormDataDto
     {
         [Key]
         public int Id { get; set; }
@@ -33,13 +33,6 @@ namespace OnyxScoutApplication.Shared.Models
 
         public List<string> SelectedOptions { get; set; } = new List<string>();
 
-        public SortedList<ScoutFormDataDto> CascadeData { get; set; } = new SortedList<ScoutFormDataDto>();
-        
-        public int CompareTo(ScoutFormDataDto other)
-        {
-            if (ReferenceEquals(this, other)) return 0;
-            if (ReferenceEquals(null, other)) return 1;
-            return Field.CompareTo(other.Field);
-        }
+        public List<ScoutFormDataDto> CascadeData { get; set; } = new List<ScoutFormDataDto>();
     }
 }

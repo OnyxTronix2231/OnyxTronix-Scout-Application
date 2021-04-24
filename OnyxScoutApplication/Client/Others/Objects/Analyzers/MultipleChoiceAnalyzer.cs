@@ -10,7 +10,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
     public class MultipleChoiceAnalyzer : IFieldAnalyzer
     {
         public TeamFieldAverage Analyze(IEnumerable<ScoutFormDto> scoutForms, FieldDto field,
-            Func<ScoutFormDto, List<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
+            Func<ScoutFormDto, IEnumerable<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
         {
             OptionSelectTeamFieldAverage fieldAverage = new OptionSelectTeamFieldAverage(field);
             int totalCount = 0;

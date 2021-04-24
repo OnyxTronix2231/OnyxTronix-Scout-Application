@@ -17,6 +17,6 @@ namespace OnyxScoutApplication.Shared.Models
 
         public string WriterUserName { get; set; }
 
-        public List<FormDataInStage> FieldsInStages { get; set; } = new List<FormDataInStage>();
+        public List<FormDataInStage> FormDataInStages { get; set; } = new List<FormDataInStage>();
     }
 }

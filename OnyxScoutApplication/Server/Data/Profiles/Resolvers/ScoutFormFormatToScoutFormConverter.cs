@@ -23,7 +23,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
         {
             destination = new ScoutFormDto
             {
-                FieldsInStages = source.FieldsInStages.Select(i => mapper.Map<FormDataInStageDto>(i)).ToSortedList()
+                FormDataInStages = source.FieldsInStages.Select(i => mapper.Map<FormDataInStageDto>(i)).ToList()
             };
 
             return destination;
@@ -51,7 +51,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                     case FieldType.None:
                         break;
                     case FieldType.CascadeField:
-                        scoutFormData.CascadeData = mapper.Map<SortedList<ScoutFormDataDto>>(field.CascadeFields);
+                        scoutFormData.CascadeData = mapper.Map<List<ScoutFormDataDto>>(field.CascadeFields);
                         goto case FieldType.Boolean;
                     case FieldType.Boolean:
                         scoutFormData.BooleanValue = field.BoolDefaultValue;

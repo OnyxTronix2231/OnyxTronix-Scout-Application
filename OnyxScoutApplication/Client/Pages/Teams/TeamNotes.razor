@@ -2,40 +2,41 @@
 
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
-@if (notesByStage != null)
-{
-    <h3>Team @TeamNumber</h3>
-    <h4>@selectedEvent?.Name</h4>
-    <div>
-        @foreach (var (stage, dataByWirters) in notesByStage)
-        {
-            <h5>@stage</h5>
-            foreach (var (texts, writer) in dataByWirters)
-            {
-
-                foreach (var text in texts)
-                {
-                    <div>
-                        <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
-                        <span>@writer</span>
-                    </div>
-                    <br/>
-                }
-            }
-        }
-    </div>
-}
+@* @if (notesByStage != null) *@
+@* { *@
+@*     <h3>Team @TeamNumber</h3> *@
+@*     <h4>@selectedEvent?.Name</h4> *@
+@*     <div> *@
+@*         @foreach (var (stage, dataByWirters) in notesByStage) *@
+@*         { *@
+@*             <h5>@stage</h5> *@
+@*             foreach (var (texts, writer) in dataByWirters) *@
+@*             { *@
+@* *@
+@*                 foreach (var text in texts) *@
+@*                 { *@
+@*                     <div> *@
+@*                         <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox> *@
+@*                         <span>@writer</span> *@
+@*                     </div> *@
+@*                     <br/> *@
+@*                 } *@
+@*             } *@
+@*         } *@
+@*     </div> *@
+@* } *@
 
 @code {
 
     [Parameter]
     public int TeamNumber { get; set; }
 
-    private Dictionary<StageDto, List<Tuple<ScoutFormDataDto[], string>>> notesByStage;
+  //  private Dictionary<StageDto, List<Tuple<ScoutFormDataDto[], string>>> notesByStage;
     private Event selectedEvent;
 
     protected override async Task OnInitializedAsync()
     {
+        throw new NotImplementedException();
         selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         if (selectedEvent == null)
         {
@@ -44,10 +45,10 @@
 
         var result = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
 
-        var v = result.Select(i => i.DataByStages.ToDictionary(ii => ii.Key, ii => 
-            new Tuple<ScoutFormDataDto[], string>(ii.Value.Where(d => d.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)));
-
-        notesByStage = v.SelectMany(i => i).ToLookup(i => i.Key, i => i.Value).ToDictionary(i => i.Key, i => i.ToList());
+        //var v = result.Select(i => i.DataByStages.ToDictionary(ii => ii.Key, ii => 
+       //     new Tuple<ScoutFormDataDto[], string>(ii.Value.Where(d => d.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)));
+//
+      //  notesByStage = v.SelectMany(i => i).ToLookup(i => i.Key, i => i.Value).ToDictionary(i => i.Key, i => i.ToList());
     }
 
 }

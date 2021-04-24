@@ -6,10 +6,10 @@
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (fields != null)
-{
-    <EventAnalyticGrid Teams="teams" Fields="fields" ScoutForms="scoutForms" GetTargetList="@(s => s.DataByStages.SelectMany(i => i.Value).ToList())"
-                       OnTeamClicked="OnTeamClicked" EventAnalyticSettings="analyticSettings"/>
-}
+@* { *@
+@*     <EventAnalyticGrid Teams="teams" Fields="fields" ScoutForms="scoutForms" GetTargetList="@(s => s.DataByStages.SelectMany(i => i.Value).ToList())" *@
+@*                        OnTeamClicked="OnTeamClicked" EventAnalyticSettings="analyticSettings"/> *@
+@* } *@
 
 @code {
     private Event selectedEvent;
@@ -36,7 +36,8 @@
         {
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
-        fields = format.FieldsesInByStages.SelectMany(i => i.Value.ConcatAllCascadeFields().Where(f => f.FieldType != FieldType.TextField)).ToList();
+        throw new NotImplementedException();
+       // fields = format.FieldsesInByStages.SelectMany(i => i.Value.ConcatAllCascadeFields().Where(f => f.FieldType != FieldType.TextField)).ToList();
     }
 
     private void OnTeamClicked(int teamNumber)

@@ -31,7 +31,7 @@
 
     private Event selectedEvent;
     private List<ScoutFormDto> data;
-    private Dictionary<StageDto, List<TeamFieldAverage>> calculatedDataByStages;
+    private Dictionary<string, List<TeamFieldAverage>> calculatedDataByStages;
     private List<Match> matches;
 
     protected override async Task OnInitializedAsync()
@@ -47,11 +47,11 @@
         matches = (await Http.GetJson<List<Match>>
             ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))
             .OrderBy(i => i.Date).ToList();
-        calculatedDataByStages = new Dictionary<StageDto, List<TeamFieldAverage>>();
-        foreach (var (key, value) in format.FieldsesInByStages)
+        calculatedDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
+        foreach (var fieldsInStage in format.FieldsInStages)
         {
-            calculatedDataByStages.Add(key, TeamDataAnalyzer.CalculateDataFor(value, result,
-                scoutForm => scoutForm.DataByStages[key], s => true));
+            calculatedDataByStages.Add(fieldsInStage.Name, TeamDataAnalyzer.CalculateDataFor(fieldsInStage.Fields, result,
+                scoutForm => scoutForm.FormDataInStages.First(i => i.Name == fieldsInStage.Name).FormData, s => true));
         }
        
     }

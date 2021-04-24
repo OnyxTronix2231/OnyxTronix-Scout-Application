@@ -31,7 +31,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             return averages;
         }
 
-        private static TeamFieldAverage GetAvgFor(FieldDto field, IEnumerable<ScoutFormDto> data,
+        private static TeamFieldAverage GetAvgFor(FieldDto field, List<ScoutFormDto> data,
             Func<ScoutFormDto, List<ScoutFormDataDto>> getTargetList, Func<ScoutFormDto, bool> shouldCount)
         {
             IFieldAnalyzer analyzer;

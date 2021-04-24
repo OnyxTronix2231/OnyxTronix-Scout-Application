@@ -20,9 +20,9 @@
     </div>
 
     <div class="form-group col-sm-5">
-        @foreach (var (stage, data) in ScoutForm.DataByStages)
+        @foreach (var formDataInStages in ScoutForm.FormDataInStages)
         {
-            <SectionEdit SectionData="@data" SectionName="@stage.Name"></SectionEdit>
+            <SectionEdit SectionData="@formDataInStages.FormData" SectionName="@formDataInStages.Name"></SectionEdit>
         }
     </div>
 

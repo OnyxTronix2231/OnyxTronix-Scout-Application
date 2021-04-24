@@ -11,7 +11,7 @@ namespace OnyxScoutApplication.Shared.Models
         public int Index { get; set; }
         public int? ScoutFormId { get; set; }
         public ScoutFormDto ScoutForm { get; set; }
-        public SortedList<ScoutFormDataDto> FormData { get; set; } = new SortedList<ScoutFormDataDto>();
+        public List<ScoutFormDataDto> FormData { get; set; } = new List<ScoutFormDataDto>();
         
         public int CompareTo(FormDataInStageDto other)
         {

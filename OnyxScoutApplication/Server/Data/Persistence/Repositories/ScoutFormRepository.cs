@@ -45,9 +45,9 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public async Task<ActionResult<ScoutFormDto>> GetWithFields(int id)
         {
             var result = await ScoutAppContext.ScoutForms.
-                Include(i => i.FieldsInStages).ThenInclude(i => i.FormData)
+                Include(i => i.FormDataInStages).ThenInclude(i => i.FormData)
                 .ThenInclude(i => i.CascadeData).ThenInclude(i => i.Field)
-                .Include(i => i.FieldsInStages).ThenInclude(i => i.FormData)
+                .Include(i => i.FormDataInStages).ThenInclude(i => i.FormData)
                 .ThenInclude(i => i.Field).FirstOrDefaultAsync(i => i.Id == id);
             if (result == null)
             {
@@ -90,14 +90,14 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByEvent(string eventKey)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms.Include(i => i.FieldsInStages).ThenInclude(i => i.FormData)
+            var scoutForm = await ScoutAppContext.ScoutForms.Include(i => i.FormDataInStages).ThenInclude(i => i.FormData)
                 .ThenInclude(sn => sn.Field).Where(i => i.MatchName.Contains(eventKey)).ToListAsync();
              return Mapper.Map<List<ScoutFormDto>>(scoutForm);
         }
 
         public async Task<ActionResult<IEnumerable<ScoutFormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms.Include(i => i.FieldsInStages).ThenInclude(i => i.FormData)
+            var scoutForm = await ScoutAppContext.ScoutForms.Include(i => i.FormDataInStages).ThenInclude(i => i.FormData)
                 .ThenInclude(sn => sn.Field).Where(i => i.TeamNumber == teamNumber && i.MatchName.Contains(eventKey))
                 .ToListAsync();
             return Mapper.Map<List<ScoutFormDto>>(scoutForm);

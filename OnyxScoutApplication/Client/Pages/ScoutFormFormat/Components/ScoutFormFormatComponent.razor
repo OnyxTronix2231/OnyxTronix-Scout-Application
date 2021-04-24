@@ -22,20 +22,20 @@
         <br/>
     </div>
     
-     @foreach(var (stage, fields) in ScoutFormFormat.FieldsesInByStages)
+     @foreach(var fieldsInStage in ScoutFormFormat.FieldsInStages)
      {
-         Console.WriteLine(stage.Index);
+         Console.WriteLine(fieldsInStage.Index);
          <div class="e-icons">
-             <h3>@stage.Name</h3>
-             <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveStage(stage)">Remove stage</SfButton>
-             <SfButton Disabled="@(stage.Index <= 0)" type="button" CssClass="e-primary e-round"
-                       IconCss="e-icons e-triangleUp" @onclick="() => MoveUp(stage)">
+             <h3>@fieldsInStage.Name</h3>
+             <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveStage(fieldsInStage)">Remove stage</SfButton>
+             <SfButton Disabled="@(fieldsInStage.Index <= 0)" type="button" CssClass="e-primary e-round"
+                       IconCss="e-icons e-triangleUp" @onclick="() => MoveUp(fieldsInStage)">
              </SfButton>
-             <SfButton Disabled="@(stage.Index >= ScoutFormFormat.FieldsesInByStages.Count - 1)" type="button" CssClass="e-primary e-round"
-                       IconCss="e-icons e-triangleDown" @onclick="() => MoveDown(stage)">
+             <SfButton Disabled="@(fieldsInStage.Index >= ScoutFormFormat.FieldsInStages.Count - 1)" type="button" CssClass="e-primary e-round"
+                       IconCss="e-icons e-triangleDown" @onclick="() => MoveDown(fieldsInStage)">
              </SfButton>
          </div>
-         <FieldsEditor Fields="fields"></FieldsEditor>
+         <FieldsEditor Fields="fieldsInStage.Fields"></FieldsEditor>
      }
 
     <br/>
@@ -58,8 +58,12 @@
 
     private void OnValidSubmit()
     {
-        ScoutFormFormat.FieldsesInByStages.ToList().ForEach(i => i.Value.RemoveAll(f => f.FieldType == FieldType.None || string.IsNullOrWhiteSpace(f.Name)));
-        ScoutFormFormat.FieldsesInByStages.ToList().ForEach(i => UpdateFieldIndex(i.Value));
+       // ScoutFormFormat.FieldsInStages.ToList().ForEach(i => i.Fields.RemoveAll(f => f.FieldType == FieldType.None || string.IsNullOrWhiteSpace(f.Name)));
+        for (var i = 0; i < ScoutFormFormat.FieldsInStages.Count; i++)
+        {
+            ScoutFormFormat.FieldsInStages[i].Index = i;
+        }
+        ScoutFormFormat.FieldsInStages.ForEach(i => UpdateFieldIndex(i.Fields));
         OnSubmit.InvokeAsync(this);
     }
 
@@ -79,29 +83,28 @@
             return;
         }
 
-        if (ScoutFormFormat.FieldsesInByStages.Any(i => i.Key.Name == newStageName))
+        if (ScoutFormFormat.FieldsInStages.Any(i => i.Name == newStageName))
         {
             return;
         }
-        ScoutFormFormat.FieldsesInByStages.Add(new StageDto() { Name = newStageName, Index = ScoutFormFormat.FieldsesInByStages.Count}, new List<FieldDto>());
+        ScoutFormFormat.FieldsInStages.Add(new FieldsInStageDto() { Name = newStageName, Index = ScoutFormFormat.FieldsInStages.Count});
     }
     
-    private void RemoveStage(StageDto stage)
+    private void RemoveStage(FieldsInStageDto stage)
     {
-        ScoutFormFormat.FieldsesInByStages.Remove(stage);
+        ScoutFormFormat.FieldsInStages.Remove(stage);
     }
     
-    private void MoveUp(StageDto stage)
+    private void MoveUp(FieldsInStageDto stage)
     {
-        ScoutFormFormat.FieldsesInByStages.Keys[stage.Index - 1]
-        stage.Index -= 1;
-        StateHasChanged();
+        ScoutFormFormat.FieldsInStages.RemoveAt(stage.Index);
+        ScoutFormFormat.FieldsInStages.Insert(stage.Index - 1, stage);
     }
 
-    private void MoveDown(StageDto stage)
+    private void MoveDown(FieldsInStageDto stage)
     {
-        stage.Index += 1;
-        StateHasChanged();
+        ScoutFormFormat.FieldsInStages.RemoveAt(stage.Index);
+        ScoutFormFormat.FieldsInStages.Insert(stage.Index + 1, stage);
     }
 
 }
