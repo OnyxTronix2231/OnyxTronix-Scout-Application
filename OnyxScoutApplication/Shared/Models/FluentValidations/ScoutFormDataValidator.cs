@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
+using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 
 namespace OnyxScoutApplication.Shared.Models.FluentValidations
 {

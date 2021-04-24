@@ -1,31 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 using Newtonsoft.Json;
 
-namespace OnyxScoutApplication.Shared.Models
+namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
-    public enum FieldType
-    {
-        None,
-        Boolean,
-        TextField,
-        Numeric,
-        CascadeField,
-        OptionSelect,
-        MultipleChoice
-    }
-
-    public class Field
+    public class FieldDto : IComparable<FieldDto>
     {
         public int Id { get; set; }
 
         public int ScoutFormFormatId { get; set; }
 
-        public int? FieldId { get; set; }
-
-        //[JsonIgnore]
+        [JsonIgnore]
         public ScoutFormFormat ScoutFormFormat { get; set; }
 
         public string Name { get; set; }
@@ -38,24 +23,37 @@ namespace OnyxScoutApplication.Shared.Models
 
         public bool CascadeConditionDefaultValue { get; set; }
 
+        public int MyProperty { get; set; }
+
         public FieldType FieldType { get; set; }
 
         public int? FieldStageId { get; set; }
         
-        public FieldsInStage FieldsInStage { get; set; }
-
+        public FieldsInStageDto FieldsInStage { get; set; }
+        
         public int MaxValue { get; set; } = 9999;
 
         public int MinValue { get; set; }
 
         public bool Required { get; set; }
 
-        public string Options { get; set; } = "";
+        public List<string> Options { get; set; } = new List<string>();
+
+        public List<string> DefaultSelectedOptions { get; set; } = new List<string>();
 
         public int MaximumSelectionLength { get; set; }
 
-        public List<Field> CascadeFields { get; set; }
+        public List<FieldDto> CascadeFields { get; set; } = new List<FieldDto>();
 
         public int Index { get; set; }
+
+        public string NameId => Name + FieldsInStage;
+        
+        public int CompareTo(FieldDto other)
+        {
+            if (ReferenceEquals(this, other)) return 0;
+            if (ReferenceEquals(null, other)) return 1;
+            return Index.CompareTo(other.Index);
+        }
     }
 }

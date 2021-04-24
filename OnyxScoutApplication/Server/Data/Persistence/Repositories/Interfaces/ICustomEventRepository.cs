@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Shared.Models.CustomeEventModels;
 using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces

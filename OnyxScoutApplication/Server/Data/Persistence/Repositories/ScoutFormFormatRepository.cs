@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
+using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
+using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 using static OnyxScoutApplication.Server.Data.Extensions.Result;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories

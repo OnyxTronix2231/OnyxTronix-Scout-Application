@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FluentValidation.Validators;
+using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 
 namespace OnyxScoutApplication.Shared.Models.FluentValidations
 {

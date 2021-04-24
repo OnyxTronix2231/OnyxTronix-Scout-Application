@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using OnyxScoutApplication.Shared.Models;
+using OnyxScoutApplication.Shared.Models.CustomeEventModels;
 
 namespace OnyxScoutApplication.Server.Data.Extensions
 {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
+using OnyxScoutApplication.Shared.Models.CustomeEventModels;
 using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Shared.Models.FluentValidations

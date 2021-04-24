@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using OnyxScoutApplication.Shared.Other;
+﻿using System.Collections.Generic;
 
-namespace OnyxScoutApplication.Shared.Models
+namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
     public class FieldsInStageDto
     {

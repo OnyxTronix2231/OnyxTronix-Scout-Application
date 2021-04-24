@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
 using OnyxScoutApplication.Shared.Models;
+using OnyxScoutApplication.Shared.Models.CustomeEventModels;
 using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 using OnyxScoutApplication.Shared.Other;
 

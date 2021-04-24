@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
 using OnyxScoutApplication.Shared.Models;
+using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 
 namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 {

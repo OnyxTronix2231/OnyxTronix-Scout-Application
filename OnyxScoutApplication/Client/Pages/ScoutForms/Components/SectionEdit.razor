@@ -1,4 +1,6 @@
-﻿<h3>@SectionName</h3>
+﻿@using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
+@using OnyxScoutApplication.Shared.Models.ScoutFormModels
+<h3>@SectionName</h3>
 @foreach (var data in SectionData)
 {
     <label>@data.Field.Name</label>

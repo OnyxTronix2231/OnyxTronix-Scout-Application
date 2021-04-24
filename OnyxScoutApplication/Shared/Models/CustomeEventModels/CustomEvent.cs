@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace OnyxScoutApplication.Shared.Models
+namespace OnyxScoutApplication.Shared.Models.CustomeEventModels
 {
-    public class CustomEventDto
+    public class CustomEvent
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Country { get; set; }
         public string Key { get; set; }
         public int Year { get; set; }
-        public DateTime StartDate { get; set; } = DateTime.Today;
-        public List<CustomMatchDto> Matches { get; set; } = new List<CustomMatchDto>();
+        public DateTime StartDate { get; set; }
+        public List<CustomMatch> Matches { get; set; } = new List<CustomMatch>();
     }
 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using OnyxScoutApplication.Client.Shared;
 using OnyxScoutApplication.Shared.Models;
+using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 
 namespace OnyxScoutApplication.Client.Others.Objects
 {

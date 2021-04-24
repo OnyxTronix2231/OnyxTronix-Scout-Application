@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using OnyxScoutApplication.Shared.Other;
+﻿using System.Collections.Generic;
 
-namespace OnyxScoutApplication.Shared.Models
+namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 {
     public class ScoutFormDto
     {

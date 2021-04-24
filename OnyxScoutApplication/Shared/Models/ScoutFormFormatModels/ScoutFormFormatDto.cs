@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using OnyxScoutApplication.Shared.Other;
+﻿using System.Collections.Generic;
 
-namespace OnyxScoutApplication.Shared.Models
+namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
     public class ScoutFormFormatDto
     {

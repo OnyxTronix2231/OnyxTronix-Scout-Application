@@ -7,6 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Shared.Models.CustomeEventModels;
+using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
+using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 
 namespace OnyxScoutApplication.Server.Data.Profiles

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData;
 using OnyxScoutApplication.Shared.Models;
+using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
+using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 
 namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {

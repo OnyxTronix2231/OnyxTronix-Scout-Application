@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using OnyxScoutApplication.Server.Data.Extensions;
 using OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
+using OnyxScoutApplication.Shared.Models.CustomeEventModels;
 using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 using static OnyxScoutApplication.Server.Data.Extensions.Result;
 

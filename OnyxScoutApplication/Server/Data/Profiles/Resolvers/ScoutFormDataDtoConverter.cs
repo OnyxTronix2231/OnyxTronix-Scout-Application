@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
+using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers

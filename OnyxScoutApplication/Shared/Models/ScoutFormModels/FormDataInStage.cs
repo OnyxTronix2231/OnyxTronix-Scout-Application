@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OnyxScoutApplication.Shared.Models
+namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 {
     public class FormDataInStage
     {

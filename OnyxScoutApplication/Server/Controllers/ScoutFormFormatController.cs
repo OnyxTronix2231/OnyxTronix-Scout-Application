@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using OnyxScoutApplication.Server.Data.Extensions;
 using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
 using OnyxScoutApplication.Shared.Models;
+using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
+using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 using static OnyxScoutApplication.Server.Data.Extensions.Result;
 using OnyxScoutApplication.Shared.Other;
 

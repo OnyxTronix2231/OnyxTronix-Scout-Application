@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using OnyxScoutApplication.Shared.Other;
 
-namespace OnyxScoutApplication.Shared.Models
+namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 {
     public class FormDataInStageDto : IComparable<FormDataInStageDto>
     {
