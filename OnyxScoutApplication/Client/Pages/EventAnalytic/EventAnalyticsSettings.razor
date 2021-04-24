@@ -68,7 +68,7 @@
         {
             analyticSettings = new EventAnalyticSettingsDto();
         }
-        fields = format.FieldsByStages.SelectMany(i => i.Value.ConcatAllCascadeFields()).ToList();
+        fields = format.FieldsesInByStages.SelectMany(i => i.Value.ConcatAllCascadeFields()).ToList();
         fields.RemoveAll(i => i.FieldType != FieldType.Numeric);
     }
 

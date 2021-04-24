@@ -15,15 +15,15 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
             RuleFor(x => x.MatchName).NotEmpty();
             RuleFor(x => x.TeamNumber).NotEmpty().GreaterThanOrEqualTo(1).LessThanOrEqualTo(9999);
             RuleFor(x => x.WriterUserName).NotEmpty();
-            RuleForEach(x => x.DataByStages).SetValidator(new ScoutFormDataByStagesValidator());
+            RuleForEach(x => x.FieldsInStages).SetValidator(new ScoutFormDataByStagesValidator());
         }
     }
 
-    public class ScoutFormDataByStagesValidator : AbstractValidator<KeyValuePair<StageDto, List<ScoutFormDataDto>>>
+    public class ScoutFormDataByStagesValidator : AbstractValidator<FormDataInStageDto>
     {
         public ScoutFormDataByStagesValidator()
         {
-            RuleForEach(x => x.Value).SetValidator(new ScoutFormDataValidator());
+            RuleForEach(x => x.Data).SetValidator(new ScoutFormDataValidator());
         }
     }
 }

@@ -22,7 +22,7 @@
         <br/>
     </div>
     
-     @foreach(var (stage, fields) in ScoutFormFormat.FieldsByStages)
+     @foreach(var (stage, fields) in ScoutFormFormat.FieldsesInByStages)
      {
          Console.WriteLine(stage.Index);
          <div class="e-icons">
@@ -31,7 +31,7 @@
              <SfButton Disabled="@(stage.Index <= 0)" type="button" CssClass="e-primary e-round"
                        IconCss="e-icons e-triangleUp" @onclick="() => MoveUp(stage)">
              </SfButton>
-             <SfButton Disabled="@(stage.Index >= ScoutFormFormat.FieldsByStages.Count - 1)" type="button" CssClass="e-primary e-round"
+             <SfButton Disabled="@(stage.Index >= ScoutFormFormat.FieldsesInByStages.Count - 1)" type="button" CssClass="e-primary e-round"
                        IconCss="e-icons e-triangleDown" @onclick="() => MoveDown(stage)">
              </SfButton>
          </div>
@@ -58,8 +58,8 @@
 
     private void OnValidSubmit()
     {
-        ScoutFormFormat.FieldsByStages.ToList().ForEach(i => i.Value.RemoveAll(f => f.FieldType == FieldType.None || string.IsNullOrWhiteSpace(f.Name)));
-        ScoutFormFormat.FieldsByStages.ToList().ForEach(i => UpdateFieldIndex(i.Value));
+        ScoutFormFormat.FieldsesInByStages.ToList().ForEach(i => i.Value.RemoveAll(f => f.FieldType == FieldType.None || string.IsNullOrWhiteSpace(f.Name)));
+        ScoutFormFormat.FieldsesInByStages.ToList().ForEach(i => UpdateFieldIndex(i.Value));
         OnSubmit.InvokeAsync(this);
     }
 
@@ -79,21 +79,21 @@
             return;
         }
 
-        if (ScoutFormFormat.FieldsByStages.Any(i => i.Key.Name == newStageName))
+        if (ScoutFormFormat.FieldsesInByStages.Any(i => i.Key.Name == newStageName))
         {
             return;
         }
-        ScoutFormFormat.FieldsByStages.Add(new StageDto() { Name = newStageName, Index = ScoutFormFormat.FieldsByStages.Count}, new List<FieldDto>());
+        ScoutFormFormat.FieldsesInByStages.Add(new StageDto() { Name = newStageName, Index = ScoutFormFormat.FieldsesInByStages.Count}, new List<FieldDto>());
     }
     
     private void RemoveStage(StageDto stage)
     {
-        ScoutFormFormat.FieldsByStages.Remove(stage);
+        ScoutFormFormat.FieldsesInByStages.Remove(stage);
     }
     
     private void MoveUp(StageDto stage)
     {
-        ScoutFormFormat.FieldsByStages.Keys[stage.Index - 1]
+        ScoutFormFormat.FieldsesInByStages.Keys[stage.Index - 1]
         stage.Index -= 1;
         StateHasChanged();
     }

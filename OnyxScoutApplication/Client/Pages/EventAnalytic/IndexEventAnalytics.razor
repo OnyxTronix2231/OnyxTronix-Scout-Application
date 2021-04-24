@@ -36,7 +36,7 @@
         {
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
-        fields = format.FieldsByStages.SelectMany(i => i.Value.ConcatAllCascadeFields().Where(f => f.FieldType != FieldType.TextField)).ToList();
+        fields = format.FieldsesInByStages.SelectMany(i => i.Value.ConcatAllCascadeFields().Where(f => f.FieldType != FieldType.TextField)).ToList();
     }
 
     private void OnTeamClicked(int teamNumber)

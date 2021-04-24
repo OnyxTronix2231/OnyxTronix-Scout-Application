@@ -15,7 +15,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
         {
             destination = new ScoutFormDto
             {
-                DataByStages = source.FieldsByStages.ToDictionary(i => i.Key,
+                DataByStages = source.FieldsesInByStages.ToDictionary(i => i.Key,
                     i => i.Value.Select(GetScoutFormDataFromField).ToList())
             };
 

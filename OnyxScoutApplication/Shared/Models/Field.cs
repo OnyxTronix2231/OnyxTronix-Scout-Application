@@ -25,7 +25,7 @@ namespace OnyxScoutApplication.Shared.Models
 
         public int? FieldId { get; set; }
 
-        [JsonIgnore]
+        //[JsonIgnore]
         public ScoutFormFormat ScoutFormFormat { get; set; }
 
         public string Name { get; set; }
@@ -40,7 +40,9 @@ namespace OnyxScoutApplication.Shared.Models
 
         public FieldType FieldType { get; set; }
 
-        public Stage FieldStage { get; set; }
+        public int? FieldStageId { get; set; }
+        
+        public FieldsInStage FieldsInStage { get; set; }
 
         public int MaxValue { get; set; } = 9999;
 

@@ -11,6 +11,6 @@ namespace OnyxScoutApplication.Shared.Models
 
         public int Year { get; set; }
 
-        public List<Field> Fields { get; set; } = new List<Field>();
+        public List<FieldsInStage> FieldsInStages { get; set; } = new List<FieldsInStage>();
     }
 }

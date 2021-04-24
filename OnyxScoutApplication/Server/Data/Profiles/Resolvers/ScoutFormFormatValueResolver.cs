@@ -20,7 +20,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
             ResolutionContext context)
         {
             destination.Fields.Clear();
-            List<Field> fields = mapper.Map<List<Field>>(source.FieldsByStages.SelectMany(i => i.Value));
+            List<Field> fields = mapper.Map<List<Field>>(source.FieldsesInByStages.SelectMany(i => i.Value));
             destination.Fields.AddRange(fields);
             return destination.Fields;
         }

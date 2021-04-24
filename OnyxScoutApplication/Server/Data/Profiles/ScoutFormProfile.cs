@@ -34,8 +34,8 @@ namespace OnyxScoutApplication.Server.Data.Profiles
 
             CreateMap<ScoutFormFormat, ScoutFormFormat>();
             CreateMap<ScoutFormFormatDto, ScoutFormFormatDto>();
-            CreateMap<ScoutFormFormat, ScoutFormFormatDto>().ForMember(des => des.FieldsByStages,
-                    opt => opt.MapFrom(src => src.Fields.ToLookup(i => i.FieldStage, i => i).
+            CreateMap<ScoutFormFormat, ScoutFormFormatDto>().ForMember(des => des.FieldsesInByStages,
+                    opt => opt.MapFrom(src => src.Fields.ToLookup(i => i.FieldInStage, i => i).
                         ToDictionary(i => i.Key, i => i.ToList())));
             
             CreateMap<ScoutFormFormatDto, ScoutFormFormat>().ForMember(des => des.Fields,

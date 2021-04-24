@@ -13,7 +13,7 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
         public ScoutFormFormatValidator()
         {
             RuleFor(x => x.Year).GreaterThanOrEqualTo(2000).LessThanOrEqualTo(2099);
-            RuleForEach(x => x.FieldsByStages).SetValidator(new FieldsByStagesValidator());
+            RuleForEach(x => x.FieldsInStages).SetValidator(new FieldsByStagesValidator());
             //RuleFor(x => x.FieldsByStages).Must(UniqueName).WithMessage("Fields name must be unique");
         }
 
@@ -23,11 +23,11 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
         }
     }
 
-    public class FieldsByStagesValidator :  AbstractValidator<KeyValuePair<StageDto, List<FieldDto>>>
+    public class FieldsByStagesValidator :  AbstractValidator<FieldsInStageDto>
     {
         public FieldsByStagesValidator()
         {
-            RuleForEach(x => x.Value).SetValidator(new FieldValidator());
+            RuleForEach(x => x.Fields).SetValidator(new FieldValidator());
         }
     }
 }

@@ -29,8 +29,10 @@ namespace OnyxScoutApplication.Shared.Models
 
         public FieldType FieldType { get; set; }
 
-        public string FieldStage { get; set; }
-
+        public int? FieldStageId { get; set; }
+        
+        public FieldsInStageDto FieldsInStage { get; set; }
+        
         public int MaxValue { get; set; } = 9999;
 
         public int MinValue { get; set; }
@@ -47,6 +49,6 @@ namespace OnyxScoutApplication.Shared.Models
 
         public int Index { get; set; }
 
-        public string NameId => Name + FieldStage;
+        public string NameId => Name + FieldsInStage;
     }
 }

@@ -48,7 +48,7 @@
             ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))
             .OrderBy(i => i.Date).ToList();
         calculatedDataByStages = new Dictionary<StageDto, List<TeamFieldAverage>>();
-        foreach (var (key, value) in format.FieldsByStages)
+        foreach (var (key, value) in format.FieldsesInByStages)
         {
             calculatedDataByStages.Add(key, TeamDataAnalyzer.CalculateDataFor(value, result,
                 scoutForm => scoutForm.DataByStages[key], s => true));
