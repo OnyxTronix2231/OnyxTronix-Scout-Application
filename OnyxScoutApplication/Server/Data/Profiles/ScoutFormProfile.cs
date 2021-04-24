@@ -55,6 +55,9 @@ namespace OnyxScoutApplication.Server.Data.Profiles
 
             CreateMap<ScoutFormFormatDto, ScoutFormDto>().ConvertUsing<ScoutFormFormatToScoutFormConverter>();
 
+            CreateMap<Stage, StageDto>();
+            CreateMap<StageDto, Stage>();
+            
             CreateMap<IdentityRole, IdentityRoleDto>();
             CreateMap<IdentityRoleDto, IdentityRole>();
 
@@ -72,7 +75,6 @@ namespace OnyxScoutApplication.Server.Data.Profiles
             CreateMap<CustomEventDto, CustomEventDto>();
             CreateMap<CustomEvent, CustomEventDto>();
             CreateMap<CustomEventDto, CustomEvent>();
-
             CreateMap<CustomEventDto, Event>();
 
             CreateMap<CustomMatch, CustomMatch>();

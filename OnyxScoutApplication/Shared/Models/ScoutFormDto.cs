@@ -18,7 +18,7 @@ namespace OnyxScoutApplication.Shared.Models
 
         public string WriterUserName { get; set; }
 
-        public Dictionary<string, List<ScoutFormDataDto>> DataByStages { get; set; } =
-            new Dictionary<string, List<ScoutFormDataDto>>();
+        public Dictionary<StageDto, List<ScoutFormDataDto>> DataByStages { get; set; } =
+            new Dictionary<StageDto, List<ScoutFormDataDto>>();
     }
 }

@@ -12,6 +12,6 @@ namespace OnyxScoutApplication.Shared.Models
 
         public int Year { get; set; }
 
-        public Dictionary<string, List<FieldDto>> FieldsByStages { get; set; } = new Dictionary<string, List<FieldDto>>();
+        public SortedDictionary<StageDto, List<FieldDto>> FieldsByStages { get; set; } = new SortedDictionary<StageDto, List<FieldDto>>();
     }
 }

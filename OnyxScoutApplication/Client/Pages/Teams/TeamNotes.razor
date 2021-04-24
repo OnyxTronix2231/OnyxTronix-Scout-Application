@@ -2,53 +2,25 @@
 
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
-@if (endGameNotes != null)
+@if (notesByStage != null)
 {
     <h3>Team @TeamNumber</h3>
     <h4>@selectedEvent?.Name</h4>
     <div>
-        <h5>Autonomous notes</h5>
-        <br/>
-
-        @foreach (var (scoutFormData, writer) in notesByStage)
+        @foreach (var (stage, dataByWirters) in notesByStage)
         {
-            foreach (var text in scoutFormData)
+            <h5>@stage</h5>
+            foreach (var (texts, writer) in dataByWirters)
             {
-                <div>
-                    <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
-                    <span>@writer</span>
-                </div>
-                <br/>
-            }
-        }
 
-        <h5>Teleoperated notes</h5>
-        <br/>
-
-        @foreach (var (scoutFormData, writer) in teleoperatedNotes)
-        {
-            foreach (var text in scoutFormData)
-            {
-                <div>
-                    <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
-                    <span>@writer</span>
-                </div>
-                <br/>
-            }
-        }
-
-        <h5>End game notes</h5>
-        <br/>
-
-        @foreach (var (scoutFormData, writer) in endGameNotes)
-        {
-            foreach (var text in scoutFormData)
-            {
-                <div>
-                    <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
-                    <span>@writer</span>
-                </div>
-                <br/>
+                foreach (var text in texts)
+                {
+                    <div>
+                        <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
+                        <span>@writer</span>
+                    </div>
+                    <br/>
+                }
             }
         }
     </div>
@@ -59,7 +31,7 @@
     [Parameter]
     public int TeamNumber { get; set; }
 
-    private Dictionary<string, List<Tuple<ScoutFormDataDto[], string>>> notesByStage;
+    private Dictionary<StageDto, List<Tuple<ScoutFormDataDto[], string>>> notesByStage;
     private Event selectedEvent;
 
     protected override async Task OnInitializedAsync()
@@ -72,17 +44,10 @@
 
         var result = await Http.GetJson<List<ScoutFormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
 
-        foreach (var form in result)
-        {
-            
-        }
+        var v = result.Select(i => i.DataByStages.ToDictionary(ii => ii.Key, ii => 
+            new Tuple<ScoutFormDataDto[], string>(ii.Value.Where(d => d.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)));
 
-    /*
-           SelectMany(i => i.Value).
-            Where(i => i.Field.FieldType == FieldType.TextField).ToArray().ToLookup(i => i.Field.FieldStage).
-            ToDictionary(ii => ii.Key, iii => new Tuple<ScoutFormDataDto[], string>(iii.ToArray(), i.WriterUserName))).ToDictionary(i => i.Key, i=> i.Value);
-
-
+        notesByStage = v.SelectMany(i => i).ToLookup(i => i.Key, i => i.Value).ToDictionary(i => i.Key, i => i.ToList());
     }
 
 }

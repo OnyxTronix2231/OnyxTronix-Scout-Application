@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FluentValidation.Validators;
 
 namespace OnyxScoutApplication.Shared.Models.FluentValidations
 {
@@ -14,9 +15,15 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
             RuleFor(x => x.MatchName).NotEmpty();
             RuleFor(x => x.TeamNumber).NotEmpty().GreaterThanOrEqualTo(1).LessThanOrEqualTo(9999);
             RuleFor(x => x.WriterUserName).NotEmpty();
-            RuleForEach(x => x.DataByStages).SetValidator(new ScoutFormDataValidator());
-            RuleForEach(x => x.TeleoperatedData).SetValidator(new ScoutFormDataValidator());
-            RuleForEach(x => x.EndGameData).SetValidator(new ScoutFormDataValidator());
+            RuleForEach(x => x.DataByStages).SetValidator(new ScoutFormDataByStagesValidator());
+        }
+    }
+
+    public class ScoutFormDataByStagesValidator : AbstractValidator<KeyValuePair<StageDto, List<ScoutFormDataDto>>>
+    {
+        public ScoutFormDataByStagesValidator()
+        {
+            RuleForEach(x => x.Value).SetValidator(new ScoutFormDataValidator());
         }
     }
 }

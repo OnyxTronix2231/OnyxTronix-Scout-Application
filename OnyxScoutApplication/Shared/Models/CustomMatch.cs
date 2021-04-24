@@ -25,8 +25,10 @@ namespace OnyxScoutApplication.Shared.Models
     public class CustomAlliances
     {
         public int Id { get; set; }
-        public int BlueId { get; set; }
-        public int RedId { get; set; }
+        [ForeignKey("Blue")]
+        public int? BlueId { get; set; }
+        [ForeignKey("Red")]
+        public int? RedId { get; set; }
         public CustomAlliance Blue { get; set; } 
         public CustomAlliance Red { get; set; }
     }

@@ -40,7 +40,7 @@ namespace OnyxScoutApplication.Shared.Models
 
         public FieldType FieldType { get; set; }
 
-        public string FieldStage { get; set; }
+        public Stage FieldStage { get; set; }
 
         public int MaxValue { get; set; } = 9999;
 

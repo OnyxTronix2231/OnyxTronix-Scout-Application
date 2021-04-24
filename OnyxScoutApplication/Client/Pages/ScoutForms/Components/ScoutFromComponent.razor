@@ -20,11 +20,10 @@
     </div>
 
     <div class="form-group col-sm-5">
-        <SectionEdit SectionData="ScoutForm.DataByStages" SectionName="Autonomous"></SectionEdit>
-
-        <SectionEdit SectionData="ScoutForm.TeleoperatedData" SectionName="Teleoperated"></SectionEdit>
-
-        <SectionEdit SectionData="ScoutForm.EndGameData" SectionName="End game"></SectionEdit>
+        @foreach (var (stage, data) in ScoutForm.DataByStages)
+        {
+            <SectionEdit SectionData="@data" SectionName="@stage.Name"></SectionEdit>
+        }
     </div>
 
     <div>

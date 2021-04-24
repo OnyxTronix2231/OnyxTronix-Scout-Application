@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnyxScoutApplication.Server.Data;
 
 namespace OnyxScoutApplication.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210423101210_ToDynamicStages")]
+    partial class ToDynamicStages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -453,8 +455,8 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<int?>("FieldId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("FieldStageid")
-                        .HasColumnType("int");
+                    b.Property<string>("FieldStage")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("FieldType")
                         .HasColumnType("int");
@@ -492,8 +494,6 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FieldId");
-
-                    b.HasIndex("FieldStageid");
 
                     b.HasIndex("ScoutFormFormatId");
 
@@ -567,24 +567,6 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ScoutFormFormats");
-                });
-
-            modelBuilder.Entity("OnyxScoutApplication.Shared.Models.Stage", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Index")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("id");
-
-                    b.ToTable("Stage");
                 });
 
             modelBuilder.Entity("OnyxScoutApplication.Server.Models.ApplicationRole", b =>
@@ -691,10 +673,6 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.HasOne("OnyxScoutApplication.Shared.Models.Field", null)
                         .WithMany("CascadeFields")
                         .HasForeignKey("FieldId");
-
-                    b.HasOne("OnyxScoutApplication.Shared.Models.Stage", "FieldStage")
-                        .WithMany()
-                        .HasForeignKey("FieldStageid");
 
                     b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormat", "ScoutFormFormat")
                         .WithMany("Fields")
