@@ -29,13 +29,15 @@ namespace OnyxScoutApplication.Client.Others.Objects
         public string PagingScopeName { get; set; }
 
 
-        public override Task SetParametersAsync(ParameterView parameters)
+        public override async Task SetParametersAsync(ParameterView parameters)
         {
+            Console.WriteLine("MatchGridSettings:SetParametersAsync");
             foreach (var parameter in parameters)
             {
                 if (parameter.Cascading)
                 {
                     Parent = (MatchesGrid) parameter.Value;
+                    Parent.Settings = this;
                     continue;
                 }
 
@@ -54,17 +56,16 @@ namespace OnyxScoutApplication.Client.Others.Objects
                         AllowPaging = (bool) parameter.Value;
                         break;
                     case nameof(PagingScopeName):
-                        Console.WriteLine(PagingScopeName);
                         PagingScopeName = (string) parameter.Value;
                         break;
                 }
             }
-            return base.SetParametersAsync(ParameterView.Empty);
+            await base.SetParametersAsync(ParameterView.Empty).ConfigureAwait(false);
         }
 
         protected override void OnInitialized()
         {
-            Parent.Settings = this;
+            Parent.Refresh();
         }
     }
 }

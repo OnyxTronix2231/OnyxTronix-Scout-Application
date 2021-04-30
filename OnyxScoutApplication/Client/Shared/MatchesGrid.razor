@@ -1,7 +1,9 @@
-﻿@inject NavigationManager NavigationManager
+﻿@using Microsoft.AspNetCore.Components.Rendering
+@inject NavigationManager NavigationManager
 @inject ILocalStorageService StorageService
 @if (Matches != null && Settings != null)
 {
+    Console.WriteLine("SHOOOOOOOOOOW");
     if (!string.IsNullOrWhiteSpace(Settings.PagingScopeName))
     {
         <SfButton OnClick="SavePageNumber">Save page number</SfButton>
@@ -133,6 +135,12 @@
             args.Cell.AddClass(new[] {args.Data.WinningAlliance});
         }
     }
+
+    public void Refresh()
+    {
+        StateHasChanged();
+    }
+
 }
 
 <style>
