@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnyxScoutApplication.Server.Data;
 
 namespace OnyxScoutApplication.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210430175604_FixFormDataFk2")]
+    partial class FixFormDataFk2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -570,6 +572,9 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<int?>("FormDataId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("FormDataInStageId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("FormDataStageId")
                         .HasColumnType("int");
 
@@ -582,7 +587,7 @@ namespace OnyxScoutApplication.Server.Migrations
 
                     b.HasIndex("FormDataId");
 
-                    b.HasIndex("FormDataStageId");
+                    b.HasIndex("FormDataInStageId");
 
                     b.ToTable("FormData");
                 });
@@ -602,6 +607,9 @@ namespace OnyxScoutApplication.Server.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ScoutFormId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -741,7 +749,7 @@ namespace OnyxScoutApplication.Server.Migrations
 
                     b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormModels.FormDataInStage", "FormDataInStage")
                         .WithMany("FormData")
-                        .HasForeignKey("FormDataStageId");
+                        .HasForeignKey("FormDataInStageId");
                 });
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormModels.FormDataInStage", b =>

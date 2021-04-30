@@ -9,18 +9,12 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
     {
         [Key]
         public int Id { get; set; }
-
-        public int ScoutFormId { get; set; }
-
-        public int? ScoutFormDataId { get; set; }
-
-        [ForeignKey("Field")]
+        
         public int? FieldId { get; set; }
 
         public FieldDto Field { get; set; }
 
-        [ForeignKey("FormDataInStage")]
-        public int? FormDataInStageId { get; set; }
+        public int? FormDataStageId { get; set; }
         
         public FormDataInStageDto FormDataInStage { get; set; }
 

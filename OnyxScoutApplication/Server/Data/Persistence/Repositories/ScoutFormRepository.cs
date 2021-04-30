@@ -27,20 +27,15 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                 Console.WriteLine("This scout form already exists!");
                 return ResultCode(System.Net.HttpStatusCode.BadRequest, "This scout form already exists!");
             }
-
-            FormDto clone = new FormDto
-            {
-                Year = formFormat.Year,
-                TeamNumber = formFormat.TeamNumber,
-                MatchName = formFormat.MatchName,
-                WriterUserName = formFormat.WriterUserName
-            };
-            await base.Add(clone);
-            await Context.SaveChangesAsync();
-            var result = await ScoutAppContext.ScoutForms.FirstOrDefaultAsync(i =>
-                i.Year == formFormat.Year && i.MatchName == formFormat.MatchName && i.TeamNumber == formFormat.TeamNumber);
-            formFormat.Id = result.Id;
-            return await Update(result, formFormat);
+            var updated = Mapper.Map<Form>(formFormat);
+            Context.Update(updated);
+            return await Task.Run(() => new OkResult());
+            //await base.Add(clone);
+           // await Context.SaveChangesAsync();
+            ///var result = await ScoutAppContext.ScoutForms.FirstOrDefaultAsync(i =>
+          //      i.Year == formFormat.Year && i.MatchName == formFormat.MatchName && i.TeamNumber == formFormat.TeamNumber);
+        //    formFormat.Id = result.Id;
+          //  return await Update(result, formFormat);
         }
 
         public async Task<ActionResult<FormDto>> GetWithFields(int id)
@@ -104,14 +99,15 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return Mapper.Map<List<FormDto>>(scoutForm);
         }
 
-        private static void RecursivelySetScoutFormId(int id, IEnumerable<FormData> data)
-        {
-            foreach (FormData aData in data)
-            {
-                aData.ScoutFormId = id;
-                RecursivelySetScoutFormId(id, aData.CascadeData);
-            }
-        }
+        // private static void RecursivelySetScoutFormId(int id, IEnumerable<FormData> data)
+        // {
+        //     foreach
+        // (FormData aData in data)
+        //     {
+        //         aData.ScoutFormId = id;
+        //         RecursivelySetScoutFormId(id, aData.CascadeData);
+        //     }
+        // }
 
         private ApplicationDbContext ScoutAppContext => Context as ApplicationDbContext;
     }

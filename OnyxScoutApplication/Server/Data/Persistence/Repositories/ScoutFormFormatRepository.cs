@@ -79,14 +79,16 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult> Update(int id, ScoutFormFormatDto scoutFormFormatDto)
         {
-            var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.FieldsInStages).
-                ThenInclude(f => f.Fields).ThenInclude(i => i.CascadeFields).FirstOrDefaultAsync(i => i.Id == id);
-            if (result == null)
+            // var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.FieldsInStages).
+            //     ThenInclude(f => f.Fields).ThenInclude(i => i.CascadeFields).FirstOrDefaultAsync(i => i.Id == id);
+            if (!await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Year == scoutFormFormatDto.Year))
             {
                 return new BadRequestObjectResult("No scout from format found to update!");
             }
-
-            return await Update(result, scoutFormFormatDto);
+            var updated = Mapper.Map<ScoutFormFormat>(scoutFormFormatDto);
+            Context.Update(updated);
+            return await Task.Run(() => new OkResult());
+            //return await Update(result, scoutFormFormatDto);
         }
 
         private async Task<ActionResult> Update(ScoutFormFormat scoutFormFormat, ScoutFormFormatDto scoutFormFormatDto)

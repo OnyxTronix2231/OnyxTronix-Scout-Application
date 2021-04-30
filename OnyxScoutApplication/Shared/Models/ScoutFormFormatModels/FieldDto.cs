@@ -10,9 +10,6 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
         public int ScoutFormFormatId { get; set; }
 
-        [JsonIgnore]
-        public ScoutFormFormat ScoutFormFormat { get; set; }
-
         public string Name { get; set; }
 
         public string TextDefaultValue { get; set; }

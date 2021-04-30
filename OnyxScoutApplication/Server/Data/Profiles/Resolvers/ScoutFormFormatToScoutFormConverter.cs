@@ -30,57 +30,55 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 
             return destination;
         }
+    }
 
-        public class FieldToScoutFormDataConverter : ITypeConverter<FieldDto, FormDataDto>
+    public class FieldToScoutFormDataConverter : ITypeConverter<FieldDto, FormDataDto>
+    {
+        private readonly IMapper mapper;
+
+        public FieldToScoutFormDataConverter(IMapper mapper)
         {
-            private readonly IMapper mapper;
+            this.mapper = mapper;
+        }
 
-            public FieldToScoutFormDataConverter(IMapper mapper)
+        public FormDataDto Convert(FieldDto source, FormDataDto destination, ResolutionContext context)
+        {
+            destination = new FormDataDto {Field = source, FieldId = source.Id};
+            return GetScoutFormDataFromField(destination, source);
+        }
+
+        private FormDataDto GetScoutFormDataFromField(FormDataDto formData, FieldDto field)
+        {
+            switch (field.FieldType)
             {
-                this.mapper = mapper;
-            }
-            
-            public FormDataDto Convert(FieldDto source, FormDataDto destination, ResolutionContext context)
-            {
-                destination = new FormDataDto {Field = source, FieldId = source.Id};
-                return GetScoutFormDataFromField(destination, source);
-            }
-
-            private FormDataDto GetScoutFormDataFromField(FormDataDto formData, FieldDto field)
-            {
-                switch (field.FieldType)
-                {
-                    case FieldType.None:
-                        break;
-                    case FieldType.CascadeField:
-                        formData.CascadeData = mapper.Map<List<FormDataDto>>(field.CascadeFields);
-                        goto case FieldType.Boolean;
-                    case FieldType.Boolean:
-                        formData.BooleanValue = field.BoolDefaultValue;
-                        break;
-                    case FieldType.OptionSelect:
-                    case FieldType.TextField:
-                        formData.StringValue = field.TextDefaultValue;
-                        break;
-                    case FieldType.Numeric:
-                        formData.NumericValue = field.NumericDefaultValue;
-                        break;
-                    case FieldType.MultipleChoice:
-                        formData.SelectedOptions = field.DefaultSelectedOptions;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                foreach (var f in field.CascadeFields)
-                {
-                  //  scoutFormData.CascadeData.Add(GetScoutFormDataFromField(f));
-                }
-
-                return formData;
+                case FieldType.None:
+                    break;
+                case FieldType.CascadeField:
+                    formData.CascadeData = mapper.Map<List<FormDataDto>>(field.CascadeFields);
+                    goto case FieldType.Boolean;
+                case FieldType.Boolean:
+                    formData.BooleanValue = field.BoolDefaultValue;
+                    break;
+                case FieldType.OptionSelect:
+                case FieldType.TextField:
+                    formData.StringValue = field.TextDefaultValue;
+                    break;
+                case FieldType.Numeric:
+                    formData.NumericValue = field.NumericDefaultValue;
+                    break;
+                case FieldType.MultipleChoice:
+                    formData.SelectedOptions = field.DefaultSelectedOptions;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
-           
+            foreach (var f in field.CascadeFields)
+            {
+                //  scoutFormData.CascadeData.Add(GetScoutFormDataFromField(f));
+            }
+
+            return formData;
         }
     }
 }
