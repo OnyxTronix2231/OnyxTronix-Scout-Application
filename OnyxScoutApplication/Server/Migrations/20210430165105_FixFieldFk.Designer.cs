@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnyxScoutApplication.Server.Data;
 
 namespace OnyxScoutApplication.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210430165105_FixFieldFk")]
+    partial class FixFieldFk
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -459,6 +461,9 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<int>("FieldType")
                         .HasColumnType("int");
 
+                    b.Property<int?>("FieldsInStageId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Index")
                         .HasColumnType("int");
 
@@ -483,6 +488,9 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<bool>("Required")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("ScoutFormFormatId")
+                        .HasColumnType("int");
+
                     b.Property<string>("TextDefaultValue")
                         .HasColumnType("nvarchar(max)");
 
@@ -490,7 +498,9 @@ namespace OnyxScoutApplication.Server.Migrations
 
                     b.HasIndex("FieldId");
 
-                    b.HasIndex("FieldStageId");
+                    b.HasIndex("FieldsInStageId");
+
+                    b.HasIndex("ScoutFormFormatId");
 
                     b.ToTable("Field");
                 });
@@ -729,7 +739,11 @@ namespace OnyxScoutApplication.Server.Migrations
 
                     b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.FieldsInStage", "FieldsInStage")
                         .WithMany("Fields")
-                        .HasForeignKey("FieldStageId");
+                        .HasForeignKey("FieldsInStageId");
+
+                    b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.ScoutFormFormat", "ScoutFormFormat")
+                        .WithMany()
+                        .HasForeignKey("ScoutFormFormatId");
                 });
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.FieldsInStage", b =>

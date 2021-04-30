@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
@@ -17,13 +18,6 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
     {
         public int Id { get; set; }
 
-        public int ScoutFormFormatId { get; set; }
-
-        public int? FieldId { get; set; }
-
-        //[JsonIgnore]
-        public ScoutFormFormat ScoutFormFormat { get; set; }
-
         public string Name { get; set; }
 
         public string TextDefaultValue { get; set; }
@@ -36,6 +30,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
         public FieldType FieldType { get; set; }
 
+        [ForeignKey("FieldsInStage")]
         public int? FieldStageId { get; set; }
         
         public FieldsInStage FieldsInStage { get; set; }

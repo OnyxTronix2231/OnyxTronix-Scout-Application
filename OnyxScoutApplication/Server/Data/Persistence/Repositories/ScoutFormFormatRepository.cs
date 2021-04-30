@@ -32,12 +32,12 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             {
                 Year = scoutFormFormat.Year
             };
-            await base.Add(clone);
-            await Context.SaveChangesAsync();
-            var result =
-                await ScoutAppContext.ScoutFormFormats.FirstOrDefaultAsync(i => i.Year == scoutFormFormat.Year);
-            scoutFormFormat.Id = result.Id;
-            return await Update(result.Id, scoutFormFormat);
+            return await base.Add(scoutFormFormat);
+            //await Context.SaveChangesAsync();
+          //  var result =
+         ////       await ScoutAppContext.ScoutFormFormats.FirstOrDefaultAsync(i => i.Year == scoutFormFormat.Year);
+          //  scoutFormFormat.Id = result.Id;
+         //   return await Update(result.Id, scoutFormFormat);
         }
 
         public async Task<ActionResult<FormDto>> GetTemplateScoutFormByYear(int year)

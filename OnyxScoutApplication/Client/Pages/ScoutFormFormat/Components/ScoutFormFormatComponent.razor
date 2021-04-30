@@ -23,17 +23,18 @@
         <br/>
     </div>
     
-     @foreach(var fieldsInStage in ScoutFormFormat.FieldsInStages)
-     {
-         Console.WriteLine(fieldsInStage.Index);
+    @for (var i = 0; i < ScoutFormFormat.FieldsInStages.Count; i++)
+    {
+        var fieldsInStage = ScoutFormFormat.FieldsInStages[i];
+        var index = i;
          <div class="e-icons">
              <h3>@fieldsInStage.Name</h3>
              <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveStage(fieldsInStage)">Remove stage</SfButton>
-             <SfButton Disabled="@(fieldsInStage.Index <= 0)" type="button" CssClass="e-primary e-round"
-                       IconCss="e-icons e-triangleUp" @onclick="() => MoveUp(fieldsInStage)">
+             <SfButton Disabled="@(index == 0)" type="button" CssClass="e-primary e-round"
+                       IconCss="e-icons e-triangleUp" @onclick="() => MoveUp(index)">
              </SfButton>
-             <SfButton Disabled="@(fieldsInStage.Index >= ScoutFormFormat.FieldsInStages.Count - 1)" type="button" CssClass="e-primary e-round"
-                       IconCss="e-icons e-triangleDown" @onclick="() => MoveDown(fieldsInStage)">
+             <SfButton Disabled="@(index >= ScoutFormFormat.FieldsInStages.Count - 1)" type="button" CssClass="e-primary e-round"
+                       IconCss="e-icons e-triangleDown" @onclick="() => MoveDown(index)">
              </SfButton>
          </div>
          <FieldsEditor Fields="fieldsInStage.Fields"></FieldsEditor>
@@ -88,7 +89,7 @@
         {
             return;
         }
-        ScoutFormFormat.FieldsInStages.Add(new FieldsInStageDto() { Name = newStageName, Index = ScoutFormFormat.FieldsInStages.Count});
+        ScoutFormFormat.FieldsInStages.Add(new FieldsInStageDto() { Name = newStageName});
     }
     
     private void RemoveStage(FieldsInStageDto stage)
@@ -96,16 +97,18 @@
         ScoutFormFormat.FieldsInStages.Remove(stage);
     }
     
-    private void MoveUp(FieldsInStageDto stage)
+    private void MoveUp(int index)
     {
-        ScoutFormFormat.FieldsInStages.RemoveAt(stage.Index);
-        ScoutFormFormat.FieldsInStages.Insert(stage.Index - 1, stage);
+        var field = ScoutFormFormat.FieldsInStages[index];
+        ScoutFormFormat.FieldsInStages.RemoveAt(index);
+        ScoutFormFormat.FieldsInStages.Insert(index - 1, field);
     }
 
-    private void MoveDown(FieldsInStageDto stage)
+    private void MoveDown(int index)
     {
-        ScoutFormFormat.FieldsInStages.RemoveAt(stage.Index);
-        ScoutFormFormat.FieldsInStages.Insert(stage.Index + 1, stage);
+        var field = ScoutFormFormat.FieldsInStages[index];
+        ScoutFormFormat.FieldsInStages.RemoveAt(index);
+        ScoutFormFormat.FieldsInStages.Insert(index + 1, field);
     }
 
 }
