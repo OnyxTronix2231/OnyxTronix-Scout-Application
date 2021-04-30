@@ -46,7 +46,7 @@
             SessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
 
             var scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
-        //    SessionStorage.SetItem("ScoutForms.All", scoutForms);
+            SessionStorage.SetItem("ScoutForms.All", scoutForms);
 
             var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
             if (events != null) //user is probably not authorized 

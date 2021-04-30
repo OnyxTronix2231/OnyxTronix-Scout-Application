@@ -30,12 +30,6 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             var updated = Mapper.Map<Form>(formFormat);
             Context.Update(updated);
             return await Task.Run(() => new OkResult());
-            //await base.Add(clone);
-           // await Context.SaveChangesAsync();
-            ///var result = await ScoutAppContext.ScoutForms.FirstOrDefaultAsync(i =>
-          //      i.Year == formFormat.Year && i.MatchName == formFormat.MatchName && i.TeamNumber == formFormat.TeamNumber);
-        //    formFormat.Id = result.Id;
-          //  return await Update(result, formFormat);
         }
 
         public async Task<ActionResult<FormDto>> GetWithFields(int id)
@@ -49,36 +43,23 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             {
                 return new NotFoundObjectResult("No scout form found with the id of: " + id);
             }
-
+            result.FormDataInStages = result.FormDataInStages.OrderBy(i => i.Index).ToList();
             return Mapper.Map<FormDto>(result);
         }
 
         public async Task<ActionResult> Update(int id, FormDto formFormatDto)
         {
-            // var result = await ScoutAppContext.ScoutForms.Include(i => i.FieldsInStages).ThenInclude(i => i.FormData)
-            //     .ThenInclude(i => i.CascadeData).FirstOrDefaultAsync(i => i.Id == id);
-            // if (result == null)
-            // {
-            //     return new BadRequestObjectResult("No scout from found to update!");
-            // }
-
             return await Update(formFormatDto);
         }
 
         private async Task<ActionResult> Update(Form form, FormDto formFormatDto)
         {
-          //  var updated = Mapper.Map<ScoutForm>(scoutFormFormatDto);
-           // scoutForm = Mapper.Map(updated, scoutForm);
-           // RecursivelySetScoutFormId(scoutForm.Id, scoutForm.Data);
             Context.Update(form);
             return await Task.Run(() => new OkResult());
         }
         
         private async Task<ActionResult> Update(FormDto formFormatDto)
         {
-            //  var updated = Mapper.Map<ScoutForm>(scoutFormFormatDto);
-            // scoutForm = Mapper.Map(updated, scoutForm);
-            // RecursivelySetScoutFormId(scoutForm.Id, scoutForm.Data);
             var entity = Mapper.Map<Form>(formFormatDto);
             Context.Update(entity);
             return await Task.Run(() => new OkResult());
@@ -98,16 +79,6 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                 .ToListAsync();
             return Mapper.Map<List<FormDto>>(scoutForm);
         }
-
-        // private static void RecursivelySetScoutFormId(int id, IEnumerable<FormData> data)
-        // {
-        //     foreach
-        // (FormData aData in data)
-        //     {
-        //         aData.ScoutFormId = id;
-        //         RecursivelySetScoutFormId(id, aData.CascadeData);
-        //     }
-        // }
 
         private ApplicationDbContext ScoutAppContext => Context as ApplicationDbContext;
     }
