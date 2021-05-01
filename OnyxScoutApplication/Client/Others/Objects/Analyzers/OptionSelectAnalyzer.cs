@@ -11,29 +11,28 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
     public class OptionSelectAnalyzer : IFieldAnalyzer
     {
-        public TeamFieldAverage Analyze(IEnumerable<FormDto> scoutForms, FieldDto field,
-            Func<FormDto, IEnumerable<FormDataDto>> getTargetList, Func<FormDto, bool> shouldCount)
+        public TeamFieldAverage Analyze(IEnumerable<FormDataDto> allFormData, FieldDto field,
+            Func<FormDataDto, bool> shouldCount)
         {
             OptionSelectTeamFieldAverage fieldAverage = new OptionSelectTeamFieldAverage(field);
             int totalCount = 0;
             Dictionary<string, int> optionsCount = new Dictionary<string, int>();
-            foreach (var scoutFormData in from scoutForm in scoutForms
-                where shouldCount(scoutForm)
-                select getTargetList(scoutForm).FirstOrDefault(i => i.Field.NameId == field.NameId)
-                into scoutFormData
-                where scoutFormData != null
-                select scoutFormData)
+            foreach (var formData in allFormData.Where(i => i.Field.NameId == field.NameId))
             {
-                totalCount++;
-                if (string.IsNullOrWhiteSpace(scoutFormData.StringValue))
-                    continue;
-                if (optionsCount.ContainsKey(scoutFormData.StringValue))
+                if (!shouldCount(formData))
                 {
-                    optionsCount[scoutFormData.StringValue] = optionsCount[scoutFormData.StringValue]++;
+                    continue;
+                }
+                totalCount++;
+                if (string.IsNullOrWhiteSpace(formData.StringValue))
+                    continue;
+                if (optionsCount.ContainsKey(formData.StringValue))
+                {
+                    optionsCount[formData.StringValue] = optionsCount[formData.StringValue]++;
                 }
                 else
                 {
-                    optionsCount.Add(scoutFormData.StringValue, 1);
+                    optionsCount.Add(formData.StringValue, 1);
                 }
             }
 

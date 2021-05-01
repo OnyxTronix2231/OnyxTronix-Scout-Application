@@ -11,23 +11,21 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
     public class NumericalAnalyzer : IFieldAnalyzer
     {
-        public TeamFieldAverage Analyze(IEnumerable<FormDto> scoutForms, FieldDto field,
-            Func<FormDto, IEnumerable<FormDataDto>> getTargetList, Func<FormDto, bool> shouldCount)
+        public TeamFieldAverage Analyze(IEnumerable<FormDataDto> allFormData, FieldDto field,
+            Func<FormDataDto, bool> shouldCount)
         {
             NumericTeamFieldAverage fieldAverage = new NumericTeamFieldAverage(field);
             float average = 0;
             int count = 0;
-            foreach (var value in from scoutForm in scoutForms
-                where shouldCount(scoutForm)
-                select getTargetList(scoutForm).FirstOrDefault(i => i.Field.NameId == field.NameId)
-                into scoutFormData
-                where scoutFormData != null
-                where scoutFormData.NumericValue != null
-                select (int) scoutFormData.NumericValue)
+            foreach (var formData in allFormData.Where(i => i.Field.NameId == field.NameId))
             {
-                average += value;
+                if (!shouldCount(formData) || formData.NumericValue == null)
+                {
+                    continue;
+                }
+                average += formData.NumericValue.Value;
                 count++;
-                fieldAverage.Values.Add(value);
+                fieldAverage.Values.Add(formData.NumericValue.Value);
             }
 
             fieldAverage.Average = average / count;

@@ -52,8 +52,8 @@
         calculatedDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
         foreach (var fieldsInStage in format.FieldsInStages)
         {
-            calculatedDataByStages.Add(fieldsInStage.Name, TeamDataAnalyzer.CalculateDataFor(fieldsInStage.Fields, result,
-                scoutForm => scoutForm.FormDataInStages.First(i => i.Name == fieldsInStage.Name).FormData, s => true));
+            calculatedDataByStages.Add(fieldsInStage.Name, 
+                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, result, s => true));
         }
        
     }

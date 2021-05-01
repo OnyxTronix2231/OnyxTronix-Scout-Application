@@ -11,7 +11,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
     public interface IFieldAnalyzer
     {
-        TeamFieldAverage Analyze(IEnumerable<FormDto> scoutForms, FieldDto field,
-            Func<FormDto, IEnumerable<FormDataDto>> getTargetList, Func<FormDto, bool> shouldCount);
+        TeamFieldAverage Analyze(IEnumerable<FormDataDto> allFormData, FieldDto field,
+            Func<FormDataDto, bool> shouldCount);
     }
 }

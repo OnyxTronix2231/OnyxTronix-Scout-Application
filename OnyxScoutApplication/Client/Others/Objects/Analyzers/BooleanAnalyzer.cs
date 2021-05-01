@@ -11,21 +11,20 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
     public class BooleanAnalyzer : IFieldAnalyzer
     {
-        public TeamFieldAverage Analyze(IEnumerable<FormDto> scoutForms, FieldDto field,
-            Func<FormDto, IEnumerable<FormDataDto>> getTargetList, Func<FormDto, bool> shouldCount)
+        public TeamFieldAverage Analyze(IEnumerable<FormDataDto> allFormData, FieldDto field,
+            Func<FormDataDto, bool> shouldCount)
         {
             BooleanTeamFieldAverage fieldAverage = new BooleanTeamFieldAverage(field);
             int trueCount = 0;
             int count = 0;
-            foreach (var scoutFormData in from scoutForm in scoutForms
-                where shouldCount(scoutForm)
-                select getTargetList(scoutForm).FirstOrDefault(i => i.Field.NameId == field.NameId)
-                into scoutFormData
-                where scoutFormData != null
-                select scoutFormData)
+            foreach (var formData in allFormData.Where(i => i.Field.NameId == field.NameId))
             {
+                if (!shouldCount(formData))
+                {
+                    continue;
+                }
                 count++;
-                if (scoutFormData.BooleanValue)
+                if (formData.BooleanValue)
                 {
                     trueCount++;
                 }

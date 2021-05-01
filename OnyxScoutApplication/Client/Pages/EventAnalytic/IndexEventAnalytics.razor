@@ -7,18 +7,17 @@
 @inject NotificationManager NotificationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
-@* @if (fields != null) *@
-@* { *@
-@*     <EventAnalyticGrid Teams="teams" Fields="fields" ScoutForms="scoutForms" GetTargetList="@(s => s.DataByStages.SelectMany(i => i.Value).ToList())" *@
-@*                        OnTeamClicked="OnTeamClicked" EventAnalyticSettings="analyticSettings"/> *@
-@* } *@
+@if (format != null)
+{
+    <EventAnalyticGrid Teams="teams" Fields="format" ScoutForms="scoutForms"
+                       OnTeamClicked="OnTeamClicked" EventAnalyticSettings="analyticSettings"/>
+}
 
 @code {
     private Event selectedEvent;
     private List<FormDto> scoutForms = new List<FormDto>();
     private List<Team> teams = new List<Team>();
     private ScoutFormFormatDto format = new ScoutFormFormatDto();
-    private List<FieldDto> fields = new List<FieldDto>();
     private EventAnalyticSettingsDto analyticSettings;
 
     protected override async Task OnInitializedAsync()
@@ -31,15 +30,13 @@
             return;
         }
 
-        format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
         scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
         teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
         if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
         {
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
-        throw new NotImplementedException();
-       // fields = format.FieldsesInByStages.SelectMany(i => i.Value.ConcatAllCascadeFields().Where(f => f.FieldType != FieldType.TextField)).ToList();
+        format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
     }
 
     private void OnTeamClicked(int teamNumber)

@@ -10,31 +10,60 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
     public static class TeamDataAnalyzer
     {
-        public static List<TeamFieldAverage> CalculateDataFor(IEnumerable<FieldDto> fields, List<FormDto> scoutForms,
-            Func<FormDto, List<FormDataDto>> getTargetList, Func<FormDto, bool> shouldCount)
+        public static IEnumerable<TeamFieldAverage> CalculateDataFor(ScoutFormFormatDto scoutFormFormat,
+            List<FormDto> forms, Func<FormDataDto, bool> shouldCount)
         {
             List<TeamFieldAverage> averages = new List<TeamFieldAverage>();
-            foreach (var field in fields.Where(field => field.FieldType != FieldType.TextField))
+            foreach (var fieldsInStage in scoutFormFormat.FieldsInStages)
             {
-                averages.Add(GetAvgFor(field, scoutForms, getTargetList, shouldCount));
+                averages.AddRange(CalculateDataFor(fieldsInStage, forms, shouldCount));
+            }
+            return averages;
+        }
+        
+        public static List<TeamFieldAverage> CalculateDataFor(FieldsInStageDto fieldsInStage, 
+            IEnumerable<FormDto> forms, Func<FormDataDto, bool> shouldCount)
+        {
+            List<TeamFieldAverage> averages = new List<TeamFieldAverage>();
+            var stageInForm = forms.SelectMany(i => i.FormDataInStages).
+                Where(ii => ii.Name == fieldsInStage.Name).ToList();
+            averages.AddRange(CalculateDataFor(fieldsInStage, stageInForm, shouldCount));
+            return averages;
+        }
+
+        public static IEnumerable<TeamFieldAverage> CalculateDataFor(FieldsInStageDto fieldsInStage, 
+            IEnumerable<FormDataInStageDto> formDataInStage, Func<FormDataDto, bool> shouldCount)
+        {
+            List<TeamFieldAverage> averages = new List<TeamFieldAverage>();
+            averages.AddRange(CalculateDataFor(fieldsInStage.Fields.Where(field => field.FieldType != FieldType.TextField), 
+                formDataInStage.SelectMany(i => i.FormData).Where(field => field.Field.FieldType != 
+                                                                           FieldType.TextField).ToList(),
+                shouldCount));
+            return averages;
+        }
+        
+        public static IEnumerable<TeamFieldAverage> CalculateDataFor(IEnumerable<FieldDto> fields, 
+            List<FormDataDto> formData, Func<FormDataDto, bool> shouldCount)
+        {
+            List<TeamFieldAverage> averages = new List<TeamFieldAverage>();
+            foreach (var field in fields)
+            {
+                averages.Add(GetAvgFor(field, formData, shouldCount));
 
                 if (field.FieldType != FieldType.CascadeField)
                     continue;
 
-                FormDataDto GetScoutFormData(FormDto scoutForm) => getTargetList(scoutForm)
-                    .FirstOrDefault(f => f.Field.NameId == field.NameId);
-
-                averages.AddRange(CalculateDataFor(field.CascadeFields, scoutForms,
-                    scoutForm => GetScoutFormData(scoutForm).CascadeData,
-                    scoutForm =>
-                        GetScoutFormData(scoutForm) != null && GetScoutFormData(scoutForm).BooleanValue));
+                averages.AddRange(CalculateDataFor(field.CascadeFields.Where(f => f.FieldType != FieldType.TextField), 
+                    formData.SelectMany(i => i.CascadeData).ToList(),
+                    data =>
+                        formData.Where(i => i.Field.NameId == field.NameId).First(i => 
+                            i.CascadeData.Contains(data)).BooleanValue));
             }
-
             return averages;
         }
 
-        private static TeamFieldAverage GetAvgFor(FieldDto field, List<FormDto> data,
-            Func<FormDto, List<FormDataDto>> getTargetList, Func<FormDto, bool> shouldCount)
+        private static TeamFieldAverage GetAvgFor(FieldDto field, List<FormDataDto> data
+            , Func<FormDataDto, bool> shouldCount)
         {
             IFieldAnalyzer analyzer;
             switch (field.FieldType)
@@ -59,7 +88,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 default:
                     throw new NotSupportedException();
             }
-            return analyzer.Analyze(data, field, getTargetList, shouldCount);
+            return analyzer.Analyze(data, field, shouldCount);
         }
     }
 }

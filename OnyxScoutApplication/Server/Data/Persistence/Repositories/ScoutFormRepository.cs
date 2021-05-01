@@ -23,11 +23,13 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public override async Task<ActionResult> Add(FormDto formFormat)
         {
             if (await ScoutAppContext.ScoutForms.AnyAsync(i =>
-                i.Year == formFormat.Year && i.MatchName == formFormat.MatchName && i.TeamNumber == formFormat.TeamNumber))
+                i.Year == formFormat.Year && i.MatchName == formFormat.MatchName &&
+                i.TeamNumber == formFormat.TeamNumber))
             {
                 Console.WriteLine("This scout form already exists!");
                 return ResultCode(System.Net.HttpStatusCode.BadRequest, "This scout form already exists!");
             }
+
             var updated = Mapper.Map<Form>(formFormat);
             Context.Update(updated);
             return await Task.Run(() => new OkResult());
@@ -35,28 +37,17 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<FormDto>> GetWithFields(int id)
         {
-            var result = await ScoutAppContext.ScoutForms.
-                WithAllFields().FirstOrDefaultAsync(i => i.Id == id);
+            var result = await ScoutAppContext.ScoutForms.WithAllFields().FirstOrDefaultAsync(i => i.Id == id);
             if (result == null)
             {
                 return new NotFoundObjectResult("No scout form found with the id of: " + id);
             }
+
             result.FormDataInStages = result.FormDataInStages.OrderBy(i => i.Index).ToList();
             return Mapper.Map<FormDto>(result);
         }
 
         public async Task<ActionResult> Update(int id, FormDto formFormatDto)
-        {
-            return await Update(formFormatDto);
-        }
-
-        private async Task<ActionResult> Update(Form form, FormDto formFormatDto)
-        {
-            Context.Update(form);
-            return await Task.Run(() => new OkResult());
-        }
-        
-        private async Task<ActionResult> Update(FormDto formFormatDto)
         {
             var entity = Mapper.Map<Form>(formFormatDto);
             Context.Update(entity);
@@ -65,14 +56,14 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms. WithAllFields()
+            var scoutForm = await ScoutAppContext.ScoutForms.WithAllFields()
                 .Where(i => i.MatchName.Contains(eventKey)).ToListAsync();
-             return Mapper.Map<List<FormDto>>(scoutForm);
+            return Mapper.Map<List<FormDto>>(scoutForm);
         }
 
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms. WithAllFields()
+            var scoutForm = await ScoutAppContext.ScoutForms.WithAllFields()
                 .Where(i => i.TeamNumber == teamNumber && i.MatchName.Contains(eventKey))
                 .ToListAsync();
             return Mapper.Map<List<FormDto>>(scoutForm);

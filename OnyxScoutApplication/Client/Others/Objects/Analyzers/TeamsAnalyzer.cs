@@ -29,7 +29,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
         public List<FormDto> ScoutForms { get; set; }
 
         [Parameter]
-        public List<FieldDto> Fields { get; set; }
+        public ScoutFormFormatDto ScoutFormFormatDto { get; set; }
 
         [Parameter]
         public Func<FormDto, List<FormDataDto>> GetTargetList { get; set; }
@@ -40,14 +40,15 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
         protected List<ExpandoObject> CalculatedTeamsData { get; private set; }
 
         protected List<ColumnField> ColumnsFields { get; private set; }
-
-        // private List<FieldDto> scoutFormFieldsToCalculate;
+        
+        private List<FieldDto> scoutFormFieldsToCalculate;
 
         protected override void OnParametersSet()
         {
             //List<FieldDto> combinedFields = new List<FieldDto>();
             // scoutFormFieldsToCalculate = new List<FieldDto>(Fields);
-            ColumnsFields = Fields.Select(i => new ColumnField
+            scoutFormFieldsToCalculate = ScoutFormFormatDto.FieldsInStages.SelectMany(i => i.Fields).ToList();
+            ColumnsFields = scoutFormFieldsToCalculate.Select(i => new ColumnField
                 {Name = i.Name, MarkupName = new MarkupString(i.Name), NameId = i.NameId}).ToList();
             if (EventAnalyticSettings != null)
             {
@@ -57,7 +58,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                     FieldDto lastField = null;
                     foreach (var field in combinedField.Fields)
                     {
-                        if (Fields.Any(i => i.NameId == field.NameId))
+                        if (scoutFormFieldsToCalculate.Any(i => i.NameId == field.NameId))
                         {
                             lastField = field;
                         }
@@ -88,15 +89,15 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             var data = new List<ExpandoObject>();
             foreach (var team in Teams)
             {
-                List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(Fields,
-                    ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), GetTargetList, s => true).ToList();
+                List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(ScoutFormFormatDto,
+                    ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), s => true).ToList();
 
                 IDictionary<string, object> rows = new ExpandoObject();
 
                 rows.Add("TeamNumber", team.TeamNumber);
                 rows.Add("Nickname", team.Nickname);
 
-                foreach (var field in Fields)
+                foreach (var field in scoutFormFieldsToCalculate)
                 {
                     var teamAvg = avgs.First(i => i.Field.NameId == field.NameId);
                     rows.Add(field.NameId, teamAvg.GetFormattedAverage().Value);

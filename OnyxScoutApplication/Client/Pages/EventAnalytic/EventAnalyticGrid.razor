@@ -5,7 +5,7 @@
 <div>
     @if (CalculatedTeamsData != null)
     {
-        <SfGrid @ref="@dataGrid" AllowTextWrap="true" DataSource="@CalculatedTeamsData" AllowReordering="true" 
+        <SfGrid AllowTextWrap="true" DataSource="@CalculatedTeamsData" AllowReordering="true" 
                  AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true"
                  Toolbar="@toolbarItems" ShowColumnChooser="true" Width="100%">
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
@@ -63,20 +63,13 @@
     [Parameter]
     public EventCallback<int> OnTeamClicked { get; set; }
 
-    private string[] toolbarItems = {"ColumnChooser"};
-    private SfGrid<ExpandoObject> dataGrid;
-    private string width;
+    private readonly string[] toolbarItems = {"ColumnChooser"};
 
     private async Task OnTeamGridClicked(int teamNumber)
     {
         await OnTeamClicked.InvokeAsync(teamNumber);
     }
 
-    private class TeamAverage
-    {
-        public Team Team { get; set; }
-        public List<TeamFieldAverage> TeamFieldAverage { get; set; }
-    }
 
 }
 
