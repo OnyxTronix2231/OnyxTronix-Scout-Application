@@ -34,7 +34,7 @@
                 @for (int i = 0; i < ColumnsFields.Count; i++)
                 {
                     int index = i;
-                    string nameId = ColumnsFields[index].NameId;
+                    string nameId = ColumnsFields[index].Id;
                     string name = ColumnsFields[index].Name;
                     string rawValue = "RawValue" + nameId;
                     <GridColumn HeaderText="@name" Field="@rawValue" AutoFit="true" AllowReordering="true"

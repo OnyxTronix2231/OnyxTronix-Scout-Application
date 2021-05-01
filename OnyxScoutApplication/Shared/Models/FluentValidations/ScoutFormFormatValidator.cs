@@ -15,12 +15,6 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
         {
             RuleFor(x => x.Year).GreaterThanOrEqualTo(2000).LessThanOrEqualTo(2099);
             RuleForEach(x => x.FieldsInStages).SetValidator(new FieldsByStagesValidator());
-            //RuleFor(x => x.FieldsByStages).Must(UniqueName).WithMessage("Fields name must be unique");
-        }
-
-        private static bool UniqueName(List<FieldDto> fields)
-        {
-            return !fields.ConcatAllCascadeFields().GroupBy(f => f.Name).Any(x => x.Skip(1).Any());
         }
     }
 

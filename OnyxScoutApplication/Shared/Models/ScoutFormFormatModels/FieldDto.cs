@@ -43,8 +43,6 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         public List<FieldDto> CascadeFields { get; set; } = new List<FieldDto>();
 
         public int Index { get; set; }
-
-        public string NameId => Name + FieldsInStage;
         
         public int CompareTo(FieldDto other)
         {

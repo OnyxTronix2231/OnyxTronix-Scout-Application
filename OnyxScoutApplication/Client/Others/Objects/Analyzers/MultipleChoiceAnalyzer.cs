@@ -17,7 +17,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             OptionSelectTeamFieldAverage fieldAverage = new OptionSelectTeamFieldAverage(field);
             int totalCount = 0;
             Dictionary<string, int> optionsCount = new Dictionary<string, int>();
-            foreach (var formData in allFormData.Where(i => i.Field.NameId == field.NameId))
+            foreach (var formData in allFormData.Where(i => i.Field.Id == field.Id))
             {
                 if (!shouldCount(formData))
                 {

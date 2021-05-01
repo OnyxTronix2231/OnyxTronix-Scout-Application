@@ -9,12 +9,9 @@ namespace OnyxScoutApplication.Shared.Other
 {
     public static class Extensions
     {
-        public static List<FieldDto> ConcatAllCascadeFields(this List<FieldDto> fields)
+        public static List<FieldDto> WithCascadeFields(this List<FieldDto> field)
         {
-            return fields.Count == 0
-                ? fields
-                : fields.Concat(ConcatAllCascadeFields(fields.SelectMany(i => i.CascadeFields)
-                    .ToList())).ToList();
+            return field.Concat(field.SelectMany(i => WithCascadeFields(i.CascadeFields)).ToList()).ToList();
         }
     }
 }

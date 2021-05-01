@@ -26,9 +26,9 @@ namespace OnyxScoutApplication.Shared.Models
             get { return new MarkupString(string.Join("<br />", Fields.Select(i => i.Name))); }
         }
 
-        public string NameId
+        public string Id
         {
-            get { return string.Concat(Fields.Select(i => i.NameId)); }
+            get { return string.Concat(Fields.Select(i => ";" + i.Id + ";")); }
         }
     }
 }

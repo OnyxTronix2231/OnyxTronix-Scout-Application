@@ -17,7 +17,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             NumericTeamFieldAverage fieldAverage = new NumericTeamFieldAverage(field);
             float average = 0;
             int count = 0;
-            foreach (var formData in allFormData.Where(i => i.Field.NameId == field.NameId))
+            foreach (var formData in allFormData.Where(i => i.Field.Id == field.Id))
             {
                 if (!shouldCount(formData) || formData.NumericValue == null)
                 {

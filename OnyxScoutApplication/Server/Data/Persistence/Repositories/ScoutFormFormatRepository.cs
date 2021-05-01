@@ -71,7 +71,8 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             }
 
             result.FieldsInStages = result.FieldsInStages.OrderBy(i => i.Index).ToList();
-            return Mapper.Map<ScoutFormFormatDto>(result);
+            var r = Mapper.Map<ScoutFormFormatDto>(result);
+            return r;
         }
 
         public async Task<ActionResult> Update(int id, ScoutFormFormatDto scoutFormFormatDto)

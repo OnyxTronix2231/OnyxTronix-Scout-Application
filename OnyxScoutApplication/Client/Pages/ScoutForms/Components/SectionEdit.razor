@@ -1,6 +1,5 @@
 ﻿@using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
-<h3>@SectionName</h3>
 @foreach (var data in SectionData)
 {
     <label>@data.Field.Name</label>
@@ -50,8 +49,5 @@
 
     [Parameter]
     public List<FormDataDto> SectionData { get; set; }
-
-    [Parameter]
-    public string SectionName { get; set; }
 
 }

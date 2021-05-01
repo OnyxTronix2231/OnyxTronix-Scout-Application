@@ -27,18 +27,23 @@
     {
         var fieldsInStage = ScoutFormFormat.FieldsInStages[i];
         var index = i;
-         <div class="e-icons">
-             <h3>@fieldsInStage.Name</h3>
-             <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveStage(fieldsInStage)">Remove stage</SfButton>
-             <SfButton Disabled="@(index == 0)" type="button" CssClass="e-primary e-round"
-                       IconCss="e-icons e-triangleUp" @onclick="() => MoveUp(index)">
-             </SfButton>
-             <SfButton Disabled="@(index >= ScoutFormFormat.FieldsInStages.Count - 1)" type="button" CssClass="e-primary e-round"
-                       IconCss="e-icons e-triangleDown" @onclick="() => MoveDown(index)">
-             </SfButton>
-         </div>
-         <FieldsEditor Fields="fieldsInStage.Fields"></FieldsEditor>
-     }
+        <div class="e-icons">
+            <ValidationMessage For="@(() => fieldsInStage)"/>
+            <h3>@fieldsInStage.Name</h3>
+            <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveStage(fieldsInStage)">Remove stage</SfButton>
+            <SfButton Disabled="@(index == 0)" type="button" CssClass="e-primary e-round"
+                      IconCss="e-icons e-triangleUp" @onclick="() => MoveUp(index)">
+            </SfButton>
+            <SfButton Disabled="@(index >= ScoutFormFormat.FieldsInStages.Count - 1)" type="button" CssClass="e-primary e-round"
+                      IconCss="e-icons e-triangleDown" @onclick="() => MoveDown(index)">
+            </SfButton>
+        </div>
+        <ValidationMessage For="@(() => fieldsInStage.Fields)"/>
+        <br>
+        <div class="form-group" style="padding-left:2em">
+            <FieldsEditor Fields="fieldsInStage.Fields"></FieldsEditor>
+        </div>
+    }
 
     <br/>
     @{ var v = Type == FormType.Create ? "Add" : "Save"; }

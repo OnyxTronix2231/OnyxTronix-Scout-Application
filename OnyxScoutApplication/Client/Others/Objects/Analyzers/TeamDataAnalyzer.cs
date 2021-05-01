@@ -56,7 +56,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 averages.AddRange(CalculateDataFor(field.CascadeFields.Where(f => f.FieldType != FieldType.TextField), 
                     formData.SelectMany(i => i.CascadeData).ToList(),
                     data =>
-                        formData.Where(i => i.Field.NameId == field.NameId).First(i => 
+                        formData.Where(i => i.Field.Id == field.Id).First(i => 
                             i.CascadeData.Contains(data)).BooleanValue));
             }
             return averages;

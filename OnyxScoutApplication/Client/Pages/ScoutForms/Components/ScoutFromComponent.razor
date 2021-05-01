@@ -23,7 +23,12 @@
     <div class="form-group col-sm-5">
         @foreach (var formDataInStages in Form.FormDataInStages)
         {
-            <SectionEdit SectionData="@formDataInStages.FormData" SectionName="@formDataInStages.Name"></SectionEdit>
+            <h3>@formDataInStages.Name</h3>
+
+            <br>
+            <div class="form-group" style="padding-left:2em">
+                <SectionEdit SectionData="@formDataInStages.FormData"></SectionEdit>
+            </div>
         }
     </div>
 

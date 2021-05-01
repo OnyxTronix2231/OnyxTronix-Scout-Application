@@ -6,9 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using OnyxScoutApplication.Client.Others.Extensions;
 using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 using OnyxScoutApplication.Shared.Models.ScoutFormModels;
+using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 {
@@ -47,9 +49,10 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
         {
             //List<FieldDto> combinedFields = new List<FieldDto>();
             // scoutFormFieldsToCalculate = new List<FieldDto>(Fields);
-            scoutFormFieldsToCalculate = ScoutFormFormatDto.FieldsInStages.SelectMany(i => i.Fields).ToList();
+            scoutFormFieldsToCalculate = ScoutFormFormatDto.FieldsInStages.SelectMany(i => i.Fields.WithCascadeFields()
+                .Where(f => f.FieldType != FieldType.TextField)).ToList();
             ColumnsFields = scoutFormFieldsToCalculate.Select(i => new ColumnField
-                {Name = i.Name, MarkupName = new MarkupString(i.Name), NameId = i.NameId}).ToList();
+                {Name = i.Name, MarkupName = new MarkupString(i.Name), Id = i.Id.ToString()}).ToList();
             if (EventAnalyticSettings != null)
             {
                 foreach (var combinedField in EventAnalyticSettings.CombinedFields)
@@ -58,7 +61,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                     FieldDto lastField = null;
                     foreach (var field in combinedField.Fields)
                     {
-                        if (scoutFormFieldsToCalculate.Any(i => i.NameId == field.NameId))
+                        if (scoutFormFieldsToCalculate.Any(i => i.Id == field.Id))
                         {
                             lastField = field;
                         }
@@ -66,7 +69,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                         {
                             NavigationManager.NavigateTo("EventAnalytics/Settings");
                             NotificationManager.Notify("Please update the event settings",
-                                $"Missing scout forms field: {field.NameId}", NotificationType.Warning);
+                                $"Missing scout forms field: {field.Name}", NotificationType.Warning);
                         }
                     }
 
@@ -74,9 +77,9 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 
                     newColumnField.Name = combinedField.Name;
                     newColumnField.MarkupName = combinedField.MarkupName;
-                    newColumnField.NameId = combinedField.NameId;
+                    newColumnField.Id = combinedField.Id;
                     ColumnsFields.Insert(
-                        ColumnsFields.IndexOf(ColumnsFields.FirstOrDefault(i => i.NameId == lastField?.NameId)) + 1,
+                        ColumnsFields.IndexOf(ColumnsFields.FirstOrDefault(i => i.Id == lastField?.Id.ToString())) + 1,
                         newColumnField);
                 }
             }
@@ -97,11 +100,11 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 rows.Add("TeamNumber", team.TeamNumber);
                 rows.Add("Nickname", team.Nickname);
 
-                foreach (var field in scoutFormFieldsToCalculate)
+                foreach (var avg in avgs)
                 {
-                    var teamAvg = avgs.First(i => i.Field.NameId == field.NameId);
-                    rows.Add(field.NameId, teamAvg.GetFormattedAverage().Value);
-                    rows.Add("RawValue" + field.NameId, teamAvg.GetRelativeValue());
+                    var teamAvg = avg;
+                    rows.Add(avg.Field.Id.ToString(), teamAvg.GetFormattedAverage().Value);
+                    rows.Add("RawValue" + avg.Field.Id, teamAvg.GetRelativeValue());
                 }
 
                 if (EventAnalyticSettings != null)
@@ -113,16 +116,16 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                         int index = 0;
                         foreach (var field in combinedField.Fields)
                         {
-                            if (rows.ContainsKey("RawValue" + field.NameId))
+                            if (rows.ContainsKey("RawValue" + field.Id))
                             {
-                                sumAvg += (double) rows["RawValue" + field.NameId];
-                                fieldName += field.NameId;
+                                sumAvg += (double) rows["RawValue" + field.Id];
+                                fieldName += field.Id;
                                 index++;
                             }
                             else
                             {
                                 Console.WriteLine(
-                                    $"Warning, some scouts forms missing some data to calculate combined averages ({field.NameId}) ");
+                                    $"Warning, some scouts forms missing some data to calculate combined averages ({field.Name}) ");
                             }
                         }
 
@@ -145,6 +148,6 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
 
         public MarkupString MarkupName { get; set; }
 
-        public string NameId { get; set; }
+        public string Id { get; set; }
     }
 }

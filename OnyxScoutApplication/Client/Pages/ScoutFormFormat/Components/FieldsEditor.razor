@@ -54,9 +54,7 @@
 
                 </BooleanFieldComponent>
 
-                @*<div class="form-group" style="padding-left:1em">*@
                 <FieldsEditor CascadeDepth="@(CascadeDepth + 1)" Fields="field.CascadeFields"></FieldsEditor>
-                @*</div>*@
                 break;
             case FieldType.OptionSelect:
                 <OptionSelectFieldComponent Field="field" IsEditMode="true" @bind-Value="field.TextDefaultValue">
