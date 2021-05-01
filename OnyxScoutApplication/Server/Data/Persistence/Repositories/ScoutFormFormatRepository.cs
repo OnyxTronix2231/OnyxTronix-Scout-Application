@@ -49,7 +49,8 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFields(int id)
         {
             var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.FieldsInStages).
-                ThenInclude(f => f.Fields).ThenInclude(i => i.CascadeFields).FirstOrDefaultAsync(i => i.Id == id);
+                ThenInclude(f => f.Fields).ThenInclude(i => i.CascadeFields).ThenInclude(i => i.CascadeFields)
+                .ThenInclude(i => i.CascadeFields).FirstOrDefaultAsync(i => i.Id == id);
             if (result == null)
             {
                 return new NotFoundObjectResult("No scout form format found with the id of: " + id);
@@ -62,7 +63,8 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFieldsByYear(int year)
         {
             var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.FieldsInStages).
-                ThenInclude(f => f.Fields).ThenInclude(i => i.CascadeFields).FirstOrDefaultAsync(i => i.Year == year);
+                ThenInclude(f => f.Fields).ThenInclude(i => i.CascadeFields).ThenInclude(i => i.CascadeFields)
+                .ThenInclude(i => i.CascadeFields).FirstOrDefaultAsync(i => i.Year == year);
             if (result == null)
             {
                 return new NotFoundObjectResult("No scout form format found for year - " + year);

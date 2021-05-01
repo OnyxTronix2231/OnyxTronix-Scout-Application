@@ -20,7 +20,7 @@
     <div>
         <label>Field type</label>
         <select class="form-control" @bind="field.FieldType">
-            @foreach (var type in Enum.GetValues(typeof(FieldType)))
+            @foreach (var type in GetFields())
             {
                 <option value="@type">@type</option>
             }
@@ -55,7 +55,7 @@
                 </BooleanFieldComponent>
 
                 @*<div class="form-group" style="padding-left:1em">*@
-                <FieldsEditor Fields="field.CascadeFields"></FieldsEditor>
+                <FieldsEditor CascadeDepth="@(CascadeDepth + 1)" Fields="field.CascadeFields"></FieldsEditor>
                 @*</div>*@
                 break;
             case FieldType.OptionSelect:
@@ -81,6 +81,8 @@
 
     [Parameter]
     public List<FieldDto> Fields { get; set; }
+    [Parameter]
+    public int CascadeDepth { get; set; }
 
     private void AddField()
     {
@@ -97,7 +99,9 @@
 
     private void OnOptionSelect(ChangeEventArgs e, int index)
     {
+     
         Fields[index].FieldType = Enum.Parse<FieldType>(e.Value.ToString());
+      
     }
 
     private void MoveUp(int index)
@@ -112,6 +116,16 @@
         var field = Fields[index];
         Fields.RemoveAt(index);
         Fields.Insert(index + 1, field);
+    }
+
+    private List<FieldType> GetFields()
+    {
+        var enumValues = Enum.GetValues(typeof(FieldType)).Cast<FieldType>().ToList();
+        if (CascadeDepth >= 3)
+        {
+            enumValues.Remove(FieldType.CascadeField);
+        }
+        return enumValues;
     }
 
 }
