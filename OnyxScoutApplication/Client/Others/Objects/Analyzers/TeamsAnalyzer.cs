@@ -112,14 +112,12 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                     foreach (var combinedField in EventAnalyticSettings.CombinedFields)
                     {
                         double sumAvg = 0;
-                        string fieldName = "";
                         int index = 0;
                         foreach (var field in combinedField.Fields)
                         {
                             if (rows.ContainsKey("RawValue" + field.Id))
                             {
                                 sumAvg += (double) rows["RawValue" + field.Id];
-                                fieldName += field.Id;
                                 index++;
                             }
                             else
@@ -130,8 +128,8 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                         }
 
                         sumAvg /= index;
-                        rows.Add(fieldName, sumAvg);
-                        rows.Add("RawValue" + fieldName, sumAvg);
+                        rows.Add(combinedField.Id, sumAvg);
+                        rows.Add("RawValue" + combinedField.Id, sumAvg);
                     }
                 }
 

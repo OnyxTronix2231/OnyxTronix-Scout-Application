@@ -61,6 +61,11 @@
             return;
         }
         format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        if (format == null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
         if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
         {
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
@@ -69,9 +74,8 @@
         {
             analyticSettings = new EventAnalyticSettingsDto();
         }
-        throw new NotImplementedException();
-        //fields = format.FieldsesInByStages.SelectMany(i => i.Value.ConcatAllCascadeFields()).ToList();
-      //  fields.RemoveAll(i => i.FieldType != FieldType.Numeric);
+        fields = format.FieldsInStages.SelectMany(i => i.Fields.WithCascadeFields()).
+            Where(i => i.FieldType == FieldType.Numeric).ToList();
     }
 
     private void AddCombinedField()
