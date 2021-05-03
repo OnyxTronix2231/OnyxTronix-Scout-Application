@@ -1,0 +1,15 @@
+@using System.Timers
+
+@* <SfButton @onclick="">Start count</SfButton> *@
+
+@code {
+    private Timer timer;
+    private int elpasedTime;
+    protected override void OnInitialized()
+    {
+        timer = new Timer(100);
+        timer.Elapsed += (sender, args) => elpasedTime += 100;
+    }
+    
+
+}

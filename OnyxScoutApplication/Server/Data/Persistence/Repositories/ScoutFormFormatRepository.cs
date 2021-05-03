@@ -28,10 +28,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                     "This scout format already exists for this year!");
             }
 
-            ScoutFormFormatDto clone = new ScoutFormFormatDto
-            {
-                Year = scoutFormFormat.Year
-            };
+           
             return await base.Add(scoutFormFormat);
         }
 
