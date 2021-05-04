@@ -7,7 +7,6 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 {
     public class FormDataDto
     {
-        [Key]
         public int Id { get; set; }
         
         public int? FieldId { get; set; }

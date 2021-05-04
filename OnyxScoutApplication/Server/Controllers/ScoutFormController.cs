@@ -34,7 +34,8 @@ namespace OnyxScoutApplication.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FormDto>> Get(int id)
         {
-            return await unitOfWork.ScoutForms.GetWithFields(id);
+            var result = await unitOfWork.ScoutForms.GetWithFields(id);
+            return result;
         }
 
         [HttpGet("GetAllByEvent/{eventKey}")]

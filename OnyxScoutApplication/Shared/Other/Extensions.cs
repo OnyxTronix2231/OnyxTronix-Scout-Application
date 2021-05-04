@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
+using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 
 namespace OnyxScoutApplication.Shared.Other
 {
@@ -12,6 +13,11 @@ namespace OnyxScoutApplication.Shared.Other
         public static List<FieldDto> WithCascadeFields(this List<FieldDto> field)
         {
             return field.Concat(field.SelectMany(i => WithCascadeFields(i.CascadeFields)).ToList()).ToList();
+        }
+        
+        public static List<FormDataDto> WithCascadeData(this List<FormDataDto> field)
+        {
+            return field.Concat(field.SelectMany(i => WithCascadeData(i.CascadeData)).ToList()).ToList();
         }
     }
 }

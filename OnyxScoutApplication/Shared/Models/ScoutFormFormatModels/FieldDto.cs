@@ -24,10 +24,6 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
         public FieldType FieldType { get; set; }
 
-        public int? FieldStageId { get; set; }
-        
-        public FieldsInStageDto FieldsInStage { get; set; }
-        
         public int MaxValue { get; set; } = 9999;
 
         public int MinValue { get; set; }
