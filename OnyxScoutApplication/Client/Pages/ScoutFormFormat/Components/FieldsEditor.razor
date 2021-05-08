@@ -1,65 +1,73 @@
 ﻿@using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
-@for (int i = 0; i < Fields.Count; i++)
-{
-    int currentIndex = i;
-    <div class="e-icons">
-        <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveField(currentIndex)">Remove field</SfButton>
-        <SfButton Disabled="@(currentIndex == 0)" type="button" CssClass="e-primary e-round"
-                  IconCss="e-icons e-triangleUp" @onclick="() => MoveUp(currentIndex)">
-        </SfButton>
-        <SfButton Disabled="@(currentIndex == Fields.Count - 1)" type="button" CssClass="e-primary e-round"
-                  IconCss="e-icons e-triangleDown" @onclick="() => MoveDown(currentIndex)">
-        </SfButton>
-    </div>
-    FieldDto field = Fields[i];
-    <div>
-        <label>Field name</label>
-        <InputText class="form-control" @bind-Value="field.Name"/>
-        <ValidationMessage For="@(() => field.Name)"/>
-    </div>
-    <div>
-        <label>Field type</label>
-        <select class="form-control" @bind="field.FieldType">
-            @foreach (var type in GetFields())
+
+
+    @for (int i = 0; i < Fields.Count; i++)
+    {
+        int currentIndex = i;
+        FieldDto field = Fields[i];
+
+        <div class="e-icons">
+            <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveField(currentIndex)">Remove field</SfButton>
+            <SfButton Disabled="@(currentIndex == 0)" type="button" CssClass="e-primary e-round"
+                      IconCss="e-icons e-triangleUp" @onclick="() => MoveUp(currentIndex)">
+            </SfButton>
+            <SfButton Disabled="@(currentIndex == Fields.Count - 1)" type="button" CssClass="e-primary e-round"
+                      IconCss="e-icons e-triangleDown" @onclick="() => MoveDown(currentIndex)">
+            </SfButton>
+        </div>
+        <div>
+            <label>Field name</label>
+            <InputText class="form-control" @bind-Value="field.Name"/>
+            <ValidationMessage For="@(() => field.Name)"/>
+        </div>
+        <div>
+            <label>Field type</label>
+            <select class="form-control" @bind="field.FieldType">
+                @foreach (var type in GetFields())
+                {
+                    <option value="@type">@type</option>
+                }
+            </select>
+            <ValidationMessage For="@(() => field.FieldType)"/>
+        </div>
+        <br/>
+        <div class="e-icons">
+            @{ var icon = "e-icons " + (isVisible ? "e-triangleDown" : "e-triangleRight"); }
+            <SfButton type="button" CssClass="e-primary e-round" IconCss="@icon" @onclick="@(() => { isVisible = !isVisible; })"/>
+        </div>
+        <div class="form-group collapse @(isVisible ? "show" : "")" style="padding-left:2em">
+            @switch (field.FieldType)
             {
-                <option value="@type">@type</option>
+                case FieldType.None:
+                    break;
+                case FieldType.TextField:
+                    <TextSettingsComponent Field="field"/>
+                    break;
+                case FieldType.Numeric:
+                    <NumricSettingsComponent Field="field"/>
+                    break;
+                case FieldType.Boolean:
+                    <BooleanSettingsComponent Field="field"/>
+                    break;
+                case FieldType.CascadeField:
+                    <BooleanSettingsComponent Field="field"/>
+                    <FieldsEditor CascadeDepth="@(CascadeDepth + 1)" Fields="field.CascadeFields"/>
+                    break;
+                case FieldType.OptionSelect:
+                    <OptionSelectSettingsComponent Field="field"/>
+                    break;
+                case FieldType.MultipleChoice:
+                    <MultipleChoiceSettingsComponent Field="field"/>
+                    break;
+                case FieldType.Timer:
+                    <TimeCounterSettingsComponent Field="field"/>
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-        </select>
-        <ValidationMessage For="@(() => field.FieldType)"/>
-    </div>
-    <br/>
-    <div class="form-group" style="padding-left:2em">
-        @switch (field.FieldType)
-        {
-            case FieldType.None:
-                break;
-            case FieldType.TextField:
-                <TextSettingsComponent Field="field"/>
-                break;
-            case FieldType.Numeric:
-                <NumricSettingsComponent Field="field"/>
-                break;
-            case FieldType.Boolean:
-                <BooleanSettingsComponent Field="field"/>
-                break;
-            case FieldType.CascadeField:
-                <BooleanSettingsComponent Field="field"/>
-                <FieldsEditor CascadeDepth="@(CascadeDepth + 1)" Fields="field.CascadeFields"/>
-                break;
-            case FieldType.OptionSelect:
-                <OptionSelectSettingsComponent Field="field"/>
-                break;
-            case FieldType.MultipleChoice:
-                <MultipleChoiceSettingsComponent Field="field"/>
-                break;
-            case FieldType.Timer:
-                <TimeCounterSettingsComponent Field="field"/>
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    </div>
-}
+        </div>
+    }
+
 <div>
     <button type="button" class="btn btn-dark" @onclick="AddField">Add field</button>
 </div>
@@ -70,6 +78,8 @@
     public List<FieldDto> Fields { get; set; }
     [Parameter]
     public int CascadeDepth { get; set; }
+    
+    private bool isVisible = true;
 
     private void AddField()
     {
@@ -123,7 +133,12 @@
         content: '\e744';
     }
     
-     .e-triangleUp:before {
-            content: '\e721';
-        }
+    .e-triangleUp:before {
+        content: '\e721';
+    }
+    
+    .e-triangleRight:before {
+    content: '\e70b';
+    }
+
 </style>
