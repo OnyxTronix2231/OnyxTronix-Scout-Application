@@ -1,0 +1,79 @@
+@using System.Timers
+@using System.Diagnostics
+@using System.Diagnostics.CodeAnalysis
+@inherits InputBase<TimeSpan?>
+
+<div>
+    <SfButton type="button" @onclick="StartCount">Start count</SfButton>
+</div> 
+<br>
+<div>
+    <label>@CurrentValue?.ToString(@"mm\:ss\.fff")</label>
+</div>
+<br>
+<div>
+    <SfButton type="button" @onclick="StopCount">Stop count</SfButton>
+    <SfButton type="button" @onclick="ResetCount">Reset count</SfButton> 
+</div> 
+
+@code {
+    private Timer timer;
+    private Stopwatch stopwatch;
+    private TimeSpan? startTime;
+    protected override void OnInitialized()
+    {
+        timer = new Timer(100);
+        stopwatch = new Stopwatch();
+        startTime = CurrentValue;
+        timer.Elapsed += (sender, args) =>
+        {
+            UpdateCurrentTime();
+        };
+        UpdateCurrentTime();
+    }
+
+    private void StartCount()
+    {
+        timer.Start();
+        stopwatch.Start();
+    }
+    
+    private void StopCount()
+    {
+        timer.Stop();
+        stopwatch.Stop();
+        UpdateCurrentTime();
+    }
+    
+    private void ResetCount()
+    {
+        timer.Stop();
+        stopwatch.Reset();
+        UpdateCurrentTime();
+    }
+
+    private void UpdateCurrentTime()
+    {
+        CurrentValue = stopwatch.Elapsed + (startTime ?? TimeSpan.Zero);
+        Console.WriteLine(CurrentValue);
+        StateHasChanged();
+    }
+
+    protected override bool TryParseValueFromString(string value, out TimeSpan? result, [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        validationErrorMessage = null;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            result = null;
+            return true;
+        }
+        bool success = TimeSpan.TryParse(value, out TimeSpan val);
+        if (!success)
+        {
+            validationErrorMessage = "Value has to be a valid time span!";
+        }
+        result = val;
+        return success;
+    }
+    
+}

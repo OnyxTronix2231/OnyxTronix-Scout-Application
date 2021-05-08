@@ -1,0 +1,24 @@
+﻿@using System.Diagnostics.CodeAnalysis
+@using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
+@inherits SettingsInputBase
+
+<div>
+    <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required"/>
+    <ValidationMessage For="@(() => Field.Required)"/>
+</div>
+
+<div>
+    <label>Min value</label>
+    <SfNumericTextBox @bind-Value="@Field.MinValue"/>
+    <ValidationMessage For="@(() => Field.MinValue)"/>
+</div>
+<div>
+    <label>Max value</label>
+    <SfNumericTextBox @bind-Value="@Field.MaxValue"/>
+    <ValidationMessage For="@(() => Field.MaxValue)"/>
+</div>
+
+@code {
+   
+   
+}
