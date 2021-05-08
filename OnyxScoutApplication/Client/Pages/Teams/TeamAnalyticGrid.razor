@@ -5,7 +5,7 @@
             <GridColumn HeaderText="Name" AllowResizing="true" Width="25%">
                 <Template>
                     @{
-                        <span> @((context as TeamFieldAverage).Field.Name)</span>
+                        <span> @((context as TeamFieldAverage)!.Field.Name)</span>
                     }
                 </Template>
             </GridColumn>

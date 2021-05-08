@@ -81,6 +81,9 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 case FieldType.MultipleChoice:
                     analyzer = new MultipleChoiceAnalyzer();
                     break;
+                case FieldType.Timer:
+                    analyzer = new TimerAnalyzer();
+                    break;
                 case FieldType.None:
                     throw new NotSupportedException();
                 case FieldType.TextField:
