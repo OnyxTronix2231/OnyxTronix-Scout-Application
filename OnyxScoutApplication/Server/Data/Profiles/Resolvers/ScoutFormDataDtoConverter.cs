@@ -2,6 +2,7 @@
 using OnyxScoutApplication.Shared.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
@@ -34,6 +35,12 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                     break;
                 case FieldType.MultipleChoice:
                     destination.SelectedOptions = source.Value?.Split(';').ToList();
+                    break;
+                case FieldType.Timer:
+                    if (!string.IsNullOrWhiteSpace(source.Value))
+                    {
+                        destination.TimeSpanValue = TimeSpan.ParseExact(source.Value, @"mm\:ss\.fff", CultureInfo.InvariantCulture);
+                    }
                     break;
                 case FieldType.None:
                     throw new ArgumentOutOfRangeException();

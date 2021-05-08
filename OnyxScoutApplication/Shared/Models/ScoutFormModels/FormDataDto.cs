@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
@@ -22,6 +23,8 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
         public int? NumericValue { get; set; }
 
         public bool BooleanValue { get; set; }
+        
+        public TimeSpan? TimeSpanValue { get; set; }
 
         public List<string> SelectedOptions { get; set; } = new List<string>();
 

@@ -34,37 +34,26 @@
             case FieldType.None:
                 break;
             case FieldType.TextField:
-                <TextFieldComponent Field="field" IsEditMode="true" @bind-Value="field.TextDefaultValue">
-
-                </TextFieldComponent>
+                <TextSettingsComponent Field="field"/>
                 break;
             case FieldType.Numeric:
-                <NumricFieldComponent Field="field" IsEditMode="true" @bind-Value="field.NumericDefaultValue">
-
-                </NumricFieldComponent>
-
+                <NumricSettingsComponent Field="field"/>
                 break;
             case FieldType.Boolean:
-                <BooleanFieldComponent Field="field" IsEditMode="true" @bind-Value="field.BoolDefaultValue">
-
-                </BooleanFieldComponent>
+                <BooleanSettingsComponent Field="field"/>
                 break;
             case FieldType.CascadeField:
-                <BooleanFieldComponent Field="field" IsEditMode="true" @bind-Value="field.CascadeConditionDefaultValue">
-
-                </BooleanFieldComponent>
-
-                <FieldsEditor CascadeDepth="@(CascadeDepth + 1)" Fields="field.CascadeFields"></FieldsEditor>
+                <BooleanSettingsComponent Field="field"/>
+                <FieldsEditor CascadeDepth="@(CascadeDepth + 1)" Fields="field.CascadeFields"/>
                 break;
             case FieldType.OptionSelect:
-                <OptionSelectFieldComponent Field="field" IsEditMode="true" @bind-Value="field.TextDefaultValue">
-
-                </OptionSelectFieldComponent>
+                <OptionSelectSettingsComponent Field="field"/>
                 break;
             case FieldType.MultipleChoice:
-                <MultipleChoiceComponent Field="field" IsEditMode="true" @bind-Value="field.DefaultSelectedOptions">
-
-                </MultipleChoiceComponent>
+                <MultipleChoiceSettingsComponent Field="field"/>
+                break;
+            case FieldType.Timer:
+                <TimeCounterSettingsComponent Field="field"/>
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

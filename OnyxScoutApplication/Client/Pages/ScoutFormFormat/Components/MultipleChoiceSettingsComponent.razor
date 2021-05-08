@@ -1,0 +1,65 @@
+﻿@using Syncfusion.Blazor.Inputs
+@inherits SettingsInputBase
+<div>
+    <label>Field default value</label>
+    <MultipleChoiceFieldComponent @bind-Value="@Field.DefaultSelectedOptions" 
+                                    MaximumSelectionLength="Field.MaximumSelectionLength" Options="@Field.Options"/>
+</div>
+<div>
+    <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required"/>
+    <ValidationMessage For="@(() => Field.Required)"/>
+</div>
+
+<div>
+    <label>Max slsection option</label>
+    <SfNumericTextBox @bind-Value="Field.MaximumSelectionLength"></SfNumericTextBox>
+</div>
+
+<br/>
+
+@foreach (var (item, index) in options.Select((x, i) => (x, i)))
+{
+    <div>
+        <button type="button" class="btn btn-danger" @onclick="() => RemoveOption(index)">Remove option</button>
+        @{ var v = item; }
+        <SfTextBox Value="@v" Input="a => UpdateOption(a, index)"></SfTextBox>
+
+    </div>
+}
+<ValidationMessage For="@(() => Field.Options)"/>
+
+<br/>
+
+<div>
+    <button type="button" class="btn btn-dark" @onclick="AddOption">Add option</button>
+</div>
+
+@code {
+    private List<string> options = new List<string>();
+
+    protected override Task OnInitializedAsync()
+    {
+        options = Field.Options.ToList();
+        return base.OnInitializedAsync();
+    }
+
+    private void AddOption()
+    {
+        options.Add("");
+        Field.Options = options.ToList();
+    }
+
+    private void RemoveOption(int index)
+    {
+        options.RemoveAt(index);
+        Field.Options = options.ToList();
+    }
+
+    private void UpdateOption(InputEventArgs args, int index)
+    {
+        options[index] = args.Value;
+        Field.Options = options.ToList();
+        StateHasChanged();
+    }
+
+}

@@ -1,12 +1,6 @@
 ﻿@inherits FormInputBase<bool>
-@using System.Diagnostics.CodeAnalysis;
 
 <div>
-    @if (IsEditMode)
-    {
-        <label>Field default value</label>
-    }
-
     <SfCheckBox CssClass="e-info" @bind-Checked="CurrentValue"/>
     <ValidationMessage For="@(() => ValueExpression)"/>
 </div>

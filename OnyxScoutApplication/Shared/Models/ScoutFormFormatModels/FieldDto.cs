@@ -19,6 +19,8 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         public int? NumericDefaultValue { get; set; }
 
         public bool CascadeConditionDefaultValue { get; set; }
+        
+        public TimeSpan? TimeSpanDefaultValue { get; set; }
 
         public int MyProperty { get; set; }
 

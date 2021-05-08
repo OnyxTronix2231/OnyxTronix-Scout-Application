@@ -8,25 +8,16 @@
         case FieldType.None:
             break;
         case FieldType.TextField:
-            <TextFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.StringValue">
-
-            </TextFieldComponent>
+            <TextFieldComponent @bind-Value="data.StringValue"/>
             break;
         case FieldType.Numeric:
-            <NumricFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.NumericValue">
-
-            </NumricFieldComponent>
-
+            <NumricFieldComponent @bind-Value="data.NumericValue"/>
             break;
         case FieldType.Boolean:
-            <BooleanFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.BooleanValue">
-
-            </BooleanFieldComponent>
+            <BooleanFieldComponent @bind-Value="data.BooleanValue"/>
             break;
         case FieldType.CascadeField:
-            <BooleanFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.BooleanValue">
-
-            </BooleanFieldComponent>
+            <BooleanFieldComponent @bind-Value="data.BooleanValue"/>
             if (data.BooleanValue)
             {
                 <div class="form-group" style="padding-left:1em">
@@ -35,10 +26,14 @@
             }
             break;
         case FieldType.OptionSelect:
-            <OptionSelectFieldComponent Field="data.Field" IsEditMode="false" @bind-Value="data.StringValue"></OptionSelectFieldComponent>
+            <OptionSelectFieldComponent @bind-Value="data.StringValue" Options="@data.Field.Options"/>
             break;
         case FieldType.MultipleChoice:
-            <MultipleChoiceComponent Field="data.Field" IsEditMode="false" @bind-Value="data.SelectedOptions"></MultipleChoiceComponent>
+            <MultipleChoiceFieldComponent @bind-Value="data.SelectedOptions" Options="@data.Field.Options" 
+                                          MaximumSelectionLength="data.Field.MaximumSelectionLength"/>
+            break;
+        case FieldType.Timer:
+            <TimeCounterFieldComponent @bind-Value="data.TimeSpanValue"/>
             break;
         default:
             throw new ArgumentOutOfRangeException();

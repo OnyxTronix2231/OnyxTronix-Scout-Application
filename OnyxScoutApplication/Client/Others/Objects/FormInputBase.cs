@@ -15,13 +15,14 @@ namespace OnyxScoutApplication.Client.Others.Objects
         Update,
         Create
     }
-
+    
     public abstract class FormInputBase<T> : InputBase<T>
+    {
+    }
+
+    public abstract class SettingsInputBase : ComponentBase
     {
         [Parameter]
         public FieldDto Field { get; set; }
-
-        [Parameter]
-        public bool IsEditMode { get; set; }
     }
 }

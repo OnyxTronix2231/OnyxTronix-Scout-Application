@@ -69,6 +69,8 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 case FieldType.MultipleChoice:
                     formData.SelectedOptions = field.DefaultSelectedOptions;
                     break;
+                case FieldType.Timer:
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

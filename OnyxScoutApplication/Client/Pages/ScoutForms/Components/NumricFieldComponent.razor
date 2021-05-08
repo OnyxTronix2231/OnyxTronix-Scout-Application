@@ -3,31 +3,9 @@
 
 @inherits FormInputBase<int?>
 <div>
-    @if (IsEditMode)
-    {
-        <label>Field default value</label>
-    }
     <SfNumericTextBox @bind-Value="CurrentValue"/>
     <ValidationMessage For="@ValueExpression"/>
 </div>
-@if (IsEditMode)
-{
-    <div>
-        <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required"/>
-        <ValidationMessage For="@(() => Field.Required)"/>
-    </div>
-
-    <div>
-        <label>Min value</label>
-        <SfNumericTextBox @bind-Value="@Field.MinValue"/>
-        <ValidationMessage For="@(() => Field.MinValue)"/>
-    </div>
-    <div>
-        <label>Max value</label>
-        <SfNumericTextBox @bind-Value="@Field.MaxValue"/>
-        <ValidationMessage For="@(() => Field.MaxValue)"/>
-    </div>
-}
 
 @code {
 

@@ -1,0 +1,14 @@
+﻿@inherits FormInputBase<string>
+
+<SfDropDownList TValue="string" TItem="string" DataSource="Options" @bind-Value="CurrentValue"/>
+<ValidationMessage For="@ValueExpression"/>
+@code {
+    [Parameter]
+    public IEnumerable<string> Options { get; set; }
+    protected override bool TryParseValueFromString(string value, out string result, [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        validationErrorMessage = null;
+        result = value;
+        return true;
+    }
+}

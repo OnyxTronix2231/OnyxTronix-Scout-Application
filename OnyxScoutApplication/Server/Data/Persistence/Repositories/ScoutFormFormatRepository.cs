@@ -54,6 +54,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             }
 
             result.FieldsInStages = result.FieldsInStages.OrderBy(i => i.Index).ToList();
+            result.FieldsInStages.ForEach(i => i.Fields.Sort((f1, f2) => f1.Index.CompareTo(f2.Index)));
             return Mapper.Map<ScoutFormFormatDto>(result);
         }
 

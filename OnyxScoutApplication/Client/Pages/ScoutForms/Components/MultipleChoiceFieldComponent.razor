@@ -1,0 +1,25 @@
+﻿@using Syncfusion.Blazor.Inputs
+
+@inherits FormInputBase<List<string>>
+<div>
+    <SfMultiSelect @bind-Value="CurrentValue" Mode="VisualMode.CheckBox"
+                    MaximumSelectionLength="MaximumSelectionLength == 0 
+                    ? Options.Count : MaximumSelectionLength"
+                    DataSource="Options"/>
+
+    <ValidationMessage For="@ValueExpression"/>
+</div>
+
+@code {
+    [Parameter]
+    public List<string> Options { get; set; }= new List<string>();
+    [Parameter]
+    public int MaximumSelectionLength { get; set; }
+
+    protected override bool TryParseValueFromString(string value, out List<string> result, [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        validationErrorMessage = null;
+        result = new List<string>();
+        return true;
+    }
+}

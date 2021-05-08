@@ -33,6 +33,9 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                         destination.Value = string.Join(";", source.SelectedOptions);
                     }
                     break;
+                case FieldType.Timer:
+                    destination.Value = source.TimeSpanValue?.ToString(@"mm\:ss\.fff");
+                    break;
                 case FieldType.None:
                     throw new ArgumentOutOfRangeException();
                 default:
