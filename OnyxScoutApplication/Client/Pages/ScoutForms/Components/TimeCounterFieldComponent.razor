@@ -3,32 +3,44 @@
 @using System.Diagnostics.CodeAnalysis
 @inherits InputBase<TimeSpan?>
 
-<div>
-    <SfButton type="button" @onclick="StartCount">Start count</SfButton>
-</div> 
-<br>
-<div>
-    <label>@CurrentValue?.ToString(@"mm\:ss\.fff")</label>
-</div>
-<br>
-<div>
-    <SfButton type="button" @onclick="StopCount">Stop count</SfButton>
-    <SfButton type="button" @onclick="ResetCount">Reset count</SfButton> 
-</div> 
+@if (FormType == FormType.Create)
+{
+    <div>
+        <SfButton type="button" @onclick="StartCount">Start count</SfButton>
+    </div>
+    <br>
+    <div>
+        <label>@CurrentValue?.ToString(@"mm\:ss\.fff")</label>
+    </div>
+    <br>
+    <div>
+        <SfButton type="button" @onclick="StopCount">Stop count</SfButton>
+        <SfButton type="button" @onclick="ResetCount">Reset count</SfButton>
+    </div>
+}
+@if (AllowManualInput || FormType == FormType.Update)
+{
+    <SfTimePicker TValue="TimeSpan?" Format="mm\:ss\.fff" @bind-Value="@CurrentValue"/>
+}
+
 
 @code {
+
+    [Parameter]
+    public FormType FormType { get; set; }
+    [Parameter]
+    public bool AllowManualInput { get; set; }
+
     private Timer timer;
     private Stopwatch stopwatch;
     private TimeSpan? startTime;
+
     protected override void OnInitialized()
     {
         timer = new Timer(100);
         stopwatch = new Stopwatch();
         startTime = CurrentValue;
-        timer.Elapsed += (sender, args) =>
-        {
-            UpdateCurrentTime();
-        };
+        timer.Elapsed += (sender, args) => { UpdateCurrentTime(); };
         UpdateCurrentTime();
     }
 
@@ -37,14 +49,14 @@
         timer.Start();
         stopwatch.Start();
     }
-    
+
     private void StopCount()
     {
         timer.Stop();
         stopwatch.Stop();
         UpdateCurrentTime();
     }
-    
+
     private void ResetCount()
     {
         timer.Stop();
@@ -75,5 +87,5 @@
         result = val;
         return success;
     }
-    
+
 }

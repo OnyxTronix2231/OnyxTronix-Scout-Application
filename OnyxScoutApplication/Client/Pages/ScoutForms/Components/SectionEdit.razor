@@ -33,7 +33,7 @@
                                           MaximumSelectionLength="data.Field.MaximumSelectionLength"/>
             break;
         case FieldType.Timer:
-            <TimeCounterFieldComponent @bind-Value="data.TimeSpanValue"/>
+            <TimeCounterFieldComponent FormType="@FormType" @bind-Value="data.TimeSpanValue"/>
             break;
         default:
             throw new ArgumentOutOfRangeException();
@@ -43,6 +43,10 @@
 @code {
 
     [Parameter]
+    public FormType FormType { get; set; }
+    
+    [Parameter]
     public List<FormDataDto> SectionData { get; set; }
+    
 
 }
