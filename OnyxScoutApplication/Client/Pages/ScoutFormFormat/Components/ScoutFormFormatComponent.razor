@@ -18,11 +18,11 @@
         </div>
         <div>
             <label>Stage name</label>
-            <SfButton type="button" @onclick="OnAddStageClick" >Add stage</SfButton>
+            <SfButton type="button" @onclick="OnAddStageClick">Add stage</SfButton>
         </div>
         <br/>
     </div>
-    
+
     @for (var i = 0; i < ScoutFormFormat.FieldsInStages.Count; i++)
     {
         var fieldsInStage = ScoutFormFormat.FieldsInStages[i];
@@ -40,9 +40,10 @@
         </div>
         <ValidationMessage For="@(() => fieldsInStage.Fields)"/>
         <br>
-        <CollapsibleView ValueExpression="@(() => fieldsInStage.IsCollapsed)">
+        <CollapsibleView @bind-Value="@fieldsInStage.IsCollapsed"/>
+        <div class="form-group collapse @(fieldsInStage.IsCollapsed ? "show" : "")" style="padding-left:2em">
             <FieldsEditor Fields="fieldsInStage.Fields"></FieldsEditor>
-        </CollapsibleView>
+        </div>
     }
 
     <br/>
@@ -65,7 +66,7 @@
 
     private void OnValidSubmit()
     {
-       // ScoutFormFormat.FieldsInStages.ToList().ForEach(i => i.Fields.RemoveAll(f => f.FieldType == FieldType.None || string.IsNullOrWhiteSpace(f.Name)));
+    // ScoutFormFormat.FieldsInStages.ToList().ForEach(i => i.Fields.RemoveAll(f => f.FieldType == FieldType.None || string.IsNullOrWhiteSpace(f.Name)));
         for (var i = 0; i < ScoutFormFormat.FieldsInStages.Count; i++)
         {
             ScoutFormFormat.FieldsInStages[i].Index = i;
@@ -94,14 +95,14 @@
         {
             return;
         }
-        ScoutFormFormat.FieldsInStages.Add(new FieldsInStageDto() { Name = newStageName});
+        ScoutFormFormat.FieldsInStages.Add(new FieldsInStageDto() {Name = newStageName});
     }
-    
+
     private void RemoveStage(FieldsInStageDto stage)
     {
         ScoutFormFormat.FieldsInStages.Remove(stage);
     }
-    
+
     private void MoveUp(int index)
     {
         var field = ScoutFormFormat.FieldsInStages[index];
