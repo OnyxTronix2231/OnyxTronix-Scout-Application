@@ -33,7 +33,8 @@
                                           MaximumSelectionLength="data.Field.MaximumSelectionLength"/>
             break;
         case FieldType.Timer:
-            <TimeCounterFieldComponent FormType="@FormType" @bind-Value="data.TimeSpanValue"/>
+            <TimeCounterFieldComponent AllowManualInput="@data.Field.AllowManualInput" FormType="@FormType"
+                                       @bind-Value="data.TimeSpanValue"/>
             break;
         default:
             throw new ArgumentOutOfRangeException();

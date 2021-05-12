@@ -3,10 +3,13 @@
 @inherits SettingsInputBase
 
 <div>
-    <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required"/>
+    <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="@Field.Required"/>
     <ValidationMessage For="@(() => Field.Required)"/>
 </div>
-
+<div>
+    <SfCheckBox Label="Allow manual time input" CssClass="e-big" @bind-Checked="@Field.AllowManualInput"/>
+    <ValidationMessage For="@(() => Field.AllowManualInput)"/>
+</div>
 <div>
     <label>Min value</label>
     <SfNumericTextBox @bind-Value="@Field.MinValue"/>
