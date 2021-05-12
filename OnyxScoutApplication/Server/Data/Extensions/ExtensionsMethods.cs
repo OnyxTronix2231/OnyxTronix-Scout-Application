@@ -19,7 +19,7 @@ namespace OnyxScoutApplication.Server.Data.Extensions
                 .ThenInclude(i => i.Teams);
         }
         
-        public static IIncludableQueryable<Form, Field> WithAllFields(this IQueryable<Form> queryable)
+        public static IIncludableQueryable<Form, Field> WithAllData(this IQueryable<Form> queryable)
         {
             return queryable.Include(i => i.FormDataInStages).ThenInclude(i => i.FormData).ThenInclude(i => i.Field)
 
@@ -31,9 +31,6 @@ namespace OnyxScoutApplication.Server.Data.Extensions
 
                 .Include(i => i.FormDataInStages).ThenInclude(i => i.FormData)
                 .ThenInclude(i => i.CascadeData).ThenInclude(i => i.CascadeData).ThenInclude(i => i.CascadeData)
-                .ThenInclude(i => i.Field)
-
-                .Include(i => i.FormDataInStages).ThenInclude(i => i.FormData)
                 .ThenInclude(i => i.Field);
         }
     }

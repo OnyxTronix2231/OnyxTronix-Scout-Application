@@ -43,6 +43,12 @@ namespace OnyxScoutApplication.Server.Controllers
         {
             return await unitOfWork.ScoutForms.GetAllByEvent(eventKey);
         }
+        
+        [HttpGet("GetAllByEventWithData/{eventKey}")]
+        public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEventWithData(string eventKey)
+        {
+            return await unitOfWork.ScoutForms.GetAllByEventWithData(eventKey);
+        }
 
         //[HttpGet("ByYear/{year}")]
         //public async Task<ActionResult<ScoutFormDto>> GetByYear(int year)

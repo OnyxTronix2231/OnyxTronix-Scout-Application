@@ -41,6 +41,8 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         public int MinValue { get; set; }
 
         public bool Required { get; set; }
+        
+        public bool AllowManualInput { get; set; }
 
         public string Options { get; set; } = "";
 
