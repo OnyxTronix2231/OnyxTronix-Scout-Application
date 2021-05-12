@@ -41,6 +41,8 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         public List<FieldDto> CascadeFields { get; set; } = new List<FieldDto>();
 
         public int Index { get; set; }
+
+        public bool IsCollapsed { get; set; }
         
         public int CompareTo(FieldDto other)
         {

@@ -40,9 +40,9 @@
         </div>
         <ValidationMessage For="@(() => fieldsInStage.Fields)"/>
         <br>
-        <div class="form-group" style="padding-left:2em">
+        <CollapsibleView ValueExpression="@(() => fieldsInStage.IsCollapsed)">
             <FieldsEditor Fields="fieldsInStage.Fields"></FieldsEditor>
-        </div>
+        </CollapsibleView>
     }
 
     <br/>

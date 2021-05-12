@@ -31,11 +31,7 @@
             <ValidationMessage For="@(() => field.FieldType)"/>
         </div>
         <br/>
-        <div class="e-icons">
-            @{ var icon = "e-icons " + (isVisible ? "e-triangleDown" : "e-triangleRight"); }
-            <SfButton type="button" CssClass="e-primary e-round" IconCss="@icon" @onclick="@(() => { isVisible = !isVisible; })"/>
-        </div>
-        <div class="form-group collapse @(isVisible ? "show" : "")" style="padding-left:2em">
+        <CollapsibleView ValueExpression="@(() => field.IsCollapsed)">
             @switch (field.FieldType)
             {
                 case FieldType.None:
@@ -65,7 +61,7 @@
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        </div>
+            </CollapsibleView>
     }
 
 <div>
@@ -79,8 +75,6 @@
     [Parameter]
     public int CascadeDepth { get; set; }
     
-    private bool isVisible = true;
-
     private void AddField()
     {
         if (Fields.Count <= 24)
