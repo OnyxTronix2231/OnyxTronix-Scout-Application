@@ -24,7 +24,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 case FieldType.TextField:
                     destination.Value = source.StringValue;
                     break;
-                case FieldType.Numeric:
+                case FieldType.Integer:
                     destination.Value = source.NumericValue.ToString();
                     break;
                 case FieldType.MultipleChoice:
@@ -34,7 +34,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                     }
                     break;
                 case FieldType.Timer:
-                    destination.Value = source.TimeSpanValue?.ToString(@"mm\:ss\.fff");
+                    destination.Value = source.NumericValue?.ToString();
                     break;
                 case FieldType.None:
                     throw new ArgumentOutOfRangeException();

@@ -63,7 +63,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 case FieldType.TextField:
                     formData.StringValue = field.TextDefaultValue;
                     break;
-                case FieldType.Numeric:
+                case FieldType.Integer:
                     formData.NumericValue = field.NumericDefaultValue;
                     break;
                 case FieldType.MultipleChoice:

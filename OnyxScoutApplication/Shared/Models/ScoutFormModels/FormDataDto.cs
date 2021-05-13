@@ -20,12 +20,10 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 
         public string StringValue { get; set; }
 
-        public int? NumericValue { get; set; }
-
+        public float? NumericValue { get; set; }
+        
         public bool BooleanValue { get; set; }
         
-        public TimeSpan? TimeSpanValue { get; set; }
-
         public List<string> SelectedOptions { get; set; } = new List<string>();
 
         public List<FormDataDto> CascadeData { get; set; } = new List<FormDataDto>();

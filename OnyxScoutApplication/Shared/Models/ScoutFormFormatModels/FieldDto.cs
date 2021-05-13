@@ -16,19 +16,17 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
         public bool BoolDefaultValue { get; set; }
 
-        public int? NumericDefaultValue { get; set; }
-
+        public float? NumericDefaultValue { get; set; }
+        
         public bool CascadeConditionDefaultValue { get; set; }
         
-        public TimeSpan? TimeSpanDefaultValue { get; set; }
-
         public int MyProperty { get; set; }
 
         public FieldType FieldType { get; set; }
 
-        public int MaxValue { get; set; } = 9999;
+        public float? MaxValue { get; set; } = 9999;
 
-        public int MinValue { get; set; }
+        public float? MinValue { get; set; }
 
         public bool Required { get; set; }
         

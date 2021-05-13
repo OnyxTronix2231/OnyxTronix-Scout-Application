@@ -75,7 +75,7 @@
             analyticSettings = new EventAnalyticSettingsDto();
         }
         fields = format.FieldsInStages.SelectMany(i => i.Fields.WithCascadeFields()).
-            Where(i => i.FieldType == FieldType.Numeric).ToList();
+            Where(i => i.FieldType == FieldType.Integer).ToList();
     }
 
     private void AddCombinedField()

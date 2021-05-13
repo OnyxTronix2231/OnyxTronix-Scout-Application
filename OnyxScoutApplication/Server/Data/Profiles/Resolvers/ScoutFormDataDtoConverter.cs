@@ -27,7 +27,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 case FieldType.TextField:
                     destination.StringValue = source.Value;
                     break;
-                case FieldType.Numeric:
+                case FieldType.Integer:
                     if (!string.IsNullOrWhiteSpace(source.Value))
                     {
                         destination.NumericValue = int.Parse(source.Value);
@@ -39,7 +39,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 case FieldType.Timer:
                     if (!string.IsNullOrWhiteSpace(source.Value))
                     {
-                        destination.TimeSpanValue = TimeSpan.ParseExact(source.Value, @"mm\:ss\.fff", CultureInfo.InvariantCulture);
+                        destination.NumericValue = float.Parse(source.Value);
                     }
                     break;
                 case FieldType.None:

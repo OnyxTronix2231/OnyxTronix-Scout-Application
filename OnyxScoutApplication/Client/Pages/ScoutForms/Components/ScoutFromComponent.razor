@@ -3,6 +3,7 @@
 
 <EditForm Model="@Form" OnValidSubmit="@OnValidSubmit">
     <FluentValidationValidator/>
+    <ValidationSummary/>
     <div class="form-group col-sm-5">
         <label for="teamNumber">Team number</label>
         <input class="form-control" type="number" id="teamNumber" value="@Form.TeamNumber" readonly="readonly"/>

@@ -10,8 +10,9 @@
         case FieldType.TextField:
             <TextFieldComponent @bind-Value="data.StringValue"/>
             break;
-        case FieldType.Numeric:
-            <NumricFieldComponent @bind-Value="data.NumericValue"/>
+        case FieldType.Integer:
+            <NumricFieldComponent Decimals="0" Min="@data.Field.MinValue" Max="@data.Field.MaxValue"
+                                  @bind-Value="@data.NumericValue"/>
             break;
         case FieldType.Boolean:
             <BooleanFieldComponent @bind-Value="data.BooleanValue"/>
@@ -23,7 +24,7 @@
                 <div class="form-group" style="padding-left:1em">
                     <SectionEdit SectionData="data.CascadeData"></SectionEdit>
                 </div>
-            }
+            } 
             break;
         case FieldType.OptionSelect:
             <OptionSelectFieldComponent @bind-Value="data.StringValue" Options="@data.Field.Options"/>
@@ -34,7 +35,7 @@
             break;
         case FieldType.Timer:
             <TimeCounterFieldComponent AllowManualInput="@data.Field.AllowManualInput" FormType="@FormType"
-                                       @bind-Value="data.TimeSpanValue"/>
+                                       @bind-Value="data.NumericValue"/>
             break;
         default:
             throw new ArgumentOutOfRangeException();

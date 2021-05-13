@@ -1,7 +1,8 @@
 @using System.Timers
 @using System.Diagnostics
 @using System.Diagnostics.CodeAnalysis
-@inherits InputBase<TimeSpan?>
+@using System.Globalization
+@inherits InputBase<float?>
 
 @if (FormType == FormType.Create)
 {
@@ -10,11 +11,14 @@
     </div>
     <br>
     <div>
-        <label>@CurrentValue?.ToString(@"mm\:ss\.fff")</label>
+        <label>@currentTimeSpan?.ToString(@"mm\:ss\.fff")</label>
         @if (AllowManualInput)
         {
-            <SfTimePicker TValue="TimeSpan?" Format="mm\:ss\.fff" @bind-Value="@CurrentValue"/>
+            <SfTimePicker TValue="TimeSpan?" Format="mm\:ss\.fff" Value="@currentTimeSpan">
+                <TimePickerEvents TValue="TimeSpan?" ValueChange="@TimeSpanChanged"> </TimePickerEvents>
+             </SfTimePicker>
         }
+        <ValidationMessage For="() => ValueExpression"></ValidationMessage>
     </div>
     <br>
     <div>
@@ -25,8 +29,10 @@
 else
 {
     <div>
-        <label>@CurrentValue?.ToString(@"mm\:ss\.fff")</label>
-        <SfTimePicker @ref="@timePicker" TValue="TimeSpan?" Format="mm\:ss\.fff" @bind-Value="@CurrentValue"/>
+        <label>@currentTimeSpan?.ToString(@"mm\:ss\.fff")</label>
+        <SfTimePicker TValue="TimeSpan?" Format="mm\:ss\.fff" Value="@currentTimeSpan">
+            <TimePickerEvents TValue="TimeSpan?" ValueChange="@TimeSpanChanged"> </TimePickerEvents>
+        </SfTimePicker>
     </div>
     
 }
@@ -40,6 +46,7 @@ else
     public bool AllowManualInput { get; set; }
 
     private SfTimePicker<TimeSpan?> timePicker;
+    private TimeSpan? currentTimeSpan;
 
     private Timer timer;
     private Stopwatch stopwatch;
@@ -48,6 +55,10 @@ else
     {
         timer = new Timer(100);
         stopwatch = new Stopwatch();
+        if (CurrentValue != null)
+        {
+            currentTimeSpan = TimeSpan.FromSeconds(CurrentValue.Value);
+        }
         timer.Elapsed += (sender, args) => { UpdateCurrentTime(); };
     }
 
@@ -78,12 +89,25 @@ else
 
     private void UpdateCurrentTime()
     {
-        CurrentValue = stopwatch.Elapsed;
+        currentTimeSpan = stopwatch.Elapsed;
+        CurrentValue = (float) stopwatch.Elapsed.TotalSeconds;
         Console.WriteLine(CurrentValue);
         StateHasChanged();
     }
 
-    protected override bool TryParseValueFromString(string value, out TimeSpan? result, [NotNullWhen(false)] out string validationErrorMessage)
+    private void TimeSpanChanged(Syncfusion.Blazor.Calendars.ChangeEventArgs<TimeSpan?> args)
+    {
+        currentTimeSpan = args.Value;
+        StateHasChanged();
+        if (currentTimeSpan != null)
+        {
+            CurrentValue = (float) currentTimeSpan.Value.TotalSeconds;
+            return;
+        }
+        CurrentValue = null;
+    }
+
+    protected override bool TryParseValueFromString(string value, out float? result, [NotNullWhen(false)] out string validationErrorMessage)
     {
         validationErrorMessage = null;
         if (string.IsNullOrWhiteSpace(value))
@@ -91,10 +115,10 @@ else
             result = null;
             return true;
         }
-        bool success = TimeSpan.TryParse(value, out TimeSpan val);
+        bool success = float.TryParse(value, out float val);
         if (!success)
         {
-            validationErrorMessage = "Value has to be a valid time span!";
+            validationErrorMessage = "Value has to be a number";
         }
         result = val;
         return success;

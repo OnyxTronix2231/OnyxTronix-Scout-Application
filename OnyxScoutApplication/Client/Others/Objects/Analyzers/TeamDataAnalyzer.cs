@@ -68,7 +68,8 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             IFieldAnalyzer analyzer;
             switch (field.FieldType)
             {
-                case FieldType.Numeric:
+                case FieldType.Timer:
+                case FieldType.Integer:
                     analyzer = new NumericalAnalyzer();
                     break;
                 case FieldType.Boolean:
@@ -80,9 +81,6 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                     break;
                 case FieldType.MultipleChoice:
                     analyzer = new MultipleChoiceAnalyzer();
-                    break;
-                case FieldType.Timer:
-                    analyzer = new TimerAnalyzer();
                     break;
                 case FieldType.None:
                     throw new NotSupportedException();

@@ -1,15 +1,25 @@
 ﻿@using Syncfusion.Blazor.Inputs
 @using System.Diagnostics.CodeAnalysis;
+@using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
-@inherits FormInputBase<int?>
+@inherits FormInputBase<float?>
 <div>
-    <SfNumericTextBox @bind-Value="CurrentValue"/>
-    <ValidationMessage For="@ValueExpression"/>
+    <SfNumericTextBox Format="@("N" + Decimals)" Decimals="Decimals" Min="Min" Max="Max" @bind-Value="CurrentValue"/>
+    <ValidationMessage For="ValueExpression"/>
 </div>
 
 @code {
 
-    protected override bool TryParseValueFromString(string value, out int? result, [NotNullWhen(false)] out string validationErrorMessage)
+    [Parameter]
+    public int? Decimals { get; set; }
+
+    [Parameter]
+    public float? Min { get; set; } = float.MinValue;
+
+    [Parameter]
+    public float? Max { get; set; } = float.MaxValue;
+    
+    protected override bool TryParseValueFromString(string value, out float? result, [NotNullWhen(false)] out string validationErrorMessage)
     {
         validationErrorMessage = null;
         if (string.IsNullOrWhiteSpace(value))
@@ -17,7 +27,7 @@
             result = null;
             return true;
         }
-        bool success = int.TryParse(value, out int val);
+        bool success = float.TryParse(value, out float val);
         if (!success)
         {
             validationErrorMessage = "Value has to be a number";
@@ -25,5 +35,5 @@
         result = val;
         return success;
     }
-
+    
 }

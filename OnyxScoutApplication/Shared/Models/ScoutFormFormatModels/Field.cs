@@ -8,7 +8,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         None,
         Boolean,
         TextField,
-        Numeric,
+        Integer,
         CascadeField,
         OptionSelect,
         MultipleChoice,
