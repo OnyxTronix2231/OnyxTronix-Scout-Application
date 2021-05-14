@@ -3,7 +3,6 @@
 @inject ILocalStorageService StorageService
 @if (Matches != null && Settings != null)
 {
-    Console.WriteLine("SHOOOOOOOOOOW");
     if (!string.IsNullOrWhiteSpace(Settings.PagingScopeName))
     {
         <SfButton OnClick="SavePageNumber">Save page number</SfButton>

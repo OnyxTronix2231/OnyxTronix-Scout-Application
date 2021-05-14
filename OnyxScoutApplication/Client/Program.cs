@@ -26,7 +26,7 @@ namespace OnyxScoutApplication.Client
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("app");
+            builder.RootComponents.Add<App>("#app");
 
             ConfigureServices(builder.Services, builder);
 
@@ -35,12 +35,13 @@ namespace OnyxScoutApplication.Client
 
         private static void ConfigureServices(IServiceCollection services, WebAssemblyHostBuilder builder)
         {
+            Console.WriteLine("Address: " + builder.HostEnvironment.BaseAddress);
             services.AddHttpClient("OnyxScoutApplication.ServerAPI",
                     client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
             // Supply HttpClient instances that include access tokens when making requests to the server project
-            services.AddTransient(sp =>
+            services.AddScoped(sp =>
                 sp.GetRequiredService<IHttpClientFactory>().CreateClient("OnyxScoutApplication.ServerAPI"));
 
             builder.Services.AddApiAuthorization()
@@ -49,7 +50,7 @@ namespace OnyxScoutApplication.Client
 
             services.AddSyncfusionBlazor();
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(
-                "MzgwMDc5QDMxMzgyZTM0MmUzMFM2RGdsNWJYWDRvR3RQdVdzd1BmOGM0djYxMlNTVWk4RWE0TUxVM3BjVTg9");
+                "NDQ2MTc1QDMxMzkyZTMxMmUzMEdiemxIQnZrd0xpU3I4SXZZckQ2b3M2UXc5MjBNaWEvQWVybWpOVTg0TTA9");
             services.AddTransient<HttpClientManager>();
             services.AddSingleton<NotificationManager>();
             services.AddTransient<IValidator<ScoutFormFormatDto>, ScoutFormFormatValidator>();

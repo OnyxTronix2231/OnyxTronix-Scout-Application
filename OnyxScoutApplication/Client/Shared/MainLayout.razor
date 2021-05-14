@@ -9,21 +9,23 @@
 @inject ISyncSessionStorageService SessionStorage
 @inject IJSRuntime JsRuntime
 
-<div class="sidebar">
-    <NavMenu/>
-</div>
-<Toast></Toast>
-
-<div class="main">
-    <div class="top-row px-4 auth">
-        <LoginDisplay/>
-        <span>V0.4</span>
+<div class="page">
+    <div class="sidebar">
+        <NavMenu/>
     </div>
-    <div class="content px-4">
-        @if (finishedInit)
-        {
-            @Body
-        }
+    <Toast></Toast>
+
+    <div class="main">
+        <div class="top-row px-4 auth">
+            <LoginDisplay/>
+            <span>V0.4</span>
+        </div>
+        <div class="content px-4">
+            @if (finishedInit)
+            {
+                @Body
+            }
+        </div>
     </div>
 </div>
 
@@ -41,7 +43,7 @@
         if (LocalStorage.ContainKey("EventSelector/SelectedEventKey"))
         {
             Event selectedEvent = LocalStorage.GetItem<Event>("EventSelector/SelectedEventKey");
-
+            Console.WriteLine("key: " + selectedEvent.Key);
             var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
             SessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
 

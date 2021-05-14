@@ -51,12 +51,13 @@ namespace OnyxScoutApplication.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            Console.WriteLine($"Configuring services in {env.EnvironmentName} mode");
+            Console.WriteLine($"Configuring services in {env.EnvironmentName} mode ({env.IsDevelopment()})");
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 var connectionString = configuration.GetConnectionString(env.IsDevelopment() ? "LocalConnection" : "DefaultConnection");
                 options.UseSqlServer(connectionString);
             });
+            services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<ApplicationUser>(options =>
             {
@@ -68,7 +69,7 @@ namespace OnyxScoutApplication.Server
             {
                 if (!env.IsDevelopment())
                 {
-                    options.PublicOrigin = configuration.GetValue<string>("PublicOrigin");
+                  //  options.PublicOrigin = configuration.GetValue<string>("PublicOrigin");
                 }
             }).AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
             {
@@ -111,7 +112,7 @@ namespace OnyxScoutApplication.Server
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                app.UseMigrationsEndPoint();
                 app.UseWebAssemblyDebugging();
             }
             else
@@ -156,6 +157,7 @@ namespace OnyxScoutApplication.Server
 
             IdentityResult roleResult;
             //Adding Admin Role
+            
             var roles = Enum.GetValues(typeof(Role)).Cast<Role>().ToList();
             for (int i = 0; i < roles.Count(); i++)
             {
