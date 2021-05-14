@@ -48,7 +48,7 @@
                 break;
             case FieldType.CascadeField:
                 <BooleanSettingsComponent Field="field"/>
-                <fieldseditor CascadeDepth="@(CascadeDepth + 1)" Fields="field.CascadeFields"/>
+                <FieldsEditor CascadeDepth="@(CascadeDepth + 1)" Fields="field.CascadeFields"/>
                 break;
             case FieldType.OptionSelect:
                 <OptionSelectSettingsComponent Field="field"/>
