@@ -7,7 +7,7 @@
 @inject NotificationManager NotificationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
-@if (format != null)
+@if (teams != null)
 {
     <EventAnalyticGrid Teams="teams" ScoutFormFormatDto="format" ScoutForms="scoutForms"
                        OnTeamClicked="OnTeamClicked" EventAnalyticSettings="analyticSettings"/>
@@ -15,28 +15,34 @@
 
 @code {
     private Event selectedEvent;
-    private List<FormDto> scoutForms = new List<FormDto>();
-    private List<Team> teams = new List<Team>();
-    private ScoutFormFormatDto format = new ScoutFormFormatDto();
+    private List<FormDto> scoutForms = new();
+    private List<Team> teams = new();
+    private ScoutFormFormatDto format = new();
     private EventAnalyticSettingsDto analyticSettings;
 
     protected override async Task OnInitializedAsync()
     {
         selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
-        if (selectedEvent == null)
+        if (selectedEvent is null)
         {
             NotificationManager.Notify("Please select an event first", "", NotificationType.Warning);
             NavigationManager.NavigateTo("/");
             return;
         }
+        
+        format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        if (format is null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
 
         scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEventWithData/" + selectedEvent.Key);
-        teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
         if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
         {
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
-        format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
     }
 
     private void OnTeamClicked(int teamNumber)

@@ -117,6 +117,12 @@ namespace OnyxScoutApplication.Server
             }
             else
             {
+                app.Use((ctx, next) =>
+                {
+                    ctx.Request.Scheme = "https";
+                    ctx.SetIdentityServerOrigin(configuration.GetValue<string>("PublicOrigin"));
+                    return next();
+                });
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -129,14 +135,6 @@ namespace OnyxScoutApplication.Server
             app.UseRouting();
 
             app.UseIdentityServer();
-            if (!env.IsDevelopment())
-            {
-                app.Use((ctx, next) =>
-                {
-                    ctx.SetIdentityServerOrigin(configuration.GetValue<string>("PublicOrigin"));
-                    return next();
-                });
-            }
 
             app.UseAuthentication();
             app.UseAuthorization();
