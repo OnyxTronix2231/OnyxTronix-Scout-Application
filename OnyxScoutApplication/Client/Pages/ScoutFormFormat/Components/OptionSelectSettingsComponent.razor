@@ -4,17 +4,17 @@
 
 <div>
     <label>Field default value</label>
-    <OptionSelectFieldComponent Options="@Field.Options" @bind-Value="@Field.TextDefaultValue"/>
+    <OptionSelectFieldComponent Options="@Field.Options" @bind-Value="@Field.DefaultSelectedOptions"/>
 </div>
     <div>
         <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required"/>
         <ValidationMessage For="@(() => Field.Required)"/>
     </div>
-    @foreach (var (item, index) in options.Select((x, i) => (x, i)))
+    @foreach (var (item, index) in Field.Options.Select((x, i) => (x, i)))
     {
         <div>
             <button type="button" class="btn btn-danger" @onclick="() => RemoveOption(index)">Remove option</button>
-            @{ var v = item.OptionText; }
+            @{ var v = item.Name; }
             <SfTextBox Value="@v" Input="a => Update(a, index)"></SfTextBox >
         </div>
     }
@@ -25,30 +25,26 @@
     </div>
 
 @code {
-    private List<Option> options = new List<Option>();
 
     protected override Task OnInitializedAsync()
     {
-        options = Field.Options.Select(i => new Option {OptionText = i}).ToList();
+       // Field.Options.Select(i => new OptionDto {Name = i}).ToList();
         return base.OnInitializedAsync();
     }
 
     private void AddOption()
     {
-        options.Add(new Option());
-        Field.Options = options.Select(i => i.OptionText).ToList();
+        Field.Options.Add(new OptionDto());
     }
 
     private void RemoveOption(int index)
     {
-        options.RemoveAt(index);
-        Field.Options = options.Select(i => i.OptionText).ToList();
+        Field.Options.RemoveAt(index);
     }
 
     private void Update(InputEventArgs args, int index)
     {
-        options[index].OptionText = args.Value;
-        Field.Options = options.Select(i => i.OptionText).ToList();
+        Field.Options[index].Name = args.Value;
         StateHasChanged();
     }
 

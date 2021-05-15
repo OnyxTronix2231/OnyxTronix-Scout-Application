@@ -7,9 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Server.Data.Extensions;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 using OnyxScoutApplication.Shared.Models.ScoutFormModels;
+using OnyxScoutApplication.Shared.Other;
 using static OnyxScoutApplication.Server.Data.Extensions.Result;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
@@ -45,9 +47,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFields(int id)
         {
-            var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.FieldsInStages).
-                ThenInclude(f => f.Fields).ThenInclude(i => i.CascadeFields).ThenInclude(i => i.CascadeFields)
-                .ThenInclude(i => i.CascadeFields).FirstOrDefaultAsync(i => i.Id == id);
+            var result = await ScoutAppContext.ScoutFormFormats.WithAllFields().FirstOrDefaultAsync(i => i.Id == id);
             if (result == null)
             {
                 return new NotFoundObjectResult("No scout form format found with the id of: " + id);
@@ -60,9 +60,8 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFieldsByYear(int year)
         {
-            var result = await ScoutAppContext.ScoutFormFormats.Include(i => i.FieldsInStages).
-                ThenInclude(f => f.Fields).ThenInclude(i => i.CascadeFields).ThenInclude(i => i.CascadeFields)
-                .ThenInclude(i => i.CascadeFields).FirstOrDefaultAsync(i => i.Year == year);
+            var result = await ScoutAppContext.ScoutFormFormats.WithAllFields().
+                FirstOrDefaultAsync(i => i.Year == year);
             if (result == null)
             {
                 return new NotFoundObjectResult("No scout form format found for year - " + year);
@@ -79,11 +78,37 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             {
                 return new BadRequestObjectResult("No scout from format found to update!");
             }
+
+            var old = await ScoutAppContext.ScoutFormFormats.WithAllFields().FirstAsync(i => i.Year == scoutFormFormatDto.Year);
             var updated = Mapper.Map<ScoutFormFormat>(scoutFormFormatDto);
+            updated = Mapper.Map(updated, old);
             Context.Update(updated);
             return await Task.Run(() => new OkResult());
         }
 
         private ApplicationDbContext ScoutAppContext => Context as ApplicationDbContext;
+    }
+
+    class FieldEquals : IEqualityComparer<Field>
+    {
+        public bool Equals(Field x, Field y)
+        {
+            if (x == y)
+            {
+                return true;
+            }
+
+            if (x is null || y is null)
+            {
+                return false;
+            }
+
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode(Field obj)
+        {
+            return 0;
+        }
     }
 }

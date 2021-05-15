@@ -27,7 +27,7 @@
             } 
             break;
         case FieldType.OptionSelect:
-            <OptionSelectFieldComponent @bind-Value="data.StringValue" Options="@data.Field.Options"/>
+            <OptionSelectFieldComponent @bind-Value="data.SelectedOptions" Options="@data.Field.Options"/>
             break;
         case FieldType.MultipleChoice:
             <MultipleChoiceFieldComponent @bind-Value="data.SelectedOptions" Options="@data.Field.Options" 

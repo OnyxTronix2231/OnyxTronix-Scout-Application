@@ -23,7 +23,6 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 case FieldType.Boolean:
                     destination.BooleanValue = bool.Parse(source.Value);
                     break;
-                case FieldType.OptionSelect:
                 case FieldType.TextField:
                     destination.StringValue = source.Value;
                     break;
@@ -33,8 +32,11 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                         destination.NumericValue = int.Parse(source.Value);
                     }
                     break;
+                case FieldType.OptionSelect:
                 case FieldType.MultipleChoice:
-                    destination.SelectedOptions = source.Value?.Split(';').ToList();
+                   destination.SelectedOptions = source.Value?.Split(";")
+                        .Select(i => context.Mapper.Map<OptionDto>(
+                            source.Field.Options.FirstOrDefault(o => o.Name == i))).Where(i => i is not null).ToList();
                     break;
                 case FieldType.Timer:
                     if (!string.IsNullOrWhiteSpace(source.Value))

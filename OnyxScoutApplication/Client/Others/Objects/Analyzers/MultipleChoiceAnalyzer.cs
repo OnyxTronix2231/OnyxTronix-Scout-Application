@@ -26,22 +26,22 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 totalCount++;
                 foreach (var selectedOption in formData.SelectedOptions)
                 {
-                    if (string.IsNullOrWhiteSpace(selectedOption))
+                    if (string.IsNullOrWhiteSpace(selectedOption.Name))
                     {
                         continue;
                     }
-                    if (optionsCount.ContainsKey(selectedOption))
+                    if (optionsCount.ContainsKey(selectedOption.Name))
                     {
-                        optionsCount[selectedOption] = optionsCount[formData.StringValue]++;
+                        optionsCount[selectedOption.Name] = optionsCount[selectedOption.Name]++;
                     }
                     else
                     {
-                        optionsCount.Add(selectedOption, 1);
+                        optionsCount.Add(selectedOption.Name, 1);
                     }
                 }
             }
 
-            foreach (var key in field.Options)
+            foreach (var key in field.Options.Select(i => i.Name))
             {
                 float count = 0;
                 if (optionsCount.ContainsKey(key))

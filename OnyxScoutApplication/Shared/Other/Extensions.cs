@@ -19,5 +19,15 @@ namespace OnyxScoutApplication.Shared.Other
         {
             return field.Concat(field.SelectMany(i => WithCascadeData(i.CascadeData)).ToList()).ToList();
         }
+        
+        public static List<Field> WithCascadeFields(this List<Field> field)
+        {
+            return field.Concat(field.SelectMany(i => WithCascadeFields(i.CascadeFields)).ToList()).ToList();
+        }
+        
+        public static List<FormData> WithCascadeData(this List<FormData> field)
+        {
+            return field.Concat(field.SelectMany(i => WithCascadeData(i.CascadeData)).ToList()).ToList();
+        }
     }
 }

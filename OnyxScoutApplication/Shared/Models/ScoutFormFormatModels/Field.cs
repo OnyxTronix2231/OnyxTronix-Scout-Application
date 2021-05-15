@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
@@ -32,7 +34,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         public FieldType FieldType { get; set; }
 
         [ForeignKey("FieldsInStage")]
-        public int? FieldStageId { get; set; }
+        public int FieldStageId { get; set; }
         
         public FieldsInStage FieldsInStage { get; set; }
 
@@ -44,7 +46,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         
         public bool AllowManualInput { get; set; }
 
-        public string Options { get; set; } = "";
+        public List<Option> Options { get; set; }
 
         public int MaximumSelectionLength { get; set; }
 
@@ -52,4 +54,13 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
         public int Index { get; set; }
     }
+
+    public class Option
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public float PercentWeight { get; set; }
+        public int FieldId { get; set; }
+    }
+
 }

@@ -17,12 +17,12 @@
 
 <br/>
 
-@foreach (var (item, index) in options.Select((x, i) => (x, i)))
+@foreach (var (item, index) in Field.Options.Select((x, i) => (x, i)))
 {
     <div>
         <button type="button" class="btn btn-danger" @onclick="() => RemoveOption(index)">Remove option</button>
         @{ var v = item; }
-        <SfTextBox Value="@v" Input="a => UpdateOption(a, index)"></SfTextBox>
+        <SfTextBox Value="@v.Name" Input="a => UpdateOption(a, index)"></SfTextBox>
 
     </div>
 }
@@ -35,30 +35,26 @@
 </div>
 
 @code {
-    private List<string> options = new List<string>();
 
     protected override Task OnInitializedAsync()
     {
-        options = Field.Options.ToList();
+        //options = Field.Options.ToList();
         return base.OnInitializedAsync();
     }
 
     private void AddOption()
     {
-        options.Add("");
-        Field.Options = options.ToList();
+        Field.Options.Add(new OptionDto());
     }
 
     private void RemoveOption(int index)
     {
-        options.RemoveAt(index);
-        Field.Options = options.ToList();
+        Field.Options.RemoveAt(index);
     }
 
     private void UpdateOption(InputEventArgs args, int index)
     {
-        options[index] = args.Value;
-        Field.Options = options.ToList();
+        Field.Options[index].Name = args.Value;
         StateHasChanged();
     }
 

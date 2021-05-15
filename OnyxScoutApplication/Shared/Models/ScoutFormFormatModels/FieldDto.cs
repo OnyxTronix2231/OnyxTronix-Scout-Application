@@ -8,7 +8,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
     {
         public int Id { get; set; }
 
-        public int ScoutFormFormatId { get; set; }
+       // public int ScoutFormFormatId { get; set; }
 
         public string Name { get; set; }
 
@@ -32,13 +32,13 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         
         public bool AllowManualInput { get; set; }
 
-        public List<string> Options { get; set; } = new List<string>();
-
-        public List<string> DefaultSelectedOptions { get; set; } = new List<string>();
+        public List<OptionDto> Options { get; set; } = new();
+        
+        public List<OptionDto> DefaultSelectedOptions { get; set; } = new();
 
         public int MaximumSelectionLength { get; set; }
 
-        public List<FieldDto> CascadeFields { get; set; } = new List<FieldDto>();
+        public List<FieldDto> CascadeFields { get; set; } = new();
 
         public int Index { get; set; }
 
@@ -50,5 +50,12 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
             if (ReferenceEquals(null, other)) return 1;
             return Index.CompareTo(other.Index);
         }
+    }
+    
+    public class OptionDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public float PercentWeight { get; set; }
     }
 }

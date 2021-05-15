@@ -28,6 +28,8 @@ namespace OnyxScoutApplication.Server.Data
         public DbSet<Form> ScoutForms { get; set; }
         
         public DbSet<CustomEvent> Events { get; set; }
+        
+        public DbSet<Field> Fields { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

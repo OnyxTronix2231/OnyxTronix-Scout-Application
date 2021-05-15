@@ -59,13 +59,13 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 case FieldType.Boolean:
                     formData.BooleanValue = field.BoolDefaultValue;
                     break;
-                case FieldType.OptionSelect:
                 case FieldType.TextField:
                     formData.StringValue = field.TextDefaultValue;
                     break;
                 case FieldType.Integer:
                     formData.NumericValue = field.NumericDefaultValue;
                     break;
+                case FieldType.OptionSelect:
                 case FieldType.MultipleChoice:
                     formData.SelectedOptions = field.DefaultSelectedOptions;
                     break;

@@ -314,7 +314,7 @@ namespace OnyxScoutApplication.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Index = table.Column<int>(type: "int", nullable: false),
-                    ScoutFormFormatId = table.Column<int>(type: "int", nullable: true)
+                    ScoutFormFormatId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -324,7 +324,7 @@ namespace OnyxScoutApplication.Server.Migrations
                         column: x => x.ScoutFormFormatId,
                         principalTable: "ScoutFormFormats",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -380,7 +380,7 @@ namespace OnyxScoutApplication.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Field",
+                name: "Fields",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -391,31 +391,30 @@ namespace OnyxScoutApplication.Server.Migrations
                     NumericDefaultValue = table.Column<int>(type: "int", nullable: true),
                     CascadeConditionDefaultValue = table.Column<bool>(type: "bit", nullable: false),
                     FieldType = table.Column<int>(type: "int", nullable: false),
-                    FieldStageId = table.Column<int>(type: "int", nullable: true),
+                    FieldStageId = table.Column<int>(type: "int", nullable: false),
                     MaxValue = table.Column<int>(type: "int", nullable: false),
                     MinValue = table.Column<int>(type: "int", nullable: false),
                     Required = table.Column<bool>(type: "bit", nullable: false),
                     AllowManualInput = table.Column<bool>(type: "bit", nullable: false),
-                    Options = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MaximumSelectionLength = table.Column<int>(type: "int", nullable: false),
                     Index = table.Column<int>(type: "int", nullable: false),
                     FieldId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Field", x => x.Id);
+                    table.PrimaryKey("PK_Fields", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Field_Field_FieldId",
+                        name: "FK_Fields_Fields_FieldId",
                         column: x => x.FieldId,
-                        principalTable: "Field",
+                        principalTable: "Fields",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Field_FieldsInStage_FieldStageId",
+                        name: "FK_Fields_FieldsInStage_FieldStageId",
                         column: x => x.FieldStageId,
                         principalTable: "FieldsInStage",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -433,9 +432,9 @@ namespace OnyxScoutApplication.Server.Migrations
                 {
                     table.PrimaryKey("PK_FormData", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FormData_Field_FieldId",
+                        name: "FK_FormData_Fields_FieldId",
                         column: x => x.FieldId,
-                        principalTable: "Field",
+                        principalTable: "Fields",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -450,6 +449,27 @@ namespace OnyxScoutApplication.Server.Migrations
                         principalTable: "FormDataInStage",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Option",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PercentWeight = table.Column<float>(type: "real", nullable: false),
+                    FieldId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Option", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Option_Fields_FieldId",
+                        column: x => x.FieldId,
+                        principalTable: "Fields",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -533,13 +553,13 @@ namespace OnyxScoutApplication.Server.Migrations
                 column: "Expiration");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Field_FieldId",
-                table: "Field",
+                name: "IX_Fields_FieldId",
+                table: "Fields",
                 column: "FieldId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Field_FieldStageId",
-                table: "Field",
+                name: "IX_Fields_FieldStageId",
+                table: "Fields",
                 column: "FieldStageId");
 
             migrationBuilder.CreateIndex(
@@ -566,6 +586,11 @@ namespace OnyxScoutApplication.Server.Migrations
                 name: "IX_FormDataInStage_FormId",
                 table: "FormDataInStage",
                 column: "FormId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Option_FieldId",
+                table: "Option",
+                column: "FieldId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersistedGrants_Expiration",
@@ -613,6 +638,9 @@ namespace OnyxScoutApplication.Server.Migrations
                 name: "FormData");
 
             migrationBuilder.DropTable(
+                name: "Option");
+
+            migrationBuilder.DropTable(
                 name: "PersistedGrants");
 
             migrationBuilder.DropTable(
@@ -628,19 +656,19 @@ namespace OnyxScoutApplication.Server.Migrations
                 name: "Events");
 
             migrationBuilder.DropTable(
-                name: "Field");
+                name: "FormDataInStage");
 
             migrationBuilder.DropTable(
-                name: "FormDataInStage");
+                name: "Fields");
 
             migrationBuilder.DropTable(
                 name: "CustomAlliance");
 
             migrationBuilder.DropTable(
-                name: "FieldsInStage");
+                name: "ScoutForms");
 
             migrationBuilder.DropTable(
-                name: "ScoutForms");
+                name: "FieldsInStage");
 
             migrationBuilder.DropTable(
                 name: "ScoutFormFormats");

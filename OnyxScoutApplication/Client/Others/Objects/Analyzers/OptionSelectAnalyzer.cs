@@ -36,7 +36,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 }
             }
 
-            foreach (var key in field.Options)
+            foreach (var key in field.Options.Select(i => i.Name))
             {
                 float count = 0;
                 if (optionsCount.ContainsKey(key))

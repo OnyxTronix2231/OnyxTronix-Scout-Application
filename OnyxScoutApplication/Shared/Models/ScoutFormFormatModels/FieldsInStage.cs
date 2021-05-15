@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.InteropServices;
 
@@ -10,7 +11,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         public string Name { get; set; }
         public int Index { get; set; }
         [ForeignKey("ScoutFormFormat")]
-        public int? ScoutFormFormatId { get; set; }
+        public int ScoutFormFormatId { get; set; }
         public ScoutFormFormat ScoutFormFormat { get; set; }
         public List<Field> Fields { get; set; }
     }

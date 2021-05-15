@@ -10,7 +10,7 @@ using OnyxScoutApplication.Server.Data;
 namespace OnyxScoutApplication.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210514140916_Init")]
+    [Migration("20210515171320_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -479,7 +479,7 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<int?>("FieldId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("FieldStageId")
+                    b.Property<int>("FieldStageId")
                         .HasColumnType("int");
 
                     b.Property<int>("FieldType")
@@ -503,9 +503,6 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<int?>("NumericDefaultValue")
                         .HasColumnType("int");
 
-                    b.Property<string>("Options")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("Required")
                         .HasColumnType("bit");
 
@@ -518,7 +515,7 @@ namespace OnyxScoutApplication.Server.Migrations
 
                     b.HasIndex("FieldStageId");
 
-                    b.ToTable("Field");
+                    b.ToTable("Fields");
                 });
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.FieldsInStage", b =>
@@ -534,7 +531,7 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ScoutFormFormatId")
+                    b.Property<int>("ScoutFormFormatId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -542,6 +539,29 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.HasIndex("ScoutFormFormatId");
 
                     b.ToTable("FieldsInStage");
+                });
+
+            modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.Option", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("FieldId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("PercentWeight")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FieldId");
+
+                    b.ToTable("Option");
                 });
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.ScoutFormFormat", b =>
@@ -751,7 +771,9 @@ namespace OnyxScoutApplication.Server.Migrations
 
                     b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.FieldsInStage", "FieldsInStage")
                         .WithMany("Fields")
-                        .HasForeignKey("FieldStageId");
+                        .HasForeignKey("FieldStageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("FieldsInStage");
                 });
@@ -760,9 +782,20 @@ namespace OnyxScoutApplication.Server.Migrations
                 {
                     b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.ScoutFormFormat", "ScoutFormFormat")
                         .WithMany("FieldsInStages")
-                        .HasForeignKey("ScoutFormFormatId");
+                        .HasForeignKey("ScoutFormFormatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ScoutFormFormat");
+                });
+
+            modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.Option", b =>
+                {
+                    b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.Field", null)
+                        .WithMany("Options")
+                        .HasForeignKey("FieldId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormModels.FormData", b =>
@@ -830,6 +863,8 @@ namespace OnyxScoutApplication.Server.Migrations
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.Field", b =>
                 {
                     b.Navigation("CascadeFields");
+
+                    b.Navigation("Options");
                 });
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.FieldsInStage", b =>

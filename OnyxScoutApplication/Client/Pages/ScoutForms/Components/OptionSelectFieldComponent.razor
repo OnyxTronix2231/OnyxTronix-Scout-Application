@@ -1,14 +1,28 @@
-﻿@inherits FormInputBase<string>
+﻿@inherits FormInputBase<List<OptionDto>>
 
-<SfDropDownList TValue="string" TItem="string" DataSource="Options" @bind-Value="CurrentValue"/>
+<SfDropDownList TValue="@OptionDto" TItem="@OptionDto" DataSource="@Options" @bind-Value="@option">
+    <DropDownListFieldSettings Text="Name" Value="Name"></DropDownListFieldSettings>
+    <DropDownListEvents TValue="OptionDto" TItem="OptionDto"  ValueChange="OnValueSelect"></DropDownListEvents>
+</SfDropDownList>
+
 <ValidationMessage For="@ValueExpression"/>
 @code {
     [Parameter]
-    public IEnumerable<string> Options { get; set; }
-    protected override bool TryParseValueFromString(string value, out string result, [NotNullWhen(false)] out string validationErrorMessage)
+    public IEnumerable<OptionDto> Options { get; set; }
+
+    private OptionDto option = new();
+
+    protected override bool TryParseValueFromString(string value, out List<OptionDto> result, [NotNullWhen(false)] out string validationErrorMessage)
     {
         validationErrorMessage = null;
-        result = value;
+        //result = new List<OptionDto>() { Name = value};
+        result = new List<OptionDto>();
         return true;
     }
+
+    private void OnValueSelect()
+    {
+        CurrentValue = new List<OptionDto> {option};
+    }
+
 }
