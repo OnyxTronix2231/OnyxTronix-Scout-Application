@@ -1,18 +1,27 @@
 ﻿@using Syncfusion.Blazor.Inputs
+@using System.Collections.ObjectModel
 
 @inherits FormInputBase<List<OptionDto>>
 <div>
     <SfMultiSelect @bind-Value="CurrentValue" Mode="VisualMode.CheckBox"
-                    MaximumSelectionLength="MaximumSelectionLength == 0 
-                    ? Options.Count : MaximumSelectionLength"
-                    DataSource="Options"/>
+                   MaximumSelectionLength="MaximumSelectionLength == 0 ? options.Count : MaximumSelectionLength"
+                   DataSource="options">
+        <MultiSelectFieldSettings Value="Index" Text="Name" ></MultiSelectFieldSettings>
+    </SfMultiSelect>
 
-    <ValidationMessage For="@ValueExpression"/>
+    <validationmessage For="@ValueExpression"/>
 </div>
 
 @code {
+
+    private ObservableCollection<OptionDto> options;
     [Parameter]
-    public List<OptionDto> Options { get; set; }= new();
+    public List<OptionDto> Options
+    {
+        get => options.ToList();
+        set => options = new ObservableCollection<OptionDto>(value);
+    }
+
     [Parameter]
     public int MaximumSelectionLength { get; set; }
 
@@ -22,4 +31,5 @@
         result = new List<OptionDto>();
         return true;
     }
+
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 
 namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
@@ -52,10 +54,39 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         }
     }
     
-    public class OptionDto
+    public class OptionDto : INotifyPropertyChanged
     {
+        private string name;
+        private int index;
         public int Id { get; set; }
-        public string Name { get; set; }
+
+        public string Name
+        {
+            get => name;
+            set
+            {
+                name = value;
+                OnPropertyChanged();
+            }
+        }
+
         public float PercentWeight { get; set; }
+
+        public int Index
+        {
+            get => index;
+            set
+            {
+                index = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

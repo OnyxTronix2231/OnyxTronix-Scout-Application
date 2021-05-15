@@ -44,16 +44,23 @@
 
     private void AddOption()
     {
-        Field.Options.Add(new OptionDto());
+        Field.Options.Add(new OptionDto(){Index = Field.Options.Count});
+        StateHasChanged();
     }
 
     private void RemoveOption(int index)
     {
         Field.Options.RemoveAt(index);
+        foreach (var optionDto in Field.Options.Skip(index))
+        {
+            optionDto.Index -= 1;
+        }
+        StateHasChanged();
     }
 
     private void UpdateOption(InputEventArgs args, int index)
     {
+        Console.WriteLine($"Changed to: {args.Value}");
         Field.Options[index].Name = args.Value;
         StateHasChanged();
     }

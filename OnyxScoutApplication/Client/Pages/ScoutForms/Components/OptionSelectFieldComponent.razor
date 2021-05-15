@@ -1,4 +1,5 @@
-﻿@inherits FormInputBase<List<OptionDto>>
+﻿@using System.Collections.ObjectModel
+@inherits FormInputBase<List<OptionDto>>
 
 <SfDropDownList TValue="@OptionDto" TItem="@OptionDto" DataSource="@Options" @bind-Value="@option">
     <DropDownListFieldSettings Text="Name" Value="Name"></DropDownListFieldSettings>
@@ -7,8 +8,14 @@
 
 <ValidationMessage For="@ValueExpression"/>
 @code {
+
+    private ObservableCollection<OptionDto> options;
     [Parameter]
-    public IEnumerable<OptionDto> Options { get; set; }
+    public IEnumerable<OptionDto> Options
+    {
+        get => options;
+        set => options = new ObservableCollection<OptionDto>(value);
+    }
 
     private OptionDto option = new();
 
