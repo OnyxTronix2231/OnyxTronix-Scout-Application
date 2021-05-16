@@ -36,12 +36,6 @@
 
 @code {
 
-    protected override Task OnInitializedAsync()
-    {
-        //options = Field.Options.ToList();
-        return base.OnInitializedAsync();
-    }
-
     private void AddOption()
     {
         Field.Options.Add(new OptionDto(){Index = Field.Options.Count});

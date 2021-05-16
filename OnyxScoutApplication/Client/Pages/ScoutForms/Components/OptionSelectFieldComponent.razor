@@ -17,7 +17,15 @@
         set => options = new ObservableCollection<OptionDto>(value);
     }
 
-    private OptionDto option = new();
+    protected override void OnInitialized()
+    {
+        if (CurrentValue?.Count > 0)
+        {
+            option = CurrentValue[0];
+        }
+    }
+
+    private OptionDto option;
 
     protected override bool TryParseValueFromString(string value, out List<OptionDto> result, [NotNullWhen(false)] out string validationErrorMessage)
     {

@@ -26,12 +26,6 @@
 
 @code {
 
-    protected override Task OnInitializedAsync()
-    {
-       // Field.Options.Select(i => new OptionDto {Name = i}).ToList();
-        return base.OnInitializedAsync();
-    }
-
     private void AddOption()
     {
         Field.Options.Add(new OptionDto());

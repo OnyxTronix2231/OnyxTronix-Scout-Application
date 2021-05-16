@@ -20,6 +20,6 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 
         public string Value { get; set; }
 
-        public List<FormData> CascadeData { get; set; } = new List<FormData>();
+        public List<FormData> CascadeData { get; set; } = new();
     }
 }

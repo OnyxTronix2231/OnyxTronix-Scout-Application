@@ -23,20 +23,19 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
         public string Name { get; set; }
 
-        public string TextDefaultValue { get; set; }
-
-        public bool BoolDefaultValue { get; set; }
-
-        public int? NumericDefaultValue { get; set; }
-
-        public bool CascadeConditionDefaultValue { get; set; }
+        public string DefaultValue { get; set; }
 
         public FieldType FieldType { get; set; }
 
         [ForeignKey("FieldsInStage")]
-        public int FieldStageId { get; set; }
+        public int? FieldStageId { get; set; }
+        
+        [ForeignKey("ParentField")]
+        public int? FieldId { get; set; }
         
         public FieldsInStage FieldsInStage { get; set; }
+        
+        public Field ParentField { get; set; }
 
         public int MaxValue { get; set; } = 9999;
 
@@ -59,6 +58,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int Index { get; set; }
         public float PercentWeight { get; set; }
         public int FieldId { get; set; }
     }

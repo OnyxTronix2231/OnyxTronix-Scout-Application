@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnyxScoutApplication.Server.Data;
 
 namespace OnyxScoutApplication.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210516115507_FixFieldRelation")]
+    partial class FixFieldRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -760,7 +762,7 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.Field", "ParentField")
                         .WithMany("CascadeFields")
                         .HasForeignKey("FieldId")
-                        .OnDelete(DeleteBehavior.ClientCascade);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.FieldsInStage", "FieldsInStage")
                         .WithMany("Fields")

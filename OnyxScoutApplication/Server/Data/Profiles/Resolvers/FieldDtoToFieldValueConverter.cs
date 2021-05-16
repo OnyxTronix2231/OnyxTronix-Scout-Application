@@ -9,32 +9,32 @@ using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 
 namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 {
-    public class ScoutFormDataValueConverter : IValueResolver<FormDataDto, FormData, string>
+    public class FieldDtoToFieldValueConverter : IValueResolver<FieldDto, Field, string>
     {
-        public string Resolve(FormDataDto source, FormData destination, string destMember,
+        public string Resolve(FieldDto source, Field destination, string destMember,
             ResolutionContext context)
         {
-            switch (source.Field.FieldType)
+            switch (source.FieldType)
             {
                 case FieldType.CascadeField:
                 case FieldType.Boolean:
-                    destination.Value = source.BooleanValue.ToString();
+                    destination.DefaultValue = source.BoolDefaultValue.ToString();
                     break;
                 case FieldType.TextField:
-                    destination.Value = source.StringValue;
+                    destination.DefaultValue = source.TextDefaultValue;
                     break;
                 case FieldType.Integer:
-                    destination.Value = source.NumericValue?.ToString();
+                    destination.DefaultValue = source.NumericDefaultValue?.ToString();
                     break;
                 case FieldType.OptionSelect:
                 case FieldType.MultipleChoice:
-                    if (source.SelectedOptions != null)
+                    if (source.DefaultSelectedOptions != null)
                     {
-                        destination.Value = string.Join(";", source.SelectedOptions.Select(i => i.Name));
+                        destination.DefaultValue = string.Join(";", source.DefaultSelectedOptions.Select(i => i.Name));
                     }
                     break;
                 case FieldType.Timer:
-                    destination.Value = source.NumericValue?.ToString();
+                    destination.DefaultValue = source.NumericDefaultValue?.ToString();
                     break;
                 case FieldType.None:
                     throw new ArgumentOutOfRangeException();
@@ -42,7 +42,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                     throw new ArgumentOutOfRangeException();
             }
 
-            return destination.Value;
+            return destination.DefaultValue;
         }
     }
 }

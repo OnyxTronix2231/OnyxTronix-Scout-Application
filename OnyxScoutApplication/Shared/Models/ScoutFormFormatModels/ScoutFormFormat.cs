@@ -9,6 +9,6 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
         public int Year { get; set; }
 
-        public List<FieldsInStage> FieldsInStages { get; set; } = new List<FieldsInStage>();
+        public List<FieldsInStage> FieldsInStages { get; set; } = new();
     }
 }

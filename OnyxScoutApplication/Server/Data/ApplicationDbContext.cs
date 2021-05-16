@@ -40,6 +40,18 @@ namespace OnyxScoutApplication.Server.Data
                 .WithOne(x => x.User)
                 .HasForeignKey(ur => ur.UserId)
                 .IsRequired();
+            
+            builder.Entity<FieldsInStage>()
+                .HasMany(x => x.Fields)
+                .WithOne(x => x.FieldsInStage)
+                .HasForeignKey(p => p.FieldStageId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Entity<Field>()
+                .HasMany(x => x.CascadeFields)
+                .WithOne(x => x.ParentField)
+                .HasForeignKey(p => p.FieldId)
+                .OnDelete(DeleteBehavior.ClientCascade);
         }
     }
 }

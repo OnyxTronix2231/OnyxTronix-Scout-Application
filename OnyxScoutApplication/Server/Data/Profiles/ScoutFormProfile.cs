@@ -18,26 +18,12 @@ namespace OnyxScoutApplication.Server.Data.Profiles
     {
         public ScoutFormProfile()
         {
-            CreateMap<FieldDto, Field>().ForMember(des => des.Options, opt =>
-            {
-                // opt.PreCondition(src =>
-                //     src.FieldType == FieldType.OptionSelect || src.FieldType == FieldType.MultipleChoice);
-                // opt.MapFrom(src => src.Options.Aggregate((i, j) => i + ";" + j));
-            }).ForMember(des => des.TextDefaultValue,
-                opt => opt.MapFrom(src =>
-                    src.FieldType == FieldType.MultipleChoice
-                        ? src.DefaultSelectedOptions.Select(i => i.Name).Aggregate(string.Empty, (i, j) => i + ";" + j)
-                        : src.TextDefaultValue))
-                ;
-
-            CreateMap<Field, FieldDto>()
-                // .ForMember(des => des.Options,
-                    // opt => opt.MapFrom(des => des.Options.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()))
-                .ForMember(des => des.DefaultSelectedOptions,
-                    opt => opt.MapFrom(src =>
-                        src.TextDefaultValue.Split(';', StringSplitOptions.RemoveEmptyEntries).
-                            Select(i => src.Options.FirstOrDefault(ii => ii.Name == i)).Where(i => i != null).ToList()))
-                ;
+            CreateMap<FieldDto, Field>().
+                ForMember(des => des.DefaultValue, opt => opt.MapFrom<FieldDtoToFieldValueConverter>());
+                
+            CreateMap<Field, FieldDto>().AfterMap<FieldToFieldDtoConvertor>();
+            CreateMap<Field, Field>();
+            
             CreateMap<Option, OptionDto>();
             CreateMap<OptionDto, Option>();
 
@@ -48,9 +34,9 @@ namespace OnyxScoutApplication.Server.Data.Profiles
             CreateMap<ScoutFormFormatDto, ScoutFormFormat>();
 
             CreateMap<FormDataDto, FormData>()
-                .ForMember(des => des.Value, opt => opt.MapFrom<ScoutFormDataValueConverter>())
+                .ForMember(des => des.Value, opt => opt.MapFrom<FormDataDtoToFormDataValueConverter>())
                 .ForMember(dst => dst.Field, op => op.Ignore());
-            CreateMap<FormData, FormDataDto>().AfterMap<ScoutFormDataDtoValueParser>();
+            CreateMap<FormData, FormDataDto>().AfterMap<FormDataToFormDataDtoConvertor>();
 
             CreateMap<Form, Form>();
             CreateMap<FormDto, Form>();
@@ -60,6 +46,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles
 
             CreateMap<FieldsInStage, FieldsInStageDto>();
             CreateMap<FieldsInStageDto, FieldsInStage>();
+            CreateMap<FieldsInStage, FieldsInStage>();
 
             CreateMap<FormDataInStage, FormDataInStageDto>();
             CreateMap<FormDataInStageDto, FormDataInStage>();

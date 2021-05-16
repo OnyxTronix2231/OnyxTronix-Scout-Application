@@ -30,7 +30,6 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                     "This scout format already exists for this year!");
             }
 
-           
             return await base.Add(scoutFormFormat);
         }
 
@@ -53,9 +52,9 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                 return new NotFoundObjectResult("No scout form format found with the id of: " + id);
             }
 
-            result.FieldsInStages = result.FieldsInStages.OrderBy(i => i.Index).ToList();
-            result.FieldsInStages.ForEach(i => i.Fields.Sort((f1, f2) => f1.Index.CompareTo(f2.Index)));
-            return Mapper.Map<ScoutFormFormatDto>(result);
+            var dto = Mapper.Map<ScoutFormFormatDto>(result);
+            SortScoutFormFormat(dto);
+            return dto;
         }
 
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFieldsByYear(int year)
@@ -68,8 +67,9 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             }
 
             result.FieldsInStages = result.FieldsInStages.OrderBy(i => i.Index).ToList();
-            var r = Mapper.Map<ScoutFormFormatDto>(result);
-            return r;
+            var dto = Mapper.Map<ScoutFormFormatDto>(result);
+            SortScoutFormFormat(dto);
+            return dto;
         }
 
         public async Task<ActionResult> Update(int id, ScoutFormFormatDto scoutFormFormatDto)
@@ -81,34 +81,48 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
             var old = await ScoutAppContext.ScoutFormFormats.WithAllFields().FirstAsync(i => i.Year == scoutFormFormatDto.Year);
             var updated = Mapper.Map<ScoutFormFormat>(scoutFormFormatDto);
+            
             updated = Mapper.Map(updated, old);
             Context.Update(updated);
             return await Task.Run(() => new OkResult());
         }
 
+        private void SetFieldsInStageId(ScoutFormFormat updated)
+        {
+            foreach (var stage in updated.FieldsInStages)
+            {
+                SetFieldsInStageIdForEach(stage.Fields, stage.Id);
+            }
+        }
+
+        private void SetFieldsInStageIdForEach(List<Field> stageFields, int stageId)
+        {
+            foreach (var field in stageFields)
+            {
+                field.FieldStageId = stageId;
+                SetFieldsInStageIdForEach(field.CascadeFields, stageId);
+            }
+        }
+
+        private void SortScoutFormFormat(ScoutFormFormatDto scoutFormFormat)
+        {
+            scoutFormFormat.FieldsInStages.Sort((i1,i2) => i1.Index.CompareTo(i2.Index));
+            foreach (var stage in scoutFormFormat.FieldsInStages)
+            {
+                SortForEachField(stage.Fields);
+            }
+        }
+        
+        private void SortForEachField(List<FieldDto> fields)
+        {
+            fields.Sort((i1,i2) => i1.Index.CompareTo(i2.Index));
+            foreach (var field in fields)
+            {
+                field.Options.Sort((i1,i2) => i1.Index.CompareTo(i2.Index));
+                SortForEachField(field.CascadeFields);
+            }
+        }
+
         private ApplicationDbContext ScoutAppContext => Context as ApplicationDbContext;
-    }
-
-    class FieldEquals : IEqualityComparer<Field>
-    {
-        public bool Equals(Field x, Field y)
-        {
-            if (x == y)
-            {
-                return true;
-            }
-
-            if (x is null || y is null)
-            {
-                return false;
-            }
-
-            return x.Id == y.Id;
-        }
-
-        public int GetHashCode(Field obj)
-        {
-            return 0;
-        }
     }
 }

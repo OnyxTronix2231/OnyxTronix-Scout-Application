@@ -10,7 +10,9 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
     {
         public int Id { get; set; }
 
-       // public int ScoutFormFormatId { get; set; }
+       public int? FieldStageId { get; set; }
+       
+       public int? FieldId { get; set; }
 
         public string Name { get; set; }
 

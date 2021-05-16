@@ -11,37 +11,37 @@ using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 {
-    public class ScoutFormDataDtoValueParser : IMappingAction<FormData, FormDataDto>
+    public class FieldToFieldDtoConvertor : IMappingAction<Field, FieldDto>
     {
-        public void Process(FormData source, FormDataDto destination, ResolutionContext context)
+        public void Process(Field source, FieldDto destination, ResolutionContext context)
         {
-            switch (source.Field.FieldType)
+            switch (source.FieldType)
             {
                 case FieldType.CascadeField:
-                    destination.CascadeData = context.Mapper.Map<List<FormDataDto>>(source.CascadeData);
+                    destination.CascadeFields = context.Mapper.Map<List<FieldDto>>(source.CascadeFields);
                     goto case FieldType.Boolean;
                 case FieldType.Boolean:
-                    destination.BooleanValue = bool.Parse(source.Value);
+                    destination.BoolDefaultValue = bool.Parse(source.DefaultValue);
                     break;
                 case FieldType.TextField:
-                    destination.StringValue = source.Value;
+                    destination.TextDefaultValue = source.DefaultValue;
                     break;
                 case FieldType.Integer:
-                    if (!string.IsNullOrWhiteSpace(source.Value))
+                    if (!string.IsNullOrWhiteSpace(source.DefaultValue))
                     {
-                        destination.NumericValue = int.Parse(source.Value);
+                        destination.NumericDefaultValue = int.Parse(source.DefaultValue);
                     }
                     break;
                 case FieldType.OptionSelect:
                 case FieldType.MultipleChoice:
-                   destination.SelectedOptions = source.Value?.Split(";")
+                   destination.DefaultSelectedOptions = source.DefaultValue?.Split(";")
                         .Select(i => context.Mapper.Map<OptionDto>(
-                            source.Field.Options.FirstOrDefault(o => o.Name == i))).Where(i => i is not null).ToList();
+                            source.Options.FirstOrDefault(o => o.Name == i))).Where(i => i is not null).ToList();
                     break;
                 case FieldType.Timer:
-                    if (!string.IsNullOrWhiteSpace(source.Value))
+                    if (!string.IsNullOrWhiteSpace(source.DefaultValue))
                     {
-                        destination.NumericValue = float.Parse(source.Value);
+                        destination.NumericDefaultValue = float.Parse(source.DefaultValue);
                     }
                     break;
                 case FieldType.None:
