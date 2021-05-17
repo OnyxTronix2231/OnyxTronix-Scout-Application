@@ -17,14 +17,25 @@
 
 <br/>
 
-@foreach (var (item, index) in Field.Options.Select((x, i) => (x, i)))
+@foreach (var (option, index) in Field.Options.Select((x, i) => (x, i)))
 {
     <div>
-        <button type="button" class="btn btn-danger" @onclick="() => RemoveOption(index)">Remove option</button>
-        @{ var v = item; }
-        <SfTextBox Value="@v.Name" Input="a => UpdateOption(a, index)"></SfTextBox>
-
+        @if (!SafeModeEnabled || FormType == FormType.Create || option.IsNew)
+        {
+            <button type="button" class="btn btn-danger" @onclick="() => RemoveOption(index)">Remove option</button>
+        }
     </div>
+    <div class="form-group col-lg-12 row">
+        <div class="col-lg-5">
+            <label>Option name</label>
+            <SfTextBox Value="@option.Name" Input="a => UpdateOption(a, index)"/>
+        </div>
+        <div class="col-lg-7">
+            <label>Option percent weight</label>
+            <SfNumericTextBox Step=0.05f Format="p2" Max="1" Min="-1" @bind-Value="@option.PercentWeight"/>
+        </div>
+    </div>
+    <br>
 }
 <ValidationMessage For="@(() => Field.Options)"/>
 
@@ -35,10 +46,14 @@
 </div>
 
 @code {
+    [Parameter]
+    public FormType FormType { get; set; }
+    [Parameter]
+    public bool SafeModeEnabled { get; set; }
 
     private void AddOption()
     {
-        Field.Options.Add(new OptionDto(){Index = Field.Options.Count});
+        Field.Options.Add(new OptionDto(){Index = Field.Options.Count, IsNew = true, PercentWeight = 1f});
         StateHasChanged();
     }
 
@@ -49,14 +64,11 @@
         {
             optionDto.Index -= 1;
         }
-        StateHasChanged();
     }
 
     private void UpdateOption(InputEventArgs args, int index)
     {
-        Console.WriteLine($"Changed to: {args.Value}");
         Field.Options[index].Name = args.Value;
-        StateHasChanged();
     }
 
 }

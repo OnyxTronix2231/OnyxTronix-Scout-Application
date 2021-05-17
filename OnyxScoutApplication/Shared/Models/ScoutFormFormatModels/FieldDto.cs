@@ -48,6 +48,8 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
         public bool IsCollapsed { get; set; }
         
+        public bool IsNew { get; set; }
+        
         public int CompareTo(FieldDto other)
         {
             if (ReferenceEquals(this, other)) return 0;
@@ -83,6 +85,8 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
                 OnPropertyChanged();
             }
         }
+
+        public bool IsNew { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

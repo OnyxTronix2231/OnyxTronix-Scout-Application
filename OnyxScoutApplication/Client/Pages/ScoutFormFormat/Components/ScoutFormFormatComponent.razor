@@ -17,20 +17,32 @@
             <SfTextBox @bind-Value="newStageName"/>
         </div>
         <div>
-            <label>Stage name</label>
             <SfButton type="button" @onclick="OnAddStageClick">Add stage</SfButton>
         </div>
         <br/>
+        @if (Type == FormType.Update)
+        {
+            <AuthorizeView Context="Auth" Roles="@(Role.Owner.ToString())">
+                <div>
+                    <SfButton type="button" CssClass="@cssClass" IsToggle="true" Content="@safeModeButtonText"
+                              @onclick="ToggleSafeMode"/>
+                </div>
+            </AuthorizeView>
+        }
     </div>
 
     @for (var i = 0; i < ScoutFormFormat.FieldsInStages.Count; i++)
     {
         var fieldsInStage = ScoutFormFormat.FieldsInStages[i];
         var index = i;
-        <div class="e-icons">
-            <ValidationMessage For="@(() => fieldsInStage)"/>
-            <h3>@fieldsInStage.Name</h3>
-            <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveStage(fieldsInStage)">Remove stage</SfButton>
+        var safeToChnage = Type == FormType.Create || fieldsInStage.IsNew;
+        <ValidationMessage For="@(() => fieldsInStage)"/>
+        <div class="e-icons" style="display: inline-block">
+            <h3 style="display: inline-block">@fieldsInStage.Name</h3>
+            @if (!safeMode || safeToChnage)
+            {
+                <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveStage(fieldsInStage)">Remove stage</SfButton>
+            }
             <SfButton Disabled="@(index == 0)" type="button" CssClass="e-primary e-round"
                       IconCss="e-icons e-triangleUp" @onclick="() => MoveUp(index)">
             </SfButton>
@@ -38,11 +50,14 @@
                       IconCss="e-icons e-triangleDown" @onclick="() => MoveDown(index)">
             </SfButton>
         </div>
-        <ValidationMessage For="@(() => fieldsInStage.Fields)"/>
         <br>
-        <CollapsibleView @bind-Value="@fieldsInStage.IsCollapsed"/>
-        <div class="form-group collapse @(fieldsInStage.IsCollapsed ? "show" : "")" style="padding-left:2em">
-            <FieldsEditor Fields="fieldsInStage.Fields"></FieldsEditor>
+        <br>
+        <div>
+            <CollapsibleView @bind-Value="@fieldsInStage.IsCollapsed"/>
+        </div>
+        <br>
+        <div class="form-group col-lg-6 col-md-6 collapse @(fieldsInStage.IsCollapsed ? "show" : "")" style="padding-left:2em">
+            <FieldsEditor SafeModeEnabled="safeMode" FormType="Type" Fields="fieldsInStage.Fields"></FieldsEditor>
         </div>
     }
 
@@ -62,11 +77,19 @@
     [Parameter]
     public FormType Type { get; set; }
 
+    private string safeModeButtonText;
+    private SfButton toggleSafeModeButton;
     private string newStageName;
+    private bool safeMode;
+    private string cssClass;
+
+    protected override void OnInitialized()
+    {
+        ToggleSafeMode();
+    }
 
     private void OnValidSubmit()
     {
-    // ScoutFormFormat.FieldsInStages.ToList().ForEach(i => i.Fields.RemoveAll(f => f.FieldType == FieldType.None || string.IsNullOrWhiteSpace(f.Name)));
         for (var i = 0; i < ScoutFormFormat.FieldsInStages.Count; i++)
         {
             ScoutFormFormat.FieldsInStages[i].Index = i;
@@ -95,7 +118,7 @@
         {
             return;
         }
-        ScoutFormFormat.FieldsInStages.Add(new FieldsInStageDto() {Name = newStageName});
+        ScoutFormFormat.FieldsInStages.Add(new FieldsInStageDto() {Name = newStageName, IsNew = true});
     }
 
     private void RemoveStage(FieldsInStageDto stage)
@@ -115,6 +138,21 @@
         var field = ScoutFormFormat.FieldsInStages[index];
         ScoutFormFormat.FieldsInStages.RemoveAt(index);
         ScoutFormFormat.FieldsInStages.Insert(index + 1, field);
+    }
+
+    private void ToggleSafeMode()
+    {
+        safeMode = !safeMode;
+        if (safeMode)
+        {
+            safeModeButtonText = "Disable safe mode";
+            cssClass = "e-danger";
+        }
+        else
+        {
+            safeModeButtonText = "Enable safe mode";
+            cssClass = "e-success";
+        }
     }
 
 }

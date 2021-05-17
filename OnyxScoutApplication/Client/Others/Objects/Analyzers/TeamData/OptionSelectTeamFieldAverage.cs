@@ -9,17 +9,20 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 {
     public class OptionSelectTeamFieldAverage : TeamFieldAverage
     {
-        public Dictionary<string, Tuple<float, float>> OptionsAverage { get; }
+        public Dictionary<string, OptionCalc> OptionsAverage { get; }
+        public int TotalCount { get; set; }
 
         public OptionSelectTeamFieldAverage(FieldDto field) : base(field)
         {
-            OptionsAverage = new Dictionary<string, Tuple<float, float>>();
+            OptionsAverage = new Dictionary<string, OptionCalc>();
         }
 
         public override MarkupString GetFormattedAverage()
         {
-            return new MarkupString(string.Join("<br />",
-                OptionsAverage.Select(i => $"{i.Key}: {i.Value.Item1}/{i.Value.Item2}")));
+            var v = new MarkupString(string.Join("<br />",
+                OptionsAverage.Select(i => $"{i.Key}: {i.Value.Count}/{TotalCount}")));
+            v = new MarkupString(v + "<br />" + GetRelativeValue().ToString("N2"));
+            return v;
         }
 
         public override int CompareTo(TeamFieldAverage other)
@@ -34,7 +37,21 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 
         public override double GetRelativeValue()
         {
-            return 0; //TODO: calculate relative value
+            double value = 0;
+            foreach (var option in OptionsAverage.Values)
+            {
+                value += option.Count * option.PercentWeight;
+            }
+
+            return value;
         }
+
+       
+    }
+    
+    public class OptionCalc
+    {
+        public int Count { get; init; }
+        public float PercentWeight { get; init; }
     }
 }

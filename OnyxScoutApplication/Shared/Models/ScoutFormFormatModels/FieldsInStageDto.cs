@@ -11,6 +11,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         public ScoutFormFormatDto ScoutFormFormat { get; set; }
         public List<FieldDto> Fields { get; set; } = new List<FieldDto>();
         public bool IsCollapsed { get; set; }
+        public bool IsNew { get; set; }
 
         public int CompareTo(FieldsInStageDto other)
         {

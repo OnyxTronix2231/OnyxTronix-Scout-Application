@@ -24,27 +24,32 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                     continue;
                 }
                 totalCount++;
-                if (string.IsNullOrWhiteSpace(formData.StringValue))
-                    continue;
-                if (optionsCount.ContainsKey(formData.StringValue))
+                if (formData.SelectedOptions.Count == 0)
                 {
-                    optionsCount[formData.StringValue] = optionsCount[formData.StringValue]++;
+                    continue;
+                }
+                
+                if (optionsCount.ContainsKey(formData.SelectedOptions[0].Name))
+                {
+                    optionsCount[formData.SelectedOptions[0].Name]++;
                 }
                 else
                 {
-                    optionsCount.Add(formData.StringValue, 1);
+                    optionsCount.Add(formData.SelectedOptions[0].Name, 1);
                 }
             }
 
-            foreach (var key in field.Options.Select(i => i.Name))
+            fieldAverage.TotalCount = totalCount;
+            foreach (var option in field.Options)
             {
-                float count = 0;
-                if (optionsCount.ContainsKey(key))
+                int count = 0;
+                if (optionsCount.ContainsKey(option.Name))
                 {
-                    count = optionsCount[key];
+                    count = optionsCount[option.Name];
                 }
 
-                fieldAverage.OptionsAverage.Add(key, new Tuple<float, float>(count, totalCount));
+                fieldAverage.OptionsAverage.Add(option.Name, new OptionCalc{Count = count,
+                    PercentWeight = option.PercentWeight});
             }
 
             return fieldAverage;

@@ -3,7 +3,7 @@
 
 <SfDropDownList TValue="@OptionDto" TItem="@OptionDto" DataSource="@Options" @bind-Value="@option">
     <DropDownListFieldSettings Text="Name" Value="Name"></DropDownListFieldSettings>
-    <DropDownListEvents TValue="OptionDto" TItem="OptionDto"  ValueChange="OnValueSelect"></DropDownListEvents>
+    <DropDownListEvents TValue="@OptionDto" TItem="@OptionDto"  ValueChange="OnValueSelect"></DropDownListEvents>
 </SfDropDownList>
 
 <ValidationMessage For="@ValueExpression"/>
@@ -37,6 +37,11 @@
 
     private void OnValueSelect()
     {
+        if (option is null)
+        {
+            CurrentValue = new List<OptionDto>();
+            return;
+        }
         CurrentValue = new List<OptionDto> {option};
     }
 

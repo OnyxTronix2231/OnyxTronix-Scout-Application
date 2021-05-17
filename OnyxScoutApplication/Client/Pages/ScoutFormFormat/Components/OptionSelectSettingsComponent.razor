@@ -10,12 +10,20 @@
         <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required"/>
         <ValidationMessage For="@(() => Field.Required)"/>
     </div>
-    @foreach (var (item, index) in Field.Options.Select((x, i) => (x, i)))
+    @foreach (var (option, index) in Field.Options.Select((x, i) => (x, i)))
     {
         <div>
             <button type="button" class="btn btn-danger" @onclick="() => RemoveOption(index)">Remove option</button>
-            @{ var v = item.Name; }
-            <SfTextBox Value="@v" Input="a => Update(a, index)"></SfTextBox >
+            <div class="form-group col-lg-12 row">
+                <div class="col-lg-5">
+                    <label>Option name</label>
+                    <SfTextBox Value="@option.Name" Input="a => Update(a, index)"/>
+                </div>
+                <div class="col-lg-7">
+                    <label>Option percent weight</label>
+                    <SfNumericTextBox Step=0.05f Format="p2" Max="1" Min="-1" @bind-Value="@option.PercentWeight"/>
+                </div>
+            </div>
         </div>
     }
     <ValidationMessage For="@(() => Field.Options)"/>
@@ -28,18 +36,21 @@
 
     private void AddOption()
     {
-        Field.Options.Add(new OptionDto());
+        Field.Options.Add(new OptionDto() {Index = Field.Options.Count, IsNew = true, PercentWeight = 1f});
     }
 
     private void RemoveOption(int index)
     {
         Field.Options.RemoveAt(index);
+        foreach (var optionDto in Field.Options.Skip(index))
+        {
+            optionDto.Index -= 1;
+        }
     }
 
     private void Update(InputEventArgs args, int index)
     {
         Field.Options[index].Name = args.Value;
-        StateHasChanged();
     }
 
 }

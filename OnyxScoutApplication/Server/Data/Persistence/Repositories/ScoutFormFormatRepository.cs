@@ -87,23 +87,6 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return await Task.Run(() => new OkResult());
         }
 
-        private void SetFieldsInStageId(ScoutFormFormat updated)
-        {
-            foreach (var stage in updated.FieldsInStages)
-            {
-                SetFieldsInStageIdForEach(stage.Fields, stage.Id);
-            }
-        }
-
-        private void SetFieldsInStageIdForEach(List<Field> stageFields, int stageId)
-        {
-            foreach (var field in stageFields)
-            {
-                field.FieldStageId = stageId;
-                SetFieldsInStageIdForEach(field.CascadeFields, stageId);
-            }
-        }
-
         private void SortScoutFormFormat(ScoutFormFormatDto scoutFormFormat)
         {
             scoutFormFormat.FieldsInStages.Sort((i1,i2) => i1.Index.CompareTo(i2.Index));

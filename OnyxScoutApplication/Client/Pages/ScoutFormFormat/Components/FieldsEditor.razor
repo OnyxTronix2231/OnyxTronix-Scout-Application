@@ -5,9 +5,12 @@
 {
     int currentIndex = i;
     FieldDto field = Fields[i];
-
+    var safeToChnage = FormType == FormType.Create || field.IsNew;
     <div class="e-icons">
-        <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveField(currentIndex)">Remove field</SfButton>
+        @if (!SafeModeEnabled || safeToChnage)
+        {
+            <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveField(currentIndex)">Remove field</SfButton>
+        }
         <SfButton Disabled="@(currentIndex == 0)" type="button" CssClass="e-primary e-round"
                   IconCss="e-icons e-triangleUp" @onclick="() => MoveUp(currentIndex)">
         </SfButton>
@@ -22,7 +25,7 @@
     </div>
     <div>
         <label>Field type</label>
-        <select class="form-control" @bind="field.FieldType">
+        <select class="form-control" @bind="field.FieldType" disabled="@(!safeToChnage)">
             @foreach (var type in GetFields())
             {
                 <option value="@type">@type</option>
@@ -48,13 +51,14 @@
                 break;
             case FieldType.CascadeField:
                 <BooleanSettingsComponent Field="field"/>
-                <FieldsEditor CascadeDepth="@(CascadeDepth + 1)" Fields="field.CascadeFields"/>
+                <FieldsEditor SafeModeEnabled="SafeModeEnabled" FormType="FormType" 
+                              CascadeDepth="@(CascadeDepth + 1)" Fields="field.CascadeFields"/>
                 break;
             case FieldType.OptionSelect:
                 <OptionSelectSettingsComponent Field="field"/>
                 break;
             case FieldType.MultipleChoice:
-                <MultipleChoiceSettingsComponent Field="field"/>
+                <MultipleChoiceSettingsComponent FormType="FormType" SafeModeEnabled="SafeModeEnabled" Field="field"/>
                 break;
             case FieldType.Timer:
                 <TimeCounterSettingsComponent Field="field"/>
@@ -73,6 +77,10 @@
 
     [Parameter]
     public List<FieldDto> Fields { get; set; }
+    [Parameter]
+    public FormType FormType { get; set; }
+    [Parameter]
+    public bool SafeModeEnabled { get; set; }
 
     [Parameter]
     public int CascadeDepth { get; set; }
@@ -81,7 +89,7 @@
     {
         if (Fields.Count <= 24)
         {
-            Fields.Add(new FieldDto {Index = Fields.Count});
+            Fields.Add(new FieldDto {Index = Fields.Count, IsNew = true});
         }
     }
 

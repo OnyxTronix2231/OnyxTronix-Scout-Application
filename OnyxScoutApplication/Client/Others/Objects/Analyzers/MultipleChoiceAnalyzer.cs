@@ -26,13 +26,9 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 totalCount++;
                 foreach (var selectedOption in formData.SelectedOptions)
                 {
-                    if (string.IsNullOrWhiteSpace(selectedOption.Name))
-                    {
-                        continue;
-                    }
                     if (optionsCount.ContainsKey(selectedOption.Name))
                     {
-                        optionsCount[selectedOption.Name] = optionsCount[selectedOption.Name]++;
+                        optionsCount[selectedOption.Name]++;
                     }
                     else
                     {
@@ -41,15 +37,17 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 }
             }
 
-            foreach (var key in field.Options.Select(i => i.Name))
+            fieldAverage.TotalCount = totalCount;
+            foreach (var option in field.Options)
             {
-                float count = 0;
-                if (optionsCount.ContainsKey(key))
+                int count = 0;
+                if (optionsCount.ContainsKey(option.Name))
                 {
-                    count = optionsCount[key];
+                    count = optionsCount[option.Name];
                 }
 
-                fieldAverage.OptionsAverage.Add(key, new Tuple<float, float>(count, totalCount));
+                fieldAverage.OptionsAverage.Add(option.Name, new OptionCalc{Count = count,
+                    PercentWeight = option.PercentWeight});
             }
 
             return fieldAverage;
