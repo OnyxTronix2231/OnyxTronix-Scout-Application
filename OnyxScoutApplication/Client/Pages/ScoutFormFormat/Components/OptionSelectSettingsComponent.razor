@@ -13,7 +13,10 @@
     @foreach (var (option, index) in Field.Options.Select((x, i) => (x, i)))
     {
         <div>
-            <button type="button" class="btn btn-danger" @onclick="() => RemoveOption(index)">Remove option</button>
+            @if (!SafeModeEnabled || FormType == FormType.Create || option.IsNew)
+            {
+                <button type="button" class="btn btn-danger" @onclick="() => RemoveOption(index)">Remove option</button>
+            }
             <div class="form-group col-lg-12 row">
                 <div class="col-lg-5">
                     <label>Option name</label>
@@ -33,7 +36,10 @@
     </div>
 
 @code {
-
+    [Parameter]
+    public FormType FormType { get; set; }
+    [Parameter]
+    public bool SafeModeEnabled { get; set; }
     private void AddOption()
     {
         Field.Options.Add(new OptionDto() {Index = Field.Options.Count, IsNew = true, PercentWeight = 1f});

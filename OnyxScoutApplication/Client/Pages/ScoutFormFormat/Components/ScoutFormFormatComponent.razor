@@ -55,11 +55,11 @@
         <div>
             <CollapsibleView @bind-Value="@fieldsInStage.IsCollapsed"/>
         </div>
-        <br>
         <div class="form-group col-lg-6 col-md-6 collapse @(fieldsInStage.IsCollapsed ? "show" : "")" style="padding-left:2em">
             <FieldsEditor SafeModeEnabled="safeMode" FormType="Type" Fields="fieldsInStage.Fields"></FieldsEditor>
         </div>
-    }
+        <br>
+ }
 
     <br/>
     @{ var v = Type == FormType.Create ? "Add" : "Save"; }

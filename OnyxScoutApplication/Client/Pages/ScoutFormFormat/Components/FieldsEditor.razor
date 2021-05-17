@@ -55,7 +55,7 @@
                               CascadeDepth="@(CascadeDepth + 1)" Fields="field.CascadeFields"/>
                 break;
             case FieldType.OptionSelect:
-                <OptionSelectSettingsComponent Field="field"/>
+                <OptionSelectSettingsComponent  FormType="FormType" SafeModeEnabled="SafeModeEnabled" Field="field"/>
                 break;
             case FieldType.MultipleChoice:
                 <MultipleChoiceSettingsComponent FormType="FormType" SafeModeEnabled="SafeModeEnabled" Field="field"/>
@@ -67,6 +67,7 @@
                 throw new ArgumentOutOfRangeException();
         }
     </div>
+    <br>
 }
 
 <div>
