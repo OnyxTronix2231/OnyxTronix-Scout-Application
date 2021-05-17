@@ -10,8 +10,8 @@ using OnyxScoutApplication.Server.Data;
 namespace OnyxScoutApplication.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210516112501_FixOptionIndex")]
-    partial class FixOptionIndex
+    [Migration("20210517145700_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -476,7 +476,7 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<int?>("FieldId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FieldStageId")
+                    b.Property<int?>("FieldStageId")
                         .HasColumnType("int");
 
                     b.Property<int>("FieldType")
@@ -759,17 +759,19 @@ namespace OnyxScoutApplication.Server.Migrations
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.Field", b =>
                 {
-                    b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.Field", null)
+                    b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.Field", "ParentField")
                         .WithMany("CascadeFields")
-                        .HasForeignKey("FieldId");
+                        .HasForeignKey("FieldId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
 
                     b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.FieldsInStage", "FieldsInStage")
                         .WithMany("Fields")
                         .HasForeignKey("FieldStageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("FieldsInStage");
+
+                    b.Navigation("ParentField");
                 });
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.FieldsInStage", b =>

@@ -386,19 +386,16 @@ namespace OnyxScoutApplication.Server.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TextDefaultValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BoolDefaultValue = table.Column<bool>(type: "bit", nullable: false),
-                    NumericDefaultValue = table.Column<int>(type: "int", nullable: true),
-                    CascadeConditionDefaultValue = table.Column<bool>(type: "bit", nullable: false),
+                    DefaultValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FieldType = table.Column<int>(type: "int", nullable: false),
-                    FieldStageId = table.Column<int>(type: "int", nullable: false),
+                    FieldStageId = table.Column<int>(type: "int", nullable: true),
+                    FieldId = table.Column<int>(type: "int", nullable: true),
                     MaxValue = table.Column<int>(type: "int", nullable: false),
                     MinValue = table.Column<int>(type: "int", nullable: false),
                     Required = table.Column<bool>(type: "bit", nullable: false),
                     AllowManualInput = table.Column<bool>(type: "bit", nullable: false),
                     MaximumSelectionLength = table.Column<int>(type: "int", nullable: false),
-                    Index = table.Column<int>(type: "int", nullable: false),
-                    FieldId = table.Column<int>(type: "int", nullable: true)
+                    Index = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -458,6 +455,7 @@ namespace OnyxScoutApplication.Server.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Index = table.Column<int>(type: "int", nullable: false),
                     PercentWeight = table.Column<float>(type: "real", nullable: false),
                     FieldId = table.Column<int>(type: "int", nullable: false)
                 },
