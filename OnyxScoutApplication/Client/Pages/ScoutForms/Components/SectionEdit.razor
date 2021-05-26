@@ -5,8 +5,6 @@
     <label>@data.Field.Name</label>
     @switch (data.Field.FieldType)
     {
-        case FieldType.None:
-            break;
         case FieldType.TextField:
             <TextFieldComponent @bind-Value="data.StringValue"/>
             break;

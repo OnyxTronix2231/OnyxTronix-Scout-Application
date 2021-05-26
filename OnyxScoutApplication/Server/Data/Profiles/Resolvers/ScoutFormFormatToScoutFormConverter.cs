@@ -51,8 +51,6 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
         {
             switch (field.FieldType)
             {
-                case FieldType.None:
-                    break;
                 case FieldType.CascadeField:
                     formData.CascadeData = mapper.Map<List<FormDataDto>>(field.CascadeFields);
                     goto case FieldType.Boolean;

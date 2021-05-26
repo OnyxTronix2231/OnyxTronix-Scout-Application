@@ -44,8 +44,6 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                         destination.NumericValue = float.Parse(source.Value);
                     }
                     break;
-                case FieldType.None:
-                    throw new ArgumentOutOfRangeException();
                 default:
                     throw new ArgumentOutOfRangeException();
             }

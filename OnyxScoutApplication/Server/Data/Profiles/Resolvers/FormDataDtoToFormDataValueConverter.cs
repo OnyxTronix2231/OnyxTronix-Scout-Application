@@ -36,8 +36,6 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 case FieldType.Timer:
                     destination.Value = source.NumericValue?.ToString();
                     break;
-                case FieldType.None:
-                    throw new ArgumentOutOfRangeException();
                 default:
                     throw new ArgumentOutOfRangeException();
             }

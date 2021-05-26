@@ -7,7 +7,6 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
     public enum FieldType
     {
-        None,
         Boolean,
         TextField,
         Integer,

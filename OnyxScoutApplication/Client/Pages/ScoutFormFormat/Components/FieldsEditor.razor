@@ -38,8 +38,6 @@
     <div class="form-group collapse @(field.IsCollapsed ? "show" : "")" style="padding-left:2em">
         @switch (field.FieldType)
         {
-            case FieldType.None:
-                break;
             case FieldType.TextField:
                 <TextSettingsComponent Field="field"/>
                 break;
