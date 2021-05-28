@@ -1,6 +1,6 @@
 ﻿@page "/ScoutForm/Edit/{Id:int}"
-@inject HttpClientManager Http
-@inject NavigationManager NavigationManager
+@inject HttpClientManager http
+@inject NavigationManager navigationManager
 @attribute [OnyxAuthorize(Role = Role.Admin)]
 
 @if (form != null)
@@ -18,17 +18,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var oldForm = await Http.GetJson<FormDto>("ScoutForm/ " + Id);
+        var oldForm = await http.GetJson<FormDto>("ScoutForm/ " + Id);
         if (oldForm == null)
         {
-            NavigationManager.NavigateTo("/");
+            navigationManager.NavigateTo("/");
             return;
         }
         
-        form = await Http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/ " + oldForm.Year);
+        form = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/ " + oldForm.Year);
         if (form == null)
         {
-            NavigationManager.NavigateTo("/");
+            navigationManager.NavigateTo("/");
             return;
         }
         MapForms(oldForm, form);
@@ -76,9 +76,9 @@
 
     private async Task OnValidSubmit()
     {
-        if (await Http.TryPutJson("ScoutForm/" + Id, form))
+        if (await http.TryPutJson("ScoutForm/" + Id, form))
         {
-            NavigationManager.NavigateTo("/");
+            navigationManager.NavigateTo("/");
         }
     }
 

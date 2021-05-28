@@ -1,15 +1,19 @@
 ﻿@using System.Collections.ObjectModel
 @inherits FormInputBase<List<OptionDto>>
 
-<SfDropDownList TValue="@OptionDto" TItem="@OptionDto" DataSource="@Options" @bind-Value="@option">
+<SfDropDownList TValue="@OptionDto" TItem="@OptionDto" DataSource="@Options" @bind-Value="@option"  
+                Readonly="@(FormType == FormType.View)" ShowClearButton="true">
     <DropDownListFieldSettings Text="Name" Value="Name"></DropDownListFieldSettings>
     <DropDownListEvents TValue="@OptionDto" TItem="@OptionDto"  ValueChange="OnValueSelect"></DropDownListEvents>
 </SfDropDownList>
 
 <ValidationMessage For="@ValueExpression"/>
 @code {
-
+    [Parameter]
+    public FormType FormType { get; set; }
+    
     private ObservableCollection<OptionDto> options;
+    
     [Parameter]
     public IEnumerable<OptionDto> Options
     {

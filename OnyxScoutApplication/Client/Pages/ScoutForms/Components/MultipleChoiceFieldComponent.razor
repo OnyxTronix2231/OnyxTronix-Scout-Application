@@ -5,7 +5,8 @@
 <div>
     <SfMultiSelect @bind-Value="CurrentValue" Mode="VisualMode.CheckBox"
                    MaximumSelectionLength="MaximumSelectionLength == 0 ? options.Count : MaximumSelectionLength"
-                   DataSource="options">
+                   DataSource="options"  Readonly="@(FormType == FormType.View)" 
+                   ShowClearButton="@(FormType != FormType.View)">
         <MultiSelectFieldSettings Value="Index" Text="Name" ></MultiSelectFieldSettings>
     </SfMultiSelect>
 
@@ -13,8 +14,14 @@
 </div>
 
 @code {
-
+    [Parameter]
+    public FormType FormType { get; set; }
+    
+    [Parameter]
+    public int MaximumSelectionLength { get; set; }
+    
     private ObservableCollection<OptionDto> options;
+    
     [Parameter]
     public List<OptionDto> Options
     {
@@ -22,8 +29,7 @@
         set => options = new ObservableCollection<OptionDto>(value);
     }
 
-    [Parameter]
-    public int MaximumSelectionLength { get; set; }
+   
 
     protected override bool TryParseValueFromString(string value, out List<OptionDto> result, [NotNullWhen(false)] out string validationErrorMessage)
     {

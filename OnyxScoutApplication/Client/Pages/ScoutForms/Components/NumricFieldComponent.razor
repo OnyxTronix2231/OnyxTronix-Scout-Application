@@ -4,12 +4,17 @@
 
 @inherits FormInputBase<float?>
 <div>
-    <SfNumericTextBox Format="@("N" + Decimals)" Decimals="Decimals" Min="Min" Max="Max" @bind-Value="CurrentValue"/>
+    <SfNumericTextBox @bind-Value="CurrentValue" Format="@("N" + Decimals)" Decimals="Decimals" Min="Min" Max="Max" 
+                      Readonly="@(FormType == FormType.View)" ShowClearButton="true"
+                      ShowSpinButton="@(FormType != FormType.View)"/>
     <ValidationMessage For="ValueExpression"/>
 </div>
 
 @code {
 
+    [Parameter]
+    public FormType FormType { get; set; }
+    
     [Parameter]
     public int? Decimals { get; set; }
 

@@ -1,12 +1,13 @@
 ﻿@inherits FormInputBase<bool>
 
 <div>
-    <SfCheckBox CssClass="e-info" @bind-Checked="CurrentValue"/>
+        <SfCheckBox CssClass="e-info" @bind-Checked="CurrentValue" Disabled="@(FormType == FormType.View)"/>
     <ValidationMessage For="@(() => ValueExpression)"/>
 </div>
 
 @code {
-
+    [Parameter]
+    public FormType FormType { get; set; }
     protected override bool TryParseValueFromString(string value, out bool result, [NotNullWhen(false)] out string validationErrorMessage)
     {
         validationErrorMessage = "Value must be a valid boolean";

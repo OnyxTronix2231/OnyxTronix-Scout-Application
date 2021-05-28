@@ -13,7 +13,8 @@ namespace OnyxScoutApplication.Client.Others.Objects
     public enum FormType
     {
         Update,
-        Create
+        Create,
+        View
     }
     
     public abstract class FormInputBase<T> : InputBase<T>

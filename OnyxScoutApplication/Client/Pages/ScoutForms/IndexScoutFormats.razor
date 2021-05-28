@@ -1,8 +1,8 @@
 ﻿@page "/ScoutForms"
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
-@inject NavigationManager NavigationManager
-@inject HttpClientManager Http
-@attribute [OnyxAuthorize(Role = Role.Admin)]
+@inject NavigationManager navigationManager
+@inject HttpClientManager http
+@attribute [OnyxAuthorize(Role = Role.Scouter)]
 <h1>ScoutForms</h1>
 @if (scoutForms == null)
 {
@@ -29,24 +29,33 @@ else
                 <td>@scoutForm.Year</td>
                 <td>@scoutForm.MatchName</td>
                 <td>@scoutForm.WriterUserName</td>
-                <SfButton CssClass="e-warning" @onclick="() => Edit(scoutForm)">Edit</SfButton>
+                <OnyxAuthorizeView Role="@(Role.Admin)">
+                    <SfButton CssClass="e-warning" @onclick="() => Edit(scoutForm)">Edit</SfButton>
+                </OnyxAuthorizeView>
+                <SfButton CssClass="e-info" @onclick="() => View(scoutForm)" style="margin-left :5px">View</SfButton>
             </tr>
         }
         </tbody>
     </table>
 }
 
+
 @code {
     private List<FormDto> scoutForms;
 
     protected override async Task OnInitializedAsync()
     {
-        scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm");
+        scoutForms = await http.GetJson<List<FormDto>>("ScoutForm");
     }
 
     private void Edit(FormDto form)
     {
-        NavigationManager.NavigateTo("ScoutForm/Edit/" + form.Id);
+        navigationManager.NavigateTo("ScoutForm/Edit/" + form.Id);
+    }
+    
+    private void View(FormDto form)
+    {
+        navigationManager.NavigateTo("ScoutForm/View/" + form.Id);
     }
 
 }

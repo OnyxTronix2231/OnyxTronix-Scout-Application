@@ -30,9 +30,12 @@ else
 {
     <div>
         <label>@currentTimeSpan?.ToString(@"mm\:ss\.fff")</label>
-        <SfTimePicker TValue="TimeSpan?" Format="mm\:ss\.fff" Value="@currentTimeSpan">
-            <TimePickerEvents TValue="TimeSpan?" ValueChange="@TimeSpanChanged"> </TimePickerEvents>
-        </SfTimePicker>
+        @if(FormType != FormType.View) 
+        {
+            <SfTimePicker TValue="TimeSpan?" Format="mm\:ss\.fff" Value="@currentTimeSpan">
+                <TimePickerEvents TValue="TimeSpan?" ValueChange="@TimeSpanChanged"> </TimePickerEvents>
+            </SfTimePicker>
+        }
     </div>
     
 }
