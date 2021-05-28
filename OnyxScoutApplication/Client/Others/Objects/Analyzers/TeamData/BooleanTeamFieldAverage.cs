@@ -18,8 +18,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 
         public override MarkupString GetFormattedAverage()
         {
-            return new MarkupString(
-                (GetAverage() * 100).ToString("0.##") + "%" + "<br />" + $"{TrueCount}/{TotalCount}");
+            return new((GetAverage() * 100).ToString("N2") + "%" + "<br />" + $"{TrueCount}/{TotalCount}");
         }
 
         public override int CompareTo(TeamFieldAverage other)

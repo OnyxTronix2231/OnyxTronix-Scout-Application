@@ -18,7 +18,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 
         public override MarkupString GetFormattedAverage()
         {
-            return new MarkupString(Average.ToString("0.##"));
+            return new(Average.ToString("N2"));
         }
 
         public string GetFormattedHighValuesByCount(int count)
