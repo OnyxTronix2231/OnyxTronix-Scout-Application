@@ -33,7 +33,7 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
 
         private static bool NotContainEmpty(List<OptionDto> v)
         {
-            return v.Any(i => !string.IsNullOrWhiteSpace(i.Name));
+            return v.All(i => !string.IsNullOrWhiteSpace(i.Name));
         }
 
         private static bool ContainsOptions(List<OptionDto> options)
