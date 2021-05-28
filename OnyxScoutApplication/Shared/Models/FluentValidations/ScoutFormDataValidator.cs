@@ -14,13 +14,11 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
         public ScoutFormDataValidator()
         {
             RuleFor(x => x.NumericValue).Must(BeNumberBetween)
-                .WithMessage((model, s) =>
+                .WithMessage(model => 
                     "Value must be a number between " + model.Field.MinValue + " and " + model.Field.MaxValue)
-                .When(c => c.Field.FieldType == FieldType.Integer);
+                .When(c => c.Field.FieldType is FieldType.Integer or FieldType.Timer);
             RuleFor(x => x.NumericValue).NotEmpty().WithMessage((model, s) => $"Field {model.Field.Name} required")
-                .When(m => m.Field.Required &&
-                           (m.Field.FieldType == FieldType.Integer || 
-                           m.Field.FieldType == FieldType.Timer));
+                .When(m => m.Field.Required && m.Field.FieldType is FieldType.Integer or FieldType.Timer);
             
             RuleFor(x => x.StringValue).NotEmpty().WithMessage((model, s) => $"Field {model.Field.Name} required")
                 .When(m => m.Field.Required && m.Field.FieldType == FieldType.TextField);

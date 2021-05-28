@@ -7,9 +7,10 @@
 @if (FormType == FormType.Create)
 {
     <div>
-        <SfButton type="button" @onclick="StartCount">Start count</SfButton>
+        <SfButton type="button" CssClass="@(!stopwatch.IsRunning ? "e-success" : "e-warning	")" @onclick="ToggleCount">
+            @(!stopwatch.IsRunning ? "Start count" : "Stop count")
+        </SfButton>
     </div>
-    <br>
     <div>
         <label>@currentTimeSpan?.ToString(@"mm\:ss\.fff")</label>
         @if (AllowManualInput)
@@ -18,31 +19,30 @@
                 <TimePickerEvents TValue="TimeSpan?" ValueChange="@TimeSpanChanged"> </TimePickerEvents>
              </SfTimePicker>
         }
-        <ValidationMessage For="() => ValueExpression"></ValidationMessage>
     </div>
-    <br>
     <div>
-        <SfButton type="button" @onclick="StopCount">Stop count</SfButton>
-        <SfButton type="button" @onclick="ResetCountAndUpdate">Reset count</SfButton>
+        <SfButton type="button" CssClass="e-danger" @onclick="ResetCountAndUpdate">Reset count</SfButton>
     </div>
-}
+}  
 else
 {
     <div>
         <label>@currentTimeSpan?.ToString(@"mm\:ss\.fff")</label>
         @if(FormType != FormType.View) 
         {
-            <SfTimePicker TValue="TimeSpan?" Format="mm\:ss\.fff" Value="@currentTimeSpan">
+            <SfTimePicker TValue="TimeSpan?"
+                          Format="mm\:ss\.fff" Value="@currentTimeSpan">
                 <TimePickerEvents TValue="TimeSpan?" ValueChange="@TimeSpanChanged"> </TimePickerEvents>
             </SfTimePicker>
         }
     </div>
     
 }
+ <ValidationMessage For="@ValueExpression"/>
+ <br>
 
 
 @code {
-
     [Parameter]
     public FormType FormType { get; set; }
     [Parameter]
@@ -65,14 +65,14 @@ else
         timer.Elapsed += (sender, args) => { UpdateCurrentTime(); };
     }
 
-    private void StartCount()
+    private void ToggleCount()
     {
-        timer.Start();
-        stopwatch.Start();
-    }
-
-    private void StopCount()
-    {
+        if(!stopwatch.IsRunning) 
+        {
+            timer.Start();
+            stopwatch.Start();
+            return;
+        }
         timer.Stop();
         stopwatch.Stop();
         UpdateCurrentTime();

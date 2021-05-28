@@ -2,7 +2,7 @@
 
 <div>
         <SfCheckBox CssClass="e-info" @bind-Checked="CurrentValue" Disabled="@(FormType == FormType.View)"/>
-    <ValidationMessage For="@(() => ValueExpression)"/>
+    <ValidationMessage For="@ValueExpression"/>
 </div>
 
 @code {
