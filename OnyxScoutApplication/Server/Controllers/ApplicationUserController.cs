@@ -51,10 +51,15 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpPut("{name}")]
-        public async Task<ActionResult> UpdateScoutFormFormat(string name,
+        public async Task<ActionResult> UpdateUser(string name,
             [FromBody] ApplicationUserDto applicationUserDto)
         {
             var response = await unitOfWork.ApplicationUser.Update(name, applicationUserDto);
+            if (response is FailResult failResult)
+            {
+                ModelState.AddModelError("NewPassword", string.Join(" ", failResult.Errors));
+                return BadRequest(ModelState);
+            }
             await unitOfWork.Complete();
             return response;
         }

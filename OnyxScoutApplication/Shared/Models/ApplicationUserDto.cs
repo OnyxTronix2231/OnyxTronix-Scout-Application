@@ -9,6 +9,7 @@ namespace OnyxScoutApplication.Shared.Models
     {
         public string Id { get; set; }
         public string UserName { get; set; }
+        public string NewPassword { get; set; }
         public List<ApplicationUserRoleDto> UserRoles { get; set; } = new List<ApplicationUserRoleDto>();
     }
 
