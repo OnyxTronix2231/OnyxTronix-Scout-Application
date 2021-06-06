@@ -68,7 +68,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                 if (resetPasswordResult.Errors.Any())
                 {
                     return new FailResult(HttpStatusCode.BadRequest,
-                        resetPasswordResult.Errors.Select(i => i.Description));
+                        resetPasswordResult.Errors.Select(i => i.Description).ToList());
                 }
             }
 

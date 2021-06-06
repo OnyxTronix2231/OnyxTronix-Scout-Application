@@ -33,7 +33,7 @@ else
                 </td>
                 <SfButton CssClass="e-warning" @onclick="() => Edit(applicationUser)">Edit</SfButton>
                 <OnyxAuthorizeView Role="@(Role.Owner)">
-                    <SfButton CssClass="e-danger" @onclick="() => ChangePassword(applicationUser)">
+                    <SfButton CssClass="e-danger" style="margin-left :5px" @onclick="() => ChangePassword(applicationUser)">
                         Change password
                     </SfButton>
                 </OnyxAuthorizeView>
