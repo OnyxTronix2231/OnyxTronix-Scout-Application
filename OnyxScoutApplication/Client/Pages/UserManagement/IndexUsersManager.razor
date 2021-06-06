@@ -32,6 +32,11 @@ else
                     @roles
                 </td>
                 <SfButton CssClass="e-warning" @onclick="() => Edit(applicationUser)">Edit</SfButton>
+                <OnyxAuthorizeView Role="@(Role.Owner)">
+                    <SfButton CssClass="e-danger" style="margin-left :5px" @onclick="() => ChangePassword(applicationUser)">
+                        Change password
+                    </SfButton>
+                </OnyxAuthorizeView>
             </tr>
         }
         </tbody>
@@ -49,6 +54,11 @@ else
     private void Edit(ApplicationUserDto applicationUserDto)
     {
         NavigationManager.NavigateTo("/UsersManager/Edit/" + applicationUserDto.UserName);
+    }
+    
+    private void ChangePassword(ApplicationUserDto applicationUserDto)
+    {
+        NavigationManager.NavigateTo("/UsersManager/ChangePasswordFor/" + applicationUserDto.UserName);
     }
 
 }

@@ -32,9 +32,12 @@
         }
     </div>
 
-    <div>
-        <button type="submit" class="btn btn-primary">@(Type == FormType.Create ? "Add" : "Save")</button>
-    </div>
+    @if (Type != FormType.View)
+    {
+        <div>
+            <button type="submit" class="btn btn-primary">@(Type == FormType.Create ? "Add" : "Save")</button>
+        </div>
+    }
 </EditForm>
 
 @code {

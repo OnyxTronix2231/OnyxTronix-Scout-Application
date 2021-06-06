@@ -11,6 +11,9 @@ namespace OnyxScoutApplication.Server.Models
     public class ApplicationUser : IdentityUser
     {
         public List<ApplicationUserRole> UserRoles { get; set; } = new List<ApplicationUserRole>();
+
+        [NotMapped]
+        public string NewPassword { get; set; }
     }
 
     public class ApplicationRole : IdentityRole

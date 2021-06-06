@@ -6,17 +6,25 @@ using OnyxScoutApplication.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using OnyxScoutApplication.Server.Data.Extensions;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
+using OnyxScoutApplication.Server.Data.Profiles;
 using static OnyxScoutApplication.Server.Data.Extensions.Result;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
     public class ApplicationUserRepository : Repository<ApplicationUser, ApplicationUserDto>, IApplicationUserRepository
     {
-        public ApplicationUserRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
+        private readonly UserManager<ApplicationUser> userManager;
+
+        public ApplicationUserRepository(ApplicationDbContext context, IMapper mapper,
+            UserManager<ApplicationUser> userManager) : base(context, mapper)
         {
+            this.userManager = userManager;
         }
 
         public async Task<ActionResult<List<ApplicationUserDto>>> GetAllWithRoles()
@@ -52,6 +60,18 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         private async Task<ActionResult> Update(ApplicationUser applicationUser, ApplicationUserDto applicationUserDto)
         {
+            if (!string.IsNullOrWhiteSpace(applicationUserDto.NewPassword))
+            {
+                var token = await userManager.GeneratePasswordResetTokenAsync(applicationUser);
+                var resetPasswordResult = await userManager.
+                    ResetPasswordAsync(applicationUser, token, applicationUserDto.NewPassword);
+                if (resetPasswordResult.Errors.Any())
+                {
+                    return new FailResult(HttpStatusCode.BadRequest,
+                        resetPasswordResult.Errors.Select(i => i.Description).ToList());
+                }
+            }
+
             Mapper.Map(applicationUserDto, applicationUser);
             foreach (var userRole in applicationUser.UserRoles)
             {

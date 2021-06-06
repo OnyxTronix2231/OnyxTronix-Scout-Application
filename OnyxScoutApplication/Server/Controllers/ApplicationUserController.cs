@@ -51,7 +51,7 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpPut("{name}")]
-        public async Task<ActionResult> UpdateScoutFormFormat(string name,
+        public async Task<ActionResult> UpdateUser(string name,
             [FromBody] ApplicationUserDto applicationUserDto)
         {
             var response = await unitOfWork.ApplicationUser.Update(name, applicationUserDto);

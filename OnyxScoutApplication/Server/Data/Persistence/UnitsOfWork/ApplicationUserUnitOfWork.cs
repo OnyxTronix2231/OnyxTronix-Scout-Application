@@ -2,7 +2,9 @@
 using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
+using OnyxScoutApplication.Server.Models;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
 {
@@ -10,10 +12,11 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
     {
         private readonly ApplicationDbContext context;
 
-        public ApplicationUserUnitOfWork(ApplicationDbContext context, IMapper mapper)
+        public ApplicationUserUnitOfWork(ApplicationDbContext context, IMapper mapper,  
+            UserManager<ApplicationUser> userManager)
         {
             this.context = context;
-            ApplicationUser = new ApplicationUserRepository(context, mapper);
+            ApplicationUser = new ApplicationUserRepository(context, mapper, userManager);
         }
 
         public IApplicationUserRepository ApplicationUser { get; }
