@@ -54,7 +54,7 @@ namespace OnyxScoutApplication.Server.Data.Extensions
                 .Include(i => i.FieldsInStages)
                 .ThenInclude(f => f.Fields)
                 .ThenInclude(i => i.CascadeFields).ThenInclude(i => i.CascadeFields)
-                .ThenInclude(i => i.CascadeFields).ThenInclude(i => i.Options);
+                .ThenInclude(i => i.CascadeFields).ThenInclude(i => i.Options).AsSplitQuery();
         }
     }
 }
