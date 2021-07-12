@@ -23,8 +23,10 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 {
                     continue;
                 }
+                
                 totalCount++;
-                if (formData.SelectedOptions.Count == 0)
+                
+                if (formData.SelectedOptions is null || formData.SelectedOptions.Count == 0)
                 {
                     continue;
                 }

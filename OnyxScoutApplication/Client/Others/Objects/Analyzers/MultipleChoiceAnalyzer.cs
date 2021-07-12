@@ -23,7 +23,14 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 {
                     continue;
                 }
+                
                 totalCount++;
+
+                if (formData.SelectedOptions is null)
+                {
+                    continue;
+                }
+
                 foreach (var selectedOption in formData.SelectedOptions)
                 {
                     if (optionsCount.ContainsKey(selectedOption.Name))
