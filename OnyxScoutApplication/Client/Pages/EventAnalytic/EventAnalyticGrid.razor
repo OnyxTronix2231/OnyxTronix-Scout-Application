@@ -17,20 +17,10 @@
                         @{
                             var v = (dynamic) context;
                             <div>
-                                @* <span class="clickable" *@
-                                @*       @onclick="() => OnTeamGridClicked(v.TeamNumber)"> *@
-                                @*     @(v.Nickname) *@
-                                @* </span> *@
-                                 <a href="TeamDetails/@v.TeamNumber" class="clickable" 
-                                        @onclick="() => OnTeamGridClicked(v.TeamNumber)">
-                                    @(v.Nickname)
-                                </a>
+                                <a href="TeamDetails/@v.TeamNumber"> @(v.Nickname) </a>
                             </div>
                             <div>
-                                <span class="clickable"
-                                      @onclick="() => OnTeamGridClicked(v.TeamNumber)">
-                                    @(v.TeamNumber)
-                                </span>
+                                <a href="TeamDetails/@v.TeamNumber"> @(v.TeamNumber) </a>
                             </div>
                         }
                     </Template>
