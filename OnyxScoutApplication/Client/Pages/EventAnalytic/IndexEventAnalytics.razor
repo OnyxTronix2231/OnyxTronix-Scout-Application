@@ -45,9 +45,4 @@
         teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
     }
 
-    private void OnTeamClicked(int teamNumber)
-    {
-        NavigationManager.NavigateTo("TeamDetails/" + teamNumber);
-    }
-
 }
