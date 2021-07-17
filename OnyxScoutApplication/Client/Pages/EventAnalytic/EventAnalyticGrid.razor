@@ -10,17 +10,21 @@
                  Toolbar="@toolbarItems" ShowColumnChooser="true" Width="100%">
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
             <GridColumns>
-                <GridColumn HeaderText="Team" Field="TeamNumber" AllowFiltering="true"
+                <GridColumn  HeaderText="Team" Field="TeamNumber" AllowFiltering="true"
                             FilterSettings="@(new FilterSettings {Type = Syncfusion.Blazor.Grids.FilterType.CheckBox})"
                             Width="100px">
                     <Template>
                         @{
                             var v = (dynamic) context;
                             <div>
-                                <span class="clickable"
-                                      @onclick="() => OnTeamGridClicked(v.TeamNumber)">
+                                @* <span class="clickable" *@
+                                @*       @onclick="() => OnTeamGridClicked(v.TeamNumber)"> *@
+                                @*     @(v.Nickname) *@
+                                @* </span> *@
+                                 <a href="TeamDetails/@v.TeamNumber" class="clickable" 
+                                        @onclick="() => OnTeamGridClicked(v.TeamNumber)">
                                     @(v.Nickname)
-                                </span>
+                                </a>
                             </div>
                             <div>
                                 <span class="clickable"
@@ -60,14 +64,10 @@
 
 @code {
 
-    [Parameter]
-    public EventCallback<int> OnTeamClicked { get; set; }
-
     private readonly string[] toolbarItems = {"ColumnChooser"};
 
     private async Task OnTeamGridClicked(int teamNumber)
     {
-        await OnTeamClicked.InvokeAsync(teamNumber);
     }
 
 
