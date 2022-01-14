@@ -1,0 +1,54 @@
+﻿@using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
+<div>
+    <SfGrid DataSource="@CalculatedData" AllowResizing="true" Width="100%">
+        <GridColumns>
+            <GridColumn HeaderText="Name" AllowResizing="true" Width="25%">
+                <Template>
+                    @{
+                        <span> @((context as TeamFieldAverage)!.Field.Name)</span>
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn HeaderText="Avarge/Success rate" AllowResizing="true" Width="25%">
+                <Template>
+                    @{
+                        var f = (TeamFieldAverage) context;
+                        var text = f.GetFormattedAverage();
+                    }
+                    <span>@text</span>
+                </Template>
+            </GridColumn>
+            <GridColumn HeaderText="Min" AllowResizing="true" Width="10%">
+                <Template>
+                    @if (context is NumericTeamFieldAverage numericTeamFieldAverage)
+                    {
+                        <span>@numericTeamFieldAverage.GetFormattedLowValuesByCount(1)</span>
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn HeaderText="Max" AllowResizing="true" Width="10%">
+                <Template>
+                    @if (context is NumericTeamFieldAverage numericTeamFieldAverage)
+                    {
+                        <span>@numericTeamFieldAverage.GetFormattedHighValuesByCount(1)</span>
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn HeaderText="Top 3" AllowResizing="true" Width="20%">
+                <Template>
+                    @if (context is NumericTeamFieldAverage numericTeamFieldAverage)
+                    {
+                        <span>@numericTeamFieldAverage.GetFormattedHighValuesByCount(3)</span>
+                    }
+                </Template>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+@code {
+
+    [Parameter]
+    public List<TeamFieldAverage> CalculatedData { get; set; }
+
+}

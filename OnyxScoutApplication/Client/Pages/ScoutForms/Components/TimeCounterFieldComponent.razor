@@ -1,0 +1,130 @@
+@using System.Timers
+@using System.Diagnostics
+@using System.Diagnostics.CodeAnalysis
+@using System.Globalization
+@inherits InputBase<float?>
+
+@if (FormType == FormType.Create)
+{
+    <div>
+        <SfButton type="button" CssClass="@(!stopwatch.IsRunning ? "e-success" : "e-warning	")" @onclick="ToggleCount">
+            @(!stopwatch.IsRunning ? "Start count" : "Stop count")
+        </SfButton>
+    </div>
+    <div>
+        <label>@currentTimeSpan?.ToString(@"mm\:ss\.fff")</label>
+        @if (AllowManualInput)
+        {
+            <SfTimePicker TValue="TimeSpan?" Format="mm\:ss\.fff" Value="@currentTimeSpan">
+                <TimePickerEvents TValue="TimeSpan?" ValueChange="@TimeSpanChanged"> </TimePickerEvents>
+             </SfTimePicker>
+        }
+    </div>
+    <div>
+        <SfButton type="button" CssClass="e-danger" @onclick="ResetCountAndUpdate">Reset count</SfButton>
+    </div>
+}  
+else
+{
+    <div>
+        <label>@currentTimeSpan?.ToString(@"mm\:ss\.fff")</label>
+        @if(FormType != FormType.View) 
+        {
+            <SfTimePicker TValue="TimeSpan?"
+                          Format="mm\:ss\.fff" Value="@currentTimeSpan">
+                <TimePickerEvents TValue="TimeSpan?" ValueChange="@TimeSpanChanged"> </TimePickerEvents>
+            </SfTimePicker>
+        }
+    </div>
+    
+}
+ <ValidationMessage For="@ValueExpression"/>
+ <br>
+
+
+@code {
+    [Parameter]
+    public FormType FormType { get; set; }
+    [Parameter]
+    public bool AllowManualInput { get; set; }
+
+    private SfTimePicker<TimeSpan?> timePicker;
+    private TimeSpan? currentTimeSpan;
+
+    private Timer timer;
+    private Stopwatch stopwatch;
+
+    protected override void OnInitialized()
+    {
+        timer = new Timer(100);
+        stopwatch = new Stopwatch();
+        if (CurrentValue != null)
+        {
+            currentTimeSpan = TimeSpan.FromSeconds(CurrentValue.Value);
+        }
+        timer.Elapsed += (_, _) => { UpdateCurrentTime(); };
+    }
+
+    private void ToggleCount()
+    {
+        if(!stopwatch.IsRunning) 
+        {
+            timer.Start();
+            stopwatch.Start();
+            return;
+        }
+        timer.Stop();
+        stopwatch.Stop();
+        UpdateCurrentTime();
+    }
+
+    private void ResetCount()
+    {
+        timer.Stop();
+        stopwatch.Reset();
+    }
+    
+    private void ResetCountAndUpdate()
+    {
+        ResetCount();
+        UpdateCurrentTime();
+    }
+
+    private void UpdateCurrentTime()
+    {
+        currentTimeSpan = stopwatch.Elapsed;
+        CurrentValue = (float) stopwatch.Elapsed.TotalSeconds;
+        Console.WriteLine(CurrentValue);
+        StateHasChanged();
+    }
+
+    private void TimeSpanChanged(Syncfusion.Blazor.Calendars.ChangeEventArgs<TimeSpan?> args)
+    {
+        currentTimeSpan = args.Value;
+        StateHasChanged();
+        if (currentTimeSpan != null)
+        {
+            CurrentValue = (float) currentTimeSpan.Value.TotalSeconds;
+            return;
+        }
+        CurrentValue = null;
+    }
+
+    protected override bool TryParseValueFromString(string value, out float? result, [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        validationErrorMessage = null;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            result = null;
+            return true;
+        }
+        bool success = float.TryParse(value, out float val);
+        if (!success)
+        {
+            validationErrorMessage = "Value has to be a number";
+        }
+        result = val;
+        return success;
+    }
+
+}

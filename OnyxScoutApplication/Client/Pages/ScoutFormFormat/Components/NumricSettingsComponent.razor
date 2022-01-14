@@ -1,0 +1,29 @@
+﻿@using Syncfusion.Blazor.Inputs
+@using System.Diagnostics.CodeAnalysis;
+
+@inherits SettingsInputBase
+<div>
+    <label>Field default value</label>
+    <NumricFieldComponent Decimals="Decimals" Min="@Field.MinValue" Max="@Field.MaxValue" 
+                          @bind-Value="Field.NumericDefaultValue"/>
+</div>
+<div>
+    <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required"/>
+    <ValidationMessage For="@(() => Field.Required)"/>
+</div>
+<div>
+    <label>Min value</label>
+    <NumricFieldComponent Decimals="Decimals" @bind-Value="@Field.MinValue"/>
+    <ValidationMessage For="@(() => Field.MinValue)"/>
+</div>
+<div>
+    <label>Max value</label>
+    <NumricFieldComponent Decimals="Decimals" @bind-Value="@Field.MaxValue"/>
+    <ValidationMessage For="@(() => Field.MaxValue)"/>
+</div>
+
+@code {
+
+    [Parameter]
+    public int? Decimals { get; set; }
+}

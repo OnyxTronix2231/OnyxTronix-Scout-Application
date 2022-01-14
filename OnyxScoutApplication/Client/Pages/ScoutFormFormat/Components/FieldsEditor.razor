@@ -1,0 +1,145 @@
+﻿@using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
+
+
+@for (int i = 0; i < Fields.Count; i++)
+{
+    int currentIndex = i;
+    FieldDto field = Fields[i];
+    var safeToChnage = FormType == FormType.Create || field.IsNew;
+    <div class="e-icons">
+        @if (!SafeModeEnabled || safeToChnage)
+        {
+            <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveField(currentIndex)">Remove field</SfButton>
+        }
+        <SfButton Disabled="@(currentIndex == 0)" type="button" CssClass="e-primary e-round"
+                  IconCss="e-icons e-triangleUp" @onclick="() => MoveUp(currentIndex)">
+        </SfButton>
+        <SfButton Disabled="@(currentIndex == Fields.Count - 1)" type="button" CssClass="e-primary e-round"
+                  IconCss="e-icons e-triangleDown" @onclick="() => MoveDown(currentIndex)">
+        </SfButton>
+    </div>
+    <div>
+        <label>Field name</label>
+        <InputText class="form-control" @bind-Value="field.Name"/>
+        <ValidationMessage For="@(() => field.Name)"/>
+    </div>
+    <div>
+        <label>Field type</label>
+        <select class="form-control" @bind="field.FieldType" disabled="@(!safeToChnage)">
+            @foreach (var type in GetFields())
+            {
+                <option value="@type">@type</option>
+            }
+        </select>
+        <ValidationMessage For="@(() => field.FieldType)"/>
+    </div>
+    <br/>
+    <CollapsibleView @bind-Value="@field.IsCollapsed"/>
+    <div class="form-group collapse @(field.IsCollapsed ? "show" : "")" style="padding-left:2em">
+        @switch (field.FieldType)
+        {
+            case FieldType.TextField:
+                <TextSettingsComponent Field="field"/>
+                break;
+            case FieldType.Integer:
+                <NumricSettingsComponent Decimals="0" Field="field"/>
+                break;
+            case FieldType.Boolean:
+                <BooleanSettingsComponent Field="field"/>
+                break;
+            case FieldType.CascadeField:
+                <BooleanSettingsComponent Field="field"/>
+                <FieldsEditor SafeModeEnabled="SafeModeEnabled" FormType="FormType" 
+                              CascadeDepth="@(CascadeDepth + 1)" Fields="field.CascadeFields"/>
+                break;
+            case FieldType.OptionSelect:
+                <OptionSelectSettingsComponent  FormType="FormType" SafeModeEnabled="SafeModeEnabled" Field="field"/>
+                break;
+            case FieldType.MultipleChoice:
+                <MultipleChoiceSettingsComponent FormType="FormType" SafeModeEnabled="SafeModeEnabled" Field="field"/>
+                break;
+            case FieldType.Timer:
+                <TimeCounterSettingsComponent Field="field"/>
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    </div>
+    <br>
+}
+
+<div>
+    <button type="button" class="btn btn-dark" @onclick="AddField">Add field</button>
+</div>
+
+@code{
+
+    [Parameter]
+    public List<FieldDto> Fields { get; set; }
+    [Parameter]
+    public FormType FormType { get; set; }
+    [Parameter]
+    public bool SafeModeEnabled { get; set; }
+
+    [Parameter]
+    public int CascadeDepth { get; set; }
+
+    private void AddField()
+    {
+        if (Fields.Count <= 24)
+        {
+            Fields.Add(new FieldDto {Index = Fields.Count, IsNew = true});
+        }
+    }
+
+    private void RemoveField(int index)
+    {
+        Fields.RemoveAt(index);
+    }
+
+    private void OnOptionSelect(ChangeEventArgs e, int index)
+    {
+        Fields[index].FieldType = Enum.Parse<FieldType>(e.Value.ToString());
+    }
+
+    private void MoveUp(int index)
+    {
+        var field = Fields[index];
+        Fields.RemoveAt(index);
+        Fields.Insert(index - 1, field);
+    }
+
+    private void MoveDown(int index)
+    {
+        var field = Fields[index];
+        Fields.RemoveAt(index);
+        Fields.Insert(index + 1, field);
+    }
+
+    private List<FieldType> GetFields()
+    {
+        var enumValues = Enum.GetValues(typeof(FieldType)).Cast<FieldType>().ToList();
+        if (CascadeDepth >= 3)
+        {
+            enumValues.Remove(FieldType.CascadeField);
+        }
+        return enumValues;
+    }
+
+}
+
+
+<style>
+    .e-triangleDown:before {
+        content: '\e744';
+    }
+    
+    .e-triangleUp:before {
+        content: '\e721';
+    }
+    
+    .e-triangleRight:before {
+    content: '\e70b';
+    }
+
+</style>

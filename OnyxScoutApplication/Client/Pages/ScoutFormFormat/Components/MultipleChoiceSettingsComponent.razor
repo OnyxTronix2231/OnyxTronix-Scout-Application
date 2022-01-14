@@ -1,0 +1,85 @@
+﻿@using Syncfusion.Blazor.Inputs
+@inherits SettingsInputBase
+<div>
+    <label>Field default value</label>
+    <MultipleChoiceFieldComponent @bind-Value="@Field.DefaultSelectedOptions" 
+                                    MaximumSelectionLength="Field.MaximumSelectionLength" Options="@Field.Options"/>
+</div>
+<div>
+    <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required"/>
+    <ValidationMessage For="@(() => Field.Required)"/>
+</div>
+
+<div>
+    <label>Max slsection option</label>
+    <SfNumericTextBox @bind-Value="Field.MaximumSelectionLength"></SfNumericTextBox>
+</div>
+
+<br/>
+
+@foreach (var (option, index) in Field.Options.Select((x, i) => (x, i)))
+{
+    <div>
+        @if (!SafeModeEnabled || FormType == FormType.Create || option.IsNew)
+        {
+            <button type="button" class="btn btn-danger" @onclick="() => RemoveOption(index)">Remove option</button>
+        }
+    </div>
+    <div class="form-group col-lg-12 row">
+        <div class="col-lg-5">
+            <label>Option name</label>
+            <SfTextBox Value="@option.Name" Input="a => UpdateOption(a, index)"/>
+        </div>
+        <div class="col-lg-7">
+            <label>Option percent weight</label>
+            <SfNumericTextBox Step=0.05f Format="p2" Max="1" Min="-1" @bind-Value="@option.PercentWeight"/>
+        </div>
+    </div>
+    <br>
+}
+<ValidationMessage For="@(() => Field.Options)"/>
+
+<br/>
+
+<div>
+    <button type="button" class="btn btn-dark" @onclick="AddOption">Add option</button>
+</div>
+
+@code {
+    [Parameter]
+    public FormType FormType { get; set; }
+    [Parameter]
+    public bool SafeModeEnabled { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        if(Field.Options.Any()) {
+            return;
+        }
+        AddOption();
+        AddOption();
+    }
+
+
+    private void AddOption()
+    {
+        Field.Options.Add(new OptionDto(){Index = Field.Options.Count, IsNew = true, PercentWeight = 1f});
+        StateHasChanged();
+    }
+
+    private void RemoveOption(int index)
+    {
+        Field.Options.RemoveAt(index);
+        foreach (var optionDto in Field.Options.Skip(index))
+        {
+            optionDto.Index -= 1;
+        }
+    }
+
+    private void UpdateOption(InputEventArgs args, int index)
+    {
+        Field.Options[index].Name = args.Value;
+    }
+
+}

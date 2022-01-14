@@ -1,0 +1,41 @@
+﻿@using Syncfusion.Blazor.Inputs
+@using System.Collections.ObjectModel
+
+@inherits FormInputBase<List<OptionDto>>
+<div>
+    <SfMultiSelect @bind-Value="CurrentValue" Mode="VisualMode.CheckBox"
+                   MaximumSelectionLength="MaximumSelectionLength == 0 ? options.Count : MaximumSelectionLength"
+                   DataSource="options"  Readonly="@(FormType == FormType.View)" 
+                   ShowClearButton="@(FormType != FormType.View)">
+        <MultiSelectFieldSettings Value="Index" Text="Name" ></MultiSelectFieldSettings>
+    </SfMultiSelect>
+
+    <validationmessage For="@ValueExpression"/>
+</div>
+
+@code {
+    [Parameter]
+    public FormType FormType { get; set; }
+    
+    [Parameter]
+    public int MaximumSelectionLength { get; set; }
+    
+    private ObservableCollection<OptionDto> options;
+    
+    [Parameter]
+    public List<OptionDto> Options
+    {
+        get => options.ToList();
+        set => options = new ObservableCollection<OptionDto>(value);
+    }
+
+   
+
+    protected override bool TryParseValueFromString(string value, out List<OptionDto> result, [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        validationErrorMessage = null;
+        result = new List<OptionDto>();
+        return true;
+    }
+
+}

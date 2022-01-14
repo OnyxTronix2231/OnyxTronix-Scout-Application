@@ -1,0 +1,182 @@
+@using OnyxScoutApplication.Shared.Models.CustomeEventModels
+@inject HttpClientManager http
+@inject ILocalStorageService localStorage
+
+<EditForm Model="@CustomEvent" OnValidSubmit="@OnValidSubmit">
+    <FluentValidationValidator DisableAssemblyScanning="@true"/>
+    <div class="form-group col-sm-5">
+        <label class="form-label">Year</label>
+        <SfNumericTextBox @bind-Value="@CustomEvent.Year" Readonly="@true"/>
+        <ValidationMessage For="() => CustomEvent.Year" />
+
+    </div>
+   
+    <div class="form-group col-sm-5">
+        <label class="form-label">Country</label>
+        <SfTextBox @bind-Value="@CustomEvent.Country" Readonly="@true"/>
+        <ValidationMessage For="() => CustomEvent.Country" />
+ </div>
+   
+    <div class="form-group col-sm-5">
+        <label class="form-label">Name</label>
+        <SfTextBox @bind-Value="@CustomEvent.Name"/>
+        <ValidationMessage For="() => CustomEvent.Name" />
+    </div> 
+    <div class="form-group col-sm-5">
+        <label class="form-label">Start date</label>
+        <SfDatePicker Format="dd/MM/yyyy" @bind-Value="@CustomEvent.StartDate"/>
+        <ValidationMessage For="() => CustomEvent.StartDate" />
+    </div>
+    <div class="form-group">
+        <ValidationMessage For="() => CustomEvent.Matches" />
+        @foreach (var customMatchesByStage in CustomEvent.Matches.GroupBy(i => i.Level))
+        {
+            <h4>@customMatchesByStage.Key</h4>
+            <br><br/>
+            var matches = customMatchesByStage.ToList();
+            for (int i = 0; i < matches.Count; i++)
+            {
+                var currentIndex = i;
+                var customMatch = matches[currentIndex];
+                
+                <div class="container">
+                    <div class="form-group col-sm-5">
+                        <label class="form-label">Stage</label>
+                        <SfTextBox @bind-Value="@customMatch.Level" Readonly="@true"/>
+                    </div>
+                    <div class="form-group col-sm-5">
+                        <label class="form-label">Match number</label>
+                        <SfNumericTextBox @bind-Value="@currentIndex" Readonly="@true"/>
+                    </div>
+                    <div class="form-group col-sm-5">
+                        <label class="form-label">Date</label>
+                        <SfDateTimePicker Format="dd/MM/yyyy HH:mm" TimeFormat="HH:mm" Time @bind-Value="@customMatch.Date"/>
+                        <ValidationMessage For="() => customMatch.Date" />
+                    </div>
+                    <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveMatch(customMatch)">Remove</SfButton>
+                    <ValidationMessage For="() => customMatch.Alliances" />
+                    <div class="row">
+                        <div class="form-group col-sm-4">
+                            <h5>Blue team</h5>
+                            <ValidationMessage For="() => customMatch.Alliances.Blue" />
+                            
+                            @for (int j = 0; j < customMatch.Alliances.Blue.Teams.Count; j++)
+                            {
+                                var team = customMatch.Alliances.Blue.Teams[j];
+                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber" CssClass="maxWidth">
+                                    <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
+                                    <DropDownListEvents TItem="CustomTeamDto" TValue="int" ValueChange="e => OnTeamSelected(e, team)"></DropDownListEvents>
+                                </SfDropDownList>
+                            }
+                        </div> 
+
+                        <div class="form-group col-sm-4"> 
+                            <h5>Red team</h5>
+                            <ValidationMessage For="() => customMatch.Alliances.Red" />
+                            @for (int j = 0; j < customMatch.Alliances.Red.Teams.Count; j++)
+                            {
+                                var team = customMatch.Alliances.Red.Teams[j];
+                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber" CssClass="maxWidth">
+                                    <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
+                                    <DropDownListEvents TItem="CustomTeamDto" TValue="int" ValueChange="e => OnTeamSelected(e, team)"></DropDownListEvents>
+                                </SfDropDownList>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            <SfButton type="button" @onclick="() => AddMatch(customMatchesByStage.Key)">Add match</SfButton>
+        }
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary">@(Type == FormType.Create ? "Add" : "Save")</button>
+    </div>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public CustomEventDto CustomEvent { get; set; }
+
+    [Parameter]
+    public EventCallback OnValidSubmitCallBack { get; set; }
+
+    [Parameter]
+    public FormType Type { get; set; }
+
+    private List<CustomTeamDto> teams = new List<CustomTeamDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var selectedYear = await localStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
+        teams = await http.GetJson<List<CustomTeamDto>>("TheBlueAlliance/GetAllTeamsByDistrict/" + selectedYear + "isr"); //TODO: districts names handling
+        if (CustomEvent.Matches.Any())
+        {
+            return;
+        }
+        CustomEvent.Matches.Add(CreateCustomMatch("qm"));
+        CustomEvent.Matches.Add(CreateCustomMatch("qf"));
+        CustomEvent.Matches.Add(CreateCustomMatch("sf"));
+        CustomEvent.Matches.Add(CreateCustomMatch("f"));
+    }
+
+    private CustomMatchDto CreateCustomMatch(string level)
+    {
+        CustomMatchDto customMatch = new CustomMatchDto
+        {
+            Level = level,
+            Event = CustomEvent,
+            Alliances = new CustomAlliancesDto()
+            {
+                Blue = new CustomAllianceDto(),
+                Red = new CustomAllianceDto()
+            }
+        };
+        customMatch.Alliances.Blue.Teams.Add(new CustomTeamDto());
+        customMatch.Alliances.Blue.Teams.Add(new CustomTeamDto());
+        customMatch.Alliances.Blue.Teams.Add(new CustomTeamDto());
+
+        customMatch.Alliances.Red.Teams.Add(new CustomTeamDto());
+        customMatch.Alliances.Red.Teams.Add(new CustomTeamDto());
+        customMatch.Alliances.Red.Teams.Add(new CustomTeamDto());
+        return customMatch;
+    }
+
+    private async Task OnValidSubmit()
+    {
+        for (int i = 0; i < CustomEvent.Matches.Count; i++)
+        {
+            var customMatch = CustomEvent.Matches[i];
+            customMatch.MatchNumber = i;
+        }
+        await OnValidSubmitCallBack.InvokeAsync(this);
+    }
+
+    private void AddMatch(string stage)
+    {
+        var newMatch = CreateCustomMatch(stage);
+        newMatch.Date = CustomEvent.Matches.FirstOrDefault(i => i.Level == stage)!.Date;
+        CustomEvent.Matches.Add(newMatch);
+    }
+
+    private void RemoveMatch(CustomMatchDto customMatch)
+    {
+        CustomEvent.Matches.Remove(customMatch);
+    }
+
+    private void OnTeamSelected(ChangeEventArgs<int, CustomTeamDto> changeEventArgs, CustomTeamDto teamsInAlliance)
+    {
+        if (changeEventArgs.ItemData == null)
+        {
+            return;
+        }
+        teamsInAlliance.Nickname = changeEventArgs.ItemData.Nickname;
+        teamsInAlliance.TeamNumber = changeEventArgs.ItemData.TeamNumber;
+    }
+
+}
+<style>
+    .maxWidth {
+    max-width: 250px;
+    }
+</style>

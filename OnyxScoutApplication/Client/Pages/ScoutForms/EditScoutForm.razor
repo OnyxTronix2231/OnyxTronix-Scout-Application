@@ -1,0 +1,85 @@
+﻿@page "/ScoutForm/Edit/{Id:int}"
+@inject HttpClientManager http
+@inject NavigationManager navigationManager
+@attribute [OnyxAuthorize(Role = Role.Admin)]
+
+@if (form != null)
+{
+    <h3>ScoutForm</h3>
+    <ScoutFromComponent Form="form" Type="FormType.Update" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
+}
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private FormDto form;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var oldForm = await http.GetJson<FormDto>("ScoutForm/ " + Id);
+        if (oldForm == null)
+        {
+            navigationManager.NavigateTo("/");
+            return;
+        }
+        
+        form = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/ " + oldForm.Year);
+        if (form == null)
+        {
+            navigationManager.NavigateTo("/");
+            return;
+        }
+        MapForms(oldForm, form);
+    }
+
+    private void MapForms(FormDto oldForm, FormDto newForm) //TODO: Impl using mapper!
+    {
+        newForm.TeamNumber = oldForm.TeamNumber;
+        newForm.Year = oldForm.Year;
+        newForm.MatchName = oldForm.MatchName;
+        newForm.WriterUserName = oldForm.WriterUserName;
+        newForm.Id = oldForm.Id;
+        
+        var oldData = oldForm.FormDataInStages.SelectMany(i => i.FormData.WithCascadeData()).ToList();
+        for (var i = 0; i < newForm.FormDataInStages.Count; i++)
+        {
+            var stage = newForm.FormDataInStages[i];
+            if (oldForm.FormDataInStages.All(s => s.Name != stage.Name))
+            {
+                continue;
+            }
+
+            ReplaceData(oldData, stage.FormData);
+            var oldStage = oldForm.FormDataInStages.First(s => s.Name == stage.Name);
+            oldStage.FormData = stage.FormData;
+            newForm.FormDataInStages[i] = oldStage;
+        }
+    }
+
+    private void ReplaceData(List<FormDataDto> allOldData, List<FormDataDto> dataToReplace)
+    {
+        for (int i = 0; i < dataToReplace.Count; i++)
+        {
+            var newData = dataToReplace[i];
+            ReplaceData(allOldData, newData.CascadeData);
+            var old = allOldData.FirstOrDefault(oldD => oldD.Field.Id == newData.Field.Id);
+            if (old != null)
+            {
+                old.CascadeData = newData.CascadeData;
+                Console.WriteLine(old.Id);
+                dataToReplace[i] = old;
+            }
+        }
+    }
+
+    private async Task OnValidSubmit()
+    {
+        if (await http.TryPutJson("ScoutForm/" + Id, form))
+        {
+            navigationManager.NavigateTo("/");
+        }
+    }
+
+}

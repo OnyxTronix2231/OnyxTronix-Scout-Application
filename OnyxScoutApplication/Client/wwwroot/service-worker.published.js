@@ -22,7 +22,7 @@ async function onInstall(event) {
 
     // Also cache authentication configuration
     assetsRequests.push(new Request('_configuration/OnyxScoutApplication.Client'));
-
+    self.skipWaiting();
     await caches.open(cacheName).then(cache => cache.addAll(assetsRequests));
 }
 
@@ -49,6 +49,9 @@ async function onFetch(event) {
         const cache = await caches.open(cacheName);
         cachedResponse = await cache.match(request);
     }
+    console.info(cachedResponse);
 
     return cachedResponse || fetch(event.request);
 }
+
+/* updated 22-12-2020 00:00 */

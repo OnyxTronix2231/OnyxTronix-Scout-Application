@@ -1,0 +1,36 @@
+﻿@page "/ScoutFormFormat/Edit/{id:int}"
+@using OnyxScoutApplication.Client.Pages.ScoutFormFormat.Components
+@using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
+@inject HttpClientManager http
+@inject NavigationManager navigationManager
+@attribute [OnyxAuthorize(Role = Role.Admin)]
+
+<h3>Edit</h3>
+@if (scoutFormFormat != null)
+{
+    <ScoutFormFormatComponent ScoutFormFormat="@scoutFormFormat" Type="FormType.Update" OnSubmit="@Update">
+
+    </ScoutFormFormatComponent>
+}
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private ScoutFormFormatDto scoutFormFormat;
+
+    protected override async Task OnInitializedAsync()
+    {
+        scoutFormFormat = await http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/" + Id);
+    }
+
+    private async Task Update()
+    {
+        if (await http.TryPutJson("ScoutFormFormat/" + Id, scoutFormFormat))
+        {
+            navigationManager.NavigateTo("ScoutFormFormats");
+        }
+    }
+
+}

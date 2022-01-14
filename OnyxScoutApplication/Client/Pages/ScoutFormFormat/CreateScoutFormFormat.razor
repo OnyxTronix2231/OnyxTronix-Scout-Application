@@ -1,0 +1,26 @@
+﻿@page "/ScoutFormFormat/Create"
+
+@using OnyxScoutApplication.Client.Pages.ScoutFormFormat.Components
+@using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
+
+@inject HttpClientManager http
+@inject NavigationManager navigationManager
+@attribute [OnyxAuthorize(Role = Role.Admin)]
+
+<h3>Create</h3>
+<ScoutFormFormatComponent ScoutFormFormat="@scoutFormFormat" Type="FormType.Create" OnSubmit="@Create">
+
+</ScoutFormFormatComponent>
+
+@code {
+    private readonly ScoutFormFormatDto scoutFormFormat = new ScoutFormFormatDto();
+
+    private async Task Create()
+    {
+        if (await http.TryPostJson("ScoutFormFormat", scoutFormFormat))
+        {
+            navigationManager.NavigateTo("ScoutFormFormats");
+        }
+    }
+
+}

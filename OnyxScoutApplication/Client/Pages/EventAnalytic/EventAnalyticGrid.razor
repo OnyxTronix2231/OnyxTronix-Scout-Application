@@ -1,0 +1,72 @@
+﻿@using System.Dynamic
+@using System.Security
+@using Newtonsoft.Json
+@using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
+@inherits TeamsAnalyzer
+<div>
+    @if (CalculatedTeamsData != null)
+    {
+        <SfGrid AllowTextWrap="true" DataSource="@CalculatedTeamsData" AllowReordering="true" 
+                 AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true"
+                 Toolbar="@toolbarItems" ShowColumnChooser="true" Width="100%">
+            <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+            <GridColumns>
+                <GridColumn HeaderText="Team" Field="TeamNumber" AllowFiltering="true"
+                            FilterSettings="@(new FilterSettings {Type = Syncfusion.Blazor.Grids.FilterType.CheckBox})"
+                            Width="100px">
+                    <Template>
+                        @{
+                            var v = (dynamic) context;
+                            <div>
+                                <a href="TeamDetails/@v.TeamNumber" target="_blank"> @(v.Nickname) </a>
+                            </div>
+                            <div>
+                                <a href="TeamDetails/@v.TeamNumber" target="_blank"> @(v.TeamNumber) </a>
+                            </div>
+                        }
+                    </Template>
+                </GridColumn>
+                @for (int i = 0; i < ColumnsFields.Count; i++)
+                {
+                    int index = i;
+                    string nameId = ColumnsFields[index].Id;
+                    string name = ColumnsFields[index].Name;
+                    string rawValue = "RawValue" + nameId;
+                    <GridColumn HeaderText="@name" Field="@rawValue" AutoFit="true" AllowReordering="true"
+                                AllowResizing="true" Type="ColumnType.Number">
+                        <HeaderTemplate>
+                            <div>
+                                <span>@ColumnsFields[index].MarkupName</span>
+                            </div>
+                        </HeaderTemplate>
+                        <Template>
+                            @{
+                                var v = (IDictionary<string, object>) context;
+                                var s = new MarkupString(v[nameId].ToString() ?? "");
+                            }
+                            <span>@s</span>
+                        </Template>
+                    </GridColumn>
+                }
+            </GridColumns>
+        </SfGrid>
+    }
+</div>
+
+@code {
+    private readonly string[] toolbarItems = {"ColumnChooser"};
+}
+
+
+<style>
+    .clickable {
+        cursor: pointer
+    }
+    
+        .e-grid .e-gridheader { 
+            position: -webkit-sticky; 
+            position: sticky; 
+            top: 56px; /* The height of top nav menu. */ 
+            z-index: 1; 
+        } 
+</style>

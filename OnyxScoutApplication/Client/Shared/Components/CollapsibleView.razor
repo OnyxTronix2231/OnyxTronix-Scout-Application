@@ -1,0 +1,17 @@
+﻿@inherits InputBase<bool>
+
+@{ var icon = "e-icons " + (CurrentValue ? "e-triangleDown" : "e-triangleRight"); }
+<div class="e-icons">
+    <SfButton type="button" CssClass="e-primary e-round" IconCss="@icon" @onclick="@(() => { CurrentValue = !CurrentValue; })"/>
+</div>
+
+
+
+@code {
+
+    protected override bool TryParseValueFromString(string value, out bool result, out string validationErrorMessage)
+    {
+        validationErrorMessage = "Value must be a valid boolean";
+        return bool.TryParse(value, out result);
+    }
+}

@@ -1,0 +1,56 @@
+@page "/CustomEvents"
+@using OnyxScoutApplication.Shared.Models.CustomeEventModels
+@inject NavigationManager navigationManager
+@inject HttpClientManager http
+@inject ILocalStorageService localStorage
+
+@attribute [OnyxAuthorize(Role = Role.Admin)]
+
+<h3>IndexCustomEvent</h3>
+<SfButton @onclick="@(() => navigationManager.NavigateTo("CustomEvents/Create"))" >Create</SfButton>
+@if (events != null)
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Team number</th>
+            <th>Year</th>
+            <th>Country</th>
+            <th>Key</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var customEvent in events)
+        {
+            <tr>
+                <td>@customEvent.Name</td>
+                <td>@customEvent.Year</td>
+                <td>@customEvent.Country</td>
+                <td>@customEvent.Key</td>
+                <SfButton CssClass="e-warning" @onclick="() => Edit(customEvent)">Edit</SfButton>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<CustomEventDto> events;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var selectedYear = await localStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
+        if (selectedYear == 0)
+        {
+            navigationManager.NavigateTo("/");
+            return;
+        }
+        events = await http.GetJson<List<CustomEventDto>>("CustomEvent/GetAllEventsByYear/" + selectedYear);
+    }
+    
+    private void Edit(CustomEventDto customEvent)
+    {
+        navigationManager.NavigateTo("CustomEvent/Edit/" + customEvent.Id);
+    }
+
+}

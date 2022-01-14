@@ -1,0 +1,48 @@
+﻿@page "/EventAnalytics"
+@using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
+@using OnyxScoutApplication.Shared.Models.ScoutFormModels
+@inject ILocalStorageService localStorage
+@inject HttpClientManager http
+@inject NavigationManager navigationManager
+@inject NotificationManager notificationManager
+@attribute [OnyxAuthorize(Role = Role.Scouter)]
+
+@if (teams != null)
+{
+    <EventAnalyticGrid Teams="teams" ScoutFormFormatDto="format" ScoutForms="scoutForms"
+                       EventAnalyticSettings="analyticSettings"/>
+}
+
+@code {
+    private Event selectedEvent;
+    private List<FormDto> scoutForms = new();
+    private List<Team> teams = new();
+    private ScoutFormFormatDto format = new();
+    private EventAnalyticSettingsDto analyticSettings;
+
+    protected override async Task OnInitializedAsync()
+    {
+        selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        if (selectedEvent is null)
+        {
+            notificationManager.Notify("Please select an event first", "", NotificationType.Warning);
+            navigationManager.NavigateTo("/");
+            return;
+        }
+        
+        format = await http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        if (format is null)
+        {
+            navigationManager.NavigateTo("/");
+            return;
+        }
+
+        scoutForms = await http.GetJson<List<FormDto>>("ScoutForm/GetAllByEventWithData/" + selectedEvent.Key);
+        if (await localStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
+        {
+            analyticSettings = await localStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
+        }
+        teams = await http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
+    }
+
+}

@@ -1,0 +1,16 @@
+﻿@using System.Diagnostics.CodeAnalysis
+@inherits FormInputBase<string>
+<SfTextBox Multiline="true" class="form-control" @bind-Value="CurrentValue" Readonly="@(FormType == FormType.View)"/>
+<ValidationMessage For="@ValueExpression"/>
+
+@code {
+    [Parameter]
+    public FormType FormType { get; set; }
+    
+    protected override bool TryParseValueFromString(string value, out string result, [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        validationErrorMessage = null;
+        result = value;
+        return true;
+    }
+}

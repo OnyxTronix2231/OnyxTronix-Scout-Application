@@ -1,0 +1,49 @@
+﻿@page "/ScoutFormFormats"
+@using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
+@inject NavigationManager navigationManager
+@inject HttpClientManager http
+@attribute [OnyxAuthorize(Role = Role.Admin)]
+<h1>ScoutFormFormats</h1>
+<div class="form-group">
+    <a class="btn btn-primary" href="ScoutFormFormat/Create">Add scout form format</a>
+</div>
+@if (scoutFormFormats == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Year</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var scoutFormFormat in scoutFormFormats)
+        {
+            <tr>
+                <td>@scoutFormFormat.Year</td>
+                <SfButton CssClass="e-warning" @onclick="() => Edit(scoutFormFormat)">Edit</SfButton>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<ScoutFormFormatDto> scoutFormFormats;
+
+    private void Edit(ScoutFormFormatDto scoutFormFormat)
+    {
+        navigationManager.NavigateTo("ScoutFormFormat/Edit/" + scoutFormFormat.Id);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        scoutFormFormats = await http.GetJson<List<ScoutFormFormatDto>>("ScoutFormFormat");
+    }
+
+}

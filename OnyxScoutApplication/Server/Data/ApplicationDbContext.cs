@@ -7,6 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Shared.Models;
+using OnyxScoutApplication.Shared.Models.CustomeEventModels;
+using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
+using OnyxScoutApplication.Shared.Models.ScoutFormModels;
+using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 
 namespace OnyxScoutApplication.Server.Data
 {
@@ -16,6 +21,37 @@ namespace OnyxScoutApplication.Server.Data
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
+        }
+
+        public DbSet<ScoutFormFormat> ScoutFormFormats { get; set; }
+
+        public DbSet<Form> ScoutForms { get; set; }
+        
+        public DbSet<CustomEvent> Events { get; set; }
+        
+        public DbSet<Field> Fields { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<ApplicationUser>()
+                .HasMany(x => x.UserRoles)
+                .WithOne(x => x.User)
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
+            
+            builder.Entity<FieldsInStage>()
+                .HasMany(x => x.Fields)
+                .WithOne(x => x.FieldsInStage)
+                .HasForeignKey(p => p.FieldStageId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Entity<Field>()
+                .HasMany(x => x.CascadeFields)
+                .WithOne(x => x.ParentField)
+                .HasForeignKey(p => p.FieldId)
+                .OnDelete(DeleteBehavior.ClientCascade);
         }
     }
 }

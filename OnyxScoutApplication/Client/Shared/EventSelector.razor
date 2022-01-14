@@ -1,0 +1,100 @@
+﻿@using Syncfusion.Blazor.DropDowns
+@inject HttpClientManager http
+@inject ILocalStorageService localStorage
+
+<SfDropDownList TValue="int?" TItem="int?" Width="150px" PopupHeight="150px" PopupWidth="150px" Placeholder="Select a year" Value="selectedYearFilter" DataSource="@filterYears">
+    <DropDownListEvents TItem="int?" TValue="int?" OnValueSelect="OnYearFilterChange"></DropDownListEvents>
+</SfDropDownList>
+
+
+<SfDropDownList TValue="string" TItem="string" Width="200px" PopupHeight="200px" PopupWidth="200px" Placeholder="Select a country" Value="selectedCountryFilter" DataSource="@filterCountries">
+    <DropDownListEvents TItem="string" TValue="string" OnValueSelect="OnCountryFilterChange"></DropDownListEvents>
+</SfDropDownList>
+<br/>
+@if (events != null)
+{
+    <SfDropDownList TValue="string" TItem="Event" Width="355px" PopupHeight="355px" PopupWidth="355px" Placeholder="Select an event" Value="lastEventKey" DataSource="@events">
+        <DropDownListEvents TItem="Event" TValue="string" OnValueSelect="OnEventChange"></DropDownListEvents>
+        <DropDownListFieldSettings Text="Name" Value="Key"></DropDownListFieldSettings>
+    </SfDropDownList>
+}
+
+
+@code {
+
+    [Parameter]
+    public EventCallback<Event> OnEventSelectionChange { get; set; }
+
+    private int? selectedYearFilter = 0;
+    private string selectedCountryFilter;
+    private Event selectedEvent = new Event();
+    private List<Event> events;
+    private List<int?> filterYears = new List<int?>();
+    private List<string> filterCountries = new List<string>();
+    private string lastEventKey;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        for (int i = DateTime.Now.Year - 5; i <= DateTime.Now.Year + 5; i++)
+        {
+            filterYears.Add(i);
+        }
+        filterCountries.Add("Israel");
+        if (await localStorage.ContainKeyAsync("EventSelector/SelectedEventKey"))
+        {
+            selectedYearFilter = await localStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
+            selectedCountryFilter = await localStorage.GetItemAsync<string>("EventSelector/SelectedCountryFilter");
+            selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+            UpdateEventsList(await localStorage.GetItemAsync<List<Event>>("TheBlueAlliance.AllEvents"));
+            UpdateSelectedEvent(selectedEvent);
+        }
+        else
+        {
+            await OnYearFilterChange(new SelectEventArgs<int?> {ItemData = DateTime.Now.Year});
+            await OnCountryFilterChange(new SelectEventArgs<string> {ItemData = filterCountries[0]});
+        }
+    }
+
+    private void UpdateEventsList(List<Event> eventsToOrder)
+    {
+        events = eventsToOrder.OrderBy(i => i.StartDate).Where(i => string.Equals(i.Country, selectedCountryFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
+    private async Task OnYearFilterChange(SelectEventArgs<int?> args)
+    {
+        selectedYearFilter = args.ItemData;
+        UpdateEventsList(await http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedYearFilter));
+        await localStorage.SetItemAsync("TheBlueAlliance.AllEvents", events);
+        await localStorage.SetItemAsync("EventSelector/SelectedYearFilter", selectedYearFilter);
+        StateHasChanged();
+    }
+
+    private async Task OnCountryFilterChange(SelectEventArgs<string> args)
+    {
+        selectedCountryFilter = args.ItemData;
+        UpdateEventsList(await http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedYearFilter));
+        await localStorage.SetItemAsync("TheBlueAlliance.AllEvents", events);
+        await localStorage.SetItemAsync("EventSelector/SelectedCountryFilter", selectedCountryFilter);
+        StateHasChanged();
+    }
+
+    private async Task OnEventChange(SelectEventArgs<Event> args)
+    {
+        UpdateSelectedEvent(args.ItemData);
+        await localStorage.SetItemAsync("EventSelector/SelectedEventKey", selectedEvent);
+        await OnEventSelectionChange.InvokeAsync(selectedEvent);
+    }
+
+    private void UpdateSelectedEvent(Event gameEvent)
+    {
+        selectedEvent = gameEvent;
+        if (selectedEvent == null || lastEventKey == selectedEvent.Key)
+        {
+            return;
+        }
+        lastEventKey = selectedEvent.Key;
+        StateHasChanged();
+    }
+
+}

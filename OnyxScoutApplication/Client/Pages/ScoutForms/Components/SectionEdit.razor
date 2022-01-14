@@ -1,0 +1,56 @@
+﻿@using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
+@using OnyxScoutApplication.Shared.Models.ScoutFormModels
+@foreach (var data in SectionData)
+{
+    <label>@data.Field.Name</label>
+    <div class="form-group" style="padding-left:1em">
+        @switch (data.Field.FieldType)
+        {
+            case FieldType.TextField:
+                <TextFieldComponent @bind-Value="data.StringValue" FormType="@FormType"/>
+                break;
+            case FieldType.Integer:
+                <NumricFieldComponent Decimals="0" Min="@data.Field.MinValue" Max="@data.Field.MaxValue"
+                                      @bind-Value="@data.NumericValue" FormType="@FormType"/>
+                break;
+            case FieldType.Boolean:
+                <BooleanFieldComponent @bind-Value="data.BooleanValue" FormType="@FormType"/>
+                break;
+            case FieldType.CascadeField:
+                <BooleanFieldComponent @bind-Value="data.BooleanValue" FormType="@FormType"/>
+                if (data.BooleanValue)
+                {
+                    <div class="form-group" style="padding-left:1em">
+                        <SectionEdit FormType="@FormType" SectionData="data.CascadeData"/>
+                    </div>
+                } 
+                break;
+            case FieldType.OptionSelect:
+                <OptionSelectFieldComponent @bind-Value="data.SelectedOptions" Options="@data.Field.Options"
+                                            FormType="@FormType"/>
+                break;
+            case FieldType.MultipleChoice:
+                <MultipleChoiceFieldComponent @bind-Value="data.SelectedOptions" Options="@data.Field.Options" 
+                                              MaximumSelectionLength="data.Field.MaximumSelectionLength" 
+                                              FormType="@FormType"/>
+                break;
+            case FieldType.Timer:
+                <TimeCounterFieldComponent AllowManualInput="@data.Field.AllowManualInput" FormType="@FormType"
+                                           @bind-Value="data.NumericValue"/>
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public FormType FormType { get; set; }
+    
+    [Parameter]
+    public List<FormDataDto> SectionData { get; set; }
+    
+
+}

@@ -1,0 +1,69 @@
+﻿@page "/TeamDetails/{TeamNumber:int}"
+@using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
+@using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
+@using OnyxScoutApplication.Shared.Models.ScoutFormModels
+@inject HttpClientManager http
+@inject ILocalStorageService localStorage
+@inject NavigationManager navigationManager
+@attribute [OnyxAuthorize(Role = Role.Scouter)]
+
+@if (calculatedDataByStages != null)
+{
+    <h3>Team @TeamNumber</h3>
+    <h4>@selectedEvent?.Name</h4>
+    <a href="/TeamDetails/Notes/@TeamNumber">Notes</a>
+    <br/>
+    foreach (var (key, value) in calculatedDataByStages)
+    {
+        <h5>@key</h5>
+        <TeamAnalyticGrid CalculatedData="@value"></TeamAnalyticGrid>
+        <br/>
+ }
+
+    <br/>
+    <MatchesGrid Matches="@matches" OnTeamClicked="OnTeamClicked">
+        <MatchGridSettings SubmittedForms = "@data" TeamNumber = "@TeamNumber" ></MatchGridSettings>
+    </MatchesGrid>
+}
+
+@code {
+
+    [Parameter]
+    public int TeamNumber { get; set; }
+
+    private Event selectedEvent;
+    private List<FormDto> data;
+    private Dictionary<string, List<TeamFieldAverage>> calculatedDataByStages;
+    private List<Match> matches;
+
+    protected override async Task OnInitializedAsync()
+    {
+        selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        if (selectedEvent == null)
+        {
+            return;
+        }
+        var format = await http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        var result = await http.GetJson<List<FormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
+        data = result.OrderBy(i => i.MatchName).ToList();
+        matches = (await http.GetJson<List<Match>>
+            ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))
+            .OrderBy(i => i.Date).ToList();
+        calculatedDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
+        foreach (var fieldsInStage in format.FieldsInStages)
+        {
+            calculatedDataByStages.Add(fieldsInStage.Name, 
+                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, result, _ => true));
+        }
+       
+    }
+
+    private void OnTeamClicked(TeamInMatch teamInMatch)
+    {
+        if (teamInMatch.TeamNumber != TeamNumber)
+        {
+            navigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber, true);
+        }
+    }
+
+}

@@ -1,0 +1,18 @@
+﻿@inherits SettingsInputBase
+
+<div>
+    <label>Field default value</label>
+    <TextFieldComponent @bind-Value="@Field.TextDefaultValue"></TextFieldComponent>
+    @* <InputTextArea class="form-control" @bind-Value="CurrentValue"/> *@
+    @* <ValidationMessage For="@ValueExpression"/> *@
+</div>
+<div>
+    <SfCheckBox Label="Required" CssClass="e-info" @bind-Checked="Field.Required"/>
+    <ValidationMessage For="@(() => Field.Required)"/>
+</div>
+
+@code{
+
+    
+
+}

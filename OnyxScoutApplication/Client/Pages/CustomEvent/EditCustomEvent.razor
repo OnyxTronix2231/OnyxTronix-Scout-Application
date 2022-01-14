@@ -1,0 +1,35 @@
+@page "/CustomEvent/Edit/{Id:int}"
+@using OnyxScoutApplication.Shared.Models.CustomeEventModels
+@inject HttpClientManager http
+@inject NavigationManager navigationManager
+@attribute [OnyxAuthorize(Role = Role.Admin)]
+<h3>EditCustomEvent</h3>
+
+@if (customEvent != null)
+{
+    <CustomEventComponent CustomEvent="@customEvent" Type="FormType.Create" OnValidSubmitCallBack="OnValidSubmit"></CustomEventComponent>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    
+    private CustomEventDto customEvent;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        customEvent = await http.GetJson<CustomEventDto>("CustomEvent/" + Id);
+        if (customEvent == null)
+        {
+            navigationManager.NavigateTo("/");
+        }
+    }
+
+    private async Task OnValidSubmit()
+    {
+        if (await http.TryPutJson("CustomEvent/" + Id, customEvent))
+        {
+            navigationManager.NavigateTo("/");
+        }
+    }
+}

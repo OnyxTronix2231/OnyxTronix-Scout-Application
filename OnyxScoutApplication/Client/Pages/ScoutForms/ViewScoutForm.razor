@@ -1,0 +1,27 @@
+﻿@page "/ScoutForm/View/{Id:int}"
+@inject HttpClientManager http
+@inject NavigationManager navigationManager
+@attribute [OnyxAuthorize(Role = Role.Scouter)]
+
+@if (form != null)
+{
+    <h3>ScoutForm</h3>
+    <ScoutFromComponent Form="form" Type="FormType.View"></ScoutFromComponent>
+}
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private FormDto form;
+
+    protected override async Task OnInitializedAsync()
+    {
+        form = await http.GetJson<FormDto>("ScoutForm/ " + Id);
+        if (form == null)
+        {
+            navigationManager.NavigateTo("/");
+        }
+    }
+}

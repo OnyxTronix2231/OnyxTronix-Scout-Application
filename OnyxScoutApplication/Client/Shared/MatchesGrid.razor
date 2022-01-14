@@ -1,0 +1,178 @@
+﻿@using Microsoft.AspNetCore.Components.Rendering
+@inject NavigationManager navigationManager
+@inject ILocalStorageService storageService
+@inject ISyncLocalStorageService syncStorageService
+@if (Matches != null && Settings != null)
+{
+    if (!string.IsNullOrWhiteSpace(Settings.PagingScopeName))
+    {
+        <SfButton OnClick="SavePageNumber">Save page number</SfButton>
+    }
+
+    <SfGrid @ref="grid" DataSource="@Matches" AllowSorting="true" AllowFiltering="true" Height="@Settings.Height" AllowPaging="@Settings.AllowPaging">
+        <GridPageSettings PageSize="10"></GridPageSettings>
+        <GridEvents OnLoad="OnLoad" QueryCellInfo="CustomizeCell" TValue="Match"></GridEvents>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn Field=@nameof(Match.MatchNumber) HeaderText="Match number" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(Match.Date) HeaderText="Match date" Format="dd/MM/yyyy HH:mm" Type="ColumnType.DateTime" Width="150"></GridColumn>
+            @for (int i = 0; i < 3; i++)
+            {
+                var headName = "Blue team " + (i + 1);
+                int index = i;
+                <GridColumn HeaderText="@headName" Width="120">
+                    <Template>
+                        @{
+                            var match = (Match) context;
+                            var teamNumber = match.Alliances.Blue.GetTeamAt(index);
+                            <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
+                        }
+                    </Template>
+                </GridColumn>
+            }
+            <GridColumn Field="Alliances.Blue.Score" HeaderText="Blue Score" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+            <GridColumn Field="Alliances.Red.Score" HeaderText="Red Score" TextAlign="TextAlign.Left" Width="120"></GridColumn>
+            @for (int i = 0; i < 3; i++)
+            {
+                var headName = "Red team " + (i + 1);
+                int index = i;
+                <GridColumn HeaderText="@headName" Width="120">
+                    <Template>
+                        @{
+                            var match = (Match) context;
+                            var teamNumber = match.Alliances.Red.GetTeamAt(index);
+                            <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
+                        }
+                    </Template>
+                </GridColumn>
+            }
+            <GridColumn HeaderText="Winning alliance" Width="120"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+    
+}
+
+
+<CascadingValue Value="this" IsFixed="true">
+    @ChildContent
+</CascadingValue>
+@code {
+    [Parameter]
+    public List<Match> Matches { get; set; }
+
+    [Parameter]
+    public MatchGridSettings Settings { get; set; }
+
+    [Parameter]
+    public EventCallback<TeamInMatch> OnTeamClicked { get; set; }
+    
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private SfGrid<Match> grid;
+
+    private async Task OnLoad(object obj)
+    {
+        if (!string.IsNullOrWhiteSpace(Settings.PagingScopeName) &&
+            await storageService.ContainKeyAsync("MatchGridPage." + Settings.PagingScopeName))
+        {
+            var v = await storageService.GetItemAsync<int>("MatchGridPage." + Settings.PagingScopeName);
+            await grid.GoToPage(v);
+        }
+    }
+
+    private void SavePageNumber()
+    {
+        syncStorageService.SetItem("MatchGridPage." + Settings.PagingScopeName, grid.PageSettings.CurrentPage);
+    }
+
+
+    private string GetTeamTextStyle(int teamNumber, string matchName) //Team's text style (bold, color and clickable)
+    {
+        string classes = "";
+        if (teamNumber == Settings.TeamNumber)
+        {
+            classes += "targetTeam ";
+        }
+        else
+        {
+            classes += "clickable ";
+        }
+
+        if (Settings.SubmittedForms == null) return classes;
+
+        if (Settings.SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == matchName))
+        {
+            classes += "filledTeamForm ";
+        }
+        else if(syncStorageService.ContainKey($"ScoutForm/{matchName}/{teamNumber}"))
+        {
+            classes += "locallyFilledTeamForm ";
+        }
+        else
+        {
+            classes += "notFilledTeamForm ";
+        }
+        return classes;
+    }
+
+    private void OnGridTeamClicked(Match match, int teamNumber)
+    {
+        bool isFormExists =
+            Settings.SubmittedForms != null &&
+            Settings.SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == match.Key);
+        OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match, IsFormExists = isFormExists});
+    }
+
+    private static void CustomizeCell(QueryCellInfoEventArgs<Match> args)
+    {
+        if (args.Column.HeaderText.Contains("Blue")) //Cell color based on alliance color
+        {
+            args.Cell.AddClass(new[] {"blue"});
+        }
+        else if (args.Column.HeaderText.Contains("Red"))
+        {
+            args.Cell.AddClass(new[] {"red"});
+        }
+        else if (args.Column.HeaderText == "Winning alliance") //"WinningAlliance" Cell color
+        {
+            args.Cell.AddClass(new[] {args.Data.WinningAlliance});
+        }
+    }
+
+    public void Refresh()
+    {
+        StateHasChanged();
+    }
+
+}
+
+<style>
+    .red {
+        background-color: indianred;
+    }
+
+    .blue {
+        background-color: royalblue
+    }
+
+    .targetTeam {
+        font-weight: bold
+    }
+
+    .clickable {
+        cursor: pointer
+    }
+
+    .filledTeamForm {
+        color: lawngreen;
+    }
+    
+    .locallyFilledTeamForm {
+            color: orange;
+    }
+
+    .notFilledTeamForm {
+        color: darkred
+    }
+</style>
