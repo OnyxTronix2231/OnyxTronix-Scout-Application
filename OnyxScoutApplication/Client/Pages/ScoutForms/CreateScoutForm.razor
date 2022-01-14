@@ -3,6 +3,7 @@
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
+@inject NotificationManager NotificationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (form != null)
@@ -31,6 +32,13 @@
             NavigationManager.NavigateTo("/");
             return;
         }
+        
+        if(await LocalStorage.ContainKeyAsync($"ScoutForm/{teamInMatch.Match.Key}/{teamInMatch.TeamNumber}"))
+        {
+            form = await LocalStorage.GetItemAsync<FormDto>($"ScoutForm/{teamInMatch.Match.Key}/{teamInMatch.TeamNumber}");
+            return;
+        }
+        
         form.TeamNumber = teamInMatch.TeamNumber;
         form.Year = teamInMatch.Match.Date.Year;
         form.MatchName = teamInMatch.Match.Key;
@@ -42,7 +50,9 @@
         if (await Http.TryPostJson("ScoutForm", form))
         {
             NavigationManager.NavigateTo("/");
+            return;
         }
+        await LocalStorage.SetItemAsync($"ScoutForm/{form.MatchName}/{form.TeamNumber}" ,form);
+        NotificationManager.Notify("Error", "Error saving form in server\nThe form was saved localy for now", NotificationType.Warning);
     }
-
 }
