@@ -65,13 +65,15 @@ namespace OnyxScoutApplication.Server
                 options.Password.RequireNonAlphanumeric = false;
             }).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddTransient<IProfileService, ProfileService>();
-            services.AddIdentityServer(options =>
-            {
-                if (!env.IsDevelopment())
-                {
-                  //  options.PublicOrigin = configuration.GetValue<string>("PublicOrigin");
-                }
-            }).AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
+            services.AddIdentityServer(
+            //     options =>
+            // {
+            //     if (!env.IsDevelopment())
+            //     {
+            //       //  options.PublicOrigin = configuration.GetValue<string>("PublicOrigin");
+            //     }
+            // }
+                ).AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
             {
                 options.IdentityResources["openid"].UserClaims.Add("name");
                 options.ApiResources.Single().UserClaims.Add("name");
@@ -151,9 +153,9 @@ namespace OnyxScoutApplication.Server
         private async Task CreateUserRoles(IServiceProvider serviceProvider)
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            //var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            IdentityResult roleResult;
+            //IdentityResult roleResult;
             //Adding Admin Role
             
             var roles = Enum.GetValues(typeof(Role)).Cast<Role>().ToList();
@@ -164,7 +166,8 @@ namespace OnyxScoutApplication.Server
                 if (!roleCheck)
                 {
                     //create the roles and seed them to the database
-                    roleResult = await roleManager.CreateAsync(new ApplicationRole
+                    //roleResult =
+                        await roleManager.CreateAsync(new ApplicationRole
                     {
                         Id = i.ToString(), Name = role.ToString(), NormalizedName = role.ToString()
                     });

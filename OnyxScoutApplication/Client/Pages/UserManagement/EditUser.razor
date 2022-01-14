@@ -1,6 +1,6 @@
 ﻿@page "/UsersManager/Edit/{Name}"
-@inject HttpClientManager Http
-@inject NavigationManager NavigationManager
+@inject HttpClientManager http
+@inject NavigationManager navigationManager
 
 @attribute [Authorize(Roles = "Owner")]
 
@@ -48,19 +48,19 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        roles = await Http.GetJson<List<ApplicationRoleDto>>("ApplicationUser/GetAllRoles");
-        user = await Http.GetJson<ApplicationUserDto>("ApplicationUser/" + Name);
+        roles = await http.GetJson<List<ApplicationRoleDto>>("ApplicationUser/GetAllRoles");
+        user = await http.GetJson<ApplicationUserDto>("ApplicationUser/" + Name);
         if (user == null)
         {
-            NavigationManager.NavigateTo("/");
+            navigationManager.NavigateTo("/");
         }
     }
 
     private async Task OnValidSubmit()
     {
-        if (await Http.TryPutJson("ApplicationUser/" + user.UserName, user))
+        if (await http.TryPutJson("ApplicationUser/" + user.UserName, user))
         {
-            NavigationManager.NavigateTo("UsersManager");
+            navigationManager.NavigateTo("UsersManager");
         }
     }
 

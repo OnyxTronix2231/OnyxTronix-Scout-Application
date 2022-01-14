@@ -17,12 +17,12 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
                 .WithMessage(model => 
                     "Value must be a number between " + model.Field.MinValue + " and " + model.Field.MaxValue)
                 .When(c => c.Field.FieldType is FieldType.Integer or FieldType.Timer);
-            RuleFor(x => x.NumericValue).NotEmpty().WithMessage((model, s) => $"Field {model.Field.Name} required")
+            RuleFor(x => x.NumericValue).NotEmpty().WithMessage((model, _) => $"Field {model.Field.Name} required")
                 .When(m => m.Field.Required && m.Field.FieldType is FieldType.Integer or FieldType.Timer);
             
-            RuleFor(x => x.StringValue).NotEmpty().WithMessage((model, s) => $"Field {model.Field.Name} required")
+            RuleFor(x => x.StringValue).NotEmpty().WithMessage((model, _) => $"Field {model.Field.Name} required")
                 .When(m => m.Field.Required && m.Field.FieldType == FieldType.TextField);
-            RuleFor(x => x.SelectedOptions).NotEmpty().WithMessage((model, s) => $"Field {model.Field.Name} required")
+            RuleFor(x => x.SelectedOptions).NotEmpty().WithMessage((model, _) => $"Field {model.Field.Name} required")
                 .When(m => m.Field.Required &&
                            (m.Field.FieldType is FieldType.MultipleChoice or FieldType.OptionSelect));
             

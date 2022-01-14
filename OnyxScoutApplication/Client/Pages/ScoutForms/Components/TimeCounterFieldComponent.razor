@@ -62,7 +62,7 @@ else
         {
             currentTimeSpan = TimeSpan.FromSeconds(CurrentValue.Value);
         }
-        timer.Elapsed += (sender, args) => { UpdateCurrentTime(); };
+        timer.Elapsed += (_, _) => { UpdateCurrentTime(); };
     }
 
     private void ToggleCount()

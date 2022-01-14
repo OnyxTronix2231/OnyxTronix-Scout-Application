@@ -2,9 +2,9 @@
 @using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
-@inject HttpClientManager Http
-@inject ILocalStorageService LocalStorage
-@inject NavigationManager NavigationManager
+@inject HttpClientManager http
+@inject ILocalStorageService localStorage
+@inject NavigationManager navigationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (calculatedDataByStages != null)
@@ -38,22 +38,22 @@
 
     protected override async Task OnInitializedAsync()
     {
-        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         if (selectedEvent == null)
         {
             return;
         }
-        var format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
-        var result = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
+        var format = await http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        var result = await http.GetJson<List<FormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
         data = result.OrderBy(i => i.MatchName).ToList();
-        matches = (await Http.GetJson<List<Match>>
+        matches = (await http.GetJson<List<Match>>
             ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))
             .OrderBy(i => i.Date).ToList();
         calculatedDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
         foreach (var fieldsInStage in format.FieldsInStages)
         {
             calculatedDataByStages.Add(fieldsInStage.Name, 
-                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, result, s => true));
+                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, result, _ => true));
         }
        
     }
@@ -62,7 +62,7 @@
     {
         if (teamInMatch.TeamNumber != TeamNumber)
         {
-            NavigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber, true);
+            navigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber, true);
         }
     }
 

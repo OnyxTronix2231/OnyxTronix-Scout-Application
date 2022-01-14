@@ -2,12 +2,12 @@
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 
 @inherits LayoutComponentBase
-@inject NotificationManager NotificationManager
-@inject NavigationManager NavigationManager
-@inject HttpClientManager Http
-@inject ISyncLocalStorageService LocalStorage
-@inject ISyncSessionStorageService SessionStorage
-@inject IJSRuntime JsRuntime
+@inject NotificationManager notificationManager
+@inject NavigationManager navigationManager
+@inject HttpClientManager http
+@inject ISyncLocalStorageService localStorage
+@inject ISyncSessionStorageService sessionStorage
+@inject IJSRuntime jsRuntime
 
 <div class="page">
     <div class="sidebar">
@@ -34,27 +34,27 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await JsRuntime
+        await jsRuntime
             .InvokeAsync<object>(
                 "blazorFuncs.registerClient",
                 new object[] {DotNetObjectReference.Create(this)}
             );
 
-        if (LocalStorage.ContainKey("EventSelector/SelectedEventKey"))
+        if (localStorage.ContainKey("EventSelector/SelectedEventKey"))
         {
-            Event selectedEvent = LocalStorage.GetItem<Event>("EventSelector/SelectedEventKey");
+            Event selectedEvent = localStorage.GetItem<Event>("EventSelector/SelectedEventKey");
             Console.WriteLine("key: " + selectedEvent.Key);
-            var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
-            SessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
+            var matches = await http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
+            sessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
 
-            var scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
-            SessionStorage.SetItem("ScoutForms.All", scoutForms);
+            var scoutForms = await http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+            sessionStorage.SetItem("ScoutForms.All", scoutForms);
 
-            var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
+            var events = await http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
             if (events != null) //user is probably not authorized 
             {
                 events = events.OrderBy(i => i.StartDate).Where(i => string.Equals(i.Country, selectedEvent.Country, StringComparison.OrdinalIgnoreCase)).ToList();
-                SessionStorage.SetItem("TheBlueAlliance.AllEvents", events);
+                sessionStorage.SetItem("TheBlueAlliance.AllEvents", events);
             }
         }
         finishedInit = true;
@@ -65,14 +65,14 @@
     {
         Console.WriteLine("New version available");
         StateHasChanged();
-        NotificationManager.Notify("Update available", "Please refresh the page", NotificationType.Warning, 0,
+        notificationManager.Notify("Update available", "Please refresh the page", NotificationType.Warning, 0,
             new Syncfusion.Blazor.Notifications.ToastButton {Content = "Refresh", OnClick = EventCallback.Factory.Create(this, RefreshPage)});
         return await Task.FromResult("Alerted client");
     }
 
     private void RefreshPage(MouseEventArgs mouseEventArgs)
     {
-        NavigationManager.NavigateTo("/", true);
+        navigationManager.NavigateTo("/", true);
     }
 
 }

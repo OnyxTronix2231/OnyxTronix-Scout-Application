@@ -18,12 +18,9 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
     public class CustomEventRepository : Repository<CustomEvent, CustomEventDto>, ICustomEventRepository
     {
-        private readonly ITheBlueAllianceService allianceService;
 
-        public CustomEventRepository(ApplicationDbContext context, ITheBlueAllianceService allianceService,
-            IMapper mapper) : base(context, mapper)
+        public CustomEventRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
-            this.allianceService = allianceService;
         }
 
         public override async Task<ActionResult> Add(CustomEventDto eventToAdd)

@@ -93,7 +93,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             foreach (var team in Teams)
             {
                 List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(ScoutFormFormatDto,
-                    ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), s => true).ToList();
+                    ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), _ => true).ToList();
 
                 IDictionary<string, object> rows = new ExpandoObject();
 

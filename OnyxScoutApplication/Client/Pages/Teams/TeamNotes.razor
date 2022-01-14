@@ -2,8 +2,8 @@
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
-@inject HttpClientManager Http
-@inject ILocalStorageService LocalStorage
+@inject HttpClientManager http
+@inject ILocalStorageService localStorage
 @if (notesByStage != null)
 {
     <h3>Team @TeamNumber</h3>
@@ -38,13 +38,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         if (selectedEvent == null)
         {
             return;
         }
 
-        var result = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
+        var result = await http.GetJson<List<FormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
 
         var v = result.SelectMany(i => i.FormDataInStages.ToDictionary(ii => ii.Name, ii => 
             new Tuple<FormDataDto[], string>(ii.FormData.Where(d => d.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)));
