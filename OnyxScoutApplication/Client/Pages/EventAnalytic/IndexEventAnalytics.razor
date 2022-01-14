@@ -10,7 +10,7 @@
 @if (teams != null)
 {
     <EventAnalyticGrid Teams="teams" ScoutFormFormatDto="format" ScoutForms="scoutForms"
-                       OnTeamClicked="OnTeamClicked" EventAnalyticSettings="analyticSettings"/>
+                       EventAnalyticSettings="analyticSettings"/>
 }
 
 @code {
@@ -43,11 +43,6 @@
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
         teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
-    }
-
-    private void OnTeamClicked(int teamNumber)
-    {
-        NavigationManager.NavigateTo("TeamDetails/" + teamNumber);
     }
 
 }

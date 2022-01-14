@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -24,84 +25,77 @@ namespace OnyxScoutApplication.Client.Others.Managers
 
         public async Task<T> GetJson<T>(string command) where T : class
         {
-            try
-            {
-                HttpResponseMessage response = await httpClient.GetAsync(command);
-                T result = null;
-                if (response.IsSuccessStatusCode)
-                {
-                    string json = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine(json);
-                    result = JsonConvert.DeserializeObject<T>(json,
-                        new JsonSerializerSettings
-                        {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                        });
-                }
-                else
-                {
-                    notificationService.Notify("Error fetching data: " + response.StatusCode,
-                        await response.Content.ReadAsStringAsync(), NotificationType.Danger);
-                }
-
-                return result;
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
-
-            return null;
+            return await TryGetAsync<T>(async () => await httpClient.GetAsync(command));
         }
 
         public async Task<bool> TryPutJson(string command, object objectToPut)
         {
-            try
-            {
-                var response = await httpClient.PutAsync(command, Serialize(objectToPut));
-                if (!response.IsSuccessStatusCode)
-                {
-                    notificationService.Notify("Error", await response.Content.ReadAsStringAsync(),
-                        NotificationType.Danger);
-                }
-                else
-                {
-                    notificationService.Notify("Success", "Updated successfully", NotificationType.Success);
-                }
-
-                return response.IsSuccessStatusCode;
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
-
-            return false;
+            return await TrySetAsync(async () => await httpClient.PutAsync(command, Serialize(objectToPut)));
         }
 
         public async Task<bool> TryPostJson(string command, object objectToPost)
         {
+            return await TrySetAsync(async () => await httpClient.PostAsync(command, Serialize(objectToPost)));
+        }
+
+        private async Task<T> TryGetAsync<T>(Func<Task<HttpResponseMessage>> action) where T : class
+        {
+            var response = await TryExecuteAsync(action);
+            if(!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+            string json = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<T>(json,
+                new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                });
+            return result;
+        }
+        
+        private async Task<bool> TrySetAsync(Func<Task<HttpResponseMessage>> action)
+        {
+            var response = await TryExecuteAsync(action);
+            if(response.IsSuccessStatusCode)
+            {
+                notificationService.Notify("Success", "Pushed successfully", NotificationType.Success);
+            }
+            return response.IsSuccessStatusCode;
+        }
+        
+        private async Task<HttpResponseMessage> TryExecuteAsync(Func<Task<HttpResponseMessage>> action)
+        {
+            HttpResponseMessage response = null;
             try
             {
-                var response = await httpClient.PostAsync(command, Serialize(objectToPost));
-                if (!response .IsSuccessStatusCode)
+                response = await action();
+                if (!response.IsSuccessStatusCode)
                 {
-                    notificationService.Notify("Error", await response .Content.ReadAsStringAsync(),
-                        NotificationType.Danger);
+                    await NotifyFailer(response);
                 }
-                else
-                {
-                    notificationService.Notify("Success", "Created successfully", NotificationType.Success);
-                }
-
-                return response .IsSuccessStatusCode;
             }
             catch (AccessTokenNotAvailableException exception)
             {
                 exception.Redirect();
+                NotifyFailer("Error", exception.Message);
             }
+            catch (Exception exception)
+            {
+                NotifyFailer("Error", exception.Message);
+            }
+            return response ?? new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
+        }
 
-            return false;
+        private async Task NotifyFailer(HttpResponseMessage response)
+        {
+            notificationService.Notify($"Error: {response.StatusCode}", await response.Content.ReadAsStringAsync(),
+                NotificationType.Danger);
+        }
+         
+        private void NotifyFailer(string title, string message)
+        {
+            notificationService.Notify(title, message, NotificationType.Danger);
         }
 
         private static HttpContent Serialize(object objectToSerialize)

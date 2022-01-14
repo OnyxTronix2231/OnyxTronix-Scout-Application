@@ -17,7 +17,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
     {
         public event Action<string, string, NotificationType, int, ToastButton[]> OnShow;
 
-        public void Notify(string title, string message, NotificationType notificationType, int timeout = 3000,
+        public void Notify(string title, string message, NotificationType notificationType, int timeout = 6000,
             params ToastButton[] toastButtons)
         {
             OnShow?.Invoke(title, message, notificationType, timeout, toastButtons);

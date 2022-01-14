@@ -1,4 +1,5 @@
 ﻿@using System.Dynamic
+@using System.Security
 @using Newtonsoft.Json
 @using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 @inherits TeamsAnalyzer
@@ -17,16 +18,10 @@
                         @{
                             var v = (dynamic) context;
                             <div>
-                                <span class="clickable"
-                                      @onclick="() => OnTeamGridClicked(v.TeamNumber)">
-                                    @(v.Nickname)
-                                </span>
+                                <a href="TeamDetails/@v.TeamNumber" target="_blank"> @(v.Nickname) </a>
                             </div>
                             <div>
-                                <span class="clickable"
-                                      @onclick="() => OnTeamGridClicked(v.TeamNumber)">
-                                    @(v.TeamNumber)
-                                </span>
+                                <a href="TeamDetails/@v.TeamNumber" target="_blank"> @(v.TeamNumber) </a>
                             </div>
                         }
                     </Template>
@@ -59,22 +54,19 @@
 </div>
 
 @code {
-
-    [Parameter]
-    public EventCallback<int> OnTeamClicked { get; set; }
-
     private readonly string[] toolbarItems = {"ColumnChooser"};
-
-    private async Task OnTeamGridClicked(int teamNumber)
-    {
-        await OnTeamClicked.InvokeAsync(teamNumber);
-    }
-
-
 }
+
 
 <style>
     .clickable {
         cursor: pointer
     }
+    
+        .e-grid .e-gridheader { 
+            position: -webkit-sticky; 
+            position: sticky; 
+            top: 56px; /* The height of top nav menu. */ 
+            z-index: 1; 
+        } 
 </style>

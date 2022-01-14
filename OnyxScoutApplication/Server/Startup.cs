@@ -54,7 +54,7 @@ namespace OnyxScoutApplication.Server
             Console.WriteLine($"Configuring services in {env.EnvironmentName} mode ({env.IsDevelopment()})");
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                var connectionString = configuration.GetConnectionString(env.IsDevelopment() ? "LocalConnection" : "DefaultConnection");
+                var connectionString = configuration.GetConnectionString("DefaultConnection");
                 options.UseSqlServer(connectionString);
             });
             services.AddDatabaseDeveloperPageExceptionFilter();

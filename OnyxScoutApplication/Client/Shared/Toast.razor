@@ -27,6 +27,7 @@
 
     protected override void OnShow(string title, string message, NotificationType type, int timeout, params ToastButton[] toastButtons)
     {
+        message = message.Replace("\n", "<br/>");
         base.OnShow(title, message, type, timeout, toastButtons);
         toastObj.Show();
         StateHasChanged();
