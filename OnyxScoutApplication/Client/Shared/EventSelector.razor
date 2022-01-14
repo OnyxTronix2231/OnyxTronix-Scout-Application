@@ -1,6 +1,6 @@
 ﻿@using Syncfusion.Blazor.DropDowns
-@inject HttpClientManager Http
-@inject ILocalStorageService LocalStorage
+@inject HttpClientManager http
+@inject ILocalStorageService localStorage
 
 <SfDropDownList TValue="int?" TItem="int?" Width="150px" PopupHeight="150px" PopupWidth="150px" Placeholder="Select a year" Value="selectedYearFilter" DataSource="@filterYears">
     <DropDownListEvents TItem="int?" TValue="int?" OnValueSelect="OnYearFilterChange"></DropDownListEvents>
@@ -41,12 +41,12 @@
             filterYears.Add(i);
         }
         filterCountries.Add("Israel");
-        if (await LocalStorage.ContainKeyAsync("EventSelector/SelectedEventKey"))
+        if (await localStorage.ContainKeyAsync("EventSelector/SelectedEventKey"))
         {
-            selectedYearFilter = await LocalStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
-            selectedCountryFilter = await LocalStorage.GetItemAsync<string>("EventSelector/SelectedCountryFilter");
-            selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
-            UpdateEventsList(await LocalStorage.GetItemAsync<List<Event>>("TheBlueAlliance.AllEvents"));
+            selectedYearFilter = await localStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
+            selectedCountryFilter = await localStorage.GetItemAsync<string>("EventSelector/SelectedCountryFilter");
+            selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+            UpdateEventsList(await localStorage.GetItemAsync<List<Event>>("TheBlueAlliance.AllEvents"));
             UpdateSelectedEvent(selectedEvent);
         }
         else
@@ -64,25 +64,25 @@
     private async Task OnYearFilterChange(SelectEventArgs<int?> args)
     {
         selectedYearFilter = args.ItemData;
-        UpdateEventsList(await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedYearFilter));
-        await LocalStorage.SetItemAsync("TheBlueAlliance.AllEvents", events);
-        await LocalStorage.SetItemAsync("EventSelector/SelectedYearFilter", selectedYearFilter);
+        UpdateEventsList(await http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedYearFilter));
+        await localStorage.SetItemAsync("TheBlueAlliance.AllEvents", events);
+        await localStorage.SetItemAsync("EventSelector/SelectedYearFilter", selectedYearFilter);
         StateHasChanged();
     }
 
     private async Task OnCountryFilterChange(SelectEventArgs<string> args)
     {
         selectedCountryFilter = args.ItemData;
-        UpdateEventsList(await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedYearFilter));
-        await LocalStorage.SetItemAsync("TheBlueAlliance.AllEvents", events);
-        await LocalStorage.SetItemAsync("EventSelector/SelectedCountryFilter", selectedCountryFilter);
+        UpdateEventsList(await http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedYearFilter));
+        await localStorage.SetItemAsync("TheBlueAlliance.AllEvents", events);
+        await localStorage.SetItemAsync("EventSelector/SelectedCountryFilter", selectedCountryFilter);
         StateHasChanged();
     }
 
     private async Task OnEventChange(SelectEventArgs<Event> args)
     {
         UpdateSelectedEvent(args.ItemData);
-        await LocalStorage.SetItemAsync("EventSelector/SelectedEventKey", selectedEvent);
+        await localStorage.SetItemAsync("EventSelector/SelectedEventKey", selectedEvent);
         await OnEventSelectionChange.InvokeAsync(selectedEvent);
     }
 

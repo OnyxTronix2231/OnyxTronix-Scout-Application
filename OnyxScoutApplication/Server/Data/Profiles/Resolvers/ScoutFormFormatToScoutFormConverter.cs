@@ -73,10 +73,10 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                     throw new ArgumentOutOfRangeException();
             }
 
-            foreach (var f in field.CascadeFields)
-            {
-                //  scoutFormData.CascadeData.Add(GetScoutFormDataFromField(f));
-            }
+            // foreach (var f in field.CascadeFields)
+            // {
+            //     //  scoutFormData.CascadeData.Add(GetScoutFormDataFromField(f));
+            // }
 
             return formData;
         }

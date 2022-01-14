@@ -42,7 +42,7 @@
                         <Template>
                             @{
                                 var v = (IDictionary<string, object>) context;
-                                var s = new MarkupString(v[nameId].ToString());
+                                var s = new MarkupString(v[nameId].ToString() ?? "");
                             }
                             <span>@s</span>
                         </Template>

@@ -1,9 +1,9 @@
 ﻿@page "/"
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
-@inject ISyncLocalStorageService SyncLocalStorage
-@inject HttpClientManager Http
-@inject NavigationManager NavigationManager
-@inject ISessionStorageService SessionStorage
+@inject ISyncLocalStorageService syncLocalStorage
+@inject HttpClientManager http
+@inject NavigationManager navigationManager
+@inject ISessionStorageService sessionStorage
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 <h1>Events</h1>
@@ -48,19 +48,19 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (await SessionStorage.ContainKeyAsync("TheBlueAlliance.AllMatches"))
+        if (await sessionStorage.ContainKeyAsync("TheBlueAlliance.AllMatches"))
         {
-            var matches = await SessionStorage.GetItemAsync<List<Match>>("TheBlueAlliance.AllMatches");
-            scoutForms = await SessionStorage.GetItemAsync<List<FormDto>>("ScoutForms.All");
+            var matches = await sessionStorage.GetItemAsync<List<Match>>("TheBlueAlliance.AllMatches");
+            scoutForms = await sessionStorage.GetItemAsync<List<FormDto>>("ScoutForms.All");
             UpdateByMatches(matches);
         }
     }
     
     private async Task UpdateMatchTable(Event selectedEvent)
     {
-        var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
-        await SessionStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
-        scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+        var matches = await http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
+        await sessionStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
+        scoutForms = await http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
         UpdateByMatches(matches);
     }
 
@@ -78,12 +78,12 @@
     {
         if (!teamInMatch.IsFormExists)
         {
-            SyncLocalStorage.SetItem("ScoutForm/TeamInMatch", teamInMatch);
-            NavigationManager.NavigateTo("ScoutForm/Create");
+            syncLocalStorage.SetItem("ScoutForm/TeamInMatch", teamInMatch);
+            navigationManager.NavigateTo("ScoutForm/Create");
         }
         else
         {
-            NavigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber);
+            navigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber);
         }
     }
 }

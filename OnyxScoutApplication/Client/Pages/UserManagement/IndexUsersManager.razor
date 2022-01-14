@@ -2,8 +2,8 @@
 <h3>Users manager</h3>
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore.Internal
-@inject HttpClientManager Http
-@inject NavigationManager NavigationManager
+@inject HttpClientManager http
+@inject NavigationManager navigationManager
 @attribute [Authorize(Roles = "Owner")]
 
 @if (applicationUsers == null)
@@ -48,17 +48,17 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        applicationUsers = await Http.GetJson<List<ApplicationUserDto>>("ApplicationUser");
+        applicationUsers = await http.GetJson<List<ApplicationUserDto>>("ApplicationUser");
     }
 
     private void Edit(ApplicationUserDto applicationUserDto)
     {
-        NavigationManager.NavigateTo("/UsersManager/Edit/" + applicationUserDto.UserName);
+        navigationManager.NavigateTo("/UsersManager/Edit/" + applicationUserDto.UserName);
     }
     
     private void ChangePassword(ApplicationUserDto applicationUserDto)
     {
-        NavigationManager.NavigateTo("/UsersManager/ChangePasswordFor/" + applicationUserDto.UserName);
+        navigationManager.NavigateTo("/UsersManager/ChangePasswordFor/" + applicationUserDto.UserName);
     }
 
 }

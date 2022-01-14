@@ -11,11 +11,11 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
     {
         private readonly ApplicationDbContext context;
 
-        public CustomEventUnitOfWork(ApplicationDbContext context, ITheBlueAllianceService theBlueAllianceService, 
+        public CustomEventUnitOfWork(ApplicationDbContext context, 
             IMapper mapper)
         {
             this.context = context;
-            CustomEvents = new CustomEventRepository(context, theBlueAllianceService, mapper);
+            CustomEvents = new CustomEventRepository(context, mapper);
         }
 
         public ICustomEventRepository CustomEvents { get; }
