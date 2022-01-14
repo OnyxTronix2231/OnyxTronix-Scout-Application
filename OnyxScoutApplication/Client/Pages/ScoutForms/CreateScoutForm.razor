@@ -9,6 +9,10 @@
 @if (form != null)
 {
     <h3>ScoutForm</h3>
+    <div style="float: right;">
+        <SfButton type="button" CssClass="e-success" @onclick="SaveOnLocalCache">Save locally</SfButton>
+        <SfButton type="button" CssClass="e-danger" @onclick="DeleteLocalCache">Delete local cache</SfButton>
+    </div>
     <ScoutFromComponent Form="form" Type="FormType.Create" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
 }
 
@@ -52,7 +56,22 @@
             NavigationManager.NavigateTo("/");
             return;
         }
-        await LocalStorage.SetItemAsync($"ScoutForm/{form.MatchName}/{form.TeamNumber}" ,form);
+        await SaveOnLocalCache();
         NotificationManager.Notify("Error", "Error saving form in server\nThe form was saved localy for now", NotificationType.Warning);
+    }
+
+    private async Task SaveOnLocalCache()
+    {
+        await LocalStorage.SetItemAsync($"ScoutForm/{form.MatchName}/{form.TeamNumber}" ,form);
+    }
+    
+    private async Task DeleteLocalCache()
+    {
+        if (!await LocalStorage.ContainKeyAsync($"ScoutForm/{form.MatchName}/{form.TeamNumber}"))
+        {
+            NotificationManager.Notify("No form was found on local cache!", "", NotificationType.Warning);
+            return;
+        }
+        await LocalStorage.RemoveItemAsync($"ScoutForm/{form.MatchName}/{form.TeamNumber}");
     }
 }
