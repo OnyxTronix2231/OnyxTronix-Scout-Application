@@ -50,7 +50,7 @@ namespace OnyxScoutApplication.Client
 
             services.AddSyncfusionBlazor();
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(
-                "NDQ2MTc1QDMxMzkyZTMxMmUzMEdiemxIQnZrd0xpU3I4SXZZckQ2b3M2UXc5MjBNaWEvQWVybWpOVTg0TTA9");
+                "NTY1NTQ2QDMxMzkyZTMzMmUzMGo3dzAwdEkyYVBVVW9lRmdKTm9MbXd4bnlvTWk2TTQ3aGJtaFJuRlY3Z1U9");
             services.AddTransient<HttpClientManager>();
             services.AddSingleton<NotificationManager>();
             services.AddTransient<IValidator<ScoutFormFormatDto>, ScoutFormFormatValidator>();
