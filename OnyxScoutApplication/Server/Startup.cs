@@ -19,6 +19,7 @@ using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork;
 using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
 using AutoMapper;
 using System;
+using System.Collections;
 using OnyxScoutApplication.Server.Data.Profiles;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
@@ -52,6 +53,11 @@ namespace OnyxScoutApplication.Server
         public void ConfigureServices(IServiceCollection services)
         {
             Console.WriteLine($"Configuring services in {env.EnvironmentName} mode ({env.IsDevelopment()})");
+            Console.WriteLine($"Enviermnt vars:");
+            foreach (DictionaryEntry environmentVariable in Environment.GetEnvironmentVariables())
+            {
+                Console.WriteLine(environmentVariable.Key + " : " + environmentVariable.Value);
+            }
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 var connectionString = configuration.GetConnectionString("DefaultConnection");
