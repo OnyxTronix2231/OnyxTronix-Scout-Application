@@ -9,16 +9,16 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
 {
     public class CustomMatchValidator : AbstractValidator<CustomMatchDto>
     {
-        public CustomMatchValidator()
+        public CustomMatchValidator(CustomEventDto customEventDto)
         {
-            RuleFor(i => i.Date).NotEmpty().GreaterThanOrEqualTo(i => i.Event.StartDate)
-                .LessThanOrEqualTo(i => new DateTime(i.Event.Year + 1, 1, 1))
+            RuleFor(i => i.Date).NotEmpty().GreaterThanOrEqualTo(i => customEventDto.StartDate)
+                .LessThanOrEqualTo(i => new DateTime(customEventDto.Year + 1, 1, 1))
                 .WithMessage("Invalid date for this match, make sure you are in the currect year!");
 
             RuleFor(i => i.Alliances).NotEmpty();
             RuleFor(i => i.Alliances.Blue).Must(BeFull).WithMessage("Missing team/s in blue alliance");
             RuleFor(i => i.Alliances.Red).Must(BeFull).WithMessage("Missing team/s in red alliance");
-            RuleFor(i => i.Alliances).Must(HaveDiffrentTeams).WithMessage("team in the same match!");
+            RuleFor(i => i.Alliances).Must(HaveDiffrentTeams).WithMessage("Team in the same match!");
         }
 
         private static bool HaveDiffrentTeams(CustomAlliancesDto customAlliances)

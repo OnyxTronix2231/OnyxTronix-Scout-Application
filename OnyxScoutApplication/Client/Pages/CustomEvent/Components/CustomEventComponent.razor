@@ -28,62 +28,70 @@
     </div>
     <div class="form-group">
         <ValidationMessage For="() => CustomEvent.Matches" />
-        @foreach (var customMatchesByStage in CustomEvent.Matches.GroupBy(i => i.Level))
+        @{
+            var matchesByLevels = CustomEvent.Matches.GroupBy(i => i.Level).ToDictionary(x => x.Key, x => x.ToList());
+        }
+        @foreach (var level in levels)
         {
-            <h4>@customMatchesByStage.Key</h4>
+            <h4>@level</h4>
             <br>
-                var matches = customMatchesByStage.ToList();
-                for (int i = 0; i < matches.Count; i++)
-                {
-                    var currentIndex = i;
-                    var customMatch = matches[currentIndex];
-                    <div class="container">
-                        <div class="form-group col-sm-5">
-                            <label class="form-label">Stage</label>
-                            <SfTextBox @bind-Value="@customMatch.Level" Readonly="@true"/>
-                        </div>
-                        <div class="form-group col-sm-5">
-                            <label class="form-label">Match number</label>
-                            <SfNumericTextBox @bind-Value="@currentIndex" Readonly="@true"/>
-                        </div>
-                        <div class="form-group col-sm-5">
-                            <label class="form-label">Date</label>
-                            <SfDateTimePicker Format="dd/MM/yyyy HH:mm" TimeFormat="HH:mm" Time @bind-Value="@customMatch.Date"/>
-                            <ValidationMessage For="() => customMatch.Date"/>
-                        </div>
-                        <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveMatch(customMatch)">Remove</SfButton>
-                        <ValidationMessage For="() => customMatch.Alliances"/>
-                        <div class="row">
-                            <div class="form-group col-sm-4">
-                                <h5>Blue team</h5>
-                                <ValidationMessage For="() => customMatch.Alliances.Blue"/>
+            <SfButton type="button" @onclick="() => AddMatch(level)">Add match</SfButton>
+            if (!matchesByLevels.ContainsKey(level))
+            {
+                continue;
+            }
+            var matches = matchesByLevels[level];
+            for (int i = 0; i < matches.Count; i++)
+            {
+                var currentIndex = i;
+                var customMatch = matches[currentIndex];
+                <div class="container">
+                    <div class="form-group col-sm-5">
+                        <label class="form-label">Stage</label>
+                        <SfTextBox @bind-Value="@customMatch.Level" Readonly="@true"/>
+                    </div>
+                    <div class="form-group col-sm-5">
+                        <label class="form-label">Match number</label>
+                        @{ var matchNumber = currentIndex + 1; }
+                        <SfNumericTextBox @bind-Value="@matchNumber" Readonly="@true"/>
+                    </div>
+                    <div class="form-group col-sm-5">
+                        <label class="form-label">Date</label>
+                        <SfDateTimePicker Format="dd/MM/yyyy HH:mm" TimeFormat="HH:mm" Time @bind-Value="@customMatch.Date"/>
+                        <ValidationMessage For="() => customMatch.Date"/>
+                    </div>
+                    <SfButton type="button" CssClass="e-danger" @onclick="() => RemoveMatch(customMatch)">Remove</SfButton>
+                    <ValidationMessage For="() => customMatch.Alliances"/>
+                    <div class="row">
+                        <div class="form-group col-sm-4">
+                            <h5>Blue team</h5>
+                            <ValidationMessage For="() => customMatch.Alliances.Blue"/>
 
-                                @for (int j = 0; j < customMatch.Alliances.Blue.Teams.Count; j++)
-                                {
-                                    var team = customMatch.Alliances.Blue.Teams[j];
-                                    <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber" CssClass="maxWidth">
-                                        <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
-                                        <DropDownListEvents TItem="CustomTeamDto" TValue="int" ValueChange="e => OnTeamSelected(e, team)"></DropDownListEvents>
-                                    </SfDropDownList>
-                                }
-                            </div>
+                            @for (int j = 0; j < customMatch.Alliances.Blue.Teams.Count; j++)
+                            {
+                                var team = customMatch.Alliances.Blue.Teams[j];
+                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber" CssClass="maxWidth">
+                                    <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
+                                    <DropDownListEvents TItem="CustomTeamDto" TValue="int" ValueChange="e => OnTeamSelected(e, team)"></DropDownListEvents>
+                                </SfDropDownList>
+                            }
+                        </div>
 
-                            <div class="form-group col-sm-4">
-                                <h5>Red team</h5>
-                                <ValidationMessage For="() => customMatch.Alliances.Red"/>
-                                @for (int j = 0; j < customMatch.Alliances.Red.Teams.Count; j++)
-                                {
-                                    var team = customMatch.Alliances.Red.Teams[j];
-                                    <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber" CssClass="maxWidth">
-                                        <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
-                                        <DropDownListEvents TItem="CustomTeamDto" TValue="int" ValueChange="e => OnTeamSelected(e, team)"></DropDownListEvents>
-                                    </SfDropDownList>
-                                }
-                            </div>
+                        <div class="form-group col-sm-4">
+                            <h5>Red team</h5>
+                            <ValidationMessage For="() => customMatch.Alliances.Red"/>
+                            @for (int j = 0; j < customMatch.Alliances.Red.Teams.Count; j++)
+                            {
+                                var team = customMatch.Alliances.Red.Teams[j];
+                                <SfDropDownList TItem="CustomTeamDto" TValue="int" Placeholder="Select team" DataSource="teams" Value="team.TeamNumber" CssClass="maxWidth">
+                                    <DropDownListFieldSettings Text="NameWithNumber" Value="TeamNumber"></DropDownListFieldSettings>
+                                    <DropDownListEvents TItem="CustomTeamDto" TValue="int" ValueChange="e => OnTeamSelected(e, team)"></DropDownListEvents>
+                                </SfDropDownList>
+                            }
                         </div>
                     </div>
-                }
-                <SfButton type="button" @onclick="() => AddMatch(customMatchesByStage.Key)">Add match</SfButton>
+                </div>
+            }
             <br/>
         }
     </div>
@@ -103,7 +111,9 @@
     [Parameter]
     public FormType Type { get; set; }
 
-    private List<CustomTeamDto> teams = new List<CustomTeamDto>();
+    private List<CustomTeamDto> teams = new();
+
+    private string[] levels = { "qm", "qf", "sf", "f" };
 
     protected override async Task OnInitializedAsync()
     {
@@ -113,10 +123,10 @@
         {
             return;
         }
-        CustomEvent.Matches.Add(CreateCustomMatch("qm"));
-        CustomEvent.Matches.Add(CreateCustomMatch("qf"));
-        CustomEvent.Matches.Add(CreateCustomMatch("sf"));
-        CustomEvent.Matches.Add(CreateCustomMatch("f"));
+        foreach (var level in levels)
+        {
+            CustomEvent.Matches.Add(CreateCustomMatch(level));
+        }
     }
 
     private CustomMatchDto CreateCustomMatch(string level)
@@ -146,7 +156,7 @@
         for (int i = 0; i < CustomEvent.Matches.Count; i++)
         {
             var customMatch = CustomEvent.Matches[i];
-            customMatch.MatchNumber = i;
+            customMatch.MatchNumber = i + 1;
         }
         await OnValidSubmitCallBack.InvokeAsync(this);
     }
@@ -154,7 +164,7 @@
     private void AddMatch(string stage)
     {
         var newMatch = CreateCustomMatch(stage);
-        newMatch.Date = CustomEvent.Matches.FirstOrDefault(i => i.Level == stage)!.Date;
+        newMatch.Date = (CustomEvent.Matches.FirstOrDefault(i => i.Level == stage) ?? newMatch).Date;
         CustomEvent.Matches.Add(newMatch);
     }
 

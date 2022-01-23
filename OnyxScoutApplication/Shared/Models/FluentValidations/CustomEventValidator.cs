@@ -21,15 +21,15 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
             
             RuleFor(x => x.Matches).NotEmpty();
             
-            RuleFor(x => x.Matches).Must(HaveAllLevels).
-                WithMessage("Please make sure your are not missing any match stages");
+            // RuleFor(x => x.Matches).Must(HaveAllLevels).
+            //     WithMessage("Please make sure your are not missing any match stages");
             
-            RuleForEach(x => x.Matches).SetValidator(new CustomMatchValidator());
+            RuleForEach(x => x.Matches).SetValidator(i => new CustomMatchValidator(i));
         }
 
-        private static bool HaveAllLevels(List<CustomMatchDto> customMatches)
-        {
-            return customMatches.GroupBy(i => i.Level).Count() == 4;
-        }
+        // private static bool HaveAllLevels(List<CustomMatchDto> customMatches)
+        // {
+        //     return customMatches.GroupBy(i => i.Level).Count() == 4;
+        // }
     }
 }
