@@ -3,7 +3,7 @@
 @using Newtonsoft.Json
 @using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 @inherits TeamsAnalyzer
-<div>
+<div style="width: calc(90vw);">
     @if (CalculatedTeamsData != null && CalculatedTeamsData.Count != 0)
     {
         <SfGrid FrozenColumns="1" AllowTextWrap="false" DataSource="@CalculatedTeamsData" AllowReordering="true"
