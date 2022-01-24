@@ -56,7 +56,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEventWithData(string eventKey)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms
+            var scoutForm = await ScoutAppContext.ScoutForms.Where(i => i.MatchName.Contains(eventKey))
                 .WithAllData().ToListAsync();
             return Mapper.Map<List<FormDto>>(scoutForm);
         }
