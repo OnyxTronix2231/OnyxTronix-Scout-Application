@@ -13,8 +13,7 @@
             <GridEvents Created="CreatedHandler" TValue="ExpandoObject"></GridEvents>
             <GridColumns>
                 <GridColumn AllowReordering="false" ShowInColumnChooser="false" HeaderText="Team" Field="TeamNumber" AllowFiltering="true"
-                            FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"
-                            Width="150px">
+                            FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })">
                     <Template>
                         @{
                             var v = (dynamic)context;
@@ -61,6 +60,7 @@
     private void CreatedHandler()
     {
         Grid.AutoFitColumns();
+        Grid.Columns[0].Width = "150px";
     }
     
 }
