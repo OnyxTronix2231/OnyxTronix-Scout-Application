@@ -3,16 +3,17 @@
 @using Newtonsoft.Json
 @using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 @inherits TeamsAnalyzer
-<div style="width: calc(90vw);">
+<div style="width: calc(90vw); height: 90vh">   
     @if (CalculatedTeamsData != null && CalculatedTeamsData.Count != 0)
     {
         <SfGrid FrozenColumns="1" AllowTextWrap="false" DataSource="@CalculatedTeamsData" AllowReordering="true"
                 AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true"
-                Toolbar="@toolbarItems" ShowColumnChooser="true" Width="100%">
+                Toolbar="@toolbarItems" ShowColumnChooser="true" Width="100%" Height="100%">
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
             <GridColumns>
-                <GridColumn HeaderText="Team" Field="TeamNumber" AllowFiltering="true"
-                            FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })">
+                <GridColumn ShowInColumnChooser="false" HeaderText="Team" Field="TeamNumber" AllowFiltering="true"
+                            FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"
+                            Width="150px">
                     <Template>
                         @{
                             var v = (dynamic)context;
@@ -31,7 +32,7 @@
                     string nameId = ColumnsFields[index].Id;
                     string name = ColumnsFields[index].Name;
                     var rawValue = "RawValue" + nameId;
-                    <GridColumn HeaderText="@name" Field="@rawValue" AutoFit="true" AllowReordering="true"
+                    <GridColumn HeaderText="@name" Field="@rawValue" AllowReordering="true"
                                 AllowResizing="true" Type="ColumnType.Number">
                         <HeaderTemplate>
                             <div>
@@ -53,7 +54,7 @@
 </div>
 
 @code {
-    private readonly string[] toolbarItems = {"ColumnChooser"};
+    private readonly string[] toolbarItems = { "ColumnChooser" };
 }
 
 
