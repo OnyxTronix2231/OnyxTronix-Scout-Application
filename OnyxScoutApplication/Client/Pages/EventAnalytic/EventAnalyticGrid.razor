@@ -10,7 +10,7 @@
                 AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true"
                 Toolbar="@toolbarItems" ShowColumnChooser="true" Width="100%" Height="100%">
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
-            <GridEvents OnLoad="LoadHandler" TValue="ExpandoObject"></GridEvents>
+            <GridEvents Created="LoadHandler" TValue="ExpandoObject"></GridEvents>
             <GridColumns>
                 <GridColumn AllowReordering="false" ShowInColumnChooser="false" HeaderText="Team" Field="TeamNumber" AllowFiltering="true"
                             FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"
@@ -60,8 +60,7 @@
 
     private void LoadHandler()
     {
-        Grid.AutoFitColumns();
-        Grid.Columns[0].Width = "150px";
+        Grid.AutoFitColumns(ColumnsFields.Select(i => "RawValue" + i.Id).ToArray());
     }
     
 }
