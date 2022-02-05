@@ -14,6 +14,19 @@
 {
     @foreach (var combinedField in analyticSettings.CombinedFields)
     {
+        <div class="form-group col-sm-5">
+            <label>Name:</label>
+            <br/>
+            <SfTextBox @bind-Value="@combinedField.Name" Width="250px"/>
+        </div>
+        <div class="form-group col-sm-5">
+            <label>Type:</label>
+            <br/>
+            <SfDropDownList TItem="CombinedFieldsType" TValue="CombinedFieldsType" Placeholder="Select type" 
+                            DataSource="Enum.GetValues<CombinedFieldsType>()"
+                            @bind-Value="combinedField.CombinedFieldsType" Width="250px">
+            </SfDropDownList>
+        </div>
         <div>
             @for (int i = 0; i < combinedField.Fields.Count; i++)
             {
@@ -30,6 +43,7 @@
             }
             <SfButton @onclick="() => AddField(combinedField)">Add column</SfButton>
         </div>
+        
         <br/>
     }
 
@@ -47,9 +61,9 @@
 
 @code {
     private Event selectedEvent;
-    private ScoutFormFormatDto format = new ScoutFormFormatDto();
+    private ScoutFormFormatDto format = new();
     private EventAnalyticSettingsDto analyticSettings;
-    private List<FieldDto> fields = new List<FieldDto>();
+    private List<FieldDto> fields = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -92,7 +106,7 @@
         combinedFields[index] = args.ItemData;
         analyticSettings.CombinedFields.ForEach(i => i.Fields.ForEach(ii => Console.WriteLine(ii.Name)));
     }
-
+    
     private async Task SaveSettings()
     {
         analyticSettings.CombinedFields.ForEach(i => i.Fields.RemoveAll(f => string.IsNullOrEmpty(f.Name)));
