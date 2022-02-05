@@ -32,7 +32,9 @@ else
                 <OnyxAuthorizeView Role="@(Role.Admin)">
                     <SfButton CssClass="e-warning" @onclick="() => Edit(scoutForm)">Edit</SfButton>
                 </OnyxAuthorizeView>
-                <SfButton CssClass="e-info" @onclick="() => View(scoutForm)" style="margin-left :5px">View</SfButton>
+                <ButtonTabOpener CssClass="e-info" Url="@($"ScoutForm/View/{scoutForm.Id}")" Style="margin-left :5px" 
+                                 Text="View">
+                </ButtonTabOpener>
             </tr>
         }
         </tbody>

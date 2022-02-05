@@ -1,0 +1,17 @@
+@inject IJSRuntime jsRuntime
+
+<SfButton CssClass="@CssClass" style="@Style"
+          @onclick="@(async () => await jsRuntime.InvokeVoidAsync("open", Url, "_blank"))">
+        @Text
+    </SfButton>
+
+@code {
+    [Parameter]
+    public string CssClass { get; set; }
+    [Parameter]
+    public string Url { get; set; }
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public string Style { get; set; }
+}
