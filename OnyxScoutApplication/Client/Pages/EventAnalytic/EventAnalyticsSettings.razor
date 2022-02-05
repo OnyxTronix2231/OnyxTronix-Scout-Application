@@ -18,32 +18,35 @@
             <label>Name:</label>
             <br/>
             <SfTextBox @bind-Value="@combinedField.Name" Width="250px"/>
-        </div>
-        <div class="form-group col-sm-5">
+
+            <br/>
             <label>Type:</label>
             <br/>
-            <SfDropDownList TItem="CombinedFieldsType" TValue="CombinedFieldsType" Placeholder="Select type" 
+            <SfDropDownList TItem="CombinedFieldsType" TValue="CombinedFieldsType" Placeholder="Select type"
                             DataSource="Enum.GetValues<CombinedFieldsType>()"
                             @bind-Value="combinedField.CombinedFieldsType" Width="250px">
             </SfDropDownList>
-        </div>
-        <div>
-            @for (int i = 0; i < combinedField.Fields.Count; i++)
-            {
-                FieldDto field = combinedField.Fields[i];
-                int index = i;
-                <div>
-                    <SfDropDownList TItem="FieldDto" TValue="int" Placeholder="Select field" DataSource="fields" Value="field.Id" Width="250px">
-                        <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
-                        <DropDownListEvents TItem="FieldDto" TValue="int" ValueChange="e => OnFieldSelected(e, combinedField.Fields, index)"></DropDownListEvents>
-                    </SfDropDownList>
-                    <SfButton CssClass="e-danger" @onclick="() => combinedField.Fields.Remove(field)">Remove this column</SfButton>
-                </div>
+            <br/>
+            <br/>
+            <div>
+                <label>Columns:</label>
                 <br/>
-            }
-            <SfButton @onclick="() => AddField(combinedField)">Add column</SfButton>
+                @for (int i = 0; i < combinedField.Fields.Count; i++)
+                {
+                    FieldDto field = combinedField.Fields[i];
+                    int index = i;
+                    <div>
+                        <SfDropDownList TItem="FieldDto" TValue="int" Placeholder="Select field" DataSource="fields" Value="field.Id" Width="250px">
+                            <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
+                            <DropDownListEvents TItem="FieldDto" TValue="int" ValueChange="e => OnFieldSelected(e, combinedField.Fields, index)"></DropDownListEvents>
+                        </SfDropDownList>
+                        <SfButton CssClass="e-danger" @onclick="() => combinedField.Fields.Remove(field)">Remove this column</SfButton>
+                    </div>
+                    <br/>
+                }
+                <SfButton @onclick="() => AddField(combinedField)">Add column</SfButton>
+            </div>
         </div>
-        
         <br/>
     }
 
