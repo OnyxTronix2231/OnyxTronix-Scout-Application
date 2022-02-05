@@ -9,26 +9,28 @@ namespace OnyxScoutApplication.Shared.Models
 {
     public class EventAnalyticSettingsDto
     {
-        public List<CombinedFieldsDto> CombinedFields { get; set; } = new List<CombinedFieldsDto>();
+        public List<CombinedFieldsDto> CombinedFields { get; set; } = new();
     }
 
     public class CombinedFieldsDto
     {
-        public List<FieldDto> Fields { get; set;} = new List<FieldDto>();
+        public List<FieldDto> Fields { get; set;} = new();
 
-        public string Name
-        {
-            get { return string.Concat(Fields.Select(i => i.Name)); }
-        }
+        public CombinedFieldsType CombinedFieldsType { get; set; }
 
-        public MarkupString MarkupName
-        {
-            get { return new MarkupString(string.Join("<br />", Fields.Select(i => i.Name))); }
-        }
+        public string Name { get; set; }
+
+        public MarkupString MarkupName => new(Name);
 
         public string Id
         {
             get { return string.Concat(Fields.Select(i => ";" + i.Id + ";")); }
         }
+    }
+
+    public enum CombinedFieldsType
+    {
+        Sum,
+        Avg
     }
 }

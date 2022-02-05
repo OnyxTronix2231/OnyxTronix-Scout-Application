@@ -111,25 +111,17 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 {
                     foreach (var combinedField in EventAnalyticSettings.CombinedFields)
                     {
-                        double sumAvg = 0;
-                        int index = 0;
-                        foreach (var field in combinedField.Fields)
+                        switch (combinedField.CombinedFieldsType)
                         {
-                            if (rows.ContainsKey("RawValue" + field.Id))
-                            {
-                                sumAvg += (double) rows["RawValue" + field.Id];
-                                index++;
-                            }
-                            else
-                            {
-                                Console.WriteLine(
-                                    $"Warning, some scouts forms missing some data to calculate combined averages ({field.Name}) ");
-                            }
+                            case CombinedFieldsType.Sum:
+                                CalculateFieldSum(combinedField, rows);
+                                break;
+                            case CombinedFieldsType.Avg:
+                                CalculateFieldAvg(combinedField, rows);
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
                         }
-
-                        sumAvg /= index;
-                        rows.Add(combinedField.Id, sumAvg);
-                        rows.Add("RawValue" + combinedField.Id, sumAvg);
                     }
                 }
 
@@ -137,6 +129,48 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             }
 
             CalculatedTeamsData = data;
+        }
+        
+        private static void CalculateFieldSum(CombinedFieldsDto combinedField, IDictionary<string, object> rows)
+        {
+            double sum = 0;
+            foreach (var field in combinedField.Fields)
+            {
+                if (rows.ContainsKey("RawValue" + field.Id))
+                {
+                    sum += (double)rows["RawValue" + field.Id];
+                }
+                else
+                {
+                    Console.WriteLine(
+                        $"Warning, some scouts forms missing some data to calculate combined averages ({field.Name}) ");
+                }
+            }
+            rows.Add(combinedField.Id, sum);
+            rows.Add("RawValue" + combinedField.Id, sum);
+        }
+
+        private static void CalculateFieldAvg(CombinedFieldsDto combinedField, IDictionary<string, object> rows)
+        {
+            double sumAvg = 0;
+            int index = 0;
+            foreach (var field in combinedField.Fields)
+            {
+                if (rows.ContainsKey("RawValue" + field.Id))
+                {
+                    sumAvg += (double)rows["RawValue" + field.Id];
+                    index++;
+                }
+                else
+                {
+                    Console.WriteLine(
+                        $"Warning, some scouts forms missing some data to calculate combined averages ({field.Name}) ");
+                }
+            }
+
+            sumAvg /= index;
+            rows.Add(combinedField.Id, sumAvg);
+            rows.Add("RawValue" + combinedField.Id, sumAvg);
         }
     }
 

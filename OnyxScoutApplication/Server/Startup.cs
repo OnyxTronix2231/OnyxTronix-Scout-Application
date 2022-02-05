@@ -19,6 +19,7 @@ using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork;
 using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
 using AutoMapper;
 using System;
+using System.Collections;
 using OnyxScoutApplication.Server.Data.Profiles;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
@@ -52,9 +53,11 @@ namespace OnyxScoutApplication.Server
         public void ConfigureServices(IServiceCollection services)
         {
             Console.WriteLine($"Configuring services in {env.EnvironmentName} mode ({env.IsDevelopment()})");
+            var environmentVariables = Environment.GetEnvironmentVariables();
+            
+            var connectionString = GetConnectionString();
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                var connectionString = configuration.GetConnectionString("DefaultConnection");
                 options.UseSqlServer(connectionString);
             });
             services.AddDatabaseDeveloperPageExceptionFilter();
@@ -84,6 +87,13 @@ namespace OnyxScoutApplication.Server
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+            
+            services.AddHsts(options =>
+            {
+                options.Preload = true;
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(365 * 2);
+            });
 
             services.Configure<IdentityOptions>(options =>
                 options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
@@ -105,9 +115,9 @@ namespace OnyxScoutApplication.Server
 
             services.AddAutoMapper(typeof(ScoutFormProfile));
             services.AddSingleton<ITheBlueAllianceService>(
-                    new TheBlueAllianceService("bX9cxVNbMq3WzxTDiWjfblxrk58HZj65QyToW1hvXURrtjHtuuXsFujFC5j6iPus"));
+                    new TheBlueAllianceService(environmentVariables["TBA-KEY"]!.ToString()));
         }
-
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider)
         {
@@ -122,7 +132,7 @@ namespace OnyxScoutApplication.Server
                 app.Use((ctx, next) =>
                 {
                     ctx.Request.Scheme = "https";
-                    ctx.SetIdentityServerOrigin(configuration.GetValue<string>("PublicOrigin"));
+                    ctx.SetIdentityServerOrigin(Environment.GetEnvironmentVariables()["PublicOrigin"]!.ToString());
                     return next();
                 });
                 app.UseExceptionHandler("/Error");
@@ -179,5 +189,19 @@ namespace OnyxScoutApplication.Server
             //ApplicationUser user = await userManager.FindByEmailAsync("v-nany@hotmail.com");
             //await userManager.AddToRoleAsync(user, "Admin");
         }
+        
+        private string GetConnectionString()
+        {
+            var connectionString = "";
+            if (env.IsDevelopment())
+            {
+                connectionString = configuration.GetConnectionString("DefaultConnection");
+                return connectionString;
+            }
+
+            connectionString = Environment.GetEnvironmentVariables()["ConnectionString"]!.ToString();
+            return connectionString;
+        }
+
     }
 }

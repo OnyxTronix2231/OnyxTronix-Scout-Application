@@ -78,7 +78,6 @@ namespace OnyxScoutApplication.Client.Others.Managers
             catch (AccessTokenNotAvailableException exception)
             {
                 exception.Redirect();
-                NotifyFailer("Error", exception.Message);
             }
             catch (Exception exception)
             {

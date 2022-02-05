@@ -3,25 +3,25 @@
 @using Newtonsoft.Json
 @using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 @inherits TeamsAnalyzer
-<div>
-    @if (CalculatedTeamsData != null)
+<div style="width: calc(90vw); height: 90vh">   
+    @if (CalculatedTeamsData != null && CalculatedTeamsData.Count != 0)
     {
-        <SfGrid AllowTextWrap="true" DataSource="@CalculatedTeamsData" AllowReordering="true" 
-                 AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true"
-                 Toolbar="@toolbarItems" ShowColumnChooser="true" Width="100%">
+        <SfGrid @ref="Grid" FrozenColumns="1" AllowTextWrap="false" DataSource="@CalculatedTeamsData" AllowReordering="true"
+                AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true"
+                Toolbar="@toolbarItems" ShowColumnChooser="true" Width="100%" Height="100%">
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+            <GridEvents Created="LoadHandler" TValue="ExpandoObject"></GridEvents>
             <GridColumns>
-                <GridColumn HeaderText="Team" Field="TeamNumber" AllowFiltering="true"
-                            FilterSettings="@(new FilterSettings {Type = Syncfusion.Blazor.Grids.FilterType.CheckBox})"
-                            Width="100px">
+                <GridColumn AllowReordering="false" ShowInColumnChooser="false" HeaderText="Team" Field="TeamNumber" AllowFiltering="true"
+                            FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"
+                            Width="150px">
                     <Template>
                         @{
-                            var v = (dynamic) context;
+                            var v = (dynamic)context;
                             <div>
-                                <a href="TeamDetails/@v.TeamNumber" target="_blank"> @(v.Nickname) </a>
-                            </div>
-                            <div>
-                                <a href="TeamDetails/@v.TeamNumber" target="_blank"> @(v.TeamNumber) </a>
+                                <LinkTabOpener Url="@($"TeamDetails/{v.TeamNumber}")" Text="@v.Nickname"> </LinkTabOpener>
+                                <br/>
+                                <LinkTabOpener Url="@($"TeamDetails/{v.TeamNumber}")" Text="@v.TeamNumber.ToString()"> </LinkTabOpener>
                             </div>
                         }
                     </Template>
@@ -31,8 +31,8 @@
                     int index = i;
                     string nameId = ColumnsFields[index].Id;
                     string name = ColumnsFields[index].Name;
-                    string rawValue = "RawValue" + nameId;
-                    <GridColumn HeaderText="@name" Field="@rawValue" AutoFit="true" AllowReordering="true"
+                    var rawValue = "RawValue" + nameId;
+                    <GridColumn AutoFit="false" HeaderText="@name" Field="@rawValue" AllowReordering="true"
                                 AllowResizing="true" Type="ColumnType.Number">
                         <HeaderTemplate>
                             <div>
@@ -41,7 +41,7 @@
                         </HeaderTemplate>
                         <Template>
                             @{
-                                var v = (IDictionary<string, object>) context;
+                                var v = (IDictionary<string, object>)context;
                                 var s = new MarkupString(v[nameId].ToString() ?? "");
                             }
                             <span>@s</span>
@@ -54,7 +54,14 @@
 </div>
 
 @code {
-    private readonly string[] toolbarItems = {"ColumnChooser"};
+    private readonly string[] toolbarItems = { "ColumnChooser" };
+    public SfGrid<ExpandoObject> Grid { get; set; }
+
+    private void LoadHandler()
+    {
+        Grid.AutoFitColumns(ColumnsFields.Select(i => "RawValue" + i.Id).ToArray());
+    }
+    
 }
 
 
