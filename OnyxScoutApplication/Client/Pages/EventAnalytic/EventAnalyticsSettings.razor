@@ -14,21 +14,38 @@
 {
     @foreach (var combinedField in analyticSettings.CombinedFields)
     {
-        <div>
-            @for (int i = 0; i < combinedField.Fields.Count; i++)
-            {
-                FieldDto field = combinedField.Fields[i];
-                int index = i;
-                <div>
-                    <SfDropDownList TItem="FieldDto" TValue="int" Placeholder="Select field" DataSource="fields" Value="field.Id" Width="250px">
-                        <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
-                        <DropDownListEvents TItem="FieldDto" TValue="int" ValueChange="e => OnFieldSelected(e, combinedField.Fields, index)"></DropDownListEvents>
-                    </SfDropDownList>
-                    <SfButton CssClass="e-danger" @onclick="() => combinedField.Fields.Remove(field)">Remove this column</SfButton>
-                </div>
+        <div class="form-group col-sm-5">
+            <label>Name:</label>
+            <br/>
+            <SfTextBox @bind-Value="@combinedField.Name" Width="250px"/>
+
+            <br/>
+            <label>Type:</label>
+            <br/>
+            <SfDropDownList TItem="CombinedFieldsType" TValue="CombinedFieldsType" Placeholder="Select type"
+                            DataSource="Enum.GetValues<CombinedFieldsType>()"
+                            @bind-Value="combinedField.CombinedFieldsType" Width="250px">
+            </SfDropDownList>
+            <br/>
+            <br/>
+            <div>
+                <label>Columns:</label>
                 <br/>
-            }
-            <SfButton @onclick="() => AddField(combinedField)">Add column</SfButton>
+                @for (int i = 0; i < combinedField.Fields.Count; i++)
+                {
+                    FieldDto field = combinedField.Fields[i];
+                    int index = i;
+                    <div>
+                        <SfDropDownList TItem="FieldDto" TValue="int" Placeholder="Select field" DataSource="fields" Value="field.Id" Width="250px">
+                            <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
+                            <DropDownListEvents TItem="FieldDto" TValue="int" ValueChange="e => OnFieldSelected(e, combinedField.Fields, index)"></DropDownListEvents>
+                        </SfDropDownList>
+                        <SfButton CssClass="e-danger" @onclick="() => combinedField.Fields.Remove(field)">Remove this column</SfButton>
+                    </div>
+                    <br/>
+                }
+                <SfButton @onclick="() => AddField(combinedField)">Add column</SfButton>
+            </div>
         </div>
         <br/>
     }
@@ -47,9 +64,9 @@
 
 @code {
     private Event selectedEvent;
-    private ScoutFormFormatDto format = new ScoutFormFormatDto();
+    private ScoutFormFormatDto format = new();
     private EventAnalyticSettingsDto analyticSettings;
-    private List<FieldDto> fields = new List<FieldDto>();
+    private List<FieldDto> fields = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -92,7 +109,7 @@
         combinedFields[index] = args.ItemData;
         analyticSettings.CombinedFields.ForEach(i => i.Fields.ForEach(ii => Console.WriteLine(ii.Name)));
     }
-
+    
     private async Task SaveSettings()
     {
         analyticSettings.CombinedFields.ForEach(i => i.Fields.RemoveAll(f => string.IsNullOrEmpty(f.Name)));
