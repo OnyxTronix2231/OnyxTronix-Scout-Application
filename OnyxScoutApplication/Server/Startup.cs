@@ -58,7 +58,7 @@ namespace OnyxScoutApplication.Server
             var connectionString = GetConnectionString();
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(connectionString);
+                options.UseMySQL(connectionString);
             });
             services.AddDatabaseDeveloperPageExceptionFilter();
 
