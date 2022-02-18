@@ -38,6 +38,9 @@
                 <TimeCounterFieldComponent AllowManualInput="@data.Field.AllowManualInput" FormType="@FormType"
                                            @bind-Value="data.NumericValue"/>
                 break;
+            case FieldType.BooleanChooser:
+                <BooleanChooserFieldComponent FormType="@FormType" @bind-Value="data.StringValue"/>
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }

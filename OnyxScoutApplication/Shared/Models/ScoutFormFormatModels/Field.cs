@@ -13,7 +13,8 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         CascadeField,
         OptionSelect,
         MultipleChoice,
-        Timer
+        Timer,
+        BooleanChooser
     }
 
     public class Field

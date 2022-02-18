@@ -153,10 +153,13 @@
 
     private async Task OnValidSubmit()
     {
-        for (int i = 0; i < CustomEvent.Matches.Count; i++)
+        foreach (var customMatchDtos in CustomEvent.Matches.GroupBy(i => i.Level))
         {
-            var customMatch = CustomEvent.Matches[i];
-            customMatch.MatchNumber = i + 1;
+            for (int i = 0; i < customMatchDtos.ToList().Count; i++)
+            {
+                var customMatch = CustomEvent.Matches[i];
+                customMatch.MatchNumber = i + 1;
+            }
         }
         await OnValidSubmitCallBack.InvokeAsync(this);
     }
@@ -164,7 +167,7 @@
     private void AddMatch(string stage)
     {
         var newMatch = CreateCustomMatch(stage);
-        newMatch.Date = (CustomEvent.Matches.FirstOrDefault(i => i.Level == stage) ?? newMatch).Date;
+          newMatch.Date = (CustomEvent.Matches.FirstOrDefault(i => i.Level == stage) ?? newMatch).Date;
         CustomEvent.Matches.Add(newMatch);
     }
 

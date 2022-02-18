@@ -14,13 +14,13 @@
         <GridEvents OnLoad="OnLoad" QueryCellInfo="CustomizeCell" TValue="Match"></GridEvents>
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
-            <GridColumn Field=@nameof(Match.MatchNumber) HeaderText="Match number" Width="120"></GridColumn>
-            <GridColumn Field=@nameof(Match.Date) HeaderText="Match date" Format="dd/MM/yyyy HH:mm" Type="ColumnType.DateTime" Width="150"></GridColumn>
+            <GridColumn Field=@nameof(Match.MatchNumber) AutoFit="true" HeaderText="No." Width="auto"></GridColumn>
+            <GridColumn Field=@nameof(Match.Date) AutoFit="true" HeaderText="Match date" Format="dd/MM/yyyy HH:mm" Type="ColumnType.DateTime" Width="auto"></GridColumn>
             @for (int i = 0; i < 3; i++)
             {
-                var headName = "Blue team " + (i + 1);
+                var headName = "T" + (i + 1);
                 int index = i;
-                <GridColumn HeaderText="@headName" Width="120">
+                <GridColumn HeaderText="@headName" AutoFit="true" Width="auto">
                     <Template>
                         @{
                             var match = (Match) context;
@@ -30,13 +30,13 @@
                     </Template>
                 </GridColumn>
             }
-            <GridColumn Field="Alliances.Blue.Score" HeaderText="Blue Score" TextAlign="TextAlign.Right" Width="120"></GridColumn>
-            <GridColumn Field="Alliances.Red.Score" HeaderText="Red Score" TextAlign="TextAlign.Left" Width="120"></GridColumn>
+            <GridColumn Field="Alliances.Blue.Score" AutoFit="true" HeaderText="Score" TextAlign="TextAlign.Right" Width="auto"></GridColumn>
+            <GridColumn Field="Alliances.Red.Score" AutoFit="true" HeaderText="Score" TextAlign="TextAlign.Left" Width="auto"></GridColumn>
             @for (int i = 0; i < 3; i++)
             {
-                var headName = "Red team " + (i + 1);
+                var headName = "T" + (i + 1);
                 int index = i;
-                <GridColumn HeaderText="@headName" Width="120">
+                <GridColumn HeaderText="@headName" AutoFit="true" Width="auto">
                     <Template>
                         @{
                             var match = (Match) context;
@@ -46,7 +46,7 @@
                     </Template>
                 </GridColumn>
             }
-            <GridColumn HeaderText="Winning alliance" Width="120"></GridColumn>
+            <GridColumn HeaderText="Winner" AutoFit="true" Width="auto"></GridColumn>
         </GridColumns>
     </SfGrid>
     
@@ -126,15 +126,15 @@
 
     private static void CustomizeCell(QueryCellInfoEventArgs<Match> args)
     {
-        if (args.Column.HeaderText.Contains("Blue")) //Cell color based on alliance color
+        if (args.Column.Index is >= 2 and <= 5) //Cell color based on alliance color
         {
             args.Cell.AddClass(new[] {"blue"});
         }
-        else if (args.Column.HeaderText.Contains("Red"))
+        else if (args.Column.Index is >= 6 and <= 9)
         {
             args.Cell.AddClass(new[] {"red"});
         }
-        else if (args.Column.HeaderText == "Winning alliance") //"WinningAlliance" Cell color
+        else if (args.Column.HeaderText == "Winner") //"WinningAlliance" Cell color
         {
             args.Cell.AddClass(new[] {args.Data.WinningAlliance});
         }

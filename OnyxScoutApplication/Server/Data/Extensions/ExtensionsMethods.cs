@@ -31,13 +31,15 @@ namespace OnyxScoutApplication.Server.Data.Extensions
                 .ThenInclude(i => i.Options)
                 .Include(i => i.FormDataInStages).ThenInclude(i => i.FormData)
                 .ThenInclude(i => i.CascadeData).ThenInclude(i => i.CascadeData).ThenInclude(i => i.CascadeData)
-                .ThenInclude(i => i.Field).ThenInclude(i => i.Options).AsSplitQuery();
+                .ThenInclude(i => i.Field).ThenInclude(i => i.Options)
+                //.AsSplitQuery()
+                ;
         }
 
         public static IQueryable<ScoutFormFormat>
             WithAllFields(this IQueryable<ScoutFormFormat> queryable)
         {
-            return queryable.AsSplitQuery().Include(i => i.FieldsInStages)
+            return queryable.Include(i => i.FieldsInStages)
                 .ThenInclude(f => f.Fields).ThenInclude(i => i.Options)
                 .Include(i => i.FieldsInStages)
                 .ThenInclude(f => f.Fields)
@@ -48,7 +50,9 @@ namespace OnyxScoutApplication.Server.Data.Extensions
                 .Include(i => i.FieldsInStages)
                 .ThenInclude(f => f.Fields)
                 .ThenInclude(i => i.CascadeFields).ThenInclude(i => i.CascadeFields)
-                .ThenInclude(i => i.CascadeFields).ThenInclude(i => i.Options).AsSplitQuery();
+                .ThenInclude(i => i.CascadeFields).ThenInclude(i => i.Options)
+                //.AsSplitQuery()
+                ;
         }
     }
 }

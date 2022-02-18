@@ -20,6 +20,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 case FieldType.Boolean:
                     destination.DefaultValue = source.BoolDefaultValue.ToString();
                     break;
+                case FieldType.BooleanChooser:
                 case FieldType.TextField:
                     destination.DefaultValue = source.TextDefaultValue;
                     break;

@@ -14,17 +14,18 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
         public ScoutFormDataValidator()
         {
             RuleFor(x => x.NumericValue).Must(BeNumberBetween)
-                .WithMessage(model => 
-                    "Value must be a number between " + model.Field.MinValue + " and " + model.Field.MaxValue)
+                .WithMessage(model =>
+                    $"Value must be a number between {model.Field.MinValue} and {model.Field.MaxValue}")
                 .When(c => c.Field.FieldType is FieldType.Integer or FieldType.Timer);
-            RuleFor(x => x.NumericValue).NotEmpty().WithMessage((model, _) => $"Field {model.Field.Name} required")
+            
+            RuleFor(x => x.NumericValue).NotEmpty().WithMessage((model, _) => $"Field {model.Field.Name} is required")
                 .When(m => m.Field.Required && m.Field.FieldType is FieldType.Integer or FieldType.Timer);
             
-            RuleFor(x => x.StringValue).NotEmpty().WithMessage((model, _) => $"Field {model.Field.Name} required")
-                .When(m => m.Field.Required && m.Field.FieldType == FieldType.TextField);
-            RuleFor(x => x.SelectedOptions).NotEmpty().WithMessage((model, _) => $"Field {model.Field.Name} required")
-                .When(m => m.Field.Required &&
-                           (m.Field.FieldType is FieldType.MultipleChoice or FieldType.OptionSelect));
+            RuleFor(x => x.StringValue).NotEmpty().WithMessage((model, _) => $"Field {model.Field.Name} is required")
+                .When(m => m.Field.Required && m.Field.FieldType is FieldType.TextField or FieldType.BooleanChooser);
+            
+            RuleFor(x => x.SelectedOptions).NotEmpty().WithMessage((model, _) => $"Field {model.Field.Name} is required")
+                .When(m => m.Field.Required && m.Field.FieldType is FieldType.MultipleChoice or FieldType.OptionSelect);
             
             RuleForEach(x => x.CascadeData).SetValidator(this)
                 .When(x => x.Field.FieldType == FieldType.CascadeField && x.BooleanValue);

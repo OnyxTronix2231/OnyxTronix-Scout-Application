@@ -1,0 +1,15 @@
+﻿@inherits SettingsInputBase
+
+<div>
+    <label>Field default value</label>
+    <BooleanChooserFieldComponent CssClass="e-info" @bind-Value="@Field.TextDefaultValue"/>
+</div>
+<br>
+<div>
+    <SfCheckBox Label="Required" CssClass="e-big" @bind-Checked="Field.Required"/>
+    <ValidationMessage For="@(() => Field.Required)"/>
+</div>
+
+@code {
+
+}
