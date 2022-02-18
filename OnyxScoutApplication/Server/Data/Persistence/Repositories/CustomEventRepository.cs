@@ -26,13 +26,9 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public override async Task<ActionResult> Add(CustomEventDto eventToAdd)
         {
             eventToAdd.Key = eventToAdd.Year + eventToAdd.Country + eventToAdd.Name;
-            foreach (var customMatch in eventToAdd.Matches)
-            {
-                customMatch.Key = eventToAdd.Key + customMatch.Level + customMatch.MatchNumber;
-            }
+            
             if (await ScoutAppContext.Events.AnyAsync(i => i.Key == eventToAdd.Key))
             {
-                await Console.Error.WriteLineAsync("This event already exists!");
                 return ResultCode(System.Net.HttpStatusCode.BadRequest, "This event already exists!");
             }
 
@@ -55,6 +51,10 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         
         public async Task<ActionResult> Update(int id, CustomEventDto eventSource)
         {
+            foreach (var customMatch in eventSource.Matches)
+            {
+                customMatch.Key = eventSource.Key + customMatch.Level + customMatch.MatchNumber;
+            }
             eventSource.Matches.ForEach(i =>
             {
                 i.Alliances.Blue.Teams.ForEach(ii => ii.CustomAllianceId = i.Alliances.Blue.Id);
