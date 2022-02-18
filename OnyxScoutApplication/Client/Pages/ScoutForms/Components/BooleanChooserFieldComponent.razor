@@ -1,0 +1,31 @@
+﻿@inherits FormInputBase<string>
+
+<div @ondblclick="Click">
+    <SfRadioButton Label="True" Name="" Value="True" @bind-Checked="CurrentValue" 
+                   Disabled="@(FormType == FormType.View)"></SfRadioButton>
+    
+    <SfRadioButton Label="False" Name="" Value="False" @bind-Checked="CurrentValue" 
+                   Disabled="@(FormType == FormType.View)"></SfRadioButton>
+    <ValidationMessage For="@ValueExpression"/>
+</div>
+
+@code {
+    [Parameter]
+    public FormType FormType { get; set; }
+
+    private void Click() 
+    { 
+        CurrentValue = ""; 
+    } 
+    
+    protected override bool TryParseValueFromString(string value, out string result, [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        validationErrorMessage = "";
+        result = value;
+        return true;
+        
+    }
+
+    
+
+}
