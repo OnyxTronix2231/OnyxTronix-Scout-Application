@@ -23,6 +23,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 case FieldType.Boolean:
                     destination.BooleanValue = bool.Parse(source.Value);
                     break;
+                case FieldType.BooleanChooser:
                 case FieldType.TextField:
                     destination.StringValue = source.Value;
                     break;

@@ -82,6 +82,9 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 case FieldType.MultipleChoice:
                     analyzer = new MultipleChoiceAnalyzer();
                     break;
+                case FieldType.BooleanChooser:
+                    analyzer = new BooleanChooserAnalyzer();
+                    break;
                 case FieldType.TextField:
                     throw new NotSupportedException();
                 default:

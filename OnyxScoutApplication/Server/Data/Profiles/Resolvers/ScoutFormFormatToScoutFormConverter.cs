@@ -57,6 +57,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
                 case FieldType.Boolean:
                     formData.BooleanValue = field.BoolDefaultValue;
                     break;
+                case FieldType.BooleanChooser:
                 case FieldType.TextField:
                     formData.StringValue = field.TextDefaultValue;
                     break;
