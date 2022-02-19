@@ -1,5 +1,6 @@
 ﻿@page "/ScoutForms"
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
+@using System.Security.Claims
 @inject NavigationManager navigationManager
 @inject HttpClientManager http
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
@@ -29,10 +30,14 @@ else
                 <td>@scoutForm.Year</td>
                 <td>@scoutForm.MatchName</td>
                 <td>@scoutForm.WriterUserName</td>
-                <OnyxAuthorizeView Role="@(Role.Admin)">
-                    <SfButton CssClass="e-warning" @onclick="() => Edit(scoutForm)">Edit</SfButton>
-                </OnyxAuthorizeView>
-                <ButtonTabOpener CssClass="e-info" Url="@($"ScoutForm/View/{scoutForm.Id}")" Style="margin-left :5px" 
+                @* <OnyxAuthorizeView Role="@(Role.Admin)"> *@
+                @{ bool isAllowedToEdit = user.Identity!.Name == scoutForm.WriterUserName
+                                          || user.IsInRole(Role.Admin.ToString());}
+                <SfButton CssClass="@(isAllowedToEdit ? "e-warning" : "")" @onclick="() => Edit(scoutForm)" 
+                          Disabled="@(!isAllowedToEdit)">Edit
+                    </SfButton>
+                @* </OnyxAuthorizeView> *@
+                <ButtonTabOpener CssClass="e-info" Url="@($"ScoutForm/View/{scoutForm.Id}")" Style="margin-left :5px"  
                                  Text="View">
                 </ButtonTabOpener>
             </tr>
@@ -43,10 +48,16 @@ else
 
 
 @code {
+    
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+    private ClaimsPrincipal user;
     private List<FormDto> scoutForms;
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateTask;
+        user = authState.User;
         scoutForms = await http.GetJson<List<FormDto>>("ScoutForm");
     }
 

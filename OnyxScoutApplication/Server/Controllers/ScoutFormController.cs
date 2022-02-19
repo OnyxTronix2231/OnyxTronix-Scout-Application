@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using OnyxScoutApplication.Server.Data.Extensions;
@@ -59,6 +60,11 @@ namespace OnyxScoutApplication.Server.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateScoutForm(int id, [FromBody] FormDto formModel)
         {
+            if (!User.IsInRole(Role.Admin.ToString()) && User.GetDisplayName() != formModel.WriterUserName)
+            {
+                return new UnauthorizedObjectResult($"Only {Role.Admin.ToString()} or" +
+                                                    $" {formModel.WriterUserName} can edit this form!");
+            }
             var response = await unitOfWork.ScoutForms.Update(id, formModel);
             await unitOfWork.Complete();
             return response;

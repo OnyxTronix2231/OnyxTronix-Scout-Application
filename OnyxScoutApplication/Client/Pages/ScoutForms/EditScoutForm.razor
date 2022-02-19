@@ -1,7 +1,7 @@
 ﻿@page "/ScoutForm/Edit/{Id:int}"
 @inject HttpClientManager http
 @inject NavigationManager navigationManager
-@attribute [OnyxAuthorize(Role = Role.Admin)]
+@attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (form != null)
 {
@@ -68,7 +68,6 @@
             if (old != null)
             {
                 old.CascadeData = newData.CascadeData;
-                Console.WriteLine(old.Id);
                 dataToReplace[i] = old;
             }
         }
