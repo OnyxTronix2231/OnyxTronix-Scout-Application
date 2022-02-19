@@ -1,6 +1,7 @@
 ﻿@page "/ScoutForms"
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using System.Security.Claims
+@using FailureEventArgs = Syncfusion.Blazor.Inputs.FailureEventArgs
 @inject NavigationManager navigationManager
 @inject HttpClientManager http
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
@@ -13,37 +14,56 @@
 }
 else
 {
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Team number</th>
-            <th>Year</th>
-            <th>Match name</th>
-            <th>Writer user name</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var scoutForm in scoutForms)
-        {
-            <tr>
-                <td>@scoutForm.TeamNumber</td>
-                <td>@scoutForm.Year</td>
-                <td>@scoutForm.MatchName</td>
-                <td>@scoutForm.WriterUserName</td>
-                @* <OnyxAuthorizeView Role="@(Role.Admin)"> *@
-                @{ bool isAllowedToEdit = user.Identity!.Name == scoutForm.WriterUserName
-                                          || user.IsInRole(Role.Admin.ToString());}
-                <SfButton CssClass="@(isAllowedToEdit ? "e-warning" : "")" @onclick="() => Edit(scoutForm)" 
-                          Disabled="@(!isAllowedToEdit)">Edit
-                    </SfButton>
-                @* </OnyxAuthorizeView> *@
-                <ButtonTabOpener CssClass="e-info" Url="@($"ScoutForm/View/{scoutForm.Id}")" Style="margin-left :5px"  
-                                 Text="View">
-                </ButtonTabOpener>
-            </tr>
-        }
-        </tbody>
-    </table>
+    <SfGrid FrozenColumns="1" AllowTextWrap="false" DataSource="@scoutForms"
+            AllowFiltering="true" AllowResizing="false" AllowSorting="true" AllowMultiSorting="true"
+            ShowColumnChooser="true" Width="100%" Height="100%">
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn ShowInColumnChooser="false" HeaderText="Team" Field="TeamNumber" 
+                        AllowFiltering="true"
+                        FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"
+                        Width="70px">
+            </GridColumn>
+            
+            <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Year" Field="Year"
+                        AllowFiltering="true" 
+                        FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
+            </GridColumn>
+            
+            <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Match name" Field="MatchName"
+                        AllowFiltering="true" Type="ColumnType.String"
+                        FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
+            </GridColumn>
+            
+            <GridColumn  AutoFit="true" ShowInColumnChooser="false" HeaderText="Writer user name" Field="WriterUserName"
+                         AllowFiltering="true" Type="ColumnType.String"
+                         FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
+            </GridColumn>
+            
+    
+            <GridColumn AutoFit="true" AllowReordering="false" ShowInColumnChooser="false" HeaderText=""
+                        Field="" AllowFiltering="false">
+                <Template>
+                    @{
+                        var scoutForm = (FormDto)context;
+                        <div>
+                            @{ bool isAllowedToEdit = user.Identity!.Name == scoutForm.WriterUserName
+                                                      || user.IsInRole(Role.Admin.ToString());}
+                            <SfButton CssClass="@(isAllowedToEdit ? "e-warning" : "")" @onclick="() => Edit(scoutForm)" 
+                                      Disabled="@(!isAllowedToEdit)">Edit
+                            </SfButton>
+                            <ButtonTabOpener CssClass="e-info" Url="@($"ScoutForm/View/{scoutForm.Id}")" Style="margin-left :5px"  
+                                             Text="View">
+                            </ButtonTabOpener>
+                        </div>
+                    }
+                </Template>
+            </GridColumn>
+            
+    
+    
+        </GridColumns>
+    </SfGrid>
 }
 
 
