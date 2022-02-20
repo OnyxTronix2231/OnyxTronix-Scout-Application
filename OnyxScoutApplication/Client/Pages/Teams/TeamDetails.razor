@@ -7,18 +7,29 @@
 @inject NavigationManager navigationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
-@if (calculatedDataByStages != null)
+@if (calculatedScoutDataByStages is not null && calculatedPitScoutDataByStages is not null)
 {
     <h3>Team @TeamNumber</h3>
     <h4>@selectedEvent?.Name</h4>
     <a href="/TeamDetails/Notes/@TeamNumber">Notes</a>
     <br/>
-    foreach (var (key, value) in calculatedDataByStages)
+    foreach (var (key, value) in calculatedScoutDataByStages)
     {
         <h5>@key</h5>
         <TeamAnalyticGrid CalculatedData="@value"></TeamAnalyticGrid>
         <br/>
- }
+    }
+    
+    <br/>
+    <h4>Pit scouting</h4>
+    <br/>
+
+    foreach (var (key, value) in calculatedPitScoutDataByStages)
+    {
+        <h5>@key</h5>
+        <TeamAnalyticGrid CalculatedData="@value"></TeamAnalyticGrid>
+        <br/>
+    }
 
     <br/>
     <MatchesGrid Matches="@matches" OnTeamClicked="OnTeamClicked">
@@ -33,7 +44,9 @@
 
     private Event selectedEvent;
     private List<FormDto> data;
-    private Dictionary<string, List<TeamFieldAverage>> calculatedDataByStages;
+    private Dictionary<string, List<TeamFieldAverage>> calculatedScoutDataByStages;
+    private Dictionary<string, List<TeamFieldAverage>> calculatedPitScoutDataByStages;
+    private List<FormDto> pitScoutForms;
     private List<Match> matches;
 
     protected override async Task OnInitializedAsync()
@@ -43,26 +56,36 @@
         {
             return;
         }
-        var format = await http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
-        var result = await http.GetJson<List<FormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
-        data = result.OrderBy(i => i.MatchName).ToList();
+        var format = await http.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{selectedEvent.Year}");
+        var result = await http.GetJson<List<FormDto>>($"ScoutForm/GetAllByTeam/{TeamNumber}/{selectedEvent.Key}");
+        calculatedScoutDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
+        foreach (var fieldsInStage in format.FieldsInStages)
+        {
+            calculatedScoutDataByStages.Add(fieldsInStage.Name, 
+                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, result, _ => true));
+        }
+        
+        var pirScoutFormat = await http.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{selectedEvent.Year}/{ScoutFormType.Pit}");
+        pitScoutForms = await http.GetJson<List<FormDto>>($"ScoutForm/GetAllByTeam/{TeamNumber}/{selectedEvent.Key}/{ScoutFormType.Pit}");
+        calculatedPitScoutDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
+        foreach (var fieldsInStage in pirScoutFormat.FieldsInStages)
+        {
+            calculatedPitScoutDataByStages.Add(fieldsInStage.Name, 
+                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, pitScoutForms, _ => true, true));
+        }
+        
+        
+        data = result.OrderBy(i => i.KeyName).ToList();
         matches = (await http.GetJson<List<Match>>
             ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))
             .OrderBy(i => i.Date).ToList();
-        calculatedDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
-        foreach (var fieldsInStage in format.FieldsInStages)
-        {
-            calculatedDataByStages.Add(fieldsInStage.Name, 
-                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, result, _ => true));
-        }
-       
     }
 
     private void OnTeamClicked(TeamInMatch teamInMatch)
     {
         if (teamInMatch.TeamNumber != TeamNumber)
         {
-            navigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber, true);
+            navigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber);
         }
     }
 

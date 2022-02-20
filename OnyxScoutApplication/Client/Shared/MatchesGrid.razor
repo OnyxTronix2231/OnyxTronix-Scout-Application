@@ -101,7 +101,7 @@
 
         if (Settings.SubmittedForms == null) return classes;
 
-        if (Settings.SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == matchName))
+        if (Settings.SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.KeyName == matchName))
         {
             classes += "filledTeamForm ";
         }
@@ -120,7 +120,7 @@
     {
         bool isFormExists =
             Settings.SubmittedForms != null &&
-            Settings.SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == match.Key);
+            Settings.SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.KeyName == match.Key);
         OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match, IsFormExists = isFormExists});
     }
 

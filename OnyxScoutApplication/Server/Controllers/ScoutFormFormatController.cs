@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -38,17 +39,21 @@ namespace OnyxScoutApplication.Server.Controllers
             return await unitOfWork.ScoutFormFormats.GetWithFields(id);
         }
 
-        [HttpGet("ByYear/{year}")]
-        public async Task<ActionResult<ScoutFormFormatDto>> GetByYear(int year)
+        [HttpGet("ByYear/{year:int}")]
+        [HttpGet("ByYear/{year:int}/{scoutFormType}")]
+        public async Task<ActionResult<ScoutFormFormatDto>> GetByYear(int year,
+            [DefaultValue(ScoutFormType.MainGame)] ScoutFormType scoutFormType)
         {
-            var v = await unitOfWork.ScoutFormFormats.GetWithFieldsByYear(year);
+            var v = await unitOfWork.ScoutFormFormats.GetWithFieldsByYear(year, scoutFormType);
             return v;
         }
-
-        [HttpGet("TemplateScoutFormByYear/{year}")]
-        public async Task<ActionResult<FormDto>> GetTemplateScoutFormByYear(int year)
+ 
+        [HttpGet("TemplateScoutFormByYear/{year:int}")]
+        [HttpGet("TemplateScoutFormByYear/{year:int}/{scoutFormType?}")]
+        public async Task<ActionResult<FormDto>> GetTemplateScoutFormByYear(int year,
+            [DefaultValue(ScoutFormType.MainGame)] ScoutFormType scoutFormType)
         {
-            return await unitOfWork.ScoutFormFormats.GetTemplateScoutFormByYear(year);
+            return await unitOfWork.ScoutFormFormats.GetTemplateScoutFormByYear(year, scoutFormType);
         }
 
         [OnyxAuthorize(Role = Role.Admin)]

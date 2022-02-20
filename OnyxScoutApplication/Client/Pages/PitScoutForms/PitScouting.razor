@@ -1,0 +1,106 @@
+﻿@page "/PitScouting"
+@inject HttpClientManager http
+@inject ILocalStorageService localStorage
+@inject ISyncLocalStorageService syncLocalStorage
+@inject NotificationManager notificationManager
+@inject NavigationManager navigationManager
+
+<h3>Pit scouting</h3>
+@if (teams != null)
+{
+    <SfGrid @ref="grid" DataSource="@teams" AllowSorting="true" AllowFiltering="true" Height="auto">
+        @* <GridEvents QueryCellInfo="CustomizeCell" TValue="Team"></GridEvents> *@
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn Field=@nameof(Team.TeamNumber) AutoFit="true" HeaderText="No." Width="auto">
+                <Template>
+                    @{
+                        var team = (Team) context;
+                        <span class="@GetTeamTextStyle(team.TeamNumber)" @onclick="() => OnGridTeamClicked(team)">@(team.TeamNumber)</span>
+                        <span class="@GetTeamTextStyle(team.TeamNumber)" @onclick="() => OnGridTeamClicked(team)">@(team.Nickname)</span>
+                    }
+                </Template>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+}
+
+@code {
+
+    private SfGrid<Team> grid;
+    private List<Team> teams;
+    private List<FormDto> scoutForms;
+    private Event selectedEvent;
+
+    protected override async Task OnInitializedAsync()
+    {
+        selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        if (selectedEvent is null)
+        {
+            notificationManager.Notify("Please select event and year first!", "", NotificationType.Danger);
+            return;
+        }
+        teams = await http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
+        scoutForms = await http.GetJson<List<FormDto>>($"ScoutForm/GetAllByType/{ScoutFormType.Pit}");
+
+    }
+
+    // private void CustomizeCell(QueryCellInfoEventArgs<Team> args)
+    // {
+    //     args.Cell.AddClass(new[] {"clickable"});
+    //     if (scoutForms.Any(i => i.TeamNumber == args.Data.TeamNumber))
+    //     {
+    //         args.Cell.AddClass(new[] {"filledTeamForm"});
+    //     }
+    // }
+    //
+    private string GetTeamTextStyle(int teamNumber) //Team's text style (bold, color and clickable)
+    {
+        string classes = "";
+        classes += "clickable ";
+
+
+        if (scoutForms.Any(form => form.TeamNumber == teamNumber && form.KeyName == selectedEvent.Key))
+        {
+            classes += "filledTeamForm ";
+        }
+        else if (syncLocalStorage.ContainKey($"ScoutForm/{selectedEvent.Key}/{teamNumber}"))
+        {
+            classes += "locallyFilledTeamForm ";
+        }
+        else
+        {
+            classes += "notFilledTeamForm ";
+        }
+        return classes;
+    }
+
+    private void OnGridTeamClicked(Team team)
+    {
+        if (scoutForms.Any(form => form.TeamNumber == team.TeamNumber && form.KeyName == selectedEvent.Key))
+        {
+            navigationManager.NavigateTo($"TeamDetails/{team.TeamNumber}");
+            return;
+        }
+        navigationManager.NavigateTo($"PitScoutForm/Create/{team.TeamNumber}");
+    }
+
+}
+
+<style>
+    .clickable {
+        cursor: pointer
+    }
+    
+    .filledTeamForm {
+        color: green;
+    }
+    
+    .locallyFilledTeamForm {
+        color: orange;
+    }
+
+    .notFilledTeamForm {
+        color: darkred
+    }
+</style>

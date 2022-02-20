@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using OnyxScoutApplication.Server.Data.Extensions;
 using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
 using OnyxScoutApplication.Shared.Models;
+using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 using static OnyxScoutApplication.Server.Data.Extensions.Result;
 using OnyxScoutApplication.Shared.Other;
@@ -30,6 +32,12 @@ namespace OnyxScoutApplication.Server.Controllers
         {
             return await unitOfWork.ScoutForms.GetAll();
         }
+        
+        [HttpGet("GetAllByType/{scoutFormType}")]
+        public async Task<ActionResult<IEnumerable<FormDto>>> Get(ScoutFormType scoutFormType)
+        {
+            return await unitOfWork.ScoutForms.GetAllByType(scoutFormType);
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<FormDto>> Get(int id)
@@ -39,15 +47,19 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpGet("GetAllByEvent/{eventKey}")]
-        public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey)
+        [HttpGet("GetAllByEvent/{eventKey}/{scoutFormType}")]
+        public async Task<ActionResult<IEnumerable<FormDto>>>
+            GetAllByEvent(string eventKey, ScoutFormType scoutFormType = ScoutFormType.MainGame)
         {
-            return await unitOfWork.ScoutForms.GetAllByEvent(eventKey);
+            return await unitOfWork.ScoutForms.GetAllByEvent(eventKey, scoutFormType);
         }
         
         [HttpGet("GetAllByEventWithData/{eventKey}")]
-        public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEventWithData(string eventKey)
+        [HttpGet("GetAllByEventWithData/{eventKey}/{scoutFormType}")]
+        public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEventWithData(string eventKey,
+            ScoutFormType scoutFormType = ScoutFormType.MainGame)
         {
-            return await unitOfWork.ScoutForms.GetAllByEventWithData(eventKey);
+            return await unitOfWork.ScoutForms.GetAllByEventWithData(eventKey, scoutFormType);
         }
 
         //[HttpGet("ByYear/{year}")]
@@ -59,6 +71,11 @@ namespace OnyxScoutApplication.Server.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateScoutForm(int id, [FromBody] FormDto formModel)
         {
+            if (!User.IsInRole(Role.Admin.ToString()) && User.GetDisplayName() != formModel.WriterUserName)
+            {
+                return new UnauthorizedObjectResult($"Only {Role.Admin.ToString()} or" +
+                                                    $" {formModel.WriterUserName} can edit this form!");
+            }
             var response = await unitOfWork.ScoutForms.Update(id, formModel);
             await unitOfWork.Complete();
             return response;
@@ -77,9 +94,11 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpGet("GetAllByTeam/{teamNumber}/{eventKey}")]
-        public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByTeam(int teamNumber, string eventKey)
+        [HttpGet("GetAllByTeam/{teamNumber}/{eventKey}/{scoutFormType}")]
+        public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByTeam(int teamNumber, string eventKey,
+            ScoutFormType scoutFormType = ScoutFormType.MainGame)
         {
-            return await unitOfWork.ScoutForms.GetAllByTeamWithData(teamNumber, eventKey);
+            return await unitOfWork.ScoutForms.GetAllByTeamWithData(teamNumber, eventKey, scoutFormType);
         }
     }
 }

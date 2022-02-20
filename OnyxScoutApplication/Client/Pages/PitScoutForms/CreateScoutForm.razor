@@ -1,4 +1,4 @@
-﻿@page "/ScoutForm/Create"
+﻿@page "/PitScoutForm/Create/{TeamNumber:int}"
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @inject HttpClientManager http
 @inject NavigationManager navigationManager
@@ -8,7 +8,7 @@
 
 @if (form != null)
 {
-    <h3>ScoutForm</h3>
+    <h3>Pit scout form</h3>
     <div style="float: right;">
         <SfButton type="button" CssClass="e-success" @onclick="SaveOnLocalCache">Save locally</SfButton>
         <SfButton type="button" CssClass="e-danger" @onclick="DeleteLocalCache">Delete local cache</SfButton>
@@ -20,33 +20,42 @@
 
     [CascadingParameter]
     public Task<AuthenticationState> AuthenticationStateTask { get; set; }
+    
+    [Parameter]
+    public int TeamNumber { get; set; }
 
-    private TeamInMatch teamInMatch;
     private FormDto form;
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateTask;
         var user = authState.User;
-
-        teamInMatch = await localStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
-        form = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + teamInMatch.Match.Date.Year);
+        var selectedYear = await localStorage.GetItemAsync<int?>("EventSelector/SelectedYearFilter");
+        var selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        if (selectedEvent is null || selectedYear is null)
+        {
+            notificationManager.Notify("Please select event and year first!", "", NotificationType.Danger);
+            return;
+        }
+        form = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" +
+                                           $"{selectedYear!.Value}/{ScoutFormType.Pit}");
         if (form == null)
         {
+            notificationManager.Notify("No scout form found for  pit scouting!", "", NotificationType.Danger);
             navigationManager.NavigateTo("/");
             return;
         }
         
-        if(await localStorage.ContainKeyAsync($"ScoutForm/{teamInMatch.Match.Key}/{teamInMatch.TeamNumber}"))
+        if(await localStorage.ContainKeyAsync($"ScoutForm/{selectedEvent.Key}/{TeamNumber}"))
         {
-            form = await localStorage.GetItemAsync<FormDto>($"ScoutForm/{teamInMatch.Match.Key}/{teamInMatch.TeamNumber}");
+            form = await localStorage.GetItemAsync<FormDto>($"ScoutForm/{selectedEvent.Key}/{TeamNumber}");
             return;
         }
         
-        form.TeamNumber = teamInMatch.TeamNumber;
-        form.Year = teamInMatch.Match.Date.Year;
-        form.Type = ScoutFormType.MainGame;
-        form.KeyName = teamInMatch.Match.Key;
+        form.TeamNumber = TeamNumber;
+        form.Year = selectedYear!.Value;
+        form.Type = ScoutFormType.Pit;
+        form.KeyName = selectedEvent.Key;
         form.WriterUserName = user.Identity!.Name;
     }
 
