@@ -39,14 +39,16 @@ namespace OnyxScoutApplication.Server.Controllers
             return await unitOfWork.ScoutFormFormats.GetWithFields(id);
         }
 
-        [HttpGet("ByYear/{year}/{scoutFormType}")]
+        [HttpGet("ByYear/{year:int}")]
+        [HttpGet("ByYear/{year:int}/{scoutFormType}")]
         public async Task<ActionResult<ScoutFormFormatDto>> GetByYear(int year,
-            ScoutFormType scoutFormType = ScoutFormType.MainGame)
+            [DefaultValue(ScoutFormType.MainGame)] ScoutFormType scoutFormType)
         {
             var v = await unitOfWork.ScoutFormFormats.GetWithFieldsByYear(year, scoutFormType);
             return v;
         }
  
+        [HttpGet("TemplateScoutFormByYear/{year:int}")]
         [HttpGet("TemplateScoutFormByYear/{year:int}/{scoutFormType?}")]
         public async Task<ActionResult<FormDto>> GetTemplateScoutFormByYear(int year,
             [DefaultValue(ScoutFormType.MainGame)] ScoutFormType scoutFormType)

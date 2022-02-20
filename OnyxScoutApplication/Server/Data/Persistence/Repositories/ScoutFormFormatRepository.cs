@@ -75,12 +75,12 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult> Update(int id, ScoutFormFormatDto scoutFormFormatDto)
         {
-            if (!await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Year == scoutFormFormatDto.Year))
+            if (!await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Id == id))
             {
                 return new BadRequestObjectResult("No scout from format found to update!");
             }
 
-            var old = await ScoutAppContext.ScoutFormFormats.WithAllFields().FirstAsync(i => i.Year == scoutFormFormatDto.Year);
+            var old = await ScoutAppContext.ScoutFormFormats.WithAllFields().FirstAsync(i => i.Id == scoutFormFormatDto.Id);
             var updated = Mapper.Map<ScoutFormFormat>(scoutFormFormatDto);
             
             updated = Mapper.Map(updated, old);

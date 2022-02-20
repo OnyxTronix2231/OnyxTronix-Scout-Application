@@ -11,39 +11,42 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
     public static class TeamDataAnalyzer
     {
         public static IEnumerable<TeamFieldAverage> CalculateDataFor(ScoutFormFormatDto scoutFormFormat,
-            List<FormDto> forms, Func<FormDataDto, bool> shouldCount)
+            List<FormDto> forms, Func<FormDataDto, bool> shouldCount, bool shouldIncludeTextFields = false)
         {
             List<TeamFieldAverage> averages = new List<TeamFieldAverage>();
             foreach (var fieldsInStage in scoutFormFormat.FieldsInStages)
             {
-                averages.AddRange(CalculateDataFor(fieldsInStage, forms, shouldCount));
+                averages.AddRange(CalculateDataFor(fieldsInStage, forms, shouldCount, shouldIncludeTextFields));
             }
-            return averages;
-        }
-        
-        public static List<TeamFieldAverage> CalculateDataFor(FieldsInStageDto fieldsInStage, 
-            IEnumerable<FormDto> forms, Func<FormDataDto, bool> shouldCount)
-        {
-            List<TeamFieldAverage> averages = new List<TeamFieldAverage>();
-            var stageInForm = forms.SelectMany(i => i.FormDataInStages).
-                Where(ii => ii.Name == fieldsInStage.Name).ToList();
-            averages.AddRange(CalculateDataFor(fieldsInStage, stageInForm, shouldCount));
+
             return averages;
         }
 
-        public static IEnumerable<TeamFieldAverage> CalculateDataFor(FieldsInStageDto fieldsInStage, 
-            IEnumerable<FormDataInStageDto> formDataInStage, Func<FormDataDto, bool> shouldCount)
+        public static List<TeamFieldAverage> CalculateDataFor(FieldsInStageDto fieldsInStage,
+            IEnumerable<FormDto> forms, Func<FormDataDto, bool> shouldCount, bool shouldIncludeTextFields = false)
         {
             List<TeamFieldAverage> averages = new List<TeamFieldAverage>();
-            averages.AddRange(CalculateDataFor(fieldsInStage.Fields.Where(field => field.FieldType != FieldType.TextField), 
-                formDataInStage.SelectMany(i => i.FormData).Where(field => field.Field.FieldType != 
-                                                                           FieldType.TextField).ToList(),
-                shouldCount));
+            var stageInForm = forms.SelectMany(i => i.FormDataInStages).Where(ii => ii.Name == fieldsInStage.Name)
+                .ToList();
+            averages.AddRange(CalculateDataFor(fieldsInStage, stageInForm, shouldCount, shouldIncludeTextFields));
             return averages;
         }
-        
-        public static IEnumerable<TeamFieldAverage> CalculateDataFor(IEnumerable<FieldDto> fields, 
-            List<FormDataDto> formData, Func<FormDataDto, bool> shouldCount)
+
+        public static IEnumerable<TeamFieldAverage> CalculateDataFor(FieldsInStageDto fieldsInStage,
+            IEnumerable<FormDataInStageDto> formDataInStage, Func<FormDataDto, bool> shouldCount,
+            bool shouldIncludeTextFields = false)
+        {
+            List<TeamFieldAverage> averages = new List<TeamFieldAverage>();
+            averages.AddRange(CalculateDataFor(
+                fieldsInStage.Fields.Where(field => field.FieldType != FieldType.TextField || shouldIncludeTextFields),
+                formDataInStage.SelectMany(i => i.FormData).
+                    Where(field => field.Field.FieldType != FieldType.TextField || shouldIncludeTextFields).ToList(),
+                shouldCount, shouldIncludeTextFields));
+            return averages;
+        }
+
+        public static IEnumerable<TeamFieldAverage> CalculateDataFor(IEnumerable<FieldDto> fields,
+            List<FormDataDto> formData, Func<FormDataDto, bool> shouldCount, bool shouldIncludeTextFields = false)
         {
             List<TeamFieldAverage> averages = new List<TeamFieldAverage>();
             foreach (var field in fields)
@@ -53,12 +56,15 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 if (field.FieldType != FieldType.CascadeField)
                     continue;
 
-                averages.AddRange(CalculateDataFor(field.CascadeFields.Where(f => f.FieldType != FieldType.TextField), 
-                    formData.SelectMany(i => i.CascadeData).ToList(),
-                    data =>
-                        formData.Where(i => i.Field.Id == field.Id).First(i => 
-                            i.CascadeData.Contains(data)).BooleanValue));
+                averages.AddRange(CalculateDataFor(field.CascadeFields.Where(f =>
+                        f.FieldType != FieldType.TextField || shouldIncludeTextFields),
+
+                    formData.SelectMany(i => i.CascadeData).ToList(), data =>
+                        formData.Where(i => i.Field.Id == field.Id).First(i =>
+                            i.CascadeData.Contains(data)).BooleanValue,
+                    shouldIncludeTextFields));
             }
+
             return averages;
         }
 
@@ -86,10 +92,12 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                     analyzer = new BooleanChooserAnalyzer();
                     break;
                 case FieldType.TextField:
-                    throw new NotSupportedException();
+                    analyzer = new TextAnalyzer();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
             return analyzer.Analyze(data, field, shouldCount);
         }
     }

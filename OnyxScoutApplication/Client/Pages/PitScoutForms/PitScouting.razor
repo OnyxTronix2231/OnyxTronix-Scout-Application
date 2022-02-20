@@ -26,7 +26,7 @@
 }
 
 @code {
-    
+
     private SfGrid<Team> grid;
     private List<Team> teams;
     private List<FormDto> scoutForms;
@@ -41,10 +41,10 @@
             return;
         }
         teams = await http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
-        scoutForms = await http.GetJson<List<FormDto>>($"ScoutForm/GetAllByType/{ScoutFormType.Pit}" );
+        scoutForms = await http.GetJson<List<FormDto>>($"ScoutForm/GetAllByType/{ScoutFormType.Pit}");
 
     }
-    
+
     // private void CustomizeCell(QueryCellInfoEventArgs<Team> args)
     // {
     //     args.Cell.AddClass(new[] {"clickable"});
@@ -60,11 +60,11 @@
         classes += "clickable ";
 
 
-        if (scoutForms.Any(form => form.TeamNumber == teamNumber && form.KeyName ==selectedEvent.Key ))
+        if (scoutForms.Any(form => form.TeamNumber == teamNumber && form.KeyName == selectedEvent.Key))
         {
             classes += "filledTeamForm ";
         }
-        else if(syncLocalStorage.ContainKey($"ScoutForm/{selectedEvent.Key}/{teamNumber}"))
+        else if (syncLocalStorage.ContainKey($"ScoutForm/{selectedEvent.Key}/{teamNumber}"))
         {
             classes += "locallyFilledTeamForm ";
         }
@@ -75,9 +75,14 @@
         return classes;
     }
 
-    private void OnGridTeamClicked(Team match)
+    private void OnGridTeamClicked(Team team)
     {
-        navigationManager.NavigateTo($"PitScoutForm/Create/{match.TeamNumber}");
+        if (scoutForms.Any(form => form.TeamNumber == team.TeamNumber && form.KeyName == selectedEvent.Key))
+        {
+            navigationManager.NavigateTo($"TeamDetails/{team.TeamNumber}");
+            return;
+        }
+        navigationManager.NavigateTo($"PitScoutForm/Create/{team.TeamNumber}");
     }
 
 }

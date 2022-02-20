@@ -52,7 +52,7 @@ else
                             <SfButton CssClass="@(isAllowedToEdit ? "e-warning" : "")" @onclick="() => Edit(scoutForm)" 
                                       Disabled="@(!isAllowedToEdit)">Edit
                             </SfButton>
-                            <ButtonTabOpener CssClass="e-info" Url="@($"ScoutForm/View/{scoutForm.Id}")" Style="margin-left :5px"  
+                            <ButtonTabOpener CssClass="e-info" Url="@($"PitScoutForm/View/{scoutForm.Id}")" Style="margin-left :5px"  
                                              Text="View">
                             </ButtonTabOpener>
                         </div>
@@ -83,12 +83,6 @@ else
 
     private void Edit(FormDto form)
     {
-        navigationManager.NavigateTo("ScoutForm/Edit/" + form.Id);
+        navigationManager.NavigateTo("PitScoutForm/Edit/" + form.Id);
     }
-    
-    private void View(FormDto form)
-    {
-        navigationManager.NavigateTo("ScoutForm/View/" + form.Id);
-    }
-
 }
