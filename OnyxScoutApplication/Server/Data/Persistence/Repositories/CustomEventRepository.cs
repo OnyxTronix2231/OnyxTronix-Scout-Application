@@ -23,30 +23,30 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         {
         }
 
-        public override async Task<ActionResult> Add(CustomEventDto eventToAdd)
+        public override async Task<ActionResult> Add(CustomEventDto form)
         {
-            eventToAdd.Key = eventToAdd.Year + eventToAdd.Country + eventToAdd.Name;
+            form.Key = form.Year + form.Country + form.Name;
             
-            if (await ScoutAppContext.Events.AnyAsync(i => i.Key == eventToAdd.Key))
+            if (await ScoutAppContext.Events.AnyAsync(i => i.Key == form.Key))
             {
                 return ResultCode(System.Net.HttpStatusCode.BadRequest, "This event already exists!");
             }
 
             CustomEventDto clone = new CustomEventDto
             {
-                Year = eventToAdd.Year,
-                Country = eventToAdd.Country,
-                Key = eventToAdd.Key,
-                Name = eventToAdd.Name,
-                StartDate = eventToAdd.StartDate
+                Year = form.Year,
+                Country = form.Country,
+                Key = form.Key,
+                Name = form.Name,
+                StartDate = form.StartDate
                
             };
             await base.Add(clone);
             await Context.SaveChangesAsync();
             var result = await ScoutAppContext.Events.FirstOrDefaultAsync(i =>
-                i.Key == eventToAdd.Key);
-            eventToAdd.Id = result.Id;
-            return await Update(result, eventToAdd);
+                i.Key == form.Key);
+            form.Id = result.Id;
+            return await Update(result, form);
         }
         
         public async Task<ActionResult> Update(int id, CustomEventDto eventSource)

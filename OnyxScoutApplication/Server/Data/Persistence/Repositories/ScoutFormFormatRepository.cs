@@ -22,20 +22,21 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         {
         }
 
-        public override async Task<ActionResult> Add(ScoutFormFormatDto scoutFormFormat)
+        public override async Task<ActionResult> Add(ScoutFormFormatDto form)
         {
-            if (await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Year == scoutFormFormat.Year))
+            if (await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Year == form.Year && 
+                                                                     i.ScoutFormType == form.ScoutFormType))
             {
                 return ResultCode(System.Net.HttpStatusCode.BadRequest,
                     "This scout format already exists for this year!");
             }
 
-            return await base.Add(scoutFormFormat);
+            return await base.Add(form);
         }
 
-        public async Task<ActionResult<FormDto>> GetTemplateScoutFormByYear(int year)
+        public async Task<ActionResult<FormDto>> GetTemplateScoutFormByYear(int year, ScoutFormType scoutFormType)
         {
-            var result = await GetWithFieldsByYear(year);
+            var result = await GetWithFieldsByYear(year, scoutFormType);
             if (result.Value == null)
             {
                 return new NotFoundObjectResult("No scout form format found for year - " + year);
@@ -57,10 +58,10 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return dto;
         }
 
-        public async Task<ActionResult<ScoutFormFormatDto>> GetWithFieldsByYear(int year)
+        public async Task<ActionResult<ScoutFormFormatDto>> GetWithFieldsByYear(int year, ScoutFormType scoutFormType)
         {
             var result = await ScoutAppContext.ScoutFormFormats.WithAllFields().
-                FirstOrDefaultAsync(i => i.Year == year);
+                FirstOrDefaultAsync(i => i.Year == year && i.ScoutFormType == scoutFormType);
             if (result == null)
             {
                 return new NotFoundObjectResult("No scout form format found for year - " + year);

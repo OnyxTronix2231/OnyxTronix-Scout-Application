@@ -1,4 +1,4 @@
-﻿@page "/ScoutForm/Edit/{Id:int}"
+﻿@page "/PitScoutForm/Edit/{Id:int}"
 @inject HttpClientManager http
 @inject NavigationManager navigationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
@@ -25,7 +25,7 @@
             return;
         }
         
-        form = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/ " + oldForm.Year);
+        form = await http.GetJson<FormDto>($"ScoutFormFormat/TemplateScoutFormByYear/{oldForm.Year}/{oldForm.Type}");
         if (form == null)
         {
             navigationManager.NavigateTo("/");

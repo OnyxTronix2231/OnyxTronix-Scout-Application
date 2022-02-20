@@ -13,6 +13,15 @@
     </div>
     <div class="form-group col-sm-5">
         <div>
+            <label>Type</label>
+            <SfDropDownList TValue="ScoutFormType" TItem="string" DataSource="@Enum.GetNames(typeof(ScoutFormType))"
+                            class="form-control" @bind-Value="ScoutFormFormat.ScoutFormType"/>
+            <ValidationMessage For="@(() => ScoutFormFormat.ScoutFormType)"/>
+        </div>
+        <br/>
+    </div>
+    <div class="form-group col-sm-5">
+        <div>
             <label>Stage name</label>
             <SfTextBox @bind-Value="newStageName"/>
         </div>

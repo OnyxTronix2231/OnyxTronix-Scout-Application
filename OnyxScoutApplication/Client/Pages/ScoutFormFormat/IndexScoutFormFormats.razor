@@ -19,6 +19,7 @@ else
         <thead>
         <tr>
             <th>Year</th>
+            <th>Type</th>
         </tr>
         </thead>
         <tbody>
@@ -26,6 +27,7 @@ else
         {
             <tr>
                 <td>@scoutFormFormat.Year</td>
+                <td>@scoutFormFormat.ScoutFormType</td>
                 <SfButton CssClass="e-warning" @onclick="() => Edit(scoutFormFormat)">Edit</SfButton>
             </tr>
         }

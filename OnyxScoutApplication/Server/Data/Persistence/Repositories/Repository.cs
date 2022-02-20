@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
+using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
@@ -38,10 +39,10 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return new OkObjectResult(Mapper.Map<IEnumerable<TDtoEntity>>(await Context.Set<TDbEntity>().ToListAsync()));
         }
 
-        public virtual async Task<ActionResult> Add(TDtoEntity scoutFormFormat)
+        public virtual async Task<ActionResult> Add(TDtoEntity form)
         {
             //DbEntity db = Activator.CreateInstance<DbEntity>();
-            var mapped = Mapper.Map<TDbEntity>(scoutFormFormat);
+            var mapped = Mapper.Map<TDbEntity>(form);
             await Context.Set<TDbEntity>().AddAsync(mapped);
             return await Task.Run(() => new OkResult());
         }
