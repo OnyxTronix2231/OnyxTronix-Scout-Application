@@ -193,11 +193,11 @@ namespace OnyxScoutApplication.Server
         private string GetConnectionString()
         {
             var connectionString = "";
-            if (env.IsDevelopment())
-            {
-                connectionString = configuration.GetConnectionString("DefaultConnection");
-                return connectionString;
-            }
+            // if (env.IsDevelopment())
+            // {
+            //     connectionString = configuration.GetConnectionString("DefaultConnection");
+            //     return connectionString;
+            // }
 
             connectionString = Environment.GetEnvironmentVariables()["ConnectionString"]!.ToString();
             return connectionString;
