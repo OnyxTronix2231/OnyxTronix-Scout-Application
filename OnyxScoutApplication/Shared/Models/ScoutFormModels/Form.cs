@@ -18,5 +18,11 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
         public string WriterUserName { get; set; }
 
         public List<FormDataInStage> FormDataInStages { get; set; } = new();
+        
+        public bool IsImageUploaded { get; set; }
+        
+        public string ImageName { get; set; }
+        
+        public string ImageFileName { get; set; }
     }
 }

@@ -69,6 +69,15 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return Mapper.Map<List<FormDto>>(scoutForm);
         }
 
+        public async Task<ActionResult<FormDto>> GetByTeamAndKey(int teamNumber, string key,
+            ScoutFormType scoutFormType)
+        {
+            var scoutForm = await ScoutAppContext.ScoutForms.SingleAsync(i => i.TeamNumber == teamNumber
+                                                                        && i.KeyName.Equals(key)
+                                                                        && i.Type == scoutFormType);
+            return Mapper.Map<FormDto>(scoutForm);
+        }
+        
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey,
             ScoutFormType scoutFormType)
         {

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using OnyxScoutApplication.Server.Data.Extensions;
 using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
 using OnyxScoutApplication.Shared.Models;
@@ -44,6 +45,20 @@ namespace OnyxScoutApplication.Server.Controllers
         {
             var result = await unitOfWork.ScoutForms.GetWithFields(id);
             return result;
+        }
+
+        [HttpPost("SaveImage")]
+        public async Task<ActionResult> SaveImage([FromForm] IEnumerable<IFormFile> files)
+        {
+            long maxFileSize = 1024 * 1024 * 15;
+           // var form = await unitOfWork.ScoutForms.GetByTeamAndKey(teamNumber, keyName, ScoutFormType.Pit);
+            Console.WriteLine("OKKKKKKKKKK");
+          //  Console.WriteLine(form.Value.KeyName);
+          //  Console.WriteLine(form.Value.TeamNumber);
+            Console.WriteLine(files.Count());
+            Console.WriteLine(files.ElementAt(0).Name);
+            Console.WriteLine(files.ElementAt(0).FileName);
+            return new OkResult();
         }
 
         [HttpGet("GetAllByEvent/{eventKey}")]

@@ -1,5 +1,7 @@
 ﻿@page "/PitScoutForm/Create/{TeamNumber:int}"
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
+@using System.Net.Http.Headers
+@using System.Net
 @inject HttpClientManager http
 @inject NavigationManager navigationManager
 @inject ILocalStorageService localStorage
@@ -13,7 +15,9 @@
         <SfButton type="button" CssClass="e-success" @onclick="SaveOnLocalCache">Save locally</SfButton>
         <SfButton type="button" CssClass="e-danger" @onclick="DeleteLocalCache">Delete local cache</SfButton>
     </div>
-    <ScoutFromComponent Form="form" Type="FormType.Create" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
+    <ScoutFromComponent @ref="scoutForm" Form="form" Type="FormType.Create" OnValidSubmit="OnValidSubmit">
+        
+    </ScoutFromComponent>
 }
 
 @code {
@@ -25,6 +29,7 @@
     public int TeamNumber { get; set; }
 
     private FormDto form;
+    private ScoutFromComponent scoutForm;
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,11 +66,20 @@
 
     private async Task OnValidSubmit()
     {
-        if (await http.TryPostJson("ScoutForm", form))
+        if (scoutForm.Content != null)
         {
-            navigationManager.NavigateTo("/");
-            return;
+          //  if (await http.TryPostJson("ScoutForm", form))
+            {
+                var success = await http.TryPostJson($"/ScoutForm/SaveImage", scoutForm.Content);
+
+                if (success)
+                {
+                    navigationManager.NavigateTo("/");
+                    return;
+                }
+            }
         }
+
         await SaveOnLocalCache();
         notificationManager.Notify("Error", "Error saving form in server\nThe form was saved localy for now", NotificationType.Warning);
     }

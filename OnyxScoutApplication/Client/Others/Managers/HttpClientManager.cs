@@ -37,6 +37,11 @@ namespace OnyxScoutApplication.Client.Others.Managers
         {
             return await TrySetAsync(async () => await httpClient.PostAsync(command, Serialize(objectToPost)));
         }
+        
+        public async Task<bool> TryPostJson(string command, HttpContent content)
+        {
+            return await TrySetAsync(async () => await httpClient.PostAsync(command, content));
+        }
 
         private async Task<T> TryGetAsync<T>(Func<Task<HttpResponseMessage>> action) where T : class
         {

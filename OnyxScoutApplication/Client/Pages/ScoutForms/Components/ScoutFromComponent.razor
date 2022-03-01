@@ -1,4 +1,5 @@
 ﻿@using OnyxScoutApplication.Shared.Models.ScoutFormModels
+@using System.Net.Http.Headers
 
 <EditForm Model="@Form" OnValidSubmit="@OnValidSubmit">
     <FluentValidationValidator/>
@@ -19,7 +20,9 @@
         <label for="matchName">Writer</label>
         <input class="form-control" type="text" id="matchNumber" value="@Form.WriterUserName" readonly="readonly"/>
     </div>
-
+    <div class="form-group col-sm-5">
+        <InputFile  type="file" accept="image/*" OnChange="ImageSet"></InputFile>
+    </div>  
     <div class="form-group col-sm-5">
         @foreach (var formDataInStages in Form.FormDataInStages)
         {
@@ -50,5 +53,29 @@
 
     [Parameter]
     public FormType Type { get; set; }
+    
+    public MultipartFormDataContent Content { get; private set; }
+    
+    long maxFileSize = 1024 * 1024 * 15;
+    
+
+
+    private void ImageSet(InputFileChangeEventArgs e)
+    {
+
+        var fileContent = 
+            new StreamContent(e.File.OpenReadStream(maxFileSize));
+
+        fileContent.Headers.ContentType = 
+            new MediaTypeHeaderValue(e.File.ContentType);
+        
+        Content = new MultipartFormDataContent();
+
+        Content.Add(
+            content: fileContent,
+            name: "\"files\"",
+            fileName: e.File.Name);
+
+    }
 
 }
