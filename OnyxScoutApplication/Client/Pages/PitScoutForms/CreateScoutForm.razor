@@ -68,9 +68,9 @@
     {
         if (scoutForm.Content != null)
         {
-          //  if (await http.TryPostJson("ScoutForm", form))
+            if (await http.TryPostJson("ScoutForm", form))
             {
-                var success = await http.TryPostJson($"/ScoutForm/SaveImage", scoutForm.Content);
+                var success = await http.TryPostJson($"/ScoutForm/SaveImage/{TeamNumber}/{form.KeyName}", scoutForm.Content);
 
                 if (success)
                 {

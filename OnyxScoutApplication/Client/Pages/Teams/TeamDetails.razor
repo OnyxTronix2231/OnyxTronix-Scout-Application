@@ -2,7 +2,9 @@
 @using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
+@using System.IO
 @inject HttpClientManager http
+@inject HttpClient httpClient
 @inject ILocalStorageService localStorage
 @inject NavigationManager navigationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
@@ -12,6 +14,11 @@
     <h3>Team @TeamNumber</h3>
     <h4>@selectedEvent?.Name</h4>
     <a href="/TeamDetails/Notes/@TeamNumber">Notes</a>
+    if (pitScoutForms.Count != 0 && pitScoutForms[0].IsImageUploaded)
+    {
+        <br>
+        <a href="/ScoutForm/FetchImage/@TeamNumber/@pitScoutForms[0].KeyName/@pitScoutForms[0].ImageName">Image</a>
+    }
     <br/>
     foreach (var (key, value) in calculatedScoutDataByStages)
     {
@@ -73,8 +80,10 @@
             calculatedPitScoutDataByStages.Add(fieldsInStage.Name, 
                 TeamDataAnalyzer.CalculateDataFor(fieldsInStage, pitScoutForms, _ => true, true));
         }
-        
-        
+
+        Console.WriteLine($"{pitScoutForms[0].IsImageUploaded}");
+        Console.WriteLine($"{pitScoutForms[0].ImageFileName}");
+        Console.WriteLine($"/ScoutForm/FetchImage/{TeamNumber}/{pitScoutForms[0].KeyName}/{pitScoutForms[0].ImageName}");
         data = result.OrderBy(i => i.KeyName).ToList();
         matches = (await http.GetJson<List<Match>>
             ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))

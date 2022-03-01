@@ -63,5 +63,11 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             Context.Set<TDbEntity>().Remove(Mapper.Map<TDbEntity>(entity));
             return new OkResult();
         }
+
+        public virtual async Task UpdateFromTracking(TDtoEntity obj)
+        {
+            Context.Entry(obj).State = EntityState.Modified;
+            await Context.SaveChangesAsync();
+        }
     }
 }
