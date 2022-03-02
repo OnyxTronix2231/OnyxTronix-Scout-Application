@@ -46,7 +46,6 @@ namespace OnyxScoutApplication.Client
 
             builder.Services.AddApiAuthorization()
                 .AddAccountClaimsPrincipalFactory<RolesClaimsPrincipalFactory>();
-            
 
             services.AddSyncfusionBlazor();
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(

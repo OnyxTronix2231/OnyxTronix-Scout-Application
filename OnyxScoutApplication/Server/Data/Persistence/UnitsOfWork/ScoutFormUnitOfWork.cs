@@ -23,7 +23,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
         {
             return await context.SaveChangesAsync();
         }
-        
+
         public void Dispose()
         {
             context.Dispose();

@@ -28,11 +28,6 @@ namespace OnyxScoutApplication.Client.Others.Managers
             return await TryGetAsync<T>(async () => await httpClient.GetAsync(command));
         }
         
-        public async Task<T> Get<T>(string command) where T : class
-        {
-            return await TryGetAsync<T>(async () => await httpClient.GetAsync(command));
-        }
-
         public async Task<bool> TryPutJson(string command, object objectToPut)
         {
             return await TrySetAsync(async () => await httpClient.PutAsync(command, Serialize(objectToPut)));
