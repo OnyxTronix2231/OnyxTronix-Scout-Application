@@ -2,6 +2,7 @@
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @inject ILocalStorageService localStorage
+@inject ISessionStorageService sessionStorage
 @inject HttpClientManager http
 @inject NavigationManager navigationManager
 @inject NotificationManager notificationManager
@@ -42,7 +43,7 @@
         {
             analyticSettings = await localStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
-        teams = await http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
+        teams = await sessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
     }
 
 }

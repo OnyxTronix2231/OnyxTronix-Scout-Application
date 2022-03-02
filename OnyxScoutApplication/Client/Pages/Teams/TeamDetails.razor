@@ -6,12 +6,14 @@
 @inject HttpClientManager http
 @inject HttpClient httpClient
 @inject ILocalStorageService localStorage
+@inject ISessionStorageService sessionStorage
 @inject NavigationManager navigationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (calculatedScoutDataByStages is not null && calculatedPitScoutDataByStages is not null)
 {
     <h3>Team @TeamNumber</h3>
+    <h4>@teamName</h4>
     <h4>@selectedEvent?.Name</h4>
     <a href="/TeamDetails/Notes/@TeamNumber">Notes</a>
     if (pitScoutForms.Count != 0 && pitScoutForms[0].IsImageUploaded)
@@ -41,7 +43,7 @@
     }
 
     <br/>
-    <MatchesGrid Matches="@matches" OnTeamClicked="OnTeamClicked">
+    <MatchesGrid Matches="@matches" OnTeamClicked="@(async t => await OnTeamClicked(t))">
         <MatchGridSettings SubmittedForms = "@data" TeamNumber = "@TeamNumber" ></MatchGridSettings>
     </MatchesGrid>
 }
@@ -51,6 +53,7 @@
     [Parameter]
     public int TeamNumber { get; set; }
 
+    private string teamName;
     private Event selectedEvent;
     private List<FormDto> data;
     private Dictionary<string, List<TeamFieldAverage>> calculatedScoutDataByStages;
@@ -60,6 +63,16 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var teams = await sessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
+        var team = teams.SingleOrDefault(i => i.TeamNumber == TeamNumber);
+        if (team is null)
+        {
+            navigationManager.NavigateTo("");
+            return;
+        }
+
+        teamName = team.Nickname;
+        
         selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         if (selectedEvent == null)
         {
@@ -89,11 +102,13 @@
             .OrderBy(i => i.Date).ToList();
     }
 
-    private void OnTeamClicked(TeamInMatch teamInMatch)
+    private async Task OnTeamClicked(TeamInMatch teamInMatch)
     {
         if (teamInMatch.TeamNumber != TeamNumber)
         {
             navigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber);
+            await OnInitializedAsync();
+            StateHasChanged();
         }
     }
 

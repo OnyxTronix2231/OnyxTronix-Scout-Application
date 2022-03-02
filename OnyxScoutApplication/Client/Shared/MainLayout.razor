@@ -56,6 +56,9 @@
                 events = events.OrderBy(i => i.StartDate).Where(i => string.Equals(i.Country, selectedEvent.Country, StringComparison.OrdinalIgnoreCase)).ToList();
                 sessionStorage.SetItem("TheBlueAlliance.AllEvents", events);
             }
+            
+            var teams = await http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
+            sessionStorage.SetItem("TheBlueAlliance.AllTeams", teams);
         }
         finishedInit = true;
     }
