@@ -17,8 +17,8 @@
     if (pitScoutForms.Count != 0 && pitScoutForms[0].IsImageUploaded)
     {
         <br>
-        string s = $"Images/{pitScoutForms[0].ImageName}";
-        <img alt="@pitScoutForms[0].TeamNumber Robot image" class="img" src="@s" 
+        string s = $"{pitScoutForms[0].ImageName}";
+        <img src="@s" alt="@pitScoutForms[0].TeamNumber Robot image" class="img" 
              style="max-width: 400px; max-height: 400px"/>
     }
     <br/>

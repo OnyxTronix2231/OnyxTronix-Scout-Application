@@ -81,6 +81,11 @@
 
     private async Task OnValidSubmit()
     {
+        if (!await http.TryPutJson("ScoutForm/" + Id, form))
+        {
+            return;
+        }
+        
         if (scoutForm.Content != null)
         {
             var success = await http.TryPostJson($"/ScoutForm/SaveImage/{form.TeamNumber}/{form.KeyName}", scoutForm.Content);
@@ -89,9 +94,6 @@
                 return;
             }
         }
-        if (await http.TryPutJson("ScoutForm/" + Id, form))
-        {
-            navigationManager.NavigateTo("/");
-        }
+        navigationManager.NavigateTo("/");
     }
 }
