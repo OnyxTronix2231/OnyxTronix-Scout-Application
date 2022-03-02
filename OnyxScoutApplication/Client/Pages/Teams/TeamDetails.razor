@@ -18,7 +18,8 @@
     {
         <br>
         string s = $"Images/{pitScoutForms[0].ImageName}";
-        <img src="@s" class="img" alt="@pitScoutForms[0].TeamNumber Robot image" />
+        <img alt="@pitScoutForms[0].TeamNumber Robot image" class="img" src="@s" 
+             style="max-width: 400px; max-height: 400px"/>
     }
     <br/>
     foreach (var (key, value) in calculatedScoutDataByStages)
