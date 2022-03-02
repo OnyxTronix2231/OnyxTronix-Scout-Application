@@ -4,11 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Amazon.S3;
 using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using OnyxScoutApplication.Server.Data;
 using OnyxScoutApplication.Server.Data.Extensions;
 using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
 using OnyxScoutApplication.Shared.Models;
@@ -26,11 +28,13 @@ namespace OnyxScoutApplication.Server.Controllers
     {
         private readonly IWebHostEnvironment env;
         private readonly IScoutFormUnitOfWork unitOfWork;
+        private readonly AmazonS3Client amazonS3Client;
 
-        public ScoutFormController(IWebHostEnvironment env, IScoutFormUnitOfWork unitOfWork)
+        public ScoutFormController(IWebHostEnvironment env, IScoutFormUnitOfWork unitOfWork, AmazonS3Client amazonS3Client)
         {
             this.env = env;
             this.unitOfWork = unitOfWork;
+            this.amazonS3Client = amazonS3Client;
         }
 
         [HttpGet]
@@ -65,20 +69,32 @@ namespace OnyxScoutApplication.Server.Controllers
             {
                 return new BadRequestObjectResult($"{trustedFileNameForDisplay} length is 0");
             }
-            if (file.Length > maxFileSize)
-            {
-                return new BadRequestObjectResult($"{trustedFileNameForDisplay} of {file.Length} bytes is " +
-                                                  $"larger than the limit of {maxFileSize} bytes");
-            }
+            // if (file.Length > maxFileSize)
+            // {
+            //     return new BadRequestObjectResult($"{trustedFileNameForDisplay} of {file.Length} bytes is " +
+            //                                       $"larger than the limit of {maxFileSize} bytes");
+            // }
             try
             {
+
                 var fileName = form.Value.TeamNumber + form.Value.KeyName + Path.GetExtension(file.FileName);
-                var path = Path.Combine(env.WebRootPath, "Images");
+                var path = Path.Combine(env.ContentRootPath, "Images");
+                //var path = Path.Combine("/public", "Images");
                 Directory.CreateDirectory(path);
                 path = Path.Combine(path, fileName);
                 await using FileStream fs = new(path, FileMode.Create);
                 await file.CopyToAsync(fs);
-                form.Value.ImageName = fileName;
+                await fs.DisposeAsync();
+                var subDir = Environment.GetEnvironmentVariables()["CLOUD_CUBE-SUB_DIR"]!.ToString();
+                var bucketName = Environment.GetEnvironmentVariables()["CLOUD_CUBE-BUCKET_NAME"]!.ToString();
+                var success = await S3Bucket.UploadFileAsync(amazonS3Client, bucketName,subDir! + "/" + fileName, path);
+                if (!success)
+                {
+                    return Problem($"Could not add file to bucket");
+                }
+                var url = Environment.GetEnvironmentVariables()["CLOUD_CUBE-URL"]!.ToString();
+
+                form.Value.ImageName = url! + "/" + subDir + "/" + fileName;
                 form.Value.ImageFileName = fileName;
                 form.Value.IsImageUploaded = true;
                 await unitOfWork.ScoutForms.UpdateFromTracking(form.Value);

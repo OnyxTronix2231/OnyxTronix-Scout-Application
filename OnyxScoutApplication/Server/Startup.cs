@@ -27,6 +27,8 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using Amazon;
+using Amazon.S3;
 using IdentityServer4.AspNetIdentity;
 using IdentityServer4.Services;
 using OnyxScoutApplication.Server.Data.Extensions;
@@ -94,6 +96,8 @@ namespace OnyxScoutApplication.Server
                 options.IncludeSubDomains = true;
                 options.MaxAge = TimeSpan.FromDays(365 * 2);
             });
+            
+            
 
             services.Configure<IdentityOptions>(options =>
                 options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
@@ -112,6 +116,14 @@ namespace OnyxScoutApplication.Server
 
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             services.AddScoped<IApplicationUserUnitOfWork, ApplicationUserUnitOfWork>();
+
+            services.AddTransient(_ => 
+                new AmazonS3Client(Environment.GetEnvironmentVariables()["CLOUD_CUBE-ACCESS_KEY_ID"]!.ToString(), 
+                    Environment.GetEnvironmentVariables()["CLOUD_CUBE-SECRET_ACCESS_KEY"]!.ToString(),
+                    new AmazonS3Config
+                    {
+                        RegionEndpoint = RegionEndpoint.EUWest1,
+                    }));
 
             services.AddAutoMapper(typeof(ScoutFormProfile));
             services.AddSingleton<ITheBlueAllianceService>(

@@ -25,7 +25,7 @@
                         @{
                             var match = (Match) context;
                             var teamNumber = match.Alliances.Blue.GetTeamAt(index);
-                            <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
+                            <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="@(async () => await OnGridTeamClicked(match, teamNumber))">@(teamNumber)</span>
                         }
                     </Template>
                 </GridColumn>
@@ -116,12 +116,12 @@
         return classes;
     }
 
-    private void OnGridTeamClicked(Match match, int teamNumber)
+    private async Task OnGridTeamClicked(Match match, int teamNumber)
     {
         bool isFormExists =
             Settings.SubmittedForms != null &&
             Settings.SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.KeyName == match.Key);
-        OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match, IsFormExists = isFormExists});
+        await OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match, IsFormExists = isFormExists});
     }
 
     private static void CustomizeCell(QueryCellInfoEventArgs<Match> args)
