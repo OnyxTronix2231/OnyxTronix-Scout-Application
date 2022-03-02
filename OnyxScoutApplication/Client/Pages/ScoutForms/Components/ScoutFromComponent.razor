@@ -20,9 +20,12 @@
         <label for="matchName">Writer</label>
         <input class="form-control" type="text" id="matchNumber" value="@Form.WriterUserName" readonly="readonly"/>
     </div>
-    <div class="form-group col-sm-5">
-        <InputFile  type="file" accept="image/*" OnChange="ImageSet"></InputFile>
-    </div>  
+    @if (ShowImageUpload)
+    {
+        <div class="form-group col-sm-5">
+            <InputFile type="file" accept="image/*" OnChange="ImageSet"></InputFile>
+        </div>
+    }
     <div class="form-group col-sm-5">
         @foreach (var formDataInStages in Form.FormDataInStages)
         {
@@ -53,6 +56,9 @@
 
     [Parameter]
     public FormType Type { get; set; }
+    
+    [Parameter]
+    public bool ShowImageUpload { get; set; }
     
     public MultipartFormDataContent Content { get; private set; }
     

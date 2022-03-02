@@ -59,7 +59,6 @@ namespace OnyxScoutApplication.Server.Controllers
             var form = await unitOfWork.ScoutForms.GetByTeamAndKey(teamNumber, keyName, ScoutFormType.Pit);
             var file = files.ElementAt(0);
             var untrustedFileName = file.FileName;
-            form.Value.ImageName = untrustedFileName;
             var trustedFileNameForDisplay =
                 WebUtility.HtmlEncode(untrustedFileName);
             if (file.Length == 0)
@@ -73,14 +72,14 @@ namespace OnyxScoutApplication.Server.Controllers
             }
             try
             {
-                var trustedFileNameForFileStorage = Path.GetRandomFileName();
-                var path = Path.Combine(env.ContentRootPath,
-                    env.EnvironmentName, "unsafe_uploads");
+                var fileName = form.Value.TeamNumber + form.Value.KeyName + Path.GetExtension(file.FileName);
+                var path = Path.Combine(env.WebRootPath, "Images");
                 Directory.CreateDirectory(path);
-                path = Path.Combine(path, trustedFileNameForFileStorage);
+                path = Path.Combine(path, fileName);
                 await using FileStream fs = new(path, FileMode.Create);
                 await file.CopyToAsync(fs);
-                form.Value.ImageFileName = trustedFileNameForFileStorage;
+                form.Value.ImageName = fileName;
+                form.Value.ImageFileName = fileName;
                 form.Value.IsImageUploaded = true;
                 await unitOfWork.ScoutForms.UpdateFromTracking(form.Value);
             }
@@ -90,24 +89,6 @@ namespace OnyxScoutApplication.Server.Controllers
                 return Problem($"Could not add file to server");
             }
             return new OkResult();
-        }
-
-        [HttpGet("FetchImage/{teamNumber:int}/{keyName}")]
-        public async Task<ActionResult> FetchImage(int teamNumber, string keyName)
-        {
-            var form = await unitOfWork.ScoutForms.GetByTeamAndKey(teamNumber, keyName, ScoutFormType.Pit);
-            var contentType = "image/jpeg";
-            var path = Path.Combine(env.ContentRootPath,
-                env.EnvironmentName, "unsafe_uploads");
-            var filePath = Path.Combine(path, $"{form.Value.ImageFileName}");
-            Console.WriteLine(filePath);
-            if (!System.IO.File.Exists(filePath))
-            {
-             //   contentType = "image/jpeg";
-              //  filePath = "default_notfound_image_path_here";
-            }
-    
-            return PhysicalFile(filePath, contentType);
         }
 
         [HttpGet("GetAllByEvent/{eventKey}")]

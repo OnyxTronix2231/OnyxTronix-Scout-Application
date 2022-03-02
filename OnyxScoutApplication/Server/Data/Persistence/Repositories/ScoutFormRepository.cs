@@ -91,8 +91,6 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             var scoutForm = await ScoutAppContext.ScoutForms.WithAllData()
                 .Where(i => i.TeamNumber == teamNumber && i.KeyName.Equals(eventKey))
                 .ToListAsync();
-            Console.WriteLine("Imageeee");
-            Console.WriteLine(scoutForm[0].IsImageUploaded);
             return Mapper.Map<List<FormDto>>(scoutForm);
         }
 

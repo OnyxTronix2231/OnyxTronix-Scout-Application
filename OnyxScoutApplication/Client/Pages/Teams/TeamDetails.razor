@@ -17,7 +17,8 @@
     if (pitScoutForms.Count != 0 && pitScoutForms[0].IsImageUploaded)
     {
         <br>
-        <a href="/ScoutForm/FetchImage/@TeamNumber/@pitScoutForms[0].KeyName/@pitScoutForms[0].ImageName">Image</a>
+        string s = $"Images/{pitScoutForms[0].ImageName}";
+        <img src="@s" class="img" alt="My image" />
     }
     <br/>
     foreach (var (key, value) in calculatedScoutDataByStages)
@@ -81,9 +82,6 @@
                 TeamDataAnalyzer.CalculateDataFor(fieldsInStage, pitScoutForms, _ => true, true));
         }
 
-        Console.WriteLine($"{pitScoutForms[0].IsImageUploaded}");
-        Console.WriteLine($"{pitScoutForms[0].ImageFileName}");
-        Console.WriteLine($"/ScoutForm/FetchImage/{TeamNumber}/{pitScoutForms[0].KeyName}/{pitScoutForms[0].ImageName}");
         data = result.OrderBy(i => i.KeyName).ToList();
         matches = (await http.GetJson<List<Match>>
             ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))
