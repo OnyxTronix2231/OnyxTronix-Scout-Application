@@ -104,5 +104,8 @@
   <ItemGroup>
     <None Remove=".gz" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot" />
+  </ItemGroup>
 
 </Project>

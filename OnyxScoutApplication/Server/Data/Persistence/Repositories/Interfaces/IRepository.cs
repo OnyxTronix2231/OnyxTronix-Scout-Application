@@ -18,5 +18,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
         Task<ActionResult> Add(TDtoEntity form);
 
         Task<ActionResult> Remove(int id);
+
+        Task UpdateFromTracking(TDtoEntity obj);
     }
 }

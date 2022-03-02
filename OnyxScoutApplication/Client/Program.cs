@@ -29,7 +29,7 @@ namespace OnyxScoutApplication.Client
             builder.RootComponents.Add<App>("#app");
 
             ConfigureServices(builder.Services, builder);
-
+            var app = builder.Build();
             await builder.Build().RunAsync();
         }
 
@@ -46,7 +46,6 @@ namespace OnyxScoutApplication.Client
 
             builder.Services.AddApiAuthorization()
                 .AddAccountClaimsPrincipalFactory<RolesClaimsPrincipalFactory>();
-
 
             services.AddSyncfusionBlazor();
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(

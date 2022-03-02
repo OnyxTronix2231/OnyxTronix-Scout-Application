@@ -6,7 +6,8 @@
 @if (form != null)
 {
     <h3>ScoutForm</h3>
-    <ScoutFromComponent Form="form" Type="FormType.Update" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
+    <ScoutFromComponent @ref="scoutForm" Form="form" Type="FormType.Update" OnValidSubmit="OnValidSubmit"
+                        ShowImageUpload="true"></ScoutFromComponent>
 }
 
 @code {
@@ -15,6 +16,7 @@
     public int Id { get; set; }
 
     private FormDto form;
+    private ScoutFromComponent scoutForm;
 
     protected override async Task OnInitializedAsync()
     {
@@ -42,6 +44,9 @@
         newForm.KeyName = oldForm.KeyName;
         newForm.WriterUserName = oldForm.WriterUserName;
         newForm.Id = oldForm.Id;
+        newForm.IsImageUploaded = oldForm.IsImageUploaded;
+        newForm.ImageName = oldForm.ImageName;
+        newForm.ImageFileName = oldForm.ImageFileName;
         
         var oldData = oldForm.FormDataInStages.SelectMany(i => i.FormData.WithCascadeData()).ToList();
         for (var i = 0; i < newForm.FormDataInStages.Count; i++)
@@ -76,10 +81,17 @@
 
     private async Task OnValidSubmit()
     {
+        if (scoutForm.Content != null)
+        {
+            var success = await http.TryPostJson($"/ScoutForm/SaveImage/{form.TeamNumber}/{form.KeyName}", scoutForm.Content);
+            if (!success)
+            {
+                return;
+            }
+        }
         if (await http.TryPutJson("ScoutForm/" + Id, form))
         {
             navigationManager.NavigateTo("/");
         }
     }
-
 }

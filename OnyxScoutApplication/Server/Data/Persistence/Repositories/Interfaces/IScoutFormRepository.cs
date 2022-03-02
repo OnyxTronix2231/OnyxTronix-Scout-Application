@@ -19,5 +19,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
         Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey, ScoutFormType scoutFormType);
         Task<ActionResult<IEnumerable<FormDto>>> GetAllByEventWithData(string eventKey, ScoutFormType scoutFormType);
         Task<ActionResult<IEnumerable<FormDto>>> GetAllByType(ScoutFormType scoutFormType);
+        Task<ActionResult<FormDto>> GetByTeamAndKey(int teamNumber, string key,
+            ScoutFormType scoutFormType);
     }
 }

@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using OnyxScoutApplication.Server.Data.Extensions;
 using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
 using OnyxScoutApplication.Shared.Models;
@@ -20,10 +24,12 @@ namespace OnyxScoutApplication.Server.Controllers
     [Route("[controller]")]
     public class ScoutFormController : Controller
     {
+        private readonly IWebHostEnvironment env;
         private readonly IScoutFormUnitOfWork unitOfWork;
 
-        public ScoutFormController(IScoutFormUnitOfWork unitOfWork)
+        public ScoutFormController(IWebHostEnvironment env, IScoutFormUnitOfWork unitOfWork)
         {
+            this.env = env;
             this.unitOfWork = unitOfWork;
         }
 
@@ -44,6 +50,45 @@ namespace OnyxScoutApplication.Server.Controllers
         {
             var result = await unitOfWork.ScoutForms.GetWithFields(id);
             return result;
+        }
+
+        [HttpPost("SaveImage/{teamNumber:int}/{keyName}")]
+        public async Task<ActionResult> SaveImage(int teamNumber, string keyName, [FromForm] IEnumerable<IFormFile> files)
+        {
+            long maxFileSize = 1024 * 1024 * 15;
+            var form = await unitOfWork.ScoutForms.GetByTeamAndKey(teamNumber, keyName, ScoutFormType.Pit);
+            var file = files.ElementAt(0);
+            var untrustedFileName = file.FileName;
+            var trustedFileNameForDisplay =
+                WebUtility.HtmlEncode(untrustedFileName);
+            if (file.Length == 0)
+            {
+                return new BadRequestObjectResult($"{trustedFileNameForDisplay} length is 0");
+            }
+            if (file.Length > maxFileSize)
+            {
+                return new BadRequestObjectResult($"{trustedFileNameForDisplay} of {file.Length} bytes is " +
+                                                  $"larger than the limit of {maxFileSize} bytes");
+            }
+            try
+            {
+                var fileName = form.Value.TeamNumber + form.Value.KeyName + Path.GetExtension(file.FileName);
+                var path = Path.Combine(env.WebRootPath, "Images");
+                Directory.CreateDirectory(path);
+                path = Path.Combine(path, fileName);
+                await using FileStream fs = new(path, FileMode.Create);
+                await file.CopyToAsync(fs);
+                form.Value.ImageName = fileName;
+                form.Value.ImageFileName = fileName;
+                form.Value.IsImageUploaded = true;
+                await unitOfWork.ScoutForms.UpdateFromTracking(form.Value);
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine("Error saving file on server: " + ex);
+                return Problem($"Could not add file to server");
+            }
+            return new OkResult();
         }
 
         [HttpGet("GetAllByEvent/{eventKey}")]

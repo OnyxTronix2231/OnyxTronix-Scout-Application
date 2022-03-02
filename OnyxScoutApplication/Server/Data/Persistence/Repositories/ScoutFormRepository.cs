@@ -69,6 +69,15 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return Mapper.Map<List<FormDto>>(scoutForm);
         }
 
+        public async Task<ActionResult<FormDto>> GetByTeamAndKey(int teamNumber, string key,
+            ScoutFormType scoutFormType)
+        {
+            var scoutForm = await ScoutAppContext.ScoutForms.AsNoTracking().SingleAsync(i => i.TeamNumber == teamNumber
+                                                                        && i.KeyName.Equals(key)
+                                                                        && i.Type == scoutFormType);
+            return Mapper.Map<FormDto>(scoutForm);
+        }
+        
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey,
             ScoutFormType scoutFormType)
         {
@@ -80,11 +89,17 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             ScoutFormType scoutFormType)
         {
             var scoutForm = await ScoutAppContext.ScoutForms.WithAllData()
-                .Where(i => i.TeamNumber == teamNumber && i.KeyName.Contains(eventKey))
+                .Where(i => i.TeamNumber == teamNumber && i.KeyName.Equals(eventKey))
                 .ToListAsync();
             return Mapper.Map<List<FormDto>>(scoutForm);
         }
 
+        public override async Task UpdateFromTracking(FormDto obj)
+        {
+            Context.Entry(Mapper.Map<Form>(obj)).State = EntityState.Modified;
+            await Context.SaveChangesAsync();
+        }
+        
         private ApplicationDbContext ScoutAppContext => Context as ApplicationDbContext;
     }
 }
