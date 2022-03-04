@@ -58,7 +58,8 @@
 
     private void UpdateEventsList(List<Event> eventsToOrder)
     {
-        events = eventsToOrder.OrderBy(i => i.StartDate).Where(i => string.Equals(i.Country, selectedCountryFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+        events = eventsToOrder.Where(i => string.Equals(i.Country, selectedCountryFilter, 
+            StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
     }
 
     private async Task OnYearFilterChange(SelectEventArgs<int?> args)
