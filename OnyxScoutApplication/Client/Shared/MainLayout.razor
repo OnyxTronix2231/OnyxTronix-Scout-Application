@@ -18,7 +18,7 @@
     <div class="main">
         <div class="top-row px-4 auth">
             <LoginDisplay/>
-            <span>V0.9.7</span>
+            <span>V1.0.0</span>
         </div>
         <div class="content px-4">
             @if (finishedInit)
@@ -43,7 +43,6 @@
         if (localStorage.ContainKey("EventSelector/SelectedEventKey"))
         {
             Event selectedEvent = localStorage.GetItem<Event>("EventSelector/SelectedEventKey");
-            Console.WriteLine("key: " + selectedEvent.Key);
             var matches = await http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
             sessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
 
