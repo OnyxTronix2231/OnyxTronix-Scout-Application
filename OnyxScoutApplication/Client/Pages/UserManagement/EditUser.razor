@@ -71,7 +71,6 @@ else
 
     private void OnValueSelect(ApplicationUserRoleDto applicationUserRole, ChangeEventArgs<string, ApplicationRoleDto> args)
     {
-        Console.WriteLine(args.Value);
         applicationUserRole.Role = roles.FirstOrDefault(i => i.Id == args.Value);
         applicationUserRole.User = user;
     }

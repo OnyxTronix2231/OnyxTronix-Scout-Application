@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 {
@@ -14,8 +15,10 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 
         Task<ActionResult<IEnumerable<TDtoEntity>>> GetAll();
 
-        Task<ActionResult> Add(TDtoEntity scoutFormFormat);
+        Task<ActionResult> Add(TDtoEntity form);
 
         Task<ActionResult> Remove(int id);
+
+        Task UpdateFromTracking(TDtoEntity obj);
     }
 }

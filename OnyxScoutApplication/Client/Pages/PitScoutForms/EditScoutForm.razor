@@ -1,14 +1,13 @@
-﻿@page "/ScoutForm/Edit/{Id:int}"
+﻿@page "/PitScoutForm/Edit/{Id:int}"
 @inject HttpClientManager http
 @inject NavigationManager navigationManager
-@inject ILocalStorageService localStorage
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (form != null)
 {
-    <h3>Scout form</h3>
-    <br>
-    <ScoutFromComponent IsBlue="@isBlue" Form="form" Type="FormType.Update" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
+    <h3>ScoutForm</h3>
+    <ScoutFromComponent @ref="scoutForm" Form="form" Type="FormType.Update" OnValidSubmit="OnValidSubmit"
+                        ShowImageUpload="true"></ScoutFromComponent>
 }
 
 @code {
@@ -17,20 +16,18 @@
     public int Id { get; set; }
 
     private FormDto form;
-    private bool isBlue;
+    private ScoutFromComponent scoutForm;
 
     protected override async Task OnInitializedAsync()
     {
-        var teamInMatch = await localStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
-        isBlue = teamInMatch.Match.Alliances.Blue.TeamKeys.Any(i => i.Contains(teamInMatch.TeamNumber.ToString()));
-        var oldForm = await http.GetJson<FormDto>("ScoutForm/ " + Id);
+        var oldForm = await http.GetJson<FormDto>("ScoutForm/" + Id);
         if (oldForm == null)
         {
             navigationManager.NavigateTo("/");
             return;
         }
         
-        form = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/ " + oldForm.Year);
+        form = await http.GetJson<FormDto>($"ScoutFormFormat/TemplateScoutFormByYear/{oldForm.Year}/{oldForm.Type}");
         if (form == null)
         {
             navigationManager.NavigateTo("/");
@@ -47,6 +44,9 @@
         newForm.KeyName = oldForm.KeyName;
         newForm.WriterUserName = oldForm.WriterUserName;
         newForm.Id = oldForm.Id;
+        newForm.IsImageUploaded = oldForm.IsImageUploaded;
+        newForm.ImageName = oldForm.ImageName;
+        newForm.ImageFileName = oldForm.ImageFileName;
         
         var oldData = oldForm.FormDataInStages.SelectMany(i => i.FormData.WithCascadeData()).ToList();
         for (var i = 0; i < newForm.FormDataInStages.Count; i++)
@@ -81,11 +81,19 @@
 
     private async Task OnValidSubmit()
     {
-        if (await http.TryPutJson("ScoutForm/" + Id, form))
+        if (!await http.TryPutJson("ScoutForm/" + Id, form))
         {
-            navigationManager.NavigateTo("/");
+            return;
         }
+        
+        if (scoutForm.Content != null)
+        {
+            var success = await http.TryPostJson($"/ScoutForm/SaveImage/{form.TeamNumber}/{form.KeyName}", scoutForm.Content);
+            if (!success)
+            {
+                return;
+            }
+        }
+        navigationManager.NavigateTo("/");
     }
-
 }
-

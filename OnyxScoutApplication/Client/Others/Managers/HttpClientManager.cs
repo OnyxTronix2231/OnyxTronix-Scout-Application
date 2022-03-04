@@ -27,7 +27,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
         {
             return await TryGetAsync<T>(async () => await httpClient.GetAsync(command));
         }
-
+        
         public async Task<bool> TryPutJson(string command, object objectToPut)
         {
             return await TrySetAsync(async () => await httpClient.PutAsync(command, Serialize(objectToPut)));
@@ -36,6 +36,11 @@ namespace OnyxScoutApplication.Client.Others.Managers
         public async Task<bool> TryPostJson(string command, object objectToPost)
         {
             return await TrySetAsync(async () => await httpClient.PostAsync(command, Serialize(objectToPost)));
+        }
+        
+        public async Task<bool> TryPostJson(string command, HttpContent content)
+        {
+            return await TrySetAsync(async () => await httpClient.PostAsync(command, content));
         }
 
         private async Task<T> TryGetAsync<T>(Func<Task<HttpResponseMessage>> action) where T : class

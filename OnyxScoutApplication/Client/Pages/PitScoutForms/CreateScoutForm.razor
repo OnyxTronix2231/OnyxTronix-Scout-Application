@@ -1,0 +1,115 @@
+﻿@page "/PitScoutForm/Create/{TeamNumber:int}"
+@using OnyxScoutApplication.Shared.Models.ScoutFormModels
+@using System.Net.Http.Headers
+@using System.Net
+@inject HttpClientManager http
+@inject NavigationManager navigationManager
+@inject ILocalStorageService localStorage
+@inject NotificationManager notificationManager
+@attribute [OnyxAuthorize(Role = Role.Scouter)]
+
+@if (form != null)
+{
+    <h3>Pit scout form</h3>
+    <div style="float: right;">
+        <SfButton type="button" CssClass="e-success" @onclick="SaveOnLocalCache">Save locally</SfButton>
+        <SfButton type="button" CssClass="e-danger" @onclick="DeleteLocalCache">Delete local cache</SfButton>
+    </div>
+    <ScoutFromComponent @ref="scoutForm" Form="form" Type="FormType.Create" OnValidSubmit="OnValidSubmit"
+                        ShowImageUpload="true">
+    </ScoutFromComponent>
+}
+
+@code {
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationStateTask { get; set; }
+    
+    [Parameter]
+    public int TeamNumber { get; set; }
+
+    private FormDto form;
+    private ScoutFromComponent scoutForm;
+    private bool imageUploadFailed;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateTask;
+        var user = authState.User;
+        var selectedYear = await localStorage.GetItemAsync<int?>("EventSelector/SelectedYearFilter");
+        var selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        if (selectedEvent is null || selectedYear is null)
+        {
+            notificationManager.Notify("Please select event and year first!", "", NotificationType.Danger);
+            return;
+        }
+        form = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" +
+                                           $"{selectedYear!.Value}/{ScoutFormType.Pit}");
+        if (form == null)
+        {
+            notificationManager.Notify("No scout form found for  pit scouting!", "", NotificationType.Danger);
+            navigationManager.NavigateTo("/");
+            return;
+        }
+        
+        if(await localStorage.ContainKeyAsync($"ScoutForm/{selectedEvent.Key}/{TeamNumber}"))
+        {
+            form = await localStorage.GetItemAsync<FormDto>($"ScoutForm/{selectedEvent.Key}/{TeamNumber}");
+            return;
+        }
+        
+        form.TeamNumber = TeamNumber;
+        form.Year = selectedYear!.Value;
+        form.Type = ScoutFormType.Pit;
+        form.KeyName = selectedEvent.Key;
+        form.WriterUserName = user.Identity!.Name;
+    }
+
+    private async Task OnValidSubmit()
+    {
+        if (scoutForm.Content != null)
+        {
+            if (imageUploadFailed)
+            {
+                var success = await http.TryPostJson($"/ScoutForm/SaveImage/{TeamNumber}/{form.KeyName}", scoutForm.Content);
+                if (success)
+                {
+                    navigationManager.NavigateTo("/");
+                    return;
+                }
+                return;
+            }
+            if (await http.TryPostJson("ScoutForm", form))
+            {
+                var success = await http.TryPostJson($"/ScoutForm/SaveImage/{TeamNumber}/{form.KeyName}", scoutForm.Content);
+    
+                if (success)
+                {
+                    navigationManager.NavigateTo("/");
+                    return;
+                }
+                imageUploadFailed = true;
+            }
+            else
+            {
+                await SaveOnLocalCache();
+                notificationManager.Notify("Error", "Error saving form in server\nThe form was saved localy for now", NotificationType.Warning);
+            }
+        }
+    }
+
+    private async Task SaveOnLocalCache()
+    {
+        await localStorage.SetItemAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}" ,form);
+    }
+    
+    private async Task DeleteLocalCache()
+    {
+        if (!await localStorage.ContainKeyAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}"))
+        {
+            notificationManager.Notify("No form was found on local cache!", "", NotificationType.Warning);
+            return;
+        }
+        await localStorage.RemoveItemAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}");
+    }
+}

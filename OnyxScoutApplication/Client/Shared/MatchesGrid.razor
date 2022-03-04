@@ -25,7 +25,7 @@
                         @{
                             var match = (Match) context;
                             var teamNumber = match.Alliances.Blue.GetTeamAt(index);
-                            <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
+                            <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="@(async () => await OnGridTeamClicked(match, teamNumber))">@(teamNumber)</span>
                         }
                     </Template>
                 </GridColumn>
@@ -101,9 +101,10 @@
 
         if (Settings.SubmittedForms == null) return classes;
 
-        if (Settings.SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == matchName))
+        if (Settings.SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.KeyName == matchName))
         {
             classes += "filledTeamForm ";
+            classes += "clickable ";
         }
         else if(syncStorageService.ContainKey($"ScoutForm/{matchName}/{teamNumber}"))
         {
@@ -116,12 +117,20 @@
         return classes;
     }
 
-    private void OnGridTeamClicked(Match match, int teamNumber)
+    private async Task OnGridTeamClicked(Match match, int teamNumber)
     {
-        bool isFormExists =
-            Settings.SubmittedForms != null &&
-            Settings.SubmittedForms.Any(form => form.TeamNumber == teamNumber && form.MatchName == match.Key);
-        OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match, IsFormExists = isFormExists});
+        if (Settings.SubmittedForms == null)
+        {
+            await OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match, 
+                IsFormExists = false});
+            return;
+        }
+
+        var form = Settings.SubmittedForms.SingleOrDefault(form => form.TeamNumber == teamNumber
+                                                                   && form.KeyName == match.Key);
+        
+        await OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match, 
+            IsFormExists = form != null, Form = form});
     }
 
     private static void CustomizeCell(QueryCellInfoEventArgs<Match> args)
@@ -169,10 +178,10 @@
     }
     
     .locallyFilledTeamForm {
-            color: orange;
+        color: orange;
     }
 
     .notFilledTeamForm {
-        color: darkred
+        color: black;
     }
 </style>

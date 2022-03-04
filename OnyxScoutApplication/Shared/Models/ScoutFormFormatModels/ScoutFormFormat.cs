@@ -8,6 +8,8 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         public int Id { get; set; }
 
         public int Year { get; set; }
+        
+        public ScoutFormType ScoutFormType { get; set; }
 
         public List<FieldsInStage> FieldsInStages { get; set; } = new();
     }

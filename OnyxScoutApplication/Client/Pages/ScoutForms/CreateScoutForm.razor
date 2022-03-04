@@ -8,12 +8,13 @@
 
 @if (form != null)
 {
-    <h3>ScoutForm</h3>
+    <h3>Scout form</h3>
+    <br>
     <div style="float: right;">
         <SfButton type="button" CssClass="e-success" @onclick="SaveOnLocalCache">Save locally</SfButton>
         <SfButton type="button" CssClass="e-danger" @onclick="DeleteLocalCache">Delete local cache</SfButton>
     </div>
-    <ScoutFromComponent Form="form" Type="FormType.Create" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
+    <ScoutFromComponent IsBlue="@isBlue" Form="form" Type="FormType.Create" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
 }
 
 @code {
@@ -23,6 +24,7 @@
 
     private TeamInMatch teamInMatch;
     private FormDto form;
+    private bool isBlue;
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,8 +32,10 @@
         var user = authState.User;
 
         teamInMatch = await localStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
-        form = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/ " + teamInMatch.Match.Date.Year);
-        if (form == null)
+        isBlue = teamInMatch.Match.Alliances.Blue.TeamKeys.Any(i => i.Contains(teamInMatch.TeamNumber.ToString()));
+        
+        var newForm = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + teamInMatch.Match.Date.Year);
+        if (newForm == null)
         {
             navigationManager.NavigateTo("/");
             return;
@@ -43,10 +47,12 @@
             return;
         }
         
-        form.TeamNumber = teamInMatch.TeamNumber;
-        form.Year = teamInMatch.Match.Date.Year;
-        form.MatchName = teamInMatch.Match.Key;
-        form.WriterUserName = user.Identity.Name;
+        newForm.TeamNumber = teamInMatch.TeamNumber;
+        newForm.Year = teamInMatch.Match.Date.Year;
+        newForm.Type = ScoutFormType.MainGame;
+        newForm.KeyName = teamInMatch.Match.Key;
+        newForm.WriterUserName = user.Identity!.Name;
+        form = newForm;
     }
 
     private async Task OnValidSubmit()
@@ -62,16 +68,17 @@
 
     private async Task SaveOnLocalCache()
     {
-        await localStorage.SetItemAsync($"ScoutForm/{form.MatchName}/{form.TeamNumber}" ,form);
+        await localStorage.SetItemAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}" ,form);
     }
     
     private async Task DeleteLocalCache()
     {
-        if (!await localStorage.ContainKeyAsync($"ScoutForm/{form.MatchName}/{form.TeamNumber}"))
+        if (!await localStorage.ContainKeyAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}"))
         {
             notificationManager.Notify("No form was found on local cache!", "", NotificationType.Warning);
             return;
         }
-        await localStorage.RemoveItemAsync($"ScoutForm/{form.MatchName}/{form.TeamNumber}");
+        await localStorage.RemoveItemAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}");
     }
 }
+

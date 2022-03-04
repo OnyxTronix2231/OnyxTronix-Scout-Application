@@ -1,4 +1,5 @@
-﻿<div class="top-row pl-5 navbar navbar-dark">
+﻿<div class="top-row pl-5 navbar navbar-dark align-content-center align-items-center">
+    <img src="icon-512.png" alt="" style="max-width: 27px;"/>
     <a class="navbar-brand" href="">Onyx scouter</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -27,12 +28,26 @@
             </li>
         </OnyxAuthorizeView>
         <OnyxAuthorizeView Role="@(Role.Scouter)">
-                    <li class="nav-item px-3">
-                        <NavLink class="nav-link" href="ScoutForms">
-                            <span class="oi oi-list-rich" aria-hidden="true"></span> Scout forms
-                        </NavLink>
-                    </li>
-                </OnyxAuthorizeView>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="ScoutForms">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Scout forms
+                </NavLink>
+            </li>
+        </OnyxAuthorizeView>
+        <OnyxAuthorizeView Role="@(Role.Scouter)">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="PitScoutForms">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Pit scout forms
+                </NavLink>
+            </li>
+        </OnyxAuthorizeView>
+        <OnyxAuthorizeView Role="@(Role.Scouter)">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="PitScouting">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Pit scouting
+                </NavLink>
+            </li>
+        </OnyxAuthorizeView>
         <OnyxAuthorizeView Role="@(Role.Admin)">
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="ScoutFormFormats">

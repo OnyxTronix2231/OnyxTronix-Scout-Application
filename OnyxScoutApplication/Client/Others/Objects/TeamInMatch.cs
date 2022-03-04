@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 
 namespace OnyxScoutApplication.Client.Others.Objects
 {
@@ -13,5 +14,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
         public Match Match { get; set; }
 
         public bool IsFormExists { get; set; }
+
+        public FormDto Form { get; set; }
     }
 }

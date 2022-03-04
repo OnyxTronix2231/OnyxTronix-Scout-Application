@@ -27,10 +27,10 @@
 
     private int? selectedYearFilter = 0;
     private string selectedCountryFilter;
-    private Event selectedEvent = new Event();
+    private Event selectedEvent = new();
     private List<Event> events;
-    private List<int?> filterYears = new List<int?>();
-    private List<string> filterCountries = new List<string>();
+    private List<int?> filterYears = new();
+    private List<string> filterCountries = new();
     private string lastEventKey;
 
 
@@ -58,7 +58,8 @@
 
     private void UpdateEventsList(List<Event> eventsToOrder)
     {
-        events = eventsToOrder.OrderBy(i => i.StartDate).Where(i => string.Equals(i.Country, selectedCountryFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+        events = eventsToOrder.Where(i => string.Equals(i.Country, selectedCountryFilter, 
+            StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
     }
 
     private async Task OnYearFilterChange(SelectEventArgs<int?> args)

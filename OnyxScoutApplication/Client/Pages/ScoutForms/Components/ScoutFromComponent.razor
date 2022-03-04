@@ -1,25 +1,35 @@
 ﻿@using OnyxScoutApplication.Shared.Models.ScoutFormModels
+@using System.Net.Http.Headers
+@inject ISessionStorageService sessionStorage
 
+
+<h4>@team?.Nickname</h4>
 <EditForm Model="@Form" OnValidSubmit="@OnValidSubmit">
     <FluentValidationValidator/>
     <ValidationSummary/>
     <div class="form-group col-sm-5">
         <label for="teamNumber">Team number</label>
-        <input class="form-control" type="number" id="teamNumber" value="@Form.TeamNumber" readonly="readonly"/>
+        <input class="form-control" style="@(IsBlue ? "background-color: #5c5cff":"background-color: #ff4949")" 
+               type="number" id="teamNumber" value="@Form.TeamNumber" readonly="readonly"/>
     </div>
     <div class="form-group col-sm-5">
         <label for="year">Year</label>
         <input class="form-control" type="number" id="year" value="@Form.Year" readonly="readonly"/>
     </div>
     <div class="form-group col-sm-5">
-        <label for="matchName">Match name</label>
-        <input class="form-control" type="text" id="matchName" value="@Form.MatchName" readonly="readonly"/>
+        <label for="matchName">Key name</label>
+        <input class="form-control" type="text" id="matchName" value="@Form.KeyName" readonly="readonly"/>
     </div>
     <div class="form-group col-sm-5">
         <label for="matchName">Writer</label>
         <input class="form-control" type="text" id="matchNumber" value="@Form.WriterUserName" readonly="readonly"/>
     </div>
-
+    @if (ShowImageUpload)
+    {
+        <div class="form-group col-sm-5">
+            <InputFile type="file" accept="image/*" OnChange="ImageSet"></InputFile>
+        </div>
+    }
     <div class="form-group col-sm-5">
         @foreach (var formDataInStages in Form.FormDataInStages)
         {
@@ -50,5 +60,48 @@
 
     [Parameter]
     public FormType Type { get; set; }
+    
+    [Parameter]
+    public bool ShowImageUpload { get; set; }
+    
+    [Parameter]
+    public bool IsBlue { get; set; }
+    
+    public MultipartFormDataContent Content { get; private set; }
+
+    private Team team;
+    
+    long maxFileSize = 1024 * 1024 * 15;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var teams = await sessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
+        team = teams.SingleOrDefault(i => i.TeamNumber == Form.TeamNumber);
+    }
+
+    private void ImageSet(InputFileChangeEventArgs e)
+    {
+        var fileContent = 
+            new StreamContent(e.File.OpenReadStream(maxFileSize));
+
+        fileContent.Headers.ContentType = 
+            new MediaTypeHeaderValue(e.File.ContentType);
+        
+        Content = new MultipartFormDataContent();
+
+        Content.Add(
+            content: fileContent,
+            name: "\"files\"",
+            fileName: e.File.Name);
+    }
 
 }
+
+<style>
+    .e-input-group .e-input-group-icon, .e-input-group.e-control-wrapper .e-input-group-icon {
+        min-height: 35px;
+        min-width: 35px;
+    }
+    
+    
+</style>

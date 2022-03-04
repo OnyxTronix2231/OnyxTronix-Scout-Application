@@ -37,4 +37,16 @@
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\PitScoutForms\Components\BooleanChooserFieldComponent.razor" />
+    <_ContentIncludedByDefault Remove="Pages\PitScoutForms\Components\BooleanFieldComponent.razor" />
+    <_ContentIncludedByDefault Remove="Pages\PitScoutForms\Components\MultipleChoiceFieldComponent.razor" />
+    <_ContentIncludedByDefault Remove="Pages\PitScoutForms\Components\NumricFieldComponent.razor" />
+    <_ContentIncludedByDefault Remove="Pages\PitScoutForms\Components\OptionSelectFieldComponent.razor" />
+    <_ContentIncludedByDefault Remove="Pages\PitScoutForms\Components\PitScoutFromComponent.razor" />
+    <_ContentIncludedByDefault Remove="Pages\PitScoutForms\Components\PitSectionEdit.razor" />
+    <_ContentIncludedByDefault Remove="Pages\PitScoutForms\Components\TextFieldComponent.razor" />
+    <_ContentIncludedByDefault Remove="Pages\PitScoutForms\Components\TimeCounterFieldComponent.razor" />
+  </ItemGroup>
+
 </Project>
