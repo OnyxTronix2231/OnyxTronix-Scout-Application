@@ -31,7 +31,6 @@ namespace OnyxScoutApplication.Client.Others.Objects
 
         public override async Task SetParametersAsync(ParameterView parameters)
         {
-            Console.WriteLine("MatchGridSettings:SetParametersAsync");
             foreach (var parameter in parameters)
             {
                 if (parameter.Cascading)

@@ -51,7 +51,6 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 return null;
             }
             string json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(json);
             var result = JsonConvert.DeserializeObject<T>(json,
                 new JsonSerializerSettings
                 {

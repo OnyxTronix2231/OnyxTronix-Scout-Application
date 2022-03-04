@@ -8,6 +8,8 @@
 @inject ILocalStorageService localStorage
 @inject ISessionStorageService sessionStorage
 @inject NavigationManager navigationManager
+@inject IJSRuntime jsRuntime
+
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (calculatedScoutDataByStages is not null && calculatedPitScoutDataByStages is not null)
@@ -87,6 +89,11 @@
                 TeamDataAnalyzer.CalculateDataFor(fieldsInStage, result, _ => true));
         }
         
+        data = result.OrderBy(i => i.KeyName).ToList();
+        matches = (await http.GetJson<List<Match>>
+            ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))
+            .OrderBy(i => i.Date).ToList();
+        
         var pirScoutFormat = await http.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{selectedEvent.Year}/{ScoutFormType.Pit}");
         pitScoutForms = await http.GetJson<List<FormDto>>($"ScoutForm/GetAllByTeam/{TeamNumber}/{selectedEvent.Key}/{ScoutFormType.Pit}");
         calculatedPitScoutDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
@@ -95,11 +102,6 @@
             calculatedPitScoutDataByStages.Add(fieldsInStage.Name, 
                 TeamDataAnalyzer.CalculateDataFor(fieldsInStage, pitScoutForms, _ => true, true));
         }
-
-        data = result.OrderBy(i => i.KeyName).ToList();
-        matches = (await http.GetJson<List<Match>>
-            ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))
-            .OrderBy(i => i.Date).ToList();
     }
 
     private async Task OnTeamClicked(TeamInMatch teamInMatch)
@@ -109,7 +111,8 @@
             navigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber);
             await OnInitializedAsync();
             StateHasChanged();
+            return;
         }
+        await jsRuntime.InvokeVoidAsync("open", $"ScoutForm/View/{teamInMatch.Form.Id}", "_blank");
     }
-
 }
