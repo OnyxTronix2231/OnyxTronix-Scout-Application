@@ -61,6 +61,9 @@
         var matches = await http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
         await sessionStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
         scoutForms = await http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+        await sessionStorage.SetItemAsync("ScoutForms.All", scoutForms);
+        var teams = await http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
+        await sessionStorage.SetItemAsync("TheBlueAlliance.AllTeams", teams);
         UpdateByMatches(matches);
     }
 
