@@ -7,9 +7,8 @@
 @if (FormType == FormType.Create)
 {
     <div>
-        <SfButton type="button" CssClass="@(!stopwatch.IsRunning ? "e-success" : "e-warning	")" @onclick="ToggleCount">
-            @(!stopwatch.IsRunning ? "Start count" : "Stop count")
-        </SfButton>
+        <SfButton type="button" IconCss="e-icons e-play" CssClass="e-success" @onclick="StartCount">Start count</SfButton>
+        <SfButton type="button" IconCss="e-icons e-play" CssClass="e-warning" @onclick="StopCount">Stop count</SfButton>
     </div>
     <div>
         <label>@currentTimeSpan?.ToString(@"mm\:ss\.fff")</label>
@@ -64,14 +63,14 @@ else
         timer.Elapsed += (_, _) => { UpdateCurrentTime(); };
     }
 
-    private void ToggleCount()
+    private void StartCount()
     {
-        if(!stopwatch.IsRunning) 
-        {
-            timer.Start();
-            stopwatch.Start();
-            return;
-        }
+        timer.Start();
+        stopwatch.Start();
+    }
+
+    private void StopCount()
+    {
         timer.Stop();
         stopwatch.Stop();
         UpdateCurrentTime();
@@ -122,3 +121,15 @@ else
     }
 
 }
+
+<style>
+
+    .e-play::before {
+        content: '\e324';
+    }
+
+    .e-pause::before {
+        content: '\e326';
+    }
+
+</style>
