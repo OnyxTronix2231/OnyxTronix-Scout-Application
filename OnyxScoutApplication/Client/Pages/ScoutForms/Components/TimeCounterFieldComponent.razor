@@ -21,7 +21,7 @@
         }
     </div>
     <div>
-        <SfButton type="button" CssClass="e-danger" @onclick="ResetCountAndUpdate">Reset count</SfButton>
+        <SfButton type="button" CssClass="e-danger" @onclick="ResetCount">Reset count</SfButton>
     </div>
 }  
 else
@@ -81,19 +81,14 @@ else
     {
         timer.Stop();
         stopwatch.Reset();
+        CurrentValue = null;
+        currentTimeSpan = null;
     }
     
-    private void ResetCountAndUpdate()
-    {
-        ResetCount();
-        UpdateCurrentTime();
-    }
-
     private void UpdateCurrentTime()
     {
         currentTimeSpan = stopwatch.Elapsed;
         CurrentValue = (float) stopwatch.Elapsed.TotalSeconds;
-        Console.WriteLine(CurrentValue);
         StateHasChanged();
     }
 

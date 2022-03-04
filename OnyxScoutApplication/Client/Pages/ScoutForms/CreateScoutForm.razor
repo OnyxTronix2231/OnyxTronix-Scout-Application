@@ -8,7 +8,8 @@
 
 @if (form != null)
 {
-    <h3>ScoutForm</h3>
+    <h3>Scout form</h3>
+    <br>
     <div style="float: right;">
         <SfButton type="button" CssClass="e-success" @onclick="SaveOnLocalCache">Save locally</SfButton>
         <SfButton type="button" CssClass="e-danger" @onclick="DeleteLocalCache">Delete local cache</SfButton>
@@ -33,8 +34,8 @@
         teamInMatch = await localStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
         isBlue = teamInMatch.Match.Alliances.Blue.TeamKeys.Any(i => i.Contains(teamInMatch.TeamNumber.ToString()));
         
-        form = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + teamInMatch.Match.Date.Year);
-        if (form == null)
+        var newForm = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + teamInMatch.Match.Date.Year);
+        if (newForm == null)
         {
             navigationManager.NavigateTo("/");
             return;
@@ -46,11 +47,12 @@
             return;
         }
         
-        form.TeamNumber = teamInMatch.TeamNumber;
-        form.Year = teamInMatch.Match.Date.Year;
-        form.Type = ScoutFormType.MainGame;
-        form.KeyName = teamInMatch.Match.Key;
-        form.WriterUserName = user.Identity!.Name;
+        newForm.TeamNumber = teamInMatch.TeamNumber;
+        newForm.Year = teamInMatch.Match.Date.Year;
+        newForm.Type = ScoutFormType.MainGame;
+        newForm.KeyName = teamInMatch.Match.Key;
+        newForm.WriterUserName = user.Identity!.Name;
+        form = newForm;
     }
 
     private async Task OnValidSubmit()

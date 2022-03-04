@@ -1,6 +1,9 @@
 ﻿@using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using System.Net.Http.Headers
+@inject ISessionStorageService sessionStorage
 
+
+<h4>@team?.Nickname</h4>
 <EditForm Model="@Form" OnValidSubmit="@OnValidSubmit">
     <FluentValidationValidator/>
     <ValidationSummary/>
@@ -65,10 +68,16 @@
     public bool IsBlue { get; set; }
     
     public MultipartFormDataContent Content { get; private set; }
+
+    private Team team;
     
     long maxFileSize = 1024 * 1024 * 15;
-    
 
+    protected override async Task OnInitializedAsync()
+    {
+        var teams = await sessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
+        team = teams.SingleOrDefault(i => i.TeamNumber == Form.TeamNumber);
+    }
 
     private void ImageSet(InputFileChangeEventArgs e)
     {
