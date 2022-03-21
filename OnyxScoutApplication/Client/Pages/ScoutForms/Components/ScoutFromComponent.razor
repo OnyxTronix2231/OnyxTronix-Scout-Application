@@ -15,7 +15,7 @@
                                                TeamAlliance.Red => "background-color: #ff4949",
                                                _ => ""
                                                })" 
-               type="number" id="teamNumber" value="@Form.TeamNumber" readonly="readonly"/>
+               type="number" id="teamNumber" @bind="@Form.TeamNumber"/>
     </div>
     <div class="form-group col-sm-5">
         <label for="year">Year</label>
