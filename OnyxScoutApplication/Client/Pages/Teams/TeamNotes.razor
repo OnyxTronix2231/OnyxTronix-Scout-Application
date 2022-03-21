@@ -1,14 +1,14 @@
-﻿@page "/TeamDetails/Notes/{teamNumber:int}"
+﻿@* @page "/TeamDetails/Notes/{teamNumber:int}" *@
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
 @inject HttpClientManager http
 @inject ILocalStorageService localStorage
 @if (notesByStage != null)
-{
-    <h3>Team @TeamNumber</h3>
-    <h4>@selectedEvent?.Name</h4>
-    <div>
+{ 
+@*     <h3>Team @TeamNumber</h3> *@
+@*     <h4>@selectedEvent?.Name</h4> *@
+     <div> 
         @foreach (var (stage, textByWirters) in notesByStage)
         {
             <h5>@stage</h5>
@@ -33,23 +33,19 @@
     [Parameter]
     public int TeamNumber { get; set; }
 
-    private Dictionary<string, List<Tuple<FormDataDto[], string>>> notesByStage;
-    private Event selectedEvent;
-
-    protected override async Task OnInitializedAsync()
+    [Parameter]
+    public List<FormDto> Forms
     {
-        selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
-        if (selectedEvent == null)
+        get => forms;
+        set
         {
-            return;
+            forms = value;
+            var v = forms.SelectMany(i => i.FormDataInStages.ToDictionary(ii => ii.Name, ii => 
+                new Tuple<FormDataDto[], string>(ii.FormData.Where(d => d.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)));
+            notesByStage = v.ToLookup(i => i.Key, i => i.Value).ToDictionary(i => i.Key, i => i.ToList());
         }
-
-        var result = await http.GetJson<List<FormDto>>("ScoutForm/GetAllByTeam/" + TeamNumber + "/" + selectedEvent.Key);
-
-        var v = result.SelectMany(i => i.FormDataInStages.ToDictionary(ii => ii.Name, ii => 
-            new Tuple<FormDataDto[], string>(ii.FormData.Where(d => d.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)));
-        
-        notesByStage = v.ToLookup(i => i.Key, i => i.Value).ToDictionary(i => i.Key, i => i.ToList());
     }
 
+    private Dictionary<string, List<Tuple<FormDataDto[], string>>> notesByStage;
+    private List<FormDto> forms;
 }

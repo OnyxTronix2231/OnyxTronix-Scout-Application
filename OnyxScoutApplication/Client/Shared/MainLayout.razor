@@ -18,7 +18,7 @@
     <div class="main">
         <div class="top-row px-4 auth">
             <LoginDisplay/>
-            <span>V0.9.7</span>
+            <span>V1.0.1</span>
         </div>
         <div class="content px-4">
             @if (finishedInit)
@@ -43,7 +43,6 @@
         if (localStorage.ContainKey("EventSelector/SelectedEventKey"))
         {
             Event selectedEvent = localStorage.GetItem<Event>("EventSelector/SelectedEventKey");
-            Console.WriteLine("key: " + selectedEvent.Key);
             var matches = await http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
             sessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
 
@@ -53,7 +52,8 @@
             var events = await http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
             if (events != null) //user is probably not authorized 
             {
-                events = events.OrderBy(i => i.StartDate).Where(i => string.Equals(i.Country, selectedEvent.Country, StringComparison.OrdinalIgnoreCase)).ToList();
+                events = events.Where(i => string.Equals(i.Country, selectedEvent.Country,
+                    StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
                 sessionStorage.SetItem("TheBlueAlliance.AllEvents", events);
             }
             

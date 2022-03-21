@@ -6,8 +6,9 @@
 
 @if (form != null)
 {
-    <h3>ScoutForm</h3>
-    <ScoutFromComponent IsBlue="@isBlue"  Form="form" Type="FormType.View"></ScoutFromComponent>
+    <h3>Scout form</h3>
+    <br>
+    <ScoutFromComponent Form="form" Type="FormType.View"></ScoutFromComponent>
 }
 
 @code {
@@ -16,12 +17,9 @@
     public int Id { get; set; }
 
     private FormDto form;
-    private bool isBlue;
 
     protected override async Task OnInitializedAsync()
     {
-        var teamInMatch = await localStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
-        isBlue = teamInMatch.Match.Alliances.Blue.TeamKeys.Any(i => i.Contains(teamInMatch.TeamNumber.ToString()));
         form = await http.GetJson<FormDto>("ScoutForm/ " + Id);
         if (form == null)
         {

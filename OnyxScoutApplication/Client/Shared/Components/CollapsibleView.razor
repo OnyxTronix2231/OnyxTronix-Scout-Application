@@ -1,17 +1,49 @@
-﻿@inherits InputBase<bool>
+﻿@* @inherits InputBase<bool> *@
 
-@{ var icon = "e-icons " + (CurrentValue ? "e-triangleDown" : "e-triangleRight"); }
+@{ var icon = "e-icons " + (IsCollapsed ? "e-triangleDown" : "e-triangleRight"); }
 <div class="e-icons">
-    <SfButton type="button" CssClass="e-primary e-round" IconCss="@icon" @onclick="@(() => { CurrentValue = !CurrentValue; })"/>
+    <SfButton type="button"  @oninput="@(async i => await ValueChanged.InvokeAsync(IsCollapsed))" CssClass="e-primary e-round" 
+              IconCss="@icon" @onclick="@(() => { IsCollapsed = !IsCollapsed; })"/>
 </div>
 
 
 
 @code {
 
-    protected override bool TryParseValueFromString(string value, out bool result, out string validationErrorMessage)
+    private bool IsCollapsed
     {
-        validationErrorMessage = "Value must be a valid boolean";
-        return bool.TryParse(value, out result);
+        get => isCollapsed;
+        set
+        {
+            if (ValueChanged.HasDelegate)
+            {
+                ValueChanged.InvokeAsync(value);
+            }
+            isCollapsed = value;
+        }
     }
+
+    [Parameter]
+    public EventCallback<bool> ValueChanged { get; set; }
+    // protected override bool TryParseValueFromString(string value, out bool result, out string validationErrorMessage)
+    // {
+    //     validationErrorMessage = "Value must be a valid boolean";
+    //     return bool.TryParse(value, out result);
+    // }
+    private bool isCollapsed;
 }
+
+<style>
+    .e-triangleDown:before {
+        content: '\e744';
+    }
+    
+    .e-triangleUp:before {
+        content: '\e721';
+    }
+    
+    .e-triangleRight:before {
+    content: '\e70b';
+    }
+
+</style>

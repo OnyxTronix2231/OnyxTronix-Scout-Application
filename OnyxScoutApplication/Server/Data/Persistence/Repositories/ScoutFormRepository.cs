@@ -64,7 +64,8 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEventWithData(string eventKey,
             ScoutFormType scoutFormType)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms.Where(i => i.KeyName.Contains(eventKey))
+            var scoutForm = await ScoutAppContext.ScoutForms.Where(i => i.KeyName.Contains(eventKey) && 
+                                                                        i.Type == scoutFormType)
                 .WithAllData().ToListAsync();
             return Mapper.Map<List<FormDto>>(scoutForm);
         }
@@ -73,7 +74,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             ScoutFormType scoutFormType)
         {
             var scoutForm = await ScoutAppContext.ScoutForms.AsNoTracking().SingleAsync(i => i.TeamNumber == teamNumber
-                                                                        && i.KeyName.Equals(key)
+                                                                        && i.KeyName.Contains(key)
                                                                         && i.Type == scoutFormType);
             return Mapper.Map<FormDto>(scoutForm);
         }
@@ -81,7 +82,8 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey,
             ScoutFormType scoutFormType)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms.Where(i => i.KeyName.Contains(eventKey)).ToListAsync();
+            var scoutForm = await ScoutAppContext.ScoutForms.Where(i => i.KeyName.Contains(eventKey) &&
+                                                                        i.Type == scoutFormType).ToListAsync();
             return Mapper.Map<List<FormDto>>(scoutForm);
         }
 
@@ -89,7 +91,8 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             ScoutFormType scoutFormType)
         {
             var scoutForm = await ScoutAppContext.ScoutForms.WithAllData()
-                .Where(i => i.TeamNumber == teamNumber && i.KeyName.Equals(eventKey))
+                .Where(i => i.TeamNumber == teamNumber && i.KeyName.Contains(eventKey) &&
+                            i.Type == scoutFormType)
                 .ToListAsync();
             return Mapper.Map<List<FormDto>>(scoutForm);
         }

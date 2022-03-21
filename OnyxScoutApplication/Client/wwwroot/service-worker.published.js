@@ -49,8 +49,6 @@ async function onFetch(event) {
         const cache = await caches.open(cacheName);
         cachedResponse = await cache.match(request);
     }
-    console.info(cachedResponse);
-
     return cachedResponse || fetch(event.request);
 }
 

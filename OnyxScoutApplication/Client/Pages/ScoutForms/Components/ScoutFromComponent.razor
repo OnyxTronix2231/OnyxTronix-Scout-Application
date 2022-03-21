@@ -1,13 +1,21 @@
 ﻿@using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using System.Net.Http.Headers
+@inject ISessionStorageService sessionStorage
 
+
+<h4>@team?.Nickname</h4>
 <EditForm Model="@Form" OnValidSubmit="@OnValidSubmit">
     <FluentValidationValidator/>
     <ValidationSummary/>
     <div class="form-group col-sm-5">
         <label for="teamNumber">Team number</label>
-        <input class="form-control" disabled="@(!EmergencyMode)" style="@(IsBlue.HasValue ? IsBlue.Value ? "background-color: #5c5cff":"background-color: #ff4949" : "")" 
-               type="number" id="teamNumber" @bind="@Form.TeamNumber" />
+        <input class="form-control" disabled="@(!EmergencyMode)" style="@(TeamAllianceType switch
+                                           {
+                                               TeamAlliance.Blue => "background-color: #5c5cff",
+                                               TeamAlliance.Red => "background-color: #ff4949",
+                                               _ => ""
+                                               })" 
+               type="number" id="teamNumber" value="@Form.TeamNumber" readonly="readonly"/>
     </div>
     <div class="form-group col-sm-5">
         <label for="year">Year</label>
@@ -62,16 +70,32 @@
     public bool ShowImageUpload { get; set; }
     
     [Parameter]
-    public bool? IsBlue { get; set; }
-    
-    [Parameter]
     public bool EmergencyMode { get; set; }
     
+    [Parameter]
+    public TeamInMatch TeamInMatch { get; set; }
+
+    [Parameter]
+    public TeamAlliance TeamAllianceType { get; set; }
+    
     public MultipartFormDataContent Content { get; private set; }
+
+    private Team team;
     
     long maxFileSize = 1024 * 1024 * 15;
-    
 
+    protected override async Task OnInitializedAsync()
+    {
+        var teams = await sessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
+        team = teams.SingleOrDefault(i => i.TeamNumber == Form.TeamNumber);
+        TeamAllianceType = 
+            TeamInMatch != null ? 
+            TeamInMatch.Match.Alliances.IsInTeamBlue(TeamInMatch.TeamNumber) ?
+                TeamAlliance.Blue : TeamInMatch.Match.Alliances.IsInTeamRed(TeamInMatch.TeamNumber) ?
+                    TeamAlliance.Red : TeamAlliance.Unknown
+            :
+        TeamAlliance.Unknown;
+    }
 
     private void ImageSet(InputFileChangeEventArgs e)
     {
@@ -87,6 +111,13 @@
             content: fileContent,
             name: "\"files\"",
             fileName: e.File.Name);
+    }
+
+    public enum TeamAlliance
+    {
+        Blue,
+        Red,
+        Unknown
     }
 
 }
