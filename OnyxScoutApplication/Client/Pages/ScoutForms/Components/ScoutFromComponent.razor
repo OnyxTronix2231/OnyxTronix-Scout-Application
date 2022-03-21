@@ -6,20 +6,20 @@
     <ValidationSummary/>
     <div class="form-group col-sm-5">
         <label for="teamNumber">Team number</label>
-        <input class="form-control" style="@(IsBlue ? "background-color: #5c5cff":"background-color: #ff4949")" 
-               type="number" id="teamNumber" value="@Form.TeamNumber" readonly="readonly"/>
+        <input class="form-control" disabled="@(!EmergencyMode)" style="@(IsBlue.HasValue ? IsBlue.Value ? "background-color: #5c5cff":"background-color: #ff4949" : "")" 
+               type="number" id="teamNumber" @bind="@Form.TeamNumber" />
     </div>
     <div class="form-group col-sm-5">
         <label for="year">Year</label>
-        <input class="form-control" type="number" id="year" value="@Form.Year" readonly="readonly"/>
+        <input class="form-control" type="number" id="year" @bind="@Form.Year" readonly/>
     </div>
     <div class="form-group col-sm-5">
         <label for="matchName">Key name</label>
-        <input class="form-control" type="text" id="matchName" value="@Form.KeyName" readonly="readonly"/>
+        <input class="form-control" disabled="@(!EmergencyMode)" type="text" id="matchName" @bind="@Form.KeyName"/>
     </div>
     <div class="form-group col-sm-5">
         <label for="matchName">Writer</label>
-        <input class="form-control" type="text" id="matchNumber" value="@Form.WriterUserName" readonly="readonly"/>
+        <input class="form-control" type="text" id="matchNumber" @bind="@Form.WriterUserName" readonly/>
     </div>
     @if (ShowImageUpload)
     {
@@ -62,7 +62,10 @@
     public bool ShowImageUpload { get; set; }
     
     [Parameter]
-    public bool IsBlue { get; set; }
+    public bool? IsBlue { get; set; }
+    
+    [Parameter]
+    public bool EmergencyMode { get; set; }
     
     public MultipartFormDataContent Content { get; private set; }
     
