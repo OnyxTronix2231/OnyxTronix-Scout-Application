@@ -1,4 +1,4 @@
-﻿@page "/ScoutForm/Create"
+﻿@page "/ScoutFormEmrg/Create"
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @inject HttpClientManager http
 @inject NavigationManager navigationManager
@@ -8,13 +8,12 @@
 
 @if (form != null)
 {
-    <h3>Scout form</h3>
-    <br>
+    <h3>ScoutForm</h3>
     <div style="float: right;">
         <SfButton type="button" CssClass="e-success" @onclick="SaveOnLocalCache">Save locally</SfButton>
         <SfButton type="button" CssClass="e-danger" @onclick="DeleteLocalCache">Delete local cache</SfButton>
     </div>
-    <ScoutFromComponent TeamInMatch="@teamInMatch" Form="form" Type="FormType.Create" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
+    <ScoutFromComponent EmergencyMode="@true" Form="form" Type="FormType.Create" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
 }
 
 @code {
@@ -22,35 +21,42 @@
     [CascadingParameter]
     public Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
-    private TeamInMatch teamInMatch;
+    //private TeamInMatch teamInMatch;
     private FormDto form;
+    //private bool isBlue;
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateTask;
         var user = authState.User;
 
-        teamInMatch = await localStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
-        
-        var newForm = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + teamInMatch.Match.Date.Year);
-        if (newForm == null)
+        //teamInMatch = await localStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
+        //isBlue = teamInMatch.Match.Alliances.Blue.TeamKeys.Any(i => i.Contains(teamInMatch.TeamNumber.ToString()));
+        Event selectedEvent = null;
+        if (!await localStorage.ContainKeyAsync("EventSelector/SelectedEventKey"))
+        {
+            navigationManager.NavigateTo("/");
+            return;
+        }
+        selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        form = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + selectedEvent.Year);
+        if (form == null)
         {
             navigationManager.NavigateTo("/");
             return;
         }
         
-        if(await localStorage.ContainKeyAsync($"ScoutForm/{teamInMatch.Match.Key}/{teamInMatch.TeamNumber}"))
-        {
-            form = await localStorage.GetItemAsync<FormDto>($"ScoutForm/{teamInMatch.Match.Key}/{teamInMatch.TeamNumber}");
-            return;
-        }
+        // if(await localStorage.ContainKeyAsync($"ScoutForm/{teamInMatch.Match.Key}/{teamInMatch.TeamNumber}"))
+        // {
+        //     form = await localStorage.GetItemAsync<FormDto>($"ScoutForm/{teamInMatch.Match.Key}/{teamInMatch.TeamNumber}");
+        //     return;
+        // }
         
-        newForm.TeamNumber = teamInMatch.TeamNumber;
-        newForm.Year = teamInMatch.Match.Date.Year;
-        newForm.Type = ScoutFormType.MainGame;
-        newForm.KeyName = teamInMatch.Match.Key;
-        newForm.WriterUserName = user.Identity!.Name;
-        form = newForm;
+        // form.TeamNumber = teamInMatch.TeamNumber;
+        form.Year = selectedEvent.Year;
+        // form.Type = ScoutFormType.MainGame;
+         form.KeyName = selectedEvent.Key;
+         form.WriterUserName = user.Identity!.Name;
     }
 
     private async Task OnValidSubmit()

@@ -62,9 +62,9 @@
         <br>
         <br>
         <div>
-            <CollapsibleView @bind-Value="@fieldsInStage.IsCollapsed"/>
+            <CollapsibleView ValueChanged="@(v => fieldsInStage.IsCollapsed = !v)"/>
         </div>
-        <div class="form-group col-lg-6 col-md-6 collapse @(fieldsInStage.IsCollapsed ? "show" : "")" style="padding-left:2em">
+        <div class="form-group col-lg-6 col-md-6 collapse @(!fieldsInStage.IsCollapsed ? "show" : "")" style="padding-left:2em">
             <FieldsEditor SafeModeEnabled="safeMode" FormType="Type" Fields="fieldsInStage.Fields"></FieldsEditor>
         </div>
         <br>

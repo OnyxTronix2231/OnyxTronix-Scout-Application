@@ -17,14 +17,21 @@
     <h3>Team @TeamNumber</h3>
     <h4>@teamName</h4>
     <h4>@selectedEvent?.Name</h4>
-    <a href="/TeamDetails/Notes/@TeamNumber">Notes</a>
-    if (pitScoutForms.Count != 0 && pitScoutForms[0].IsImageUploaded)
-    {
-        <br>
-        string s = $"{pitScoutForms[0].ImageName}";
-        <img src="@s" alt="@pitScoutForms[0].TeamNumber Robot image" class="img" 
-             style="max-width: 400px; max-height: 400px"/>
-    }
+    @*<a href="/TeamDetails/Notes/@TeamNumber">Notes</a>*@
+    <div>
+    <CollapsibleView ValueChanged="@(i => isCollapsed = !i)"></CollapsibleView>
+    </div>
+    <div class="form-group col-lg-6 col-md-6 collapse @(!isCollapsed ? "show" : "")" style="padding-left:2em">
+        <TeamNotes Forms="data"></TeamNotes>
+         @if (pitScoutForms.Count != 0 && pitScoutForms[0].IsImageUploaded && !isCollapsed)
+         {
+             <br>
+             string s = $"{pitScoutForms[0].ImageName}";
+             <img src="@s" alt="@pitScoutForms[0].TeamNumber Robot image" class="img"
+                  style="max-width: 400px; max-height: 400px"/>
+         }
+    </div>
+   
     <br/>
     foreach (var (key, value) in calculatedScoutDataByStages)
     {
@@ -62,6 +69,7 @@
     private Dictionary<string, List<TeamFieldAverage>> calculatedPitScoutDataByStages;
     private List<FormDto> pitScoutForms;
     private List<Match> matches;
+    private bool isCollapsed = true;
 
     protected override async Task OnInitializedAsync()
     {
