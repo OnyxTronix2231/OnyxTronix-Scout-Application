@@ -46,7 +46,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
         public int Index { get; set; }
 
-        public bool IsCollapsed { get; set; }
+        public bool IsCollapsed { get; set; } = true;
         
         public bool IsNew { get; set; }
         

@@ -37,7 +37,18 @@ namespace OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos
     public class Alliances
     {
         public Alliance Blue { get; set; }
+        
         public Alliance Red { get; set; }
+        
+        public bool IsInTeamBlue(int teamNumber)
+        {
+            return Blue.TeamKeys.Any(i => i.Replace("frc", "").Equals(teamNumber.ToString()));
+        }
+        
+        public bool IsInTeamRed(int teamNumber)
+        {
+            return Red.TeamKeys.Any(i => i.Replace("frc", "").Equals(teamNumber.ToString()));
+        }
     }
 
     public class Alliance
