@@ -14,9 +14,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         public string Name { get; set; }
         [FirestoreProperty]
         public int Index { get; set; }
-        [ForeignKey("ScoutFormFormat")]
-        public int ScoutFormFormatId { get; set; }
-        public ScoutFormFormat ScoutFormFormat { get; set; }
+        //public ScoutFormFormat ScoutFormFormat { get; set; }
         public List<Field> Fields { get; set; }
     }
 }

@@ -120,8 +120,7 @@ namespace OnyxScoutApplication.Server.Migrations
                 name: "ScoutFormFormats",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
                     ScoutFormType = table.Column<int>(type: "int", nullable: false)
                 },
@@ -319,7 +318,7 @@ namespace OnyxScoutApplication.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Index = table.Column<int>(type: "int", nullable: false),
-                    ScoutFormFormatId = table.Column<int>(type: "int", nullable: false)
+                    ScoutFormFormatId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -329,7 +328,7 @@ namespace OnyxScoutApplication.Server.Migrations
                         column: x => x.ScoutFormFormatId,
                         principalTable: "ScoutFormFormats",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(

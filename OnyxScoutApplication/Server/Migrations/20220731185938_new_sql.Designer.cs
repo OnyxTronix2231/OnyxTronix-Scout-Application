@@ -10,7 +10,7 @@ using OnyxScoutApplication.Server.Data;
 namespace OnyxScoutApplication.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220731082403_new_sql")]
+    [Migration("20220731185938_new_sql")]
     partial class new_sql
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -525,8 +525,8 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ScoutFormFormatId")
-                        .HasColumnType("int");
+                    b.Property<string>("ScoutFormFormatId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -563,10 +563,8 @@ namespace OnyxScoutApplication.Server.Migrations
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.ScoutFormFormat", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ScoutFormType")
                         .HasColumnType("int");
@@ -794,13 +792,9 @@ namespace OnyxScoutApplication.Server.Migrations
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.FieldsInStage", b =>
                 {
-                    b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.ScoutFormFormat", "ScoutFormFormat")
+                    b.HasOne("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.ScoutFormFormat", null)
                         .WithMany("FieldsInStages")
-                        .HasForeignKey("ScoutFormFormatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ScoutFormFormat");
+                        .HasForeignKey("ScoutFormFormatId");
                 });
 
             modelBuilder.Entity("OnyxScoutApplication.Shared.Models.ScoutFormFormatModels.Option", b =>

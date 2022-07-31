@@ -47,7 +47,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return null;
         }
 
-        public async Task<ActionResult<ScoutFormFormatDto>> GetWithFields(int id)
+        public async Task<ActionResult<ScoutFormFormatDto>> GetWithFields(string id)
         {
             // var result = await ScoutAppContext.ScoutFormFormats.WithAllFields().FirstOrDefaultAsync(i => i.Id == id);
             // if (result == null)
@@ -77,7 +77,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return null;
         }
 
-        public async Task<ActionResult> Update(int id, ScoutFormFormatDto scoutFormFormatDto)
+        public async Task<ActionResult> Update(string id, ScoutFormFormatDto scoutFormFormatDto)
         {
             // if (!await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Id == id))
             // {

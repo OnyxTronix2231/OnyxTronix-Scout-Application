@@ -26,18 +26,16 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             Mapper = mapper;
         }
 
-        public virtual async Task<ActionResult<TDtoEntity>> Get(int id)
+        public virtual async Task<ActionResult<TDtoEntity>> Get(string id)
         {
             var value = Client.Collection(collectionName);
             var docRefs = new List<DocumentReference>
             {
-                value.Document(id.ToString())
+                value.Document(id)
             };
             Query query = value.WhereIn(FieldPath.DocumentId, docRefs);
             QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
-            //DbEntity entity = Decoder.Decode<TDbEntity>(value.At("data"));
-
-            if (querySnapshot == null)
+            if (querySnapshot.Count == 0)
             {
                 return new NotFoundResult();
             }
@@ -47,7 +45,6 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public virtual async Task<ActionResult<IEnumerable<TDtoEntity>>> GetAll()
         {
-            //return null;
             var collRef = Client.Collection(collectionName);
             QuerySnapshot snapshot = await collRef.GetSnapshotAsync();
             var v = snapshot.Documents.Select(d => d.ConvertTo<TDbEntity>());
@@ -62,11 +59,10 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             DocumentReference docRef = Client.Collection(collectionName).Document();
            
             await docRef.SetAsync(mapped);
-           // await Context.Set<TDbEntity>().AddAsync(mapped);
             return await Task.Run(() => new OkResult());
         }
 
-        public virtual async Task<ActionResult> Remove(int id)
+        public virtual async Task<ActionResult> Remove(string id)
         {
             // var entity = await Context.Set<TDbEntity>().FindAsync(id.ToString());
             // if (entity == null)
@@ -75,7 +71,8 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             // }
             //
             // Context.Set<TDbEntity>().Remove(Mapper.Map<TDbEntity>(entity));
-            return new OkResult();
+            //return new OkResult();
+            throw new NotImplementedException();
         }
 
         public virtual async Task UpdateFromTracking(TDtoEntity obj)

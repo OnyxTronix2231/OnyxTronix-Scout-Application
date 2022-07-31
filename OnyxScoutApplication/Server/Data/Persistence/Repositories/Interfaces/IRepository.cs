@@ -11,13 +11,13 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 {
     public interface IRepository<TDtoEntity> where TDtoEntity : class
     {
-        Task<ActionResult<TDtoEntity>> Get(int id);
+        Task<ActionResult<TDtoEntity>> Get(string id);
 
         Task<ActionResult<IEnumerable<TDtoEntity>>> GetAll();
 
         Task<ActionResult> Add(TDtoEntity form);
 
-        Task<ActionResult> Remove(int id);
+        Task<ActionResult> Remove(string id);
 
         Task UpdateFromTracking(TDtoEntity obj);
     }

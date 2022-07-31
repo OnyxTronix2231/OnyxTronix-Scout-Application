@@ -34,7 +34,7 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ScoutFormFormatDto>> Get(int id)
+        public async Task<ActionResult<ScoutFormFormatDto>> Get(string id)
         {
             return await unitOfWork.ScoutFormFormats.GetWithFields(id);
         }
@@ -58,7 +58,7 @@ namespace OnyxScoutApplication.Server.Controllers
 
         [OnyxAuthorize(Role = Role.Admin)]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateScoutFormFormat(int id,
+        public async Task<ActionResult> UpdateScoutFormFormat(string id,
             [FromBody] ScoutFormFormatDto scoutFormFormatModel)
         {
             var response = await unitOfWork.ScoutFormFormats.Update(id, scoutFormFormatModel);

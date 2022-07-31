@@ -7,7 +7,8 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
     [FirestoreData]
     public class ScoutFormFormat
     {
-        public int Id { get; set; }
+        [FirestoreDocumentId]
+        public string Id { get; set; }
 
         [FirestoreProperty]
         public int Year { get; set; }
