@@ -24,7 +24,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public override async Task<ActionResult> Add(ScoutFormFormatDto form)
         {
-            if (await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Year == form.Year && 
+            if (await ScoutAppContext.ScoutFormFormats.AsQueryable().AnyAsync(i => i.Year == form.Year && 
                                                                      i.ScoutFormType == form.ScoutFormType))
             {
                 return ResultCode(System.Net.HttpStatusCode.BadRequest,
@@ -75,7 +75,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult> Update(int id, ScoutFormFormatDto scoutFormFormatDto)
         {
-            if (!await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Id == id))
+            if (!await ScoutAppContext.ScoutFormFormats.AsQueryable().AnyAsync(i => i.Id == id))
             {
                 return new BadRequestObjectResult("No scout from format found to update!");
             }

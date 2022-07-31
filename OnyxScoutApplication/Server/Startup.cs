@@ -29,6 +29,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
+using Google.Cloud.Firestore;
 using IdentityServer4.AspNetIdentity;
 using IdentityServer4.Services;
 using OnyxScoutApplication.Server.Data.Extensions;
@@ -48,6 +49,7 @@ namespace OnyxScoutApplication.Server
         {
             this.configuration = configuration;
             this.env = env;
+            
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -60,7 +62,7 @@ namespace OnyxScoutApplication.Server
             var connectionString = GetConnectionString();
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseMySQL(connectionString);
+                options.UseSqlServer(connectionString);
             });
             services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -78,7 +80,8 @@ namespace OnyxScoutApplication.Server
             //       //  options.PublicOrigin = configuration.GetValue<string>("PublicOrigin");
             //     }
             // }
-                ).AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
+                )
+                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
             {
                 options.IdentityResources["openid"].UserClaims.Add("name");
                 options.ApiResources.Single().UserClaims.Add("name");
@@ -105,8 +108,8 @@ namespace OnyxScoutApplication.Server
             services.AddControllersWithViews().AddNewtonsoftJson( settings => settings.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
             services.AddRazorPages();
 
-            services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatRepository>();
-            services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFormatUnitOfWork>();
+            services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatFirestoreRepository>();
+            services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFaunaFormatUnitOfWork>();
             
             services.AddScoped<IScoutFormRepository, ScoutFormRepository>();
             services.AddScoped<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
@@ -116,6 +119,8 @@ namespace OnyxScoutApplication.Server
 
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             services.AddScoped<IApplicationUserUnitOfWork, ApplicationUserUnitOfWork>();
+
+            services.AddTransient(_ => FirestoreDb.Create("onyxdb-2bc25"));
 
             services.AddTransient(_ => 
                 new AmazonS3Client(Environment.GetEnvironmentVariables()["CLOUD_CUBE-ACCESS_KEY_ID"]!.ToString(), 
@@ -205,11 +210,11 @@ namespace OnyxScoutApplication.Server
         private string GetConnectionString()
         {
             var connectionString = "";
-            // if (env.IsDevelopment())
-            // {
-            //     connectionString = configuration.GetConnectionString("DefaultConnection");
-            //     return connectionString;
-            // }
+            if (env.IsDevelopment())
+            {
+                connectionString = configuration.GetConnectionString("DefaultConnection");
+                return connectionString;
+            }
 
             connectionString = Environment.GetEnvironmentVariables()["ConnectionString"]!.ToString();
             return connectionString;

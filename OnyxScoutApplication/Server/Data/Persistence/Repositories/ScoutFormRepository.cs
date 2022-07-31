@@ -23,13 +23,13 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByType(ScoutFormType scoutFormType)
         {
-            var forms = await ScoutAppContext.ScoutForms.Where(i => i.Type == scoutFormType).ToListAsync();
+            var forms = await ScoutAppContext.ScoutForms.AsQueryable().Where(i => i.Type == scoutFormType).ToListAsync();
             return Mapper.Map<List<FormDto>>(forms);
         }
         
         public override async Task<ActionResult> Add(FormDto form)
         {
-            if (await ScoutAppContext.ScoutForms.AnyAsync(i =>
+            if (await ScoutAppContext.ScoutForms.AsQueryable().AnyAsync(i =>
                 i.Year == form.Year && i.KeyName == form.KeyName &&
                 i.TeamNumber == form.TeamNumber))
             {
@@ -64,7 +64,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEventWithData(string eventKey,
             ScoutFormType scoutFormType)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms.Where(i => i.KeyName.Contains(eventKey) && 
+            var scoutForm = await ScoutAppContext.ScoutForms.AsQueryable().Where(i => i.KeyName.Contains(eventKey) && 
                                                                         i.Type == scoutFormType)
                 .WithAllData().ToListAsync();
             return Mapper.Map<List<FormDto>>(scoutForm);
@@ -82,7 +82,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey,
             ScoutFormType scoutFormType)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms.Where(i => i.KeyName.Contains(eventKey) &&
+            var scoutForm = await ScoutAppContext.ScoutForms.AsQueryable().Where(i => i.KeyName.Contains(eventKey) &&
                                                                         i.Type == scoutFormType).ToListAsync();
             return Mapper.Map<List<FormDto>>(scoutForm);
         }

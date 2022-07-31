@@ -27,7 +27,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         {
             form.Key = form.Year + form.Country + form.Name;
             
-            if (await ScoutAppContext.Events.AnyAsync(i => i.Key == form.Key))
+            if (await ScoutAppContext.Events.AsQueryable().AnyAsync(i => i.Key == form.Key))
             {
                 return ResultCode(System.Net.HttpStatusCode.BadRequest, "This event already exists!");
             }
@@ -43,7 +43,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             };
             await base.Add(clone);
             await Context.SaveChangesAsync();
-            var result = await ScoutAppContext.Events.FirstOrDefaultAsync(i =>
+            var result = await ScoutAppContext.Events.AsQueryable().FirstOrDefaultAsync(i =>
                 i.Key == form.Key);
             form.Id = result.Id;
             return await Update(result, form);
@@ -65,12 +65,12 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<bool>> GetEventExists(string eventKey)
         {
-            return await ScoutAppContext.Events.AnyAsync(i => i.Key == eventKey);
+            return await ScoutAppContext.Events.AsQueryable().AnyAsync(i => i.Key == eventKey);
         }
 
         public async Task<ActionResult<IEnumerable<CustomEventDto>>> GetAllEventsByYear(int year)
         {
-            var events = await ScoutAppContext.Events.Where(i => i.Year == year).ToListAsync();
+            var events = await ScoutAppContext.Events.AsQueryable().Where(i => i.Year == year).ToListAsync();
             return Mapper.Map<List<CustomEventDto>>(events);
         }
 

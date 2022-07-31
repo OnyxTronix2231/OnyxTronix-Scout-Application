@@ -36,7 +36,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public virtual async Task<ActionResult<IEnumerable<TDtoEntity>>> GetAll()
         {
-            return new OkObjectResult(Mapper.Map<IEnumerable<TDtoEntity>>(await Context.Set<TDbEntity>().ToListAsync()));
+            return new OkObjectResult(Mapper.Map<IEnumerable<TDtoEntity>>(await Context.Set<TDbEntity>().AsQueryable().ToListAsync()));
         }
 
         public virtual async Task<ActionResult> Add(TDtoEntity form)
