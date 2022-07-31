@@ -9,12 +9,14 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
     [FirestoreData]
     public class FieldsInStage
     {
-        public int Id { get; set; }
+        [FirestoreDocumentId]
+        public string Id { get; set; }
         [FirestoreProperty]
         public string Name { get; set; }
         [FirestoreProperty]
         public int Index { get; set; }
         //public ScoutFormFormat ScoutFormFormat { get; set; }
+        [FirestoreProperty]
         public List<Field> Fields { get; set; }
     }
 }

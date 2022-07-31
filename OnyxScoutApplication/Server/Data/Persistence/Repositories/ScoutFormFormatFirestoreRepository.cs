@@ -25,71 +25,63 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public override async Task<ActionResult> Add(ScoutFormFormatDto form)
         {
-            // if (await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Year == form.Year && 
-            //                                                          i.ScoutFormType == form.ScoutFormType))
-            // {
-            //     return ResultCode(System.Net.HttpStatusCode.BadRequest,
-            //         "This scout format already exists for this year!");
-            // }
+            var q = Client.Collection(collectionName).WhereEqualTo("Year", form.Year)
+                .WhereEqualTo("ScoutFormType", form.ScoutFormType);
+            var result = await q.GetSnapshotAsync();
+            if (result.Count != 0)
+            {
+                return ResultCode(System.Net.HttpStatusCode.BadRequest,
+                    "This scout format already exists for this year!");
+            }
 
             return await base.Add(form);
         }
 
         public async Task<ActionResult<FormDto>> GetTemplateScoutFormByYear(int year, ScoutFormType scoutFormType)
         {
-            // var result = await GetWithFieldsByYear(year, scoutFormType);
-            // if (result.Value == null)
-            // {
-            //     return new NotFoundObjectResult("No scout form format found for year - " + year);
-            // }
+            var result = await GetWithFieldsByYear(year, scoutFormType);
+            if (result.Value == null)
+            {
+                return new NotFoundObjectResult("No scout form format found for year - " + year);
+            }
 
-            //return Mapper.Map<FormDto>(result.Value);
-            return null;
+            return Mapper.Map<FormDto>(result.Value);
         }
 
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFields(string id)
         {
-            // var result = await ScoutAppContext.ScoutFormFormats.WithAllFields().FirstOrDefaultAsync(i => i.Id == id);
-            // if (result == null)
-            // {
-            //     return new NotFoundObjectResult("No scout form format found with the id of: " + id);
-            // }
-            //
-            // var dto = Mapper.Map<ScoutFormFormatDto>(result);
-            // SortScoutFormFormat(dto);
-            // return dto;
-            return null;
+            var result = await Get(id);
+            if (result.Value == null)
+            {
+                return result;
+            }
+            SortScoutFormFormat(result.Value);
+            return result;
         }
 
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFieldsByYear(int year, ScoutFormType scoutFormType)
         {
-            // var result = await ScoutAppContext.ScoutFormFormats.WithAllFields().
-            //     FirstOrDefaultAsync(i => i.Year == year && i.ScoutFormType == scoutFormType);
-            // if (result == null)
-            // {
-            //     return new NotFoundObjectResult("No scout form format found for year - " + year);
-            // }
-            //
-            // result.FieldsInStages = result.FieldsInStages.OrderBy(i => i.Index).ToList();
-            // var dto = Mapper.Map<ScoutFormFormatDto>(result);
-            // SortScoutFormFormat(dto);
-            // return dto;
-            return null;
+            var q = Client.Collection(collectionName).WhereEqualTo("Year", year);
+            var v = await q.GetSnapshotAsync();
+            if (v.Count == 0)
+            {
+                return new NotFoundObjectResult("No scout form format found for year: " + year);
+            }
+
+            var result = v[0].ConvertTo<ScoutFormFormat>();
+            result.FieldsInStages = result.FieldsInStages.OrderBy(i => i.Index).ToList();
+
+            
+            var dto = Mapper.Map<ScoutFormFormatDto>(result);
+            SortScoutFormFormat(dto);
+            return dto;
         }
 
         public async Task<ActionResult> Update(string id, ScoutFormFormatDto scoutFormFormatDto)
         {
-            // if (!await ScoutAppContext.ScoutFormFormats.AnyAsync(i => i.Id == id))
-            // {
-            //     return new BadRequestObjectResult("No scout from format found to update!");
-            // }
-            //
-            // var old = await ScoutAppContext.ScoutFormFormats.WithAllFields().FirstAsync(i => i.Id == scoutFormFormatDto.Id);
-            // var updated = Mapper.Map<ScoutFormFormat>(scoutFormFormatDto);
-            //
-            // updated = Mapper.Map(updated, old);
-            // Context.Update(updated);
-             return await Task.Run(() => new OkResult());
+            DocumentReference docRef = Client.Collection(collectionName).Document(id);
+            await docRef.SetAsync(Mapper.Map<ScoutFormFormat>(scoutFormFormatDto));
+            return await Task.Run(() => new OkResult());
         }
 
         private void SortScoutFormFormat(ScoutFormFormatDto scoutFormFormat)

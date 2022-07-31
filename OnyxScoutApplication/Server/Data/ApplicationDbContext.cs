@@ -27,8 +27,6 @@ namespace OnyxScoutApplication.Server.Data
         {
         }
 
-        public Microsoft.EntityFrameworkCore.DbSet<ScoutFormFormat> ScoutFormFormats { get; set; }
-
         public Microsoft.EntityFrameworkCore.DbSet<Form> ScoutForms { get; set; }
         
         public Microsoft.EntityFrameworkCore.DbSet<CustomEvent> Events { get; set; }
@@ -55,17 +53,6 @@ namespace OnyxScoutApplication.Server.Data
                 .HasForeignKey(ur => ur.UserId)
                 .IsRequired();
             
-            builder.Entity<FieldsInStage>()
-                .HasMany(x => x.Fields)
-                .WithOne(x => x.FieldsInStage)
-                .HasForeignKey(p => p.FieldStageId)
-                .OnDelete(DeleteBehavior.Cascade);
-            
-            builder.Entity<Field>()
-                .HasMany(x => x.CascadeFields)
-                .WithOne(x => x.ParentField)
-                .HasForeignKey(p => p.FieldId)
-                .OnDelete(DeleteBehavior.ClientCascade);
         }
     }
 }

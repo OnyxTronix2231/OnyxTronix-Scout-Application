@@ -16,7 +16,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         where TDbEntity : class where TDtoEntity : class
     {
         protected FirestoreDb  Client;
-        private readonly string collectionName;
+        protected readonly string collectionName;
         protected IMapper Mapper { get; }
 
         protected FirestoreRepository(FirestoreDb  client, IMapper mapper, string collectionName)
@@ -37,10 +37,11 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
             if (querySnapshot.Count == 0)
             {
-                return new NotFoundResult();
+                return new NotFoundObjectResult("No record found with the id of: " + id);
             }
 
-            return Mapper.Map<TDtoEntity>(querySnapshot.Documents[0].ConvertTo<TDbEntity>());
+            var e = querySnapshot.Documents[0].ConvertTo<TDbEntity>();
+            return Mapper.Map<TDtoEntity>(e);
         }
 
         public virtual async Task<ActionResult<IEnumerable<TDtoEntity>>> GetAll()
@@ -48,7 +49,6 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             var collRef = Client.Collection(collectionName);
             QuerySnapshot snapshot = await collRef.GetSnapshotAsync();
             var v = snapshot.Documents.Select(d => d.ConvertTo<TDbEntity>());
-            
             return new OkObjectResult(Mapper.Map<IEnumerable<TDtoEntity>>(v));
         }
 

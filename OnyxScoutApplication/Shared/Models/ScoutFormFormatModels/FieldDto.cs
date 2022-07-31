@@ -8,7 +8,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
     public class FieldDto : IComparable<FieldDto>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
        public int? FieldStageId { get; set; }
        
@@ -62,7 +62,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
     {
         private string name;
         private int index;
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public string Name
         {
