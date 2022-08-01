@@ -12,7 +12,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
         
         public string FieldId { get; set; }
 
-       // public FieldDto Field { get; set; }
+        public FieldDto Field { get; set; }
 
         public int? FormDataStageId { get; set; }
         
