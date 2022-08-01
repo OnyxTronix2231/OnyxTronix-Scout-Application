@@ -5,10 +5,10 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 {
     public class FormDataInStageDto : IComparable<FormDataInStageDto>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public int Index { get; set; }
-        public int? ScoutFormId { get; set; }
+        public string ScoutFormId { get; set; }
         public FormDto Form { get; set; }
         public List<FormDataDto> FormData { get; set; } = new List<FormDataDto>();
         

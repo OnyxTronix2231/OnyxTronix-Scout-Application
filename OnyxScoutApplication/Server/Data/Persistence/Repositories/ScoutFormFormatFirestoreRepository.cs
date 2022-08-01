@@ -25,7 +25,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public override async Task<ActionResult> Add(ScoutFormFormatDto form)
         {
-            var q = Client.Collection(collectionName).WhereEqualTo("Year", form.Year)
+            var q = CollectionReference.WhereEqualTo("Year", form.Year)
                 .WhereEqualTo("ScoutFormType", form.ScoutFormType);
             var result = await q.GetSnapshotAsync();
             if (result.Count != 0)
@@ -61,7 +61,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFieldsByYear(int year, ScoutFormType scoutFormType)
         {
-            var q = Client.Collection(collectionName).WhereEqualTo("Year", year);
+            var q = CollectionReference.WhereEqualTo("Year", year);
             var v = await q.GetSnapshotAsync();
             if (v.Count == 0)
             {
@@ -79,7 +79,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult> Update(string id, ScoutFormFormatDto scoutFormFormatDto)
         {
-            DocumentReference docRef = Client.Collection(collectionName).Document(id);
+            DocumentReference docRef = CollectionReference.Document(id);
             await docRef.SetAsync(Mapper.Map<ScoutFormFormat>(scoutFormFormatDto));
             return await Task.Run(() => new OkResult());
         }

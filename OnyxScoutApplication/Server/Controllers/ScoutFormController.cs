@@ -50,7 +50,7 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<FormDto>> Get(int id)
+        public async Task<ActionResult<FormDto>> Get(string id)
         {
             var result = await unitOfWork.ScoutForms.GetWithFields(id);
             return result;
@@ -130,7 +130,7 @@ namespace OnyxScoutApplication.Server.Controllers
         //}
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateScoutForm(int id, [FromBody] FormDto formModel)
+        public async Task<ActionResult> UpdateScoutForm(string id, [FromBody] FormDto formModel)
         {
             if (!User.IsInRole(Role.Admin.ToString()) && User.GetDisplayName() != formModel.WriterUserName)
             {

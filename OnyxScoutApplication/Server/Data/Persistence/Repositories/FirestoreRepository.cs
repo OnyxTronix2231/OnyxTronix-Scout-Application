@@ -15,25 +15,22 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
     public class FirestoreRepository<TDbEntity, TDtoEntity> : IRepository<TDtoEntity>
         where TDbEntity : class where TDtoEntity : class
     {
-        protected FirestoreDb  Client;
-        protected readonly string collectionName;
+        protected readonly CollectionReference CollectionReference;
         protected IMapper Mapper { get; }
 
         protected FirestoreRepository(FirestoreDb  client, IMapper mapper, string collectionName)
         {
-            Client = client;
-            this.collectionName = collectionName;
+            CollectionReference = client.Collection(collectionName);
             Mapper = mapper;
         }
 
         public virtual async Task<ActionResult<TDtoEntity>> Get(string id)
         {
-            var value = Client.Collection(collectionName);
             var docRefs = new List<DocumentReference>
             {
-                value.Document(id)
+                CollectionReference.Document(id)
             };
-            Query query = value.WhereIn(FieldPath.DocumentId, docRefs);
+            Query query = CollectionReference.WhereIn(FieldPath.DocumentId, docRefs);
             QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
             if (querySnapshot.Count == 0)
             {
@@ -46,8 +43,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public virtual async Task<ActionResult<IEnumerable<TDtoEntity>>> GetAll()
         {
-            var collRef = Client.Collection(collectionName);
-            QuerySnapshot snapshot = await collRef.GetSnapshotAsync();
+            QuerySnapshot snapshot = await CollectionReference.GetSnapshotAsync();
             var v = snapshot.Documents.Select(d => d.ConvertTo<TDbEntity>());
             return new OkObjectResult(Mapper.Map<IEnumerable<TDtoEntity>>(v));
         }
@@ -56,7 +52,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         {
             var mapped = Mapper.Map<TDbEntity>(form);
 
-            DocumentReference docRef = Client.Collection(collectionName).Document();
+            DocumentReference docRef = CollectionReference.Document();
            
             await docRef.SetAsync(mapped);
             return await Task.Run(() => new OkResult());

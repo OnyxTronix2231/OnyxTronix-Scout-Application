@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
+using Google.Cloud.Firestore;
 using Microsoft.EntityFrameworkCore;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
@@ -9,24 +10,23 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
 {
     public class ScoutFormUnitOfWork : IScoutFormUnitOfWork
     {
-        private readonly ApplicationDbContext context;
 
-        public ScoutFormUnitOfWork(ApplicationDbContext context, IMapper mapper)
+        public ScoutFormUnitOfWork(FirestoreDb client, IMapper mapper)
         {
-            this.context = context;
-            ScoutForms = new ScoutFormRepository(context, mapper);
+            ScoutForms = new ScoutFormRepository(client, mapper);
         }
 
         public IScoutFormRepository ScoutForms { get; }
 
         public async Task<int> Complete()
         {
-            return await context.SaveChangesAsync();
+            //return await context.SaveChangesAsync();
+            return 0;
         }
 
         public void Dispose()
         {
-            context.Dispose();
+          //  context.Dispose();
         }
     }
 }

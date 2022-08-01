@@ -26,13 +26,9 @@ namespace OnyxScoutApplication.Server.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
-
-        public Microsoft.EntityFrameworkCore.DbSet<Form> ScoutForms { get; set; }
         
         public Microsoft.EntityFrameworkCore.DbSet<CustomEvent> Events { get; set; }
         
-        public Microsoft.EntityFrameworkCore.DbSet<Field> Fields { get; set; }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

@@ -1,25 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using Google.Cloud.Firestore;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 
 namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 {
+    [FirestoreData]
     public class FormData
     {
-        public int Id { get; set; }
+        [FirestoreDocumentId]
+        public string Id { get; set; }
 
-        //[ForeignKey("Field")]
-        public int FieldId { get; set; }
+        [FirestoreProperty]
+        public string FieldId { get; set; }
 
+        [FirestoreProperty]
         public Field Field { get; set; }
         
-        [ForeignKey("FormDataInStage")]
-        public int? FormDataStageId { get; set; }
+        [FirestoreProperty]
+        public string FormDataStageId { get; set; }
 
+        [FirestoreProperty]
         public FormDataInStage FormDataInStage { get; set; }
 
+        [FirestoreProperty]
         public string Value { get; set; }
 
+        [FirestoreProperty]
         public List<FormData> CascadeData { get; set; } = new();
     }
 }
