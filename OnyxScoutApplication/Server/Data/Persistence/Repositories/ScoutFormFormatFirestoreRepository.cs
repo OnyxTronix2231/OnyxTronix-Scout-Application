@@ -62,7 +62,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<ScoutFormFormatDto>> GetWithFieldsByYear(int year, ScoutFormType scoutFormType)
         {
-            var q = CollectionReference.WhereEqualTo("Year", year);
+            var q = CollectionReference.WhereEqualTo("Year", year).WhereEqualTo("ScoutFormType", scoutFormType);
             var v = await q.GetSnapshotAsync();
             if (v.Count == 0)
             {
