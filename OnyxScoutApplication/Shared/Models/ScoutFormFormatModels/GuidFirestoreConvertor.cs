@@ -1,8 +1,7 @@
 ﻿using System;
 using Google.Cloud.Firestore;
-using Google.Cloud.Firestore.V1;
 
-namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
+namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
     public class GuidFirestoreConvertor : IFirestoreConverter<Guid>
     {

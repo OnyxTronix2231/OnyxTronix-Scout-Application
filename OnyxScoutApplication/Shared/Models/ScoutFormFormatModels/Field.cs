@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Google.Cloud.Firestore;
-using OnyxScoutApplication.Server.Data.Profiles.Resolvers;
 
 namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
