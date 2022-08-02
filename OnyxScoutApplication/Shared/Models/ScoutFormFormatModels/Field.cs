@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Google.Cloud.Firestore;
+using OnyxScoutApplication.Server.Data.Profiles.Resolvers;
 
 namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
@@ -21,8 +22,8 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
     [FirestoreData]
     public class Field
     {
-        [FirestoreProperty]
-        public string Id { get; set; }
+        [FirestoreProperty(ConverterType = typeof(GuidFirestoreConvertor))]
+        public Guid Id { get; set; }
 
         [FirestoreProperty]
         public string Name { get; set; }
@@ -32,14 +33,6 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
         [FirestoreProperty]
         public FieldType FieldType { get; set; }
-
-       // public int? FieldStageId { get; set; }
-       //  
-       // public int? FieldId { get; set; }
-       //  
-       // public FieldsInStage FieldsInStage { get; set; }
-       //  
-       // public Field ParentField { get; set; }
 
         [FirestoreProperty]
         public int MaxValue { get; set; } = 9999;

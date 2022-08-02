@@ -92,7 +92,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             {
                 foreach (var field in stage.Fields)
                 {
-                    field.Id ??= Guid.NewGuid();
+                    field.Id = field.Id == Guid.Empty ? Guid.NewGuid(): field.Id;
                 }
             }
         }

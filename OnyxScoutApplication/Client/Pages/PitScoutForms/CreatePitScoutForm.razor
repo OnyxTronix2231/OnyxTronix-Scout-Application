@@ -43,6 +43,7 @@
             notificationManager.Notify("Please select event and year first!", "", NotificationType.Danger);
             return;
         }
+        
         form = await http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" +
                                            $"{selectedYear!.Value}/{ScoutFormType.Pit}");
         if (form == null)

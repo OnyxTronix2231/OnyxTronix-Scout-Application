@@ -20,10 +20,9 @@ namespace OnyxScoutApplication.Server.Data.Profiles
         {
             CreateMap<FieldDto, Field>().
                 ForMember(des => des.DefaultValue, opt => opt.MapFrom<FieldDtoToFieldValueConverter>())
-                .ForMember(des => des.Id, opt => opt.MapFrom(src => src.Id!.ToString()));
+                ;
                 
             CreateMap<Field, FieldDto>()               
-                .ForMember(des => des.Id, opt => opt.MapFrom(src => new Guid(src.Id)))
                 .AfterMap<FieldToFieldDtoConvertor>();
             
             CreateMap<Field, Field>();
