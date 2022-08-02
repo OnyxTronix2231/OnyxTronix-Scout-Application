@@ -67,8 +67,8 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public async Task<ActionResult<FormDto>> GetByTeamAndKey(int teamNumber, string key,
             ScoutFormType scoutFormType)
         {
-            var scoutForms = await CollectionReference.WhereEqualTo("TeamNumber", teamNumber.ToString())
-                .WhereGreaterThanOrEqualTo("KeyName", key)
+            var scoutForms = await CollectionReference.WhereEqualTo("TeamNumber", teamNumber)
+                .WhereEqualTo("KeyName", key)
                 .WhereEqualTo("Type", scoutFormType).GetSnapshotAsync();
             if (scoutForms.Count == 0)
             {

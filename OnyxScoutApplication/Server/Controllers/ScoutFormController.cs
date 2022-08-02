@@ -61,6 +61,10 @@ namespace OnyxScoutApplication.Server.Controllers
         {
             long maxFileSize = 1024 * 1024 * 15;
             var form = await unitOfWork.ScoutForms.GetByTeamAndKey(teamNumber, keyName, ScoutFormType.Pit);
+            if (form.Value == null)
+            {
+                return form.Result;
+            }
             var file = files.ElementAt(0);
             var untrustedFileName = file.FileName;
             var trustedFileNameForDisplay =
