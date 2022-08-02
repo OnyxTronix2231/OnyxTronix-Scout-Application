@@ -34,6 +34,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                     "This scout format already exists for this year!");
             }
 
+            GenerateFieldId(form);
             return await base.Add(form);
         }
 
@@ -79,9 +80,21 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult> Update(string id, ScoutFormFormatDto scoutFormFormatDto)
         {
+            GenerateFieldId(scoutFormFormatDto);
             DocumentReference docRef = CollectionReference.Document(id);
             await docRef.SetAsync(Mapper.Map<ScoutFormFormat>(scoutFormFormatDto));
             return await Task.Run(() => new OkResult());
+        }
+
+        private void GenerateFieldId(ScoutFormFormatDto scoutFormFormat)
+        {
+            foreach (var stage in scoutFormFormat.FieldsInStages)
+            {
+                foreach (var field in stage.Fields)
+                {
+                    field.Id ??= Guid.NewGuid();
+                }
+            }
         }
 
         private void SortScoutFormFormat(ScoutFormFormatDto scoutFormFormat)

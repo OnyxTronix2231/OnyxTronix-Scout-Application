@@ -26,11 +26,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public virtual async Task<ActionResult<TDtoEntity>> Get(string id)
         {
-            var docRefs = new List<DocumentReference>
-            {
-                CollectionReference.Document(id)
-            };
-            Query query = CollectionReference.WhereIn(FieldPath.DocumentId, docRefs);
+            Query query = CollectionReference.WhereEqualTo(FieldPath.DocumentId, id);
             QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
             if (querySnapshot.Count == 0)
             {

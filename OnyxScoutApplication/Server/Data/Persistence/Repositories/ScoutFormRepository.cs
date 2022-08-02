@@ -52,7 +52,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public async Task<ActionResult> Update(string id, FormDto scoutFormDto)
         {
             DocumentReference docRef = CollectionReference.Document(id);
-            await docRef.SetAsync(Mapper.Map<ScoutFormFormat>(scoutFormDto));
+            await docRef.SetAsync(Mapper.Map<Form>(scoutFormDto));
             return await Task.Run(() => new OkResult());
         }
 

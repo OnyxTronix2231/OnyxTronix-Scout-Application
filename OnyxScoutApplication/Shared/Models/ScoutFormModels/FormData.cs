@@ -11,8 +11,8 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
         [FirestoreDocumentId]
         public string Id { get; set; }
 
-        [FirestoreProperty]
-        public string FieldId { get; set; }
+       // [FirestoreProperty]
+       // public string FieldId { get; set; }
 
         [FirestoreProperty]
         public Field Field { get; set; }

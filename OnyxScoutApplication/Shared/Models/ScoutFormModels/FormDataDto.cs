@@ -10,7 +10,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
     {
         public string Id { get; set; }
         
-        public string FieldId { get; set; }
+        //public string FieldId { get; set; }
 
         public FieldDto Field { get; set; }
 

@@ -36,7 +36,7 @@
                     FieldDto field = combinedField.Fields[i];
                     int index = i;
                     <div>
-                        <SfDropDownList TItem="FieldDto" TValue="string" Placeholder="Select field" DataSource="fields" Value="field.Id" Width="250px">
+                        <SfDropDownList TItem="FieldDto" TValue="Guid?" Placeholder="Select field" DataSource="fields" Value="field.Id" Width="250px">
                             <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
                             <DropDownListEvents TItem="FieldDto" TValue="int" ValueChange="e => OnFieldSelected(e, combinedField.Fields, index)"></DropDownListEvents>
                         </SfDropDownList>

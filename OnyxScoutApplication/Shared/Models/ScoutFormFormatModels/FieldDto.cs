@@ -8,7 +8,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
     public class FieldDto : IComparable<FieldDto>
     {
-        public string Id { get; set; }
+        public Guid? Id { get; set; }
 
        public int? FieldStageId { get; set; }
        

@@ -103,7 +103,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 foreach (var avg in avgs)
                 {
                     var teamAvg = avg;
-                    rows.Add(avg.Field.Id.ToString(), teamAvg.GetFormattedAverage().Value);
+                    rows.Add(avg.Field.Id!.ToString(), teamAvg.GetFormattedAverage().Value);
                     rows.Add("RawValue" + avg.Field.Id, teamAvg.GetRelativeValue());
                 }
 

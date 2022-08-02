@@ -21,7 +21,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
     [FirestoreData]
     public class Field
     {
-        [FirestoreDocumentId]
+        [FirestoreProperty]
         public string Id { get; set; }
 
         [FirestoreProperty]
