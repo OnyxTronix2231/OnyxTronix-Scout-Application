@@ -36,15 +36,10 @@ namespace OnyxScoutApplication.Client
 
         private static void ConfigureServices(IServiceCollection services, WebAssemblyHostBuilder builder)
         {
-            //builder.RootComponents.Add<App>("#app");
-            //builder.RootComponents.Add<HeadOutlet>("head::after");
-            
             Console.WriteLine("Address: " + builder.HostEnvironment.BaseAddress);
             services.AddHttpClient("OnyxScoutApplication.ServerAPI",
                     client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
-
-            
 
             // Supply HttpClient instances that include access tokens when making requests to the server project
             services.AddScoped(sp =>
