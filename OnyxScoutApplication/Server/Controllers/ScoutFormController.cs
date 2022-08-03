@@ -59,7 +59,6 @@ namespace OnyxScoutApplication.Server.Controllers
         [HttpPost("SaveImage/{teamNumber:int}/{keyName}")]
         public async Task<ActionResult> SaveImage(int teamNumber, string keyName, [FromForm] IEnumerable<IFormFile> files)
         {
-            long maxFileSize = 1024 * 1024 * 15;
             var form = await unitOfWork.ScoutForms.GetByTeamAndKey(teamNumber, keyName, ScoutFormType.Pit);
             if (form.Value == null)
             {
