@@ -1,7 +1,9 @@
 ﻿@using Syncfusion.Blazor.Notifications
 @inherits NotificationBase
 <SfToast @ref="toastObj" Title="@Title" Content="@Message" CssClass="@ToastTypeString" Timeout="@Timeout" ExtendedTimeout="Timeout" ShowCloseButton="Timeout == 0"
-          ActionButtons="ToastButtons?.ToList()">
+       
+         > 
+           @* ActionButton="ToastButtons?.ToList()"*@
     <ToastPosition X="Center"></ToastPosition>
 
 </SfToast>
