@@ -30,7 +30,7 @@ namespace OnyxScoutApplication.Server.Controllers
         }
         
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCustomEvent(int id, [FromBody] CustomEventDto scoutFormModel)
+        public async Task<ActionResult> UpdateCustomEvent(string id, [FromBody] CustomEventDto scoutFormModel)
         {
             var response = await unitOfWork.CustomEvents.Update(id, scoutFormModel);
             await unitOfWork.Complete();
@@ -38,7 +38,7 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<CustomEventDto>> GetById(int id)
+        public async Task<ActionResult<CustomEventDto>> GetById(string id)
         {
             return await unitOfWork.CustomEvents.GetEventWithMatchesById(id);
         }
