@@ -84,7 +84,6 @@
     private void SavePageNumber()
     {
         syncStorageService.SetItem("MatchGridPage." + Settings.PagingScopeName, grid.PageSettings.CurrentPage);
-        grid.GoToPageAsync(1);
     }
 
 
