@@ -103,9 +103,16 @@
     <Watch Include="..\**\*.scss" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Properties\.profile">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="SetupScripts\**" CopyToPublishDirectory="PreserveNewest" />
     <None Remove=".profile" />
     <Content Include=".profile">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="SetupScripts\.profile">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
