@@ -168,7 +168,6 @@ namespace OnyxScoutApplication.Server
                 app.Use((ctx, next) =>
                 {
                     ctx.Request.Scheme = "https";
-                    //ctx.ide
                     ctx.Request.Host =
                         new HostString(Environment.GetEnvironmentVariables()["PublicOrigin"]!.ToString()!);
                     return next();
@@ -240,8 +239,8 @@ namespace OnyxScoutApplication.Server
             var connectionString = "";
             if (env.IsDevelopment())
             {
-                connectionString = configuration.GetConnectionString("DefaultConnection");
-                return connectionString;
+               // connectionString = configuration.GetConnectionString("DefaultConnection");
+               // return connectionString;
             }
 
             connectionString = Environment.GetEnvironmentVariables()["ConnectionString"]!.ToString();
