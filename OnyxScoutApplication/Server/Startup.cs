@@ -32,6 +32,7 @@ using Amazon.S3;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Services;
 using Google.Cloud.Firestore;
+using Microsoft.AspNetCore.Http;
 using OnyxScoutApplication.Server.Data.Extensions;
 using Newtonsoft.Json;
 using OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance;
@@ -73,6 +74,7 @@ namespace OnyxScoutApplication.Server
             }).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddTransient<IProfileService, ProfileService>();
             services.AddIdentityServer(
+
             //     options =>
             // {
             //     if (!env.IsDevelopment())
@@ -149,7 +151,8 @@ namespace OnyxScoutApplication.Server
                 app.Use((ctx, next) =>
                 {
                     ctx.Request.Scheme = "https";
-                    ctx.SetIdentityServerOrigin(Environment.GetEnvironmentVariables()["PublicOrigin"]!.ToString());
+                    //ctx.ide
+                    ctx.Request.Host = new HostString(Environment.GetEnvironmentVariables()["PublicOrigin"]!.ToString()!);
                     return next();
                 });
                 app.UseExceptionHandler("/Error");
