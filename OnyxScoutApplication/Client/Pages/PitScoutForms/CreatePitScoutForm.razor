@@ -40,7 +40,7 @@
         var selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         if (selectedEvent is null || selectedYear is null)
         {
-            notificationManager.Notify("Please select event and year first!", "", NotificationType.Danger);
+            await notificationManager.NotifyAsync("Please select event and year first!", "", NotificationType.Danger);
             return;
         }
         
@@ -48,7 +48,7 @@
                                            $"{selectedYear!.Value}/{ScoutFormType.Pit}");
         if (form == null)
         {
-            notificationManager.Notify("No scout form found for  pit scouting!", "", NotificationType.Danger);
+            await notificationManager.NotifyAsync("No scout form found for  pit scouting!", "", NotificationType.Danger);
             navigationManager.NavigateTo("/");
             return;
         }
@@ -94,7 +94,7 @@
             else
             {
                 await SaveOnLocalCache();
-                notificationManager.Notify("Error", "Error saving form in server\nThe form was saved localy for now", NotificationType.Warning);
+                await notificationManager.NotifyAsync("Error", "Error saving form in server\nThe form was saved localy for now", NotificationType.Warning);
             }
         }
     }
@@ -108,7 +108,7 @@
     {
         if (!await localStorage.ContainKeyAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}"))
         {
-            notificationManager.Notify("No form was found on local cache!", "", NotificationType.Warning);
+            await notificationManager.NotifyAsync("No form was found on local cache!", "", NotificationType.Warning);
             return;
         }
         await localStorage.RemoveItemAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}");

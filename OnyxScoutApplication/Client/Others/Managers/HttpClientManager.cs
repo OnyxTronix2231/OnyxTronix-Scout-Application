@@ -64,7 +64,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
             var response = await TryExecuteAsync(action);
             if(response.IsSuccessStatusCode)
             {
-                notificationService.Notify("Success", "Pushed successfully", NotificationType.Success);
+                await notificationService.NotifyAsync("Success", "Pushed successfully", NotificationType.Success);
             }
             return response.IsSuccessStatusCode;
         }
@@ -86,20 +86,20 @@ namespace OnyxScoutApplication.Client.Others.Managers
             }
             catch (Exception exception)
             {
-                NotifyFailer("Error", exception.Message);
+                await NotifyFailer("Error", exception.Message);
             }
             return response ?? new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
 
         private async Task NotifyFailer(HttpResponseMessage response)
         {
-            notificationService.Notify($"Error: {response.StatusCode}", await response.Content.ReadAsStringAsync(),
+            await notificationService.NotifyAsync($"Error: {response.StatusCode}", await response.Content.ReadAsStringAsync(),
                 NotificationType.Danger);
         }
          
-        private void NotifyFailer(string title, string message)
+        private async Task NotifyFailer(string title, string message)
         {
-            notificationService.Notify(title, message, NotificationType.Danger);
+            await notificationService.NotifyAsync(title, message, NotificationType.Danger);
         }
 
         private static HttpContent Serialize(object objectToSerialize)

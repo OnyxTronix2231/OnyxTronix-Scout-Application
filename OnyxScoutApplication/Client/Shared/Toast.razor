@@ -27,12 +27,12 @@
 
     private SfToast toastObj;
 
-    protected override void OnShow(string title, string message, NotificationType type, int timeout, params ToastButton[] toastButtons)
+    protected override async void OnShow(NotificationManager.NotificationEventArgs obj)
     {
-        message = message.Replace("\n", "<br/>");
-        base.OnShow(title, message, type, timeout, toastButtons);
-        toastObj.Show();
+        var message = obj.Message.Replace("\n", "<br/>");
+        obj.Message = message;
+        base.OnShow(obj);
+        await toastObj.ShowAsync();
         StateHasChanged();
     }
-
 }

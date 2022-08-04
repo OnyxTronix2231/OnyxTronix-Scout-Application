@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 
 namespace OnyxScoutApplication.Client.Others.Managers
 {
@@ -15,12 +17,25 @@ namespace OnyxScoutApplication.Client.Others.Managers
 
     public class NotificationManager
     {
-        public event Action<string, string, NotificationType, int, ToastButton[]> OnShow;
+        public class NotificationEventArgs
+        {
+            public string Title { get; init; }
+            public string Message { get; set;}
+            public NotificationType NotificationType { get; init;}
+            public int Timeout { get; init;}
+            public ToastButton[] ToastButtons { get; init;}
+        }
+        
+        public EventCallback<NotificationEventArgs> OnShow;
 
-        public void Notify(string title, string message, NotificationType notificationType, int timeout = 6000,
+        public async Task NotifyAsync(string title, string message, NotificationType notificationType, int timeout = 6000,
             params ToastButton[] toastButtons)
         {
-            OnShow?.Invoke(title, message, notificationType, timeout, toastButtons);
+            await OnShow.InvokeAsync(new NotificationEventArgs
+            {
+                Title = title, Message = message, NotificationType = notificationType, Timeout = timeout,
+                ToastButtons = toastButtons
+            });
         }
     }
 }
