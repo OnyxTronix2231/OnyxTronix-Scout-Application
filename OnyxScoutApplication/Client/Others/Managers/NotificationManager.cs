@@ -15,6 +15,12 @@ namespace OnyxScoutApplication.Client.Others.Managers
         Info
     }
 
+    public class NotficationButton
+    {
+        public string Content { get; set; }
+        public Action<object> Action { get; set; }
+    }
+
     public class NotificationManager
     {
         public class NotificationEventArgs
@@ -23,18 +29,19 @@ namespace OnyxScoutApplication.Client.Others.Managers
             public string Message { get; set;}
             public NotificationType NotificationType { get; init;}
             public int Timeout { get; init;}
-            public ToastButton[] ToastButtons { get; init;}
+            public NotficationButton[] Buttons { get; init;}
         }
+        
         
         public EventCallback<NotificationEventArgs> OnShow;
 
         public async Task NotifyAsync(string title, string message, NotificationType notificationType, int timeout = 6000,
-            params ToastButton[] toastButtons)
+            params NotficationButton[] buttons)
         {
             await OnShow.InvokeAsync(new NotificationEventArgs
             {
                 Title = title, Message = message, NotificationType = notificationType, Timeout = timeout,
-                ToastButtons = toastButtons
+                Buttons = buttons
             });
         }
     }

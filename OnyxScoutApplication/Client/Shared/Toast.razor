@@ -2,12 +2,12 @@
 @inherits NotificationBase
 <SfToast @ref="toastObj" Title="@Title" Content="@Message" CssClass="@ToastTypeString" Timeout="@Timeout" ExtendedTimeout="Timeout" ShowCloseButton="Timeout == 0">
     <ToastPosition X="Center"></ToastPosition>
-     @if (ToastButtons != null && ToastButtons.Length != 0)
+     @if (Buttons != null && Buttons.Length != 0)
         {
             <ToastButtons>
-                @foreach (var v in ToastButtons)
+                @foreach (var v in Buttons)
                 {
-                    <ToastButton Content="@v.Content" OnClick="@v.OnClick"></ToastButton>
+                    <ToastButton Content="@v.Content" OnClick="@v.Action"></ToastButton>
                 }
             </ToastButtons>
             

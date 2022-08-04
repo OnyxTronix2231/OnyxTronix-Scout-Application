@@ -16,7 +16,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
         protected string Title { get; private set; }
         protected string Message { get; private set; }
         protected int Timeout { get; private set; }
-        protected ToastButton[] ToastButtons { get; private set; }
+        protected NotficationButton[] Buttons { get; private set; }
         protected NotificationType NotificationType { get; private set; }
         //protected bool IsVisible { get; set; }
 
@@ -32,7 +32,7 @@ namespace OnyxScoutApplication.Client.Others.Objects
             Message = obj.Message;
             NotificationType = obj.NotificationType;
             Timeout = obj.Timeout;
-            ToastButtons = obj.ToastButtons;
+            Buttons = obj.Buttons;
             StateHasChanged();
         }
     }
