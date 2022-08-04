@@ -5,7 +5,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 {
     public class FormDto
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public int TeamNumber { get; set; }
 

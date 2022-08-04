@@ -26,7 +26,7 @@
         selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         if (selectedEvent is null)
         {
-            notificationManager.Notify("Please select an event first", "", NotificationType.Warning);
+            await notificationManager.NotifyAsync("Please select an event first", "", NotificationType.Warning);
             navigationManager.NavigateTo("/");
             return;
         }

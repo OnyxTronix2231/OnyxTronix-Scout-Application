@@ -4,7 +4,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
     public class ScoutFormFormatDto
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public int Year { get; set; }
         

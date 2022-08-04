@@ -12,6 +12,7 @@ using OnyxScoutApplication.Shared.Models;
 using OnyxScoutApplication.Shared.Models.FluentValidations;
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
+using Microsoft.AspNetCore.Components.Web;
 using OnyxScoutApplication.Client.Others.Extensions;
 using OnyxScoutApplication.Client.Others.Objects;
 using OnyxScoutApplication.Client.Others.Objects.Analyzers;
@@ -47,9 +48,9 @@ namespace OnyxScoutApplication.Client
             builder.Services.AddApiAuthorization()
                 .AddAccountClaimsPrincipalFactory<RolesClaimsPrincipalFactory>();
 
-            services.AddSyncfusionBlazor();
+            builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(
-                "NTY1NTQ2QDMxMzkyZTMzMmUzMGo3dzAwdEkyYVBVVW9lRmdKTm9MbXd4bnlvTWk2TTQ3aGJtaFJuRlY3Z1U9");
+                "NjkwMDkzQDMyMzAyZTMyMmUzMFlJb3FaK1EvU3lGS1hJejEwV3pHZUtBL1VoeEZWbjk2OVhodUd4eFRKcWs9");
             services.AddTransient<HttpClientManager>();
             services.AddSingleton<NotificationManager>();
             services.AddTransient<IValidator<ScoutFormFormatDto>, ScoutFormFormatValidator>();

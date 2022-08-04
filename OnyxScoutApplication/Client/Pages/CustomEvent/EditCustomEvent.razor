@@ -1,4 +1,4 @@
-@page "/CustomEvent/Edit/{Id:int}"
+@page "/CustomEvent/Edit/{Id}"
 @using OnyxScoutApplication.Shared.Models.CustomeEventModels
 @inject HttpClientManager http
 @inject NavigationManager navigationManager
@@ -12,7 +12,7 @@
 
 @code {
     [Parameter]
-    public int Id { get; set; }
+    public string Id { get; set; }
     
     private CustomEventDto customEvent;
     

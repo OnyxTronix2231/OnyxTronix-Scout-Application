@@ -43,7 +43,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
 
         public FormDataDto Convert(FieldDto source, FormDataDto destination, ResolutionContext context)
         {
-            destination = new FormDataDto {Field = source, FieldId = source.Id};
+            destination = new FormDataDto {Field = source};
             return GetScoutFormDataFromField(destination, source);
         }
 

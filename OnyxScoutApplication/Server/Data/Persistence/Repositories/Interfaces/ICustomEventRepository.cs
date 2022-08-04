@@ -11,7 +11,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 {
     public interface ICustomEventRepository : IRepository<CustomEventDto>
     {
-        Task<ActionResult> Update(int id, CustomEventDto eventSource);
+        Task<ActionResult> Update(string id, CustomEventDto eventSource);
         
         Task<ActionResult<bool>> GetEventExists(string eventKey);
 
@@ -25,6 +25,6 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
         
         Task<ActionResult<IEnumerable<CustomEventDto>>> GetEventWithMathesByKey(string key);
         
-        Task<ActionResult<CustomEventDto>> GetEventWithMatchesById(int id);
+        Task<ActionResult<CustomEventDto>> GetEventWithMatchesById(string id);
     }
 }

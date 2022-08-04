@@ -4,12 +4,12 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
     public class FieldsInStageDto
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public int Index { get; set; }
-        public int? ScoutFormFormatId { get; set; }
-        public ScoutFormFormatDto ScoutFormFormat { get; set; }
-        public List<FieldDto> Fields { get; set; } = new List<FieldDto>();
+        //public int? ScoutFormFormatId { get; set; }
+      //  public ScoutFormFormatDto ScoutFormFormat { get; set; }
+        public List<FieldDto> Fields { get; set; } = new();
         public bool IsCollapsed { get; set; } = true;
         public bool IsNew { get; set; }
 

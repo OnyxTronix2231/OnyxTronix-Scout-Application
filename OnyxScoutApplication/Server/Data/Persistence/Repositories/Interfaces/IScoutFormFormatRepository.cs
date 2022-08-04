@@ -13,10 +13,10 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
     {
         Task<ActionResult<FormDto>> GetTemplateScoutFormByYear(int year, ScoutFormType scoutFormType);
 
-        Task<ActionResult<ScoutFormFormatDto>> GetWithFields(int id);
+        Task<ActionResult<ScoutFormFormatDto>> GetWithFields(string id);
 
         Task<ActionResult<ScoutFormFormatDto>> GetWithFieldsByYear(int year, ScoutFormType scoutFormType);
 
-        Task<ActionResult> Update(int id, ScoutFormFormatDto scoutFormFormatDto);
+        Task<ActionResult> Update(string id, ScoutFormFormatDto scoutFormFormatDto);
     }
 }

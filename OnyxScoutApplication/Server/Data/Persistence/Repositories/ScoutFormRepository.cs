@@ -4,9 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using OnyxScoutApplication.Shared.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Google.Api;
+using Google.Cloud.Firestore;
 using OnyxScoutApplication.Server.Data.Extensions;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
@@ -15,94 +18,85 @@ using static OnyxScoutApplication.Server.Data.Extensions.Result;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 {
-    public class ScoutFormRepository : Repository<Form, FormDto>, IScoutFormRepository
+    public class ScoutFormRepository : FirestoreRepository<Form, FormDto>, IScoutFormRepository
     {
-        public ScoutFormRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
+        public ScoutFormRepository(FirestoreDb  client, IMapper mapper) : base( client, mapper, "ScoutForms")
         {
         }
 
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByType(ScoutFormType scoutFormType)
         {
-            var forms = await ScoutAppContext.ScoutForms.Where(i => i.Type == scoutFormType).ToListAsync();
-            return Mapper.Map<List<FormDto>>(forms);
+            var forms = await CollectionReference.WhereEqualTo("Type", scoutFormType).GetSnapshotAsync();
+            return Mapper.Map<List<FormDto>>(forms.Select(i => i.ConvertTo<Form>()));
         }
         
         public override async Task<ActionResult> Add(FormDto form)
         {
-            if (await ScoutAppContext.ScoutForms.AnyAsync(i =>
-                i.Year == form.Year && i.KeyName == form.KeyName &&
-                i.TeamNumber == form.TeamNumber))
+            var result = await CollectionReference.WhereEqualTo("Year", form.Year)
+                .WhereEqualTo("Year", form.Year)
+                .WhereEqualTo("KeyName", form.KeyName).WhereEqualTo("TeamNumber", form.TeamNumber).GetSnapshotAsync();
+            
+            if (result.Count != 0)
             {
-                Console.WriteLine("This scout form already exists!");
                 return ResultCode(System.Net.HttpStatusCode.BadRequest, "This scout form already exists!");
             }
 
-            var updated = Mapper.Map<Form>(form);
-            Context.Update(updated);
-            return await Task.Run(() => new OkResult());
+            return await base.Add(form);;
         }
 
-        public async Task<ActionResult<FormDto>> GetWithFields(int id)
+        public async Task<ActionResult<FormDto>> GetWithFields(string id)
         {
-            var result = await ScoutAppContext.ScoutForms.WithAllData().FirstOrDefaultAsync(i => i.Id == id);
-            if (result == null)
-            {
-                return new NotFoundObjectResult("No scout form found with the id of: " + id);
-            }
-
-            result.FormDataInStages = result.FormDataInStages.OrderBy(i => i.Index).ToList();
-            return Mapper.Map<FormDto>(result);
+            return await Get(id);
         }
 
-        public async Task<ActionResult> Update(int id, FormDto formFormatDto)
+        public async Task<ActionResult> Update(string id, FormDto scoutFormDto)
         {
-            var entity = Mapper.Map<Form>(formFormatDto);
-            Context.Update(entity);
+            DocumentReference docRef = CollectionReference.Document(id);
+            await docRef.SetAsync(Mapper.Map<Form>(scoutFormDto));
             return await Task.Run(() => new OkResult());
         }
 
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEventWithData(string eventKey,
             ScoutFormType scoutFormType)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms.Where(i => i.KeyName.Contains(eventKey) && 
-                                                                        i.Type == scoutFormType)
-                .WithAllData().ToListAsync();
-            return Mapper.Map<List<FormDto>>(scoutForm);
+            var scoutForm = await CollectionReference.WhereGreaterThanOrEqualTo("KeyName", eventKey)
+                .WhereEqualTo("Type", scoutFormType).GetSnapshotAsync();
+            return Mapper.Map<List<FormDto>>(scoutForm.Select(i => i.ConvertTo<Form>()));
         }
 
         public async Task<ActionResult<FormDto>> GetByTeamAndKey(int teamNumber, string key,
             ScoutFormType scoutFormType)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms.AsNoTracking().SingleAsync(i => i.TeamNumber == teamNumber
-                                                                        && i.KeyName.Contains(key)
-                                                                        && i.Type == scoutFormType);
-            return Mapper.Map<FormDto>(scoutForm);
+            var scoutForms = await CollectionReference.WhereEqualTo("TeamNumber", teamNumber)
+                .WhereEqualTo("KeyName", key)
+                .WhereEqualTo("Type", scoutFormType).GetSnapshotAsync();
+            if (scoutForms.Count == 0)
+            {
+                return ResultCode(System.Net.HttpStatusCode.BadRequest, "This scout form doe's not exist!");
+            }
+
+            Debug.Assert(scoutForms.Count == 1);
+                
+            return Mapper.Map<FormDto>(scoutForms[0].ConvertTo<Form>());
         }
         
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey,
             ScoutFormType scoutFormType)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms.Where(i => i.KeyName.Contains(eventKey) &&
-                                                                        i.Type == scoutFormType).ToListAsync();
-            return Mapper.Map<List<FormDto>>(scoutForm);
+            var scoutForm = await CollectionReference.WhereGreaterThanOrEqualTo("KeyName", eventKey)
+                .WhereEqualTo("Type", scoutFormType).GetSnapshotAsync();
+            return Mapper.Map<List<FormDto>>(scoutForm.Select(i => i.ConvertTo<Form>()));
         }
 
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey,
             ScoutFormType scoutFormType)
         {
-            var scoutForm = await ScoutAppContext.ScoutForms.WithAllData()
-                .Where(i => i.TeamNumber == teamNumber && i.KeyName.Contains(eventKey) &&
-                            i.Type == scoutFormType)
-                .ToListAsync();
-            return Mapper.Map<List<FormDto>>(scoutForm);
+            
+            var scoutForms = await CollectionReference.WhereEqualTo("TeamNumber", teamNumber)
+                .WhereGreaterThanOrEqualTo("KeyName", eventKey)
+                .WhereEqualTo("Type", scoutFormType).GetSnapshotAsync();
+            
+            return Mapper.Map<List<FormDto>>(scoutForms.Select(i => i.ConvertTo<Form>()));
         }
-
-        public override async Task UpdateFromTracking(FormDto obj)
-        {
-            Context.Entry(Mapper.Map<Form>(obj)).State = EntityState.Modified;
-            await Context.SaveChangesAsync();
-        }
-        
-        private ApplicationDbContext ScoutAppContext => Context as ApplicationDbContext;
     }
 }

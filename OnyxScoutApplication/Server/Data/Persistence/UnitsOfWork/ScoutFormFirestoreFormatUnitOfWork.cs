@@ -2,30 +2,26 @@
 using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories;
 using AutoMapper;
+using Google.Cloud.Firestore;
+using Google.Cloud.Firestore.V1;
 using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
 {
-    public class ScoutFormFormatUnitOfWork : IScoutFormFormatUnitOfWork
+    public class ScoutFormFaunaFormatUnitOfWork : IScoutFormFormatUnitOfWork
     {
-        private readonly ApplicationDbContext context;
+        private readonly FirestoreDb client;
 
-        public ScoutFormFormatUnitOfWork(ApplicationDbContext context, IMapper mapper)
+        public ScoutFormFaunaFormatUnitOfWork(FirestoreDb client, IMapper mapper)
         {
-            this.context = context;
-            ScoutFormFormats = new ScoutFormFormatRepository(context, mapper);
+            this.client = client;
+            ScoutFormFormats = new ScoutFormFormatFirestoreRepository(client, mapper);
         }
 
         public IScoutFormFormatRepository ScoutFormFormats { get; }
 
-        public async Task<int> Complete()
-        {
-            return await context.SaveChangesAsync();
-        }
-
         public void Dispose()
         {
-            context.Dispose();
         }
     }
 }
