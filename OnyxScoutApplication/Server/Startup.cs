@@ -59,9 +59,10 @@ namespace OnyxScoutApplication.Server
             var environmentVariables = Environment.GetEnvironmentVariables();
             
             var connectionString = GetConnectionString();
+            var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseMySQL(connectionString);
+                options.UseMySql(connectionString, serverVersion);
             });
             services.AddDatabaseDeveloperPageExceptionFilter();
 
