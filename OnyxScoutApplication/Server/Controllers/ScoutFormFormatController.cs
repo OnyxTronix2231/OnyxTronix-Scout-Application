@@ -62,7 +62,6 @@ namespace OnyxScoutApplication.Server.Controllers
             [FromBody] ScoutFormFormatDto scoutFormFormatModel)
         {
             var response = await unitOfWork.ScoutFormFormats.Update(id, scoutFormFormatModel);
-            await unitOfWork.Complete();
             return response;
         }
 
@@ -74,7 +73,6 @@ namespace OnyxScoutApplication.Server.Controllers
                 return ResultCode(System.Net.HttpStatusCode.BadRequest, "Invalid inputs!");
             
             var response = await unitOfWork.ScoutFormFormats.Add(scoutFormFormatModel);
-            await unitOfWork.Complete();
             return response;
 
         }

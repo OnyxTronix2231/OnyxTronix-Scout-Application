@@ -20,11 +20,6 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
 
         public IScoutFormFormatRepository ScoutFormFormats { get; }
 
-        public async Task<int> Complete()
-        {
-            return 0;
-        }
-
         public void Dispose()
         {
         }

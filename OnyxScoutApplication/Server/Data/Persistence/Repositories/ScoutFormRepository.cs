@@ -98,12 +98,5 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             
             return Mapper.Map<List<FormDto>>(scoutForms.Select(i => i.ConvertTo<Form>()));
         }
-
-        public override async Task UpdateFromTracking(FormDto obj)
-        {
-           // Context.Entry(Mapper.Map<Form>(obj)).State = EntityState.Modified;
-           // await Context.SaveChangesAsync();
-           await Task.CompletedTask;
-        }
     }
 }

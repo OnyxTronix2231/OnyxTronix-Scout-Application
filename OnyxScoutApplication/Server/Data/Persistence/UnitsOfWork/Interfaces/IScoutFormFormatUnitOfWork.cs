@@ -7,6 +7,5 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces
     public interface IScoutFormFormatUnitOfWork : IDisposable
     {
         IScoutFormFormatRepository ScoutFormFormats { get; }
-        Task<int> Complete();
     }
 }

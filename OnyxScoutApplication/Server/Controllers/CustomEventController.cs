@@ -25,7 +25,6 @@ namespace OnyxScoutApplication.Server.Controllers
         public async Task<ActionResult> CreateCustomEvent([FromBody] CustomEventDto customEvent)
         {
             var response = await unitOfWork.CustomEvents.Add(customEvent);
-            await unitOfWork.Complete();
             return response;
         }
         
@@ -33,7 +32,6 @@ namespace OnyxScoutApplication.Server.Controllers
         public async Task<ActionResult> UpdateCustomEvent(string id, [FromBody] CustomEventDto scoutFormModel)
         {
             var response = await unitOfWork.CustomEvents.Update(id, scoutFormModel);
-            await unitOfWork.Complete();
             return response;
         }
 

@@ -141,7 +141,6 @@ namespace OnyxScoutApplication.Server.Controllers
                                                     $" {formModel.WriterUserName} can edit this form!");
             }
             var response = await unitOfWork.ScoutForms.Update(id, formModel);
-            await unitOfWork.Complete();
             return response;
         }
 
@@ -149,10 +148,9 @@ namespace OnyxScoutApplication.Server.Controllers
         public async Task<ActionResult> CreateScoutForm([FromBody] FormDto formModel)
         {
             if (!ModelState.IsValid) 
-                return ResultCode(System.Net.HttpStatusCode.BadRequest, "Invalid inputs!");
+                return ResultCode(HttpStatusCode.BadRequest, "Invalid inputs!");
             
             var response = await unitOfWork.ScoutForms.Add(formModel);
-            await unitOfWork.Complete();
             return response;
 
         }

@@ -8,6 +8,5 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces
     public interface ICustomEventUnitOfWork : IDisposable
     {
         ICustomEventRepository CustomEvents { get; }
-        Task<int> Complete();
     }
 }

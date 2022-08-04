@@ -19,11 +19,6 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
 
         public ICustomEventRepository CustomEvents { get; }
 
-        public async Task<int> Complete()
-        {
-            return 0;
-        }
-
         public void Dispose()
         {
         }

@@ -13,20 +13,14 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
 
         public ScoutFormUnitOfWork(FirestoreDb client, IMapper mapper)
         {
+            
             ScoutForms = new ScoutFormRepository(client, mapper);
         }
 
         public IScoutFormRepository ScoutForms { get; }
 
-        public async Task<int> Complete()
-        {
-            //return await context.SaveChangesAsync();
-            return 0;
-        }
-
         public void Dispose()
         {
-          //  context.Dispose();
         }
     }
 }

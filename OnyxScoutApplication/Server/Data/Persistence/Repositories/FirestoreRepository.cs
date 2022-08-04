@@ -54,7 +54,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return await Task.Run(() => new OkResult());
         }
 
-        public virtual async Task<ActionResult> Remove(string id)
+        public virtual Task<ActionResult> Remove(string id)
         {
             // var entity = await Context.Set<TDbEntity>().FindAsync(id.ToString());
             // if (entity == null)
@@ -67,10 +67,9 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             throw new NotImplementedException();
         }
 
-        public virtual async Task UpdateFromTracking(TDtoEntity obj)
+        public Task UpdateFromTracking(TDtoEntity obj)
         {
-           // Context.Entry(obj).State = EntityState.Modified;
-          //  await Context.SaveChangesAsync();
+            throw new NotImplementedException();
         }
     }
 }
