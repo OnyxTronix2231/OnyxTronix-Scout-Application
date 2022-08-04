@@ -132,10 +132,10 @@ namespace OnyxScoutApplication.Server
                                         "\"private_key\": " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_PRIVATE_KEY"]! +
                                         "\"client_email\": " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_CLIENT_EMAIL"]! +
                                         "\"client_id\": " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_CLIENT_ID"]! +
-                                        "\"auth_uri:\" " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_AUTH_URI"]! +
-                                        "\"token_uri:\" " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_TOKEN_URI"]! +
-                                        "\"auth_provider_x509_cert_url:\" " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_AUTH_PROVIDER_X509_CERT_URL"]! +
-                                        "\"client_x509_cert_url:\" " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_CLIENT_X509_CERT_URL"]! +
+                                        "\"auth_uri:\": " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_AUTH_URI"]! +
+                                        "\"token_uri:\": " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_TOKEN_URI"]! +
+                                        "\"auth_provider_x509_cert_url\": " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_AUTH_PROVIDER_X509_CERT_URL"]! +
+                                        "\"client_x509_cert_url\": " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_CLIENT_X509_CERT_URL"]! +
                                     "}";
             }
             
