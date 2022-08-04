@@ -32,6 +32,7 @@ using Amazon.S3;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Services;
 using Google.Cloud.Firestore;
+using Google.Cloud.Firestore.V1;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http;
 using OnyxScoutApplication.Server.Data.Extensions;
@@ -121,7 +122,24 @@ namespace OnyxScoutApplication.Server
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             services.AddScoped<IApplicationUserUnitOfWork, ApplicationUserUnitOfWork>();
 
-            services.AddTransient(_ => FirestoreDb.Create("onyxdb-2bc25"));
+            var v = new FirestoreClientBuilder();
+            if (!env.IsDevelopment())
+            {
+                v.JsonCredentials = "{" +
+                                        "\"type:\" " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_TYPE"]! +
+                                        "\"project_id:\" " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_PROJECT_ID"]! +
+                                        "\"private_key_id\": " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_PRIVATE_KEY_ID"]! +
+                                        "\"private_key\": " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_PRIVATE_KEY"]! +
+                                        "\"client_email: " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_CLIENT_EMAIL"]! +
+                                        "\"client_id: " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_CLIENT_ID"]! +
+                                        "\"auth_uri:\" " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_AUTH_URI"]! +
+                                        "\"token_uri:\" " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_TOKEN_URI"]! +
+                                        "\"auth_provider_x509_cert_url:\" " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_AUTH_PROVIDER_X509_CERT_URL"]! +
+                                        "\"client_x509_cert_url:\" " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_CLIENT_X509_CERT_URL"]! +
+                                    "}";
+            }
+            
+            services.AddTransient(_ => FirestoreDb.Create("onyxdb-2bc25", v.Build()));
 
             services.AddTransient(_ =>
                 new AmazonS3Client(Environment.GetEnvironmentVariables()["CLOUD_CUBE-ACCESS_KEY_ID"]!.ToString(),
