@@ -32,6 +32,7 @@ using Amazon.S3;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Services;
 using Google.Cloud.Firestore;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http;
 using OnyxScoutApplication.Server.Data.Extensions;
 using Newtonsoft.Json;
@@ -159,6 +160,13 @@ namespace OnyxScoutApplication.Server
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            
+            app.UseCookiePolicy(new CookiePolicyOptions
+            {
+                HttpOnly = HttpOnlyPolicy.None,
+                MinimumSameSitePolicy = SameSiteMode.None,
+                Secure = CookieSecurePolicy.Always
+            });
 
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
@@ -174,7 +182,7 @@ namespace OnyxScoutApplication.Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapControllers();
+                endpoints.MapControllers().RequireAuthorization();
                 endpoints.MapFallbackToFile("index.html");
             });
             CreateUserRoles(serviceProvider).Wait();
