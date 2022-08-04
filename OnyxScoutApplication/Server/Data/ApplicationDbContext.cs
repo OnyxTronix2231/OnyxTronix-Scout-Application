@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
+//using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.Identity;
-using MySql.Data.EntityFramework;
+//using MySql.Data.EntityFramework;
 using OnyxScoutApplication.Shared.Models;
 using OnyxScoutApplication.Shared.Models.CustomeEventModels;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
@@ -18,7 +18,7 @@ using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 
 namespace OnyxScoutApplication.Server.Data
 {
-    [DbConfigurationType(typeof(MySqlEFConfiguration))]
+   // [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
     {
         public ApplicationDbContext(
@@ -30,6 +30,7 @@ namespace OnyxScoutApplication.Server.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            
 
             builder.Entity<ApplicationUserRole>(entity => entity.Property(m => m.RoleId).HasMaxLength(450));
 
