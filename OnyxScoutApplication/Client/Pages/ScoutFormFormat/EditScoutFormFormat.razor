@@ -1,4 +1,4 @@
-﻿@page "/ScoutFormFormat/Edit/{id:int}"
+﻿@page "/ScoutFormFormat/Edit/{id}"
 @using OnyxScoutApplication.Client.Pages.ScoutFormFormat.Components
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 @inject HttpClientManager http
@@ -16,7 +16,7 @@
 @code {
 
     [Parameter]
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     private ScoutFormFormatDto scoutFormFormat;
 

@@ -57,9 +57,9 @@
     private readonly string[] toolbarItems = { "ColumnChooser" };
     public SfGrid<ExpandoObject> Grid { get; set; }
 
-    private void LoadHandler()
+    private async Task LoadHandler()
     {
-        Grid.AutoFitColumns(ColumnsFields.Select(i => "RawValue" + i.Id).ToArray());
+        await Grid.AutoFitColumnsAsync(ColumnsFields.Select(i => "RawValue" + i.Id).ToArray());
     }
     
 }

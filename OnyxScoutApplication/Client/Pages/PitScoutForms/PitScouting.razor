@@ -37,7 +37,7 @@
         selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         if (selectedEvent is null)
         {
-            notificationManager.Notify("Please select event and year first!", "", NotificationType.Danger);
+            await notificationManager.NotifyAsync("Please select event and year first!", "", NotificationType.Danger);
             return;
         }
         teams = await http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);

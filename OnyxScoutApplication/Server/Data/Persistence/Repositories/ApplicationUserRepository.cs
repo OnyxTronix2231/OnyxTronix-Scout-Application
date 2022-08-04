@@ -35,14 +35,14 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public async Task<ActionResult<ApplicationUserDto>> GetByNameWithRoles(string name)
         {
-            var v = await ScoutAppContext.Users.Include(u => u.UserRoles).ThenInclude(i => i.Role)
+            var v = await ScoutAppContext.Users.AsQueryable().Include(u => u.UserRoles).ThenInclude(i => i.Role)
                 .FirstOrDefaultAsync(i => i.UserName == name);
             return Mapper.Map<ApplicationUserDto>(v);
         }
 
         public async Task<ActionResult<List<ApplicationRoleDto>>> GetAllRoles()
         {
-            var v = await ScoutAppContext.Roles.ToListAsync();
+            var v = await ScoutAppContext.Roles.AsQueryable().ToListAsync();
             return Mapper.Map<List<ApplicationRoleDto>>(v);
         }
 

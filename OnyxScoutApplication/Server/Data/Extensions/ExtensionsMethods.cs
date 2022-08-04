@@ -18,23 +18,7 @@ namespace OnyxScoutApplication.Server.Data.Extensions
                 .Include(i => i.Matches).ThenInclude(i => i.Alliances).ThenInclude(i => i.Red)
                 .ThenInclude(i => i.Teams);
         }
-
-        public static IQueryable<Form> WithAllData(this IQueryable<Form> queryable)
-        {
-            return queryable.Include(i => i.FormDataInStages).ThenInclude(i => i.FormData).ThenInclude(i => i.Field)
-                .ThenInclude(i => i.Options)
-                .Include(i => i.FormDataInStages).ThenInclude(i => i.FormData)
-                .ThenInclude(i => i.CascadeData).ThenInclude(i => i.Field)
-                .ThenInclude(i => i.Options)
-                .Include(i => i.FormDataInStages).ThenInclude(i => i.FormData)
-                .ThenInclude(i => i.CascadeData).ThenInclude(i => i.CascadeData).ThenInclude(i => i.Field)
-                .ThenInclude(i => i.Options)
-                .Include(i => i.FormDataInStages).ThenInclude(i => i.FormData)
-                .ThenInclude(i => i.CascadeData).ThenInclude(i => i.CascadeData).ThenInclude(i => i.CascadeData)
-                .ThenInclude(i => i.Field).ThenInclude(i => i.Options)
-                //.AsSplitQuery()
-                ;
-        }
+        
 
         public static IQueryable<ScoutFormFormat>
             WithAllFields(this IQueryable<ScoutFormFormat> queryable)

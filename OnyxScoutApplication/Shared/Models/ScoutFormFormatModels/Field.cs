@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Google.Cloud.Firestore;
 
 namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
@@ -17,49 +18,58 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         BooleanChooser
     }
 
+    [FirestoreData]
     public class Field
     {
-        public int Id { get; set; }
+        [FirestoreProperty(ConverterType = typeof(GuidFirestoreConvertor))]
+        public Guid Id { get; set; }
 
+        [FirestoreProperty]
         public string Name { get; set; }
 
+        [FirestoreProperty]
         public string DefaultValue { get; set; }
 
+        [FirestoreProperty]
         public FieldType FieldType { get; set; }
 
-        [ForeignKey("FieldsInStage")]
-        public int? FieldStageId { get; set; }
-        
-        [ForeignKey("ParentField")]
-        public int? FieldId { get; set; }
-        
-        public FieldsInStage FieldsInStage { get; set; }
-        
-        public Field ParentField { get; set; }
-
+        [FirestoreProperty]
         public int MaxValue { get; set; } = 9999;
 
+        [FirestoreProperty]
         public int MinValue { get; set; }
 
+        [FirestoreProperty]
         public bool Required { get; set; }
         
+        [FirestoreProperty]
         public bool AllowManualInput { get; set; }
 
+        [FirestoreProperty]
         public List<Option> Options { get; set; }
 
+        [FirestoreProperty]
         public int MaximumSelectionLength { get; set; }
 
+        [FirestoreProperty]
         public List<Field> CascadeFields { get; set; }
 
+        [FirestoreProperty]
         public int Index { get; set; }
     }
 
+    [FirestoreData]
     public class Option
     {
-        public int Id { get; set; }
+        [FirestoreDocumentId]
+        public string Id { get; set; }
+        [FirestoreProperty]
         public string Name { get; set; }
+        [FirestoreProperty]
         public int Index { get; set; }
+        [FirestoreProperty]
         public float PercentWeight { get; set; }
+        [FirestoreProperty]
         public int FieldId { get; set; }
     }
 

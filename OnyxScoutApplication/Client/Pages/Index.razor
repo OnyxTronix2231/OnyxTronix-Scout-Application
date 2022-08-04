@@ -40,10 +40,10 @@
 </div>
 
 @code {
-    private List<Match> qMatches = new List<Match>();
-    private List<Match> qfMatches = new List<Match>();
-    private List<Match> sfMatches = new List<Match>();
-    private List<Match> fMatches = new List<Match>();
+    private List<Match> qMatches = new();
+    private List<Match> qfMatches = new();
+    private List<Match> sfMatches = new();
+    private List<Match> fMatches = new();
     private List<FormDto> scoutForms;
 
     protected override async Task OnInitializedAsync()

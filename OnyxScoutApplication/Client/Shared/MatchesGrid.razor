@@ -11,7 +11,7 @@
 
     <SfGrid @ref="grid" DataSource="@Matches" AllowSorting="true" AllowFiltering="true" Height="@Settings.Height" AllowPaging="@Settings.AllowPaging">
         <GridPageSettings PageSize="10"></GridPageSettings>
-        <GridEvents OnLoad="OnLoad" QueryCellInfo="CustomizeCell" TValue="Match"></GridEvents>
+        <GridEvents Created="OnLoad" QueryCellInfo="CustomizeCell" TValue="Match"></GridEvents>
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
             <GridColumn Field=@nameof(Match.MatchNumber) AutoFit="true" HeaderText="No." Width="auto"></GridColumn>
@@ -77,13 +77,14 @@
             await storageService.ContainKeyAsync("MatchGridPage." + Settings.PagingScopeName))
         {
             var v = await storageService.GetItemAsync<int>("MatchGridPage." + Settings.PagingScopeName);
-            await grid.GoToPage(v);
+            await grid.GoToPageAsync(v);
         }
     }
 
     private void SavePageNumber()
     {
         syncStorageService.SetItem("MatchGridPage." + Settings.PagingScopeName, grid.PageSettings.CurrentPage);
+        grid.GoToPageAsync(1);
     }
 
 
