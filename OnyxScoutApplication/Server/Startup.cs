@@ -50,7 +50,6 @@ namespace OnyxScoutApplication.Server
         {
             this.configuration = configuration;
             this.env = env;
-            
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -59,7 +58,7 @@ namespace OnyxScoutApplication.Server
         {
             Console.WriteLine($"Configuring services in {env.EnvironmentName} mode ({env.IsDevelopment()})");
             var environmentVariables = Environment.GetEnvironmentVariables();
-            
+
             var connectionString = GetConnectionString();
             var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -75,48 +74,47 @@ namespace OnyxScoutApplication.Server
             }).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddTransient<IProfileService, ProfileService>();
             services.AddIdentityServer(
-
-            //     options =>
-            // {
-            //     if (!env.IsDevelopment())
-            //     {
-            //       //  options.PublicOrigin = configuration.GetValue<string>("PublicOrigin");
-            //     }
-            // }
+                    //     options =>
+                    // {
+                    //     if (!env.IsDevelopment())
+                    //     {
+                    //       //  options.PublicOrigin = configuration.GetValue<string>("PublicOrigin");
+                    //     }
+                    // }
                 )
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
-            {
-                options.IdentityResources["openid"].UserClaims.Add("name");
-                options.ApiResources.Single().UserClaims.Add("name");
-                options.IdentityResources["openid"].UserClaims.Add("role");
-                options.ApiResources.Single().UserClaims.Add("role");
-            });
+                {
+                    options.IdentityResources["openid"].UserClaims.Add("name");
+                    options.ApiResources.Single().UserClaims.Add("name");
+                    options.IdentityResources["openid"].UserClaims.Add("role");
+                    options.ApiResources.Single().UserClaims.Add("role");
+                });
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("role");
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
-            
+
             services.AddHsts(options =>
             {
                 options.Preload = true;
                 options.IncludeSubDomains = true;
                 options.MaxAge = TimeSpan.FromDays(365 * 2);
             });
-            
-            
+
 
             services.Configure<IdentityOptions>(options =>
                 options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
 
-            services.AddControllersWithViews().AddNewtonsoftJson( settings => settings.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+            services.AddControllersWithViews().AddNewtonsoftJson(settings =>
+                settings.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
             services.AddRazorPages();
 
             services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatFirestoreRepository>();
             services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFaunaFormatUnitOfWork>();
-            
+
             services.AddScoped<IScoutFormRepository, ScoutFormRepository>();
             services.AddScoped<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
-            
+
             services.AddScoped<ICustomEventRepository, CustomEventRepository>();
             services.AddScoped<ICustomEventUnitOfWork, CustomEventUnitOfWork>();
 
@@ -125,8 +123,8 @@ namespace OnyxScoutApplication.Server
 
             services.AddTransient(_ => FirestoreDb.Create("onyxdb-2bc25"));
 
-            services.AddTransient(_ => 
-                new AmazonS3Client(Environment.GetEnvironmentVariables()["CLOUD_CUBE-ACCESS_KEY_ID"]!.ToString(), 
+            services.AddTransient(_ =>
+                new AmazonS3Client(Environment.GetEnvironmentVariables()["CLOUD_CUBE-ACCESS_KEY_ID"]!.ToString(),
                     Environment.GetEnvironmentVariables()["CLOUD_CUBE-SECRET_ACCESS_KEY"]!.ToString(),
                     new AmazonS3Config
                     {
@@ -135,9 +133,9 @@ namespace OnyxScoutApplication.Server
 
             services.AddAutoMapper(typeof(ScoutFormProfile));
             services.AddSingleton<ITheBlueAllianceService>(
-                    new TheBlueAllianceService(environmentVariables["TBA-KEY"]!.ToString()));
+                new TheBlueAllianceService(environmentVariables["TBA-KEY"]!.ToString()));
         }
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider)
         {
@@ -153,14 +151,15 @@ namespace OnyxScoutApplication.Server
                 {
                     ctx.Request.Scheme = "https";
                     //ctx.ide
-                    ctx.Request.Host = new HostString(Environment.GetEnvironmentVariables()["PublicOrigin"]!.ToString()!);
+                    ctx.Request.Host =
+                        new HostString(Environment.GetEnvironmentVariables()["PublicOrigin"]!.ToString()!);
                     return next();
                 });
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            
+
             // app.UseCookiePolicy(new CookiePolicyOptions
             // {
             //     HttpOnly = HttpOnlyPolicy.None,
@@ -187,7 +186,7 @@ namespace OnyxScoutApplication.Server
             });
             CreateUserRoles(serviceProvider).Wait();
         }
-        
+
         private async Task CreateUserRoles(IServiceProvider serviceProvider)
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -195,7 +194,7 @@ namespace OnyxScoutApplication.Server
 
             //IdentityResult roleResult;
             //Adding Admin Role
-            
+
             var roles = Enum.GetValues(typeof(Role)).Cast<Role>().ToList();
             for (int i = 0; i < roles.Count(); i++)
             {
@@ -205,19 +204,19 @@ namespace OnyxScoutApplication.Server
                 {
                     //create the roles and seed them to the database
                     //roleResult =
-                        await roleManager.CreateAsync(new ApplicationRole
+                    await roleManager.CreateAsync(new ApplicationRole
                     {
                         Id = i.ToString(), Name = role.ToString(), NormalizedName = role.ToString()
                     });
                 }
             }
-          
+
             //Assign Admin role to the main User here we have given our newly registered 
             //login id for Admin management
             //ApplicationUser user = await userManager.FindByEmailAsync("v-nany@hotmail.com");
             //await userManager.AddToRoleAsync(user, "Admin");
         }
-        
+
         private string GetConnectionString()
         {
             var connectionString = "";
@@ -230,6 +229,5 @@ namespace OnyxScoutApplication.Server
             connectionString = Environment.GetEnvironmentVariables()["ConnectionString"]!.ToString();
             return connectionString;
         }
-
     }
 }
