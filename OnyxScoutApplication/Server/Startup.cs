@@ -182,7 +182,7 @@ namespace OnyxScoutApplication.Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapControllers().RequireAuthorization();
+                endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
             });
             CreateUserRoles(serviceProvider).Wait();
