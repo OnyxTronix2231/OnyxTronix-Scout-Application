@@ -177,13 +177,6 @@ namespace OnyxScoutApplication.Server
                 app.UseHsts();
             }
 
-            // app.UseCookiePolicy(new CookiePolicyOptions
-            // {
-            //     HttpOnly = HttpOnlyPolicy.None,
-            //     MinimumSameSitePolicy = SameSiteMode.None,
-            //     Secure = CookieSecurePolicy.Always
-            // });
-
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();

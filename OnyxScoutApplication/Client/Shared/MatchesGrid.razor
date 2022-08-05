@@ -14,13 +14,13 @@
         <GridEvents Created="OnLoad" QueryCellInfo="CustomizeCell" TValue="Match"></GridEvents>
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
-            <GridColumn Field=@nameof(Match.MatchNumber) AutoFit="true" HeaderText="No." Width="auto"></GridColumn>
-            <GridColumn Field=@nameof(Match.Date) AutoFit="true" HeaderText="Match date" Format="dd/MM/yyyy HH:mm" Type="ColumnType.DateTime" Width="auto"></GridColumn>
+            <GridColumn Field=@nameof(Match.MatchNumber) AutoFit="false" HeaderText="No." Width="80px"></GridColumn>
+            <GridColumn Field=@nameof(Match.Date) AutoFit="false" HeaderText="Match date" Format="dd/MM/yyyy HH:mm" Type="ColumnType.DateTime" Width="135px"></GridColumn>
             @for (int i = 0; i < 3; i++)
             {
                 var headName = "T" + (i + 1);
                 int index = i;
-                <GridColumn HeaderText="@headName" AutoFit="true" Width="auto">
+                <GridColumn HeaderText="@headName" AutoFit="false" Width="50px">
                     <Template>
                         @{
                             var match = (Match) context;
@@ -30,13 +30,13 @@
                     </Template>
                 </GridColumn>
             }
-            <GridColumn Field="Alliances.Blue.Score" AutoFit="true" HeaderText="Score" TextAlign="TextAlign.Right" Width="auto"></GridColumn>
-            <GridColumn Field="Alliances.Red.Score" AutoFit="true" HeaderText="Score" TextAlign="TextAlign.Left" Width="auto"></GridColumn>
+            <GridColumn Field="Alliances.Blue.Score" AutoFit="false" HeaderText="Score" TextAlign="TextAlign.Right" Width="100px"></GridColumn>
+            <GridColumn Field="Alliances.Red.Score" AutoFit="false" HeaderText="Score" TextAlign="TextAlign.Left" Width="100px"></GridColumn>
             @for (int i = 0; i < 3; i++)
             {
                 var headName = "T" + (i + 1);
                 int index = i;
-                <GridColumn HeaderText="@headName" AutoFit="true" Width="auto">
+                <GridColumn HeaderText="@headName" AutoFit="false" Width="50px">
                     <Template>
                         @{
                             var match = (Match) context;
@@ -46,7 +46,7 @@
                     </Template>
                 </GridColumn>
             }
-            <GridColumn HeaderText="Winner" AutoFit="true" Width="auto"></GridColumn>
+            <GridColumn HeaderText="Win" AutoFit="false" Width="70px"></GridColumn>
         </GridColumns>
     </SfGrid>
     
@@ -84,7 +84,6 @@
     private void SavePageNumber()
     {
         syncStorageService.SetItem("MatchGridPage." + Settings.PagingScopeName, grid.PageSettings.CurrentPage);
-        grid.GoToPageAsync(1);
     }
 
 
@@ -144,7 +143,7 @@
         {
             args.Cell.AddClass(new[] {"red"});
         }
-        else if (args.Column.HeaderText == "Winner") //"WinningAlliance" Cell color
+        else if (args.Column.HeaderText == "Win") //"WinningAlliance" Cell color
         {
             args.Cell.AddClass(new[] {args.Data.WinningAlliance});
         }
