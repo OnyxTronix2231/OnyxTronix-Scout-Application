@@ -23,7 +23,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             Mapper = mapper;
         }
 
-        public virtual async Task<ActionResult<TDtoEntity>> Get(int id)
+        public virtual async Task<ActionResult<TDtoEntity>> Get(string id)
         {
             var entity = await Context.Set<TDbEntity>().FindAsync(id);
             if (entity == null)
@@ -36,7 +36,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
 
         public virtual async Task<ActionResult<IEnumerable<TDtoEntity>>> GetAll()
         {
-            return new OkObjectResult(Mapper.Map<IEnumerable<TDtoEntity>>(await Context.Set<TDbEntity>().ToListAsync()));
+            return new OkObjectResult(Mapper.Map<IEnumerable<TDtoEntity>>(await Context.Set<TDbEntity>().AsQueryable().ToListAsync()));
         }
 
         public virtual async Task<ActionResult> Add(TDtoEntity form)
@@ -52,9 +52,9 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         //    return await context.Set<DbEntity>().Where(predicate).ToListAsync();
         //}
 
-        public virtual async Task<ActionResult> Remove(int id)
+        public virtual async Task<ActionResult> Remove(string id)
         {
-            var entity = await Context.Set<TDbEntity>().FindAsync(id.ToString());
+            var entity = await Context.Set<TDbEntity>().FindAsync(id);
             if (entity == null)
             {
                 return new NotFoundResult();

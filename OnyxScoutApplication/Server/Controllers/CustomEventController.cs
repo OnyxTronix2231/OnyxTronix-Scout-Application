@@ -25,20 +25,18 @@ namespace OnyxScoutApplication.Server.Controllers
         public async Task<ActionResult> CreateCustomEvent([FromBody] CustomEventDto customEvent)
         {
             var response = await unitOfWork.CustomEvents.Add(customEvent);
-            await unitOfWork.Complete();
             return response;
         }
         
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCustomEvent(int id, [FromBody] CustomEventDto scoutFormModel)
+        public async Task<ActionResult> UpdateCustomEvent(string id, [FromBody] CustomEventDto scoutFormModel)
         {
             var response = await unitOfWork.CustomEvents.Update(id, scoutFormModel);
-            await unitOfWork.Complete();
             return response;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<CustomEventDto>> GetById(int id)
+        public async Task<ActionResult<CustomEventDto>> GetById(string id)
         {
             return await unitOfWork.CustomEvents.GetEventWithMatchesById(id);
         }

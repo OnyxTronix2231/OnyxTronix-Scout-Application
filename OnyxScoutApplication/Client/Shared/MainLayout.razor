@@ -1,5 +1,6 @@
 ﻿@using Microsoft.JSInterop;
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
+@using Action = System.Action
 
 @inherits LayoutComponentBase
 @inject NotificationManager notificationManager
@@ -18,7 +19,7 @@
     <div class="main">
         <div class="top-row px-4 auth">
             <LoginDisplay/>
-            <span>V1.0.1</span>
+            <span>V2.1.1</span>
         </div>
         <div class="content px-4">
             @if (finishedInit)
@@ -68,12 +69,12 @@
     {
         Console.WriteLine("New version available");
         StateHasChanged();
-        notificationManager.Notify("Update available", "Please refresh the page", NotificationType.Warning, 0,
-            new Syncfusion.Blazor.Notifications.ToastButton {Content = "Refresh", OnClick = EventCallback.Factory.Create(this, RefreshPage)});
+        await notificationManager.NotifyAsync("Update available", "Please refresh the page", NotificationType.Warning, 
+            0, new NotficationButton { Content = "Refresh", Action = RefreshPage });
         return await Task.FromResult("Alerted client");
     }
 
-    private void RefreshPage(MouseEventArgs mouseEventArgs)
+    private void RefreshPage(object arg)
     {
         navigationManager.NavigateTo("/", true);
     }

@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 {
     public class FieldDto : IComparable<FieldDto>
     {
-        public int Id { get; set; }
-
-       public int? FieldStageId { get; set; }
-       
-       public int? FieldId { get; set; }
+        public Guid Id { get; set; }
 
         public string Name { get; set; }
 
@@ -62,7 +58,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
     {
         private string name;
         private int index;
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public string Name
         {

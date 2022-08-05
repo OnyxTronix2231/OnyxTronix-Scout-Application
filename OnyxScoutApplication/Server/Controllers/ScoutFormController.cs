@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Amazon.S3;
-using IdentityServer4.Extensions;
+using Duende.IdentityServer.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -50,7 +50,7 @@ namespace OnyxScoutApplication.Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<FormDto>> Get(int id)
+        public async Task<ActionResult<FormDto>> Get(string id)
         {
             var result = await unitOfWork.ScoutForms.GetWithFields(id);
             return result;
@@ -59,8 +59,11 @@ namespace OnyxScoutApplication.Server.Controllers
         [HttpPost("SaveImage/{teamNumber:int}/{keyName}")]
         public async Task<ActionResult> SaveImage(int teamNumber, string keyName, [FromForm] IEnumerable<IFormFile> files)
         {
-            long maxFileSize = 1024 * 1024 * 15;
             var form = await unitOfWork.ScoutForms.GetByTeamAndKey(teamNumber, keyName, ScoutFormType.Pit);
+            if (form.Value == null)
+            {
+                return form.Result;
+            }
             var file = files.ElementAt(0);
             var untrustedFileName = file.FileName;
             var trustedFileNameForDisplay =
@@ -130,7 +133,7 @@ namespace OnyxScoutApplication.Server.Controllers
         //}
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateScoutForm(int id, [FromBody] FormDto formModel)
+        public async Task<ActionResult> UpdateScoutForm(string id, [FromBody] FormDto formModel)
         {
             if (!User.IsInRole(Role.Admin.ToString()) && User.GetDisplayName() != formModel.WriterUserName)
             {
@@ -138,7 +141,6 @@ namespace OnyxScoutApplication.Server.Controllers
                                                     $" {formModel.WriterUserName} can edit this form!");
             }
             var response = await unitOfWork.ScoutForms.Update(id, formModel);
-            await unitOfWork.Complete();
             return response;
         }
 
@@ -146,10 +148,9 @@ namespace OnyxScoutApplication.Server.Controllers
         public async Task<ActionResult> CreateScoutForm([FromBody] FormDto formModel)
         {
             if (!ModelState.IsValid) 
-                return ResultCode(System.Net.HttpStatusCode.BadRequest, "Invalid inputs!");
+                return ResultCode(HttpStatusCode.BadRequest, "Invalid inputs!");
             
             var response = await unitOfWork.ScoutForms.Add(formModel);
-            await unitOfWork.Complete();
             return response;
 
         }

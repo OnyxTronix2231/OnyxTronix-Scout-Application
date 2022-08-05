@@ -11,9 +11,9 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
 {
     public interface IScoutFormRepository : IRepository<FormDto>
     {
-        Task<ActionResult<FormDto>> GetWithFields(int id);
+        Task<ActionResult<FormDto>> GetWithFields(string id);
 
-        Task<ActionResult> Update(int id, FormDto formFormatDto);
+        Task<ActionResult> Update(string id, FormDto formFormatDto);
         Task<ActionResult<IEnumerable<FormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey,
             ScoutFormType scoutFormType);
         Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey, ScoutFormType scoutFormType);

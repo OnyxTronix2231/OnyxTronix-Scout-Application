@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using OnyxScoutApplication.Client.Others.Managers;
 using Syncfusion.Blazor.Notifications;
 using System.Collections.Generic;
@@ -15,24 +16,23 @@ namespace OnyxScoutApplication.Client.Others.Objects
         protected string Title { get; private set; }
         protected string Message { get; private set; }
         protected int Timeout { get; private set; }
-        protected ToastButton[] ToastButtons { get; private set; }
+        protected NotficationButton[] Buttons { get; private set; }
         protected NotificationType NotificationType { get; private set; }
         //protected bool IsVisible { get; set; }
 
         protected override void OnInitialized()
         {
-            NotificationManager.OnShow += OnShow;
+            NotificationManager.OnShow =
+                new EventCallback<NotificationManager.NotificationEventArgs>(this, (Action<NotificationManager.NotificationEventArgs>) OnShow);
         }
 
-        protected virtual void OnShow(string title, string message, NotificationType notificationType, int timeout,
-            params ToastButton[] toastButtons)
+        protected virtual void OnShow(NotificationManager.NotificationEventArgs obj)
         {
-            Title = title;
-            Message = message;
-            NotificationType = notificationType;
-            Timeout = timeout;
-            ToastButtons = toastButtons;
-            //IsVisible = true;
+            Title = obj.Title;
+            Message = obj.Message;
+            NotificationType = obj.NotificationType;
+            Timeout = obj.Timeout;
+            Buttons = obj.Buttons;
             StateHasChanged();
         }
     }

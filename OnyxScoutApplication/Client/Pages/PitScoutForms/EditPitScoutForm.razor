@@ -1,4 +1,4 @@
-﻿@page "/PitScoutForm/Edit/{Id:int}"
+﻿@page "/PitScoutForm/Edit/{Id}"
 @inject HttpClientManager http
 @inject NavigationManager navigationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
@@ -13,7 +13,7 @@
 @code {
 
     [Parameter]
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     private FormDto form;
     private ScoutFromComponent scoutForm;
@@ -81,9 +81,9 @@
 
     private async Task OnValidSubmit()
     {
-        if (!await http.TryPutJson("ScoutForm/" + Id, form))
+       // if (!await http.TryPutJson("ScoutForm/" + Id, form))
         {
-            return;
+          //  return;
         }
         
         if (scoutForm.Content != null)

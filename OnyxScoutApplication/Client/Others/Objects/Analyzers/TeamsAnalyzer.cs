@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Threading.Tasks;
 using OnyxScoutApplication.Client.Others.Extensions;
 using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
@@ -45,9 +46,9 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
         
         private List<FieldDto> scoutFormFieldsToCalculate;
 
-        protected override void OnParametersSet()
+        protected override async Task OnParametersSetAsync()
         {
-            //List<FieldDto> combinedFields = new List<FieldDto>();
+//List<FieldDto> combinedFields = new List<FieldDto>();
             // scoutFormFieldsToCalculate = new List<FieldDto>(Fields);
             scoutFormFieldsToCalculate = ScoutFormFormatDto.FieldsInStages.SelectMany(i => i.Fields.WithCascadeFields()
                 .Where(f => f.FieldType != FieldType.TextField)).ToList();
@@ -68,7 +69,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                         else
                         {
                             NavigationManager.NavigateTo("EventAnalytics/Settings");
-                            NotificationManager.Notify("Please update the event settings",
+                            await NotificationManager.NotifyAsync("Please update the event settings",
                                 $"Missing scout forms field: {field.Name}", NotificationType.Warning);
                         }
                     }
@@ -87,6 +88,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             CalculateData();
         }
 
+
         private void CalculateData()
         {
             var data = new List<ExpandoObject>();
@@ -103,7 +105,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 foreach (var avg in avgs)
                 {
                     var teamAvg = avg;
-                    rows.Add(avg.Field.Id.ToString(), teamAvg.GetFormattedAverage().Value);
+                    rows.Add(avg.Field.Id!.ToString(), teamAvg.GetFormattedAverage().Value);
                     rows.Add("RawValue" + avg.Field.Id, teamAvg.GetRelativeValue());
                 }
 
