@@ -1,4 +1,4 @@
-﻿@page "/ScoutForm/View/{Id:int}"
+﻿@page "/ScoutForm/View/{Id}"
 @inject HttpClientManager http
 @inject NavigationManager navigationManager
 @inject ILocalStorageService localStorage
@@ -14,13 +14,13 @@
 @code {
 
     [Parameter]
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     private FormDto form;
 
     protected override async Task OnInitializedAsync()
     {
-        form = await http.GetJson<FormDto>("ScoutForm/ " + Id);
+        form = await http.GetJson<FormDto>("ScoutForm/" + Id);
         if (form == null)
         {
             navigationManager.NavigateTo("/");
