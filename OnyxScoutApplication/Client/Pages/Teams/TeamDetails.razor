@@ -121,6 +121,10 @@
             StateHasChanged();
             return;
         }
-        await jsRuntime.InvokeVoidAsync("open", $"ScoutForm/View/{teamInMatch.Form.Id}", "_blank");
+
+        if (teamInMatch.Form is not null)
+        {
+            await jsRuntime.InvokeVoidAsync("open", $"ScoutForm/View/{teamInMatch.Form.Id}", "_blank");
+        }
     }
 }
