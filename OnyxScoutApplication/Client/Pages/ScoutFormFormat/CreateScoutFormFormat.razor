@@ -3,8 +3,8 @@
 @using OnyxScoutApplication.Client.Pages.ScoutFormFormat.Components
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
-@inject HttpClientManager http
-@inject NavigationManager navigationManager
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
 @attribute [OnyxAuthorize(Role = Role.Admin)]
 
 <h3>Create</h3>
@@ -17,9 +17,9 @@
 
     private async Task Create()
     {
-        if (await http.TryPostJson("ScoutFormFormat", scoutFormFormat))
+        if (await Http.TryPostJson("ScoutFormFormat", scoutFormFormat))
         {
-            navigationManager.NavigateTo("ScoutFormFormats");
+            NavigationManager.NavigateTo("ScoutFormFormats");
         }
     }
 

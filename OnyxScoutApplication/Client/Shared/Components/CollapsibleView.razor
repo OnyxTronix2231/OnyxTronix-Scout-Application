@@ -2,7 +2,7 @@
 
 @{ var icon = "e-icons " + (IsCollapsed ? "e-triangleDown" : "e-triangleRight"); }
 <div class="e-icons">
-    <SfButton type="button"  @oninput="@(async i => await ValueChanged.InvokeAsync(IsCollapsed))" CssClass="e-primary e-round" 
+    <SfButton type="button"  @oninput="@(async _ => await ValueChanged.InvokeAsync(IsCollapsed))" CssClass="e-primary e-round" 
               IconCss="@icon" @onclick="@(() => { IsCollapsed = !IsCollapsed; })"/>
 </div>
 

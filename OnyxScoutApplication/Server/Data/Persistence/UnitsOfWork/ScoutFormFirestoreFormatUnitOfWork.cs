@@ -10,11 +10,9 @@ namespace OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork
 {
     public class ScoutFormFaunaFormatUnitOfWork : IScoutFormFormatUnitOfWork
     {
-        private readonly FirestoreDb client;
 
         public ScoutFormFaunaFormatUnitOfWork(FirestoreDb client, IMapper mapper)
         {
-            this.client = client;
             ScoutFormFormats = new ScoutFormFormatFirestoreRepository(client, mapper);
         }
 

@@ -41,7 +41,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
                 return ResultCode(System.Net.HttpStatusCode.BadRequest, "This scout form already exists!");
             }
 
-            return await base.Add(form);;
+            return await base.Add(form);
         }
 
         public async Task<ActionResult<FormDto>> GetWithFields(string id)

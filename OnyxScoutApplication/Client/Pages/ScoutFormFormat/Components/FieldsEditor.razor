@@ -34,7 +34,7 @@
         <ValidationMessage For="@(() => field.FieldType)"/>
     </div>
     <br/>
-    <CollapsibleView ValueChanged="@(i => field.IsCollapsed = !i)"/>
+    <CollapsibleView ValueChanged="@(b => field.IsCollapsed = !b)"/>
     <div class="form-group collapse @(!field.IsCollapsed ? "show" : "")" style="padding-left:2em">
         @switch (field.FieldType)
         {

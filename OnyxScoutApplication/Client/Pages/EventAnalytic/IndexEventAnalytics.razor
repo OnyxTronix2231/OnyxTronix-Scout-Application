@@ -1,11 +1,11 @@
 ﻿@page "/EventAnalytics"
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
-@inject ILocalStorageService localStorage
-@inject ISessionStorageService sessionStorage
-@inject HttpClientManager http
-@inject NavigationManager navigationManager
-@inject NotificationManager notificationManager
+@inject ILocalStorageService LocalStorage
+@inject ISessionStorageService SessionStorage
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
+@inject NotificationManager NotificationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (teams != null)
@@ -23,27 +23,27 @@
 
     protected override async Task OnInitializedAsync()
     {
-        selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         if (selectedEvent is null)
         {
-            await notificationManager.NotifyAsync("Please select an event first", "", NotificationType.Warning);
-            navigationManager.NavigateTo("/");
+            await NotificationManager.NotifyAsync("Please select an event first", "", NotificationType.Warning);
+            NavigationManager.NavigateTo("/");
             return;
         }
         
-        format = await http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
         if (format is null)
         {
-            navigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/");
             return;
         }
 
-        scoutForms = await http.GetJson<List<FormDto>>("ScoutForm/GetAllByEventWithData/" + selectedEvent.Key);
-        if (await localStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
+        scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEventWithData/" + selectedEvent.Key);
+        if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
         {
-            analyticSettings = await localStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
+            analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
-        teams = await sessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
+        teams = await SessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
     }
 
 }

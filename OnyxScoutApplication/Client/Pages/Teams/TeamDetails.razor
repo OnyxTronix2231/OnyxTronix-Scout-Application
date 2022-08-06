@@ -3,12 +3,11 @@
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using System.IO
-@inject HttpClientManager http
-@inject HttpClient httpClient
-@inject ILocalStorageService localStorage
-@inject ISessionStorageService sessionStorage
-@inject NavigationManager navigationManager
-@inject IJSRuntime jsRuntime
+@inject HttpClientManager Http
+@inject ILocalStorageService LocalStorage
+@inject ISessionStorageService SessionStorage
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
 
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
@@ -73,23 +72,23 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var teams = await sessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
+        var teams = await SessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
         var team = teams.SingleOrDefault(i => i.TeamNumber == TeamNumber);
         if (team is null)
         {
-            navigationManager.NavigateTo("");
+            NavigationManager.NavigateTo("");
             return;
         }
 
         teamName = team.Nickname;
         
-        selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         if (selectedEvent == null)
         {
             return;
         }
-        var format = await http.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{selectedEvent.Year}");
-        var result = await http.GetJson<List<FormDto>>($"ScoutForm/GetAllByTeam/{TeamNumber}/{selectedEvent.Key}");
+        var format = await Http.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{selectedEvent.Year}");
+        var result = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByTeam/{TeamNumber}/{selectedEvent.Key}");
         calculatedScoutDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
         foreach (var fieldsInStage in format.FieldsInStages)
         {
@@ -98,12 +97,12 @@
         }
         
         data = result.OrderBy(i => i.KeyName).ToList();
-        matches = (await http.GetJson<List<Match>>
+        matches = (await Http.GetJson<List<Match>>
             ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))
             .OrderBy(i => i.Date).ToList();
         
-        var pirScoutFormat = await http.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{selectedEvent.Year}/{ScoutFormType.Pit}");
-        pitScoutForms = await http.GetJson<List<FormDto>>($"ScoutForm/GetAllByTeam/{TeamNumber}/{selectedEvent.Key}/{ScoutFormType.Pit}");
+        var pirScoutFormat = await Http.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{selectedEvent.Year}/{ScoutFormType.Pit}");
+        pitScoutForms = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByTeam/{TeamNumber}/{selectedEvent.Key}/{ScoutFormType.Pit}");
         calculatedPitScoutDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
         foreach (var fieldsInStage in pirScoutFormat.FieldsInStages)
         {
@@ -116,7 +115,7 @@
     {
         if (teamInMatch.TeamNumber != TeamNumber)
         {
-            navigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber);
+            NavigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber);
             await OnInitializedAsync();
             StateHasChanged();
             return;
@@ -124,7 +123,7 @@
 
         if (teamInMatch.Form is not null)
         {
-            await jsRuntime.InvokeVoidAsync("open", $"ScoutForm/View/{teamInMatch.Form.Id}", "_blank");
+            await JsRuntime.InvokeVoidAsync("open", $"ScoutForm/View/{teamInMatch.Form.Id}", "_blank");
         }
     }
 }

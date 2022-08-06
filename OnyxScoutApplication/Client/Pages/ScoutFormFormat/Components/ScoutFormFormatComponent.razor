@@ -31,7 +31,7 @@
         <br/>
         @if (Type == FormType.Update)
         {
-            <AuthorizeView Context="Auth" Roles="@(Role.Owner.ToString())">
+            <AuthorizeView Context="_" Roles="@(Role.Owner.ToString())">
                 <div>
                     <SfButton type="button" CssClass="@cssClass" IsToggle="true" Content="@safeModeButtonText"
                               @onclick="ToggleSafeMode"/>
