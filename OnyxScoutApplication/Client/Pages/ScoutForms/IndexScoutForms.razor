@@ -2,8 +2,8 @@
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using System.Security.Claims
 @using FailureEventArgs = Syncfusion.Blazor.Inputs.FailureEventArgs
-@inject NavigationManager navigationManager
-@inject HttpClientManager http
+@inject NavigationManager NavigationManager
+@inject HttpClientManager Http
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 <h1>Scout forms</h1>
 @if (scoutForms == null)
@@ -78,17 +78,11 @@ else
     {
         var authState = await AuthenticationStateTask;
         user = authState.User;
-        scoutForms = await http.GetJson<List<FormDto>>($"ScoutForm/GetAllByType/{ScoutFormType.MainGame}");
+        scoutForms = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByType/{ScoutFormType.MainGame}");
     }
 
     private void Edit(FormDto form)
     {
-        navigationManager.NavigateTo("ScoutForm/Edit/" + form.Id);
+        NavigationManager.NavigateTo("ScoutForm/Edit/" + form.Id);
     }
-    
-    private void View(FormDto form)
-    {
-        navigationManager.NavigateTo("ScoutForm/View/" + form.Id);
-    }
-
 }

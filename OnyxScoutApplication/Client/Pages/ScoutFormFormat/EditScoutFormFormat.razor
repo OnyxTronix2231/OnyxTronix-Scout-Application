@@ -1,8 +1,8 @@
 ﻿@page "/ScoutFormFormat/Edit/{id}"
 @using OnyxScoutApplication.Client.Pages.ScoutFormFormat.Components
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
-@inject HttpClientManager http
-@inject NavigationManager navigationManager
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
 @attribute [OnyxAuthorize(Role = Role.Admin)]
 
 <h3>Edit</h3>
@@ -22,14 +22,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        scoutFormFormat = await http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/" + Id);
+        scoutFormFormat = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/" + Id);
     }
 
     private async Task Update()
     {
-        if (await http.TryPutJson("ScoutFormFormat/" + Id, scoutFormFormat))
+        if (await Http.TryPutJson("ScoutFormFormat/" + Id, scoutFormFormat))
         {
-            navigationManager.NavigateTo("ScoutFormFormats");
+            NavigationManager.NavigateTo("ScoutFormFormats");
         }
     }
 

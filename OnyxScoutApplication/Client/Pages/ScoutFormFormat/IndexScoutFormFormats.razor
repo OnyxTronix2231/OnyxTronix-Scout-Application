@@ -1,7 +1,7 @@
 ﻿@page "/ScoutFormFormats"
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
-@inject NavigationManager navigationManager
-@inject HttpClientManager http
+@inject NavigationManager NavigationManager
+@inject HttpClientManager Http
 @attribute [OnyxAuthorize(Role = Role.Admin)]
 <h1>ScoutFormFormats</h1>
 <div class="form-group">
@@ -40,12 +40,12 @@ else
 
     private void Edit(ScoutFormFormatDto scoutFormFormat)
     {
-        navigationManager.NavigateTo("ScoutFormFormat/Edit/" + scoutFormFormat.Id);
+        NavigationManager.NavigateTo("ScoutFormFormat/Edit/" + scoutFormFormat.Id);
     }
 
     protected override async Task OnInitializedAsync()
     {
-        scoutFormFormats = await http.GetJson<List<ScoutFormFormatDto>>("ScoutFormFormat");
+        scoutFormFormats = await Http.GetJson<List<ScoutFormFormatDto>>("ScoutFormFormat");
     }
 
 }

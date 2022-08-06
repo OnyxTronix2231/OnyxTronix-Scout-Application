@@ -3,12 +3,12 @@
 @using Action = System.Action
 
 @inherits LayoutComponentBase
-@inject NotificationManager notificationManager
-@inject NavigationManager navigationManager
-@inject HttpClientManager http
-@inject ISyncLocalStorageService localStorage
-@inject ISyncSessionStorageService sessionStorage
-@inject IJSRuntime jsRuntime
+@inject NotificationManager NotificationManager
+@inject NavigationManager NavigationManager
+@inject HttpClientManager Http
+@inject ISyncLocalStorageService LocalStorage
+@inject ISyncSessionStorageService SessionStorage
+@inject IJSRuntime JsRuntime
 
 <div class="page">
     <div class="sidebar">
@@ -35,31 +35,31 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await jsRuntime
+        await JsRuntime
             .InvokeAsync<object>(
                 "blazorFuncs.registerClient",
                 new object[] {DotNetObjectReference.Create(this)}
             );
 
-        if (localStorage.ContainKey("EventSelector/SelectedEventKey"))
+        if (LocalStorage.ContainKey("EventSelector/SelectedEventKey"))
         {
-            Event selectedEvent = localStorage.GetItem<Event>("EventSelector/SelectedEventKey");
-            var matches = await http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
-            sessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
+            Event selectedEvent = LocalStorage.GetItem<Event>("EventSelector/SelectedEventKey");
+            var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
+            SessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
 
-            var scoutForms = await http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
-            sessionStorage.SetItem("ScoutForms.All", scoutForms);
+            var scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+            SessionStorage.SetItem("ScoutForms.All", scoutForms);
 
-            var events = await http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
+            var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
             if (events != null) //user is probably not authorized 
             {
                 events = events.Where(i => string.Equals(i.Country, selectedEvent.Country,
                     StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
-                sessionStorage.SetItem("TheBlueAlliance.AllEvents", events);
+                SessionStorage.SetItem("TheBlueAlliance.AllEvents", events);
             }
             
-            var teams = await http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
-            sessionStorage.SetItem("TheBlueAlliance.AllTeams", teams);
+            var teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
+            SessionStorage.SetItem("TheBlueAlliance.AllTeams", teams);
         }
         finishedInit = true;
     }
@@ -69,14 +69,14 @@
     {
         Console.WriteLine("New version available");
         StateHasChanged();
-        await notificationManager.NotifyAsync("Update available", "Please refresh the page", NotificationType.Warning, 
+        await NotificationManager.NotifyAsync("Update available", "Please refresh the page", NotificationType.Warning, 
             0, new NotficationButton { Content = "Refresh", Action = RefreshPage });
         return await Task.FromResult("Alerted client");
     }
 
     private void RefreshPage(object arg)
     {
-        navigationManager.NavigateTo("/", true);
+        NavigationManager.NavigateTo("/", true);
     }
 
 }

@@ -134,7 +134,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             DocumentReference docRef = CollectionReference.Document(eventSource.Id);
             foreach (var match in eventSource.Matches)
             {
-                match.Date = DateTime.SpecifyKind(match.Date, DateTimeKind.Utc); ;
+                match.Date = DateTime.SpecifyKind(match.Date, DateTimeKind.Utc); 
             }
             await docRef.SetAsync(Mapper.Map<CustomEvent>(eventSource));
             return await Task.Run(() => new OkResult());

@@ -1,6 +1,6 @@
 ﻿@page "/PitScoutForm/Edit/{Id}"
-@inject HttpClientManager http
-@inject NavigationManager navigationManager
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (form != null)
@@ -20,17 +20,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var oldForm = await http.GetJson<FormDto>("ScoutForm/" + Id);
+        var oldForm = await Http.GetJson<FormDto>("ScoutForm/" + Id);
         if (oldForm == null)
         {
-            navigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/");
             return;
         }
         
-        form = await http.GetJson<FormDto>($"ScoutFormFormat/TemplateScoutFormByYear/{oldForm.Year}/{oldForm.Type}");
+        form = await Http.GetJson<FormDto>($"ScoutFormFormat/TemplateScoutFormByYear/{oldForm.Year}/{oldForm.Type}");
         if (form == null)
         {
-            navigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/");
             return;
         }
         MapForms(oldForm, form);
@@ -88,12 +88,12 @@
         
         if (scoutForm.Content != null)
         {
-            var success = await http.TryPostJson($"/ScoutForm/SaveImage/{form.TeamNumber}/{form.KeyName}", scoutForm.Content);
+            var success = await Http.TryPostJson($"/ScoutForm/SaveImage/{form.TeamNumber}/{form.KeyName}", scoutForm.Content);
             if (!success)
             {
                 return;
             }
         }
-        navigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/");
     }
 }

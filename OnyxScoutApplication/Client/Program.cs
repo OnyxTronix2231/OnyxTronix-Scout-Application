@@ -30,7 +30,7 @@ namespace OnyxScoutApplication.Client
             builder.RootComponents.Add<App>("#app");
 
             ConfigureServices(builder.Services, builder);
-            var app = builder.Build();
+            builder.Build();
             await builder.Build().RunAsync();
         }
 

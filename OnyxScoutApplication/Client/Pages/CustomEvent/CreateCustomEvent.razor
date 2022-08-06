@@ -1,8 +1,8 @@
 @page "/CustomEvents/Create"
 @using OnyxScoutApplication.Shared.Models.CustomeEventModels
-@inject HttpClientManager http
-@inject NavigationManager navigationManager
-@inject ILocalStorageService localStorage
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
 
 @attribute [OnyxAuthorize(Role = Role.Admin)]
 <h3>EditCustomEvent</h3>
@@ -16,8 +16,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var selectedYear = await localStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
-        var selectedCountry = await localStorage.GetItemAsync<string>("EventSelector/SelectedCountryFilter");
+        var selectedYear = await LocalStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
+        var selectedCountry = await LocalStorage.GetItemAsync<string>("EventSelector/SelectedCountryFilter");
         customEvent = new CustomEventDto()
         {
             Year = selectedYear,
@@ -27,9 +27,9 @@
 
     private async Task OnValidSubmit()
     {
-        if (await http.TryPostJson("CustomEvent", customEvent))
+        if (await Http.TryPostJson("CustomEvent", customEvent))
         {
-            navigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/");
         }
     }
 }

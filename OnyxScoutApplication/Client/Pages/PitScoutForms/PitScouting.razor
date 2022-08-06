@@ -1,9 +1,9 @@
 ﻿@page "/PitScouting"
-@inject HttpClientManager http
-@inject ILocalStorageService localStorage
-@inject ISyncLocalStorageService syncLocalStorage
-@inject NotificationManager notificationManager
-@inject NavigationManager navigationManager
+@inject HttpClientManager Http
+@inject ILocalStorageService LocalStorage
+@inject ISyncLocalStorageService SyncLocalStorage
+@inject NotificationManager NotificationManager
+@inject NavigationManager NavigationManager
 
 <h3>Pit scouting</h3>
 @if (teams != null)
@@ -34,14 +34,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         if (selectedEvent is null)
         {
-            await notificationManager.NotifyAsync("Please select event and year first!", "", NotificationType.Danger);
+            await NotificationManager.NotifyAsync("Please select event and year first!", "", NotificationType.Danger);
             return;
         }
-        teams = await http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
-        scoutForms = await http.GetJson<List<FormDto>>($"ScoutForm/GetAllByType/{ScoutFormType.Pit}");
+        teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
+        scoutForms = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByType/{ScoutFormType.Pit}");
 
     }
 
@@ -64,7 +64,7 @@
         {
             classes += "filledTeamForm ";
         }
-        else if (syncLocalStorage.ContainKey($"ScoutForm/{selectedEvent.Key}/{teamNumber}"))
+        else if (SyncLocalStorage.ContainKey($"ScoutForm/{selectedEvent.Key}/{teamNumber}"))
         {
             classes += "locallyFilledTeamForm ";
         }
@@ -79,10 +79,10 @@
     {
         if (scoutForms.Any(form => form.TeamNumber == team.TeamNumber && form.KeyName == selectedEvent.Key))
         {
-            navigationManager.NavigateTo($"TeamDetails/{team.TeamNumber}");
+            NavigationManager.NavigateTo($"TeamDetails/{team.TeamNumber}");
             return;
         }
-        navigationManager.NavigateTo($"PitScoutForm/Create/{team.TeamNumber}");
+        NavigationManager.NavigateTo($"PitScoutForm/Create/{team.TeamNumber}");
     }
 
 }
