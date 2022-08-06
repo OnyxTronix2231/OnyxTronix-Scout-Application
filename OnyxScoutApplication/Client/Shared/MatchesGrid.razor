@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.Rendering
-@inject NavigationManager navigationManager
-@inject ILocalStorageService storageService
-@inject ISyncLocalStorageService syncStorageService
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService StorageService
+@inject ISyncLocalStorageService SyncStorageService
 @if (Matches != null && Settings != null)
 {
     if (!string.IsNullOrWhiteSpace(Settings.PagingScopeName))
@@ -74,16 +74,16 @@
     private async Task OnLoad(object obj)
     {
         if (!string.IsNullOrWhiteSpace(Settings.PagingScopeName) &&
-            await storageService.ContainKeyAsync("MatchGridPage." + Settings.PagingScopeName))
+            await StorageService.ContainKeyAsync("MatchGridPage." + Settings.PagingScopeName))
         {
-            var v = await storageService.GetItemAsync<int>("MatchGridPage." + Settings.PagingScopeName);
+            var v = await StorageService.GetItemAsync<int>("MatchGridPage." + Settings.PagingScopeName);
             await grid.GoToPageAsync(v);
         }
     }
 
     private void SavePageNumber()
     {
-        syncStorageService.SetItem("MatchGridPage." + Settings.PagingScopeName, grid.PageSettings.CurrentPage);
+        SyncStorageService.SetItem("MatchGridPage." + Settings.PagingScopeName, grid.PageSettings.CurrentPage);
     }
 
 
@@ -106,7 +106,7 @@
             classes += "filledTeamForm ";
             classes += "clickable ";
         }
-        else if(syncStorageService.ContainKey($"ScoutForm/{matchName}/{teamNumber}"))
+        else if(SyncStorageService.ContainKey($"ScoutForm/{matchName}/{teamNumber}"))
         {
             classes += "locallyFilledTeamForm ";
         }

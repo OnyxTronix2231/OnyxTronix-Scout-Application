@@ -1,9 +1,9 @@
 ﻿@page "/EventAnalytics/Settings"
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
-@inject ILocalStorageService localStorage
-@inject HttpClientManager http
-@inject NavigationManager navigationManager
-@inject NotificationManager notificationManager
+@inject ILocalStorageService LocalStorage
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
+@inject NotificationManager NotificationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 <h3>Select numric field to show combined result</h3>
@@ -70,22 +70,22 @@
 
     protected override async Task OnInitializedAsync()
     {
-        selectedEvent = await localStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         if (selectedEvent == null)
         {
-            await notificationManager.NotifyAsync("Please select an event first", "", NotificationType.Warning);
-            navigationManager.NavigateTo("/");
+            await NotificationManager.NotifyAsync("Please select an event first", "", NotificationType.Warning);
+            NavigationManager.NavigateTo("/");
             return;
         }
-        format = await http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
         if (format == null)
         {
-            navigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/");
             return;
         }
-        if (await localStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
+        if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
         {
-            analyticSettings = await localStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
+            analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
         else
         {
@@ -108,13 +108,13 @@
         }
         combinedFields[index] = args.ItemData;
     }
-    
+
     private async Task SaveSettings()
     {
         analyticSettings.CombinedFields.ForEach(i => i.Fields.RemoveAll(f => string.IsNullOrEmpty(f.Name)));
         analyticSettings.CombinedFields.RemoveAll(i => i.Fields.Count <= 1);
-        await localStorage.SetItemAsync("EventAnalyticSettings/" + selectedEvent.Key, analyticSettings);
-        navigationManager.NavigateTo("EventAnalytics");
+        await LocalStorage.SetItemAsync("EventAnalyticSettings/" + selectedEvent.Key, analyticSettings);
+        NavigationManager.NavigateTo("EventAnalytics");
     }
 
     private static void AddField(CombinedFieldsDto combinedFields)

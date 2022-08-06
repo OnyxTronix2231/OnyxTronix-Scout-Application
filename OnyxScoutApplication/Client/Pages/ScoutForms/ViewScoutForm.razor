@@ -1,7 +1,6 @@
 ﻿@page "/ScoutForm/View/{Id}"
-@inject HttpClientManager http
-@inject NavigationManager navigationManager
-@inject ILocalStorageService localStorage
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (form != null)
@@ -20,10 +19,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        form = await http.GetJson<FormDto>("ScoutForm/" + Id);
+        form = await Http.GetJson<FormDto>("ScoutForm/" + Id);
         if (form == null)
         {
-            navigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/");
         }
     }
 }

@@ -1,5 +1,5 @@
-@inject HttpClientManager http
-@inject ILocalStorageService localStorage
+@inject HttpClientManager Http
+@inject ILocalStorageService LocalStorage
 
 <EditForm Model="@CustomEvent" OnValidSubmit="@OnValidSubmit">
     <FluentValidationValidator DisableAssemblyScanning="@true"/>
@@ -117,8 +117,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var selectedYear = await localStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
-        teams = await http.GetJson<List<CustomTeamDto>>("TheBlueAlliance/GetAllTeamsByDistrict/" + selectedYear + "isr"); //TODO: districts names handling
+        var selectedYear = await LocalStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
+        teams = await Http.GetJson<List<CustomTeamDto>>("TheBlueAlliance/GetAllTeamsByDistrict/" + selectedYear + "isr"); //TODO: districts names handling
         if (CustomEvent.Matches.Any())
         {
             return;

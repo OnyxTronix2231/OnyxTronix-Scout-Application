@@ -246,8 +246,13 @@ namespace OnyxScoutApplication.Server.Data
 
                 do
                 {
+                    async void Action(S3Object obj)
+                    {
+                        await client.DeleteObjectAsync(bucketName, obj.Key);
+                    }
+
                     response.S3Objects
-                        .ForEach(async obj => await client.DeleteObjectAsync(bucketName, obj.Key));
+                        .ForEach(Action);
 
                     // If the response is truncated, set the request ContinuationToken
                     // from the NextContinuationToken property of the response.
