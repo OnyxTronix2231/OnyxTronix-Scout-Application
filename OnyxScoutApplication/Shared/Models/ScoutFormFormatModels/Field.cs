@@ -56,6 +56,9 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
         [FirestoreProperty]
         public int Index { get; set; }
+
+        [FirestoreProperty]
+        public float Weight { get; set; } = 1;
     }
 
     [FirestoreData]

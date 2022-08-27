@@ -1,0 +1,48 @@
+﻿@page "/EventAnalytics/Leaderbaord"
+@inject ILocalStorageService LocalStorage
+@inject ISessionStorageService SessionStorage
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
+@inject NotificationManager NotificationManager
+<h3>Leaderbaord</h3>
+
+
+@if (teams != null)
+{
+    <EventLeaderboardGrid Teams="teams" ScoutFormFormatDto="format" ScoutForms="scoutForms"
+                       EventAnalyticSettings="analyticSettings"/>
+}
+
+
+@code {
+    private Event selectedEvent;
+    private List<FormDto> scoutForms = new();
+    private List<Team> teams = new();
+    private ScoutFormFormatDto format = new();
+    private EventAnalyticSettingsDto analyticSettings;
+
+    protected override async Task OnInitializedAsync()
+    {
+        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        if (selectedEvent is null)
+        {
+            await NotificationManager.NotifyAsync("Please select an event first", "", NotificationType.Warning);
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+        
+        format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        if (format is null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEventWithData/" + selectedEvent.Key);
+        if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
+        {
+            analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
+        }
+        teams = await SessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
+    }
+}

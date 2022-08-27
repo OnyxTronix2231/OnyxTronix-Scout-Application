@@ -53,7 +53,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
             scoutFormFieldsToCalculate = ScoutFormFormatDto.FieldsInStages.SelectMany(i => i.Fields.WithCascadeFields()
                 .Where(f => f.FieldType != FieldType.TextField)).ToList();
             ColumnsFields = scoutFormFieldsToCalculate.Select(i => new ColumnField
-                {Name = i.Name, MarkupName = new MarkupString(i.Name), Id = i.Id.ToString()}).ToList();
+                {Name = i.Name, MarkupName = new MarkupString(i.Name), Id = i.Id.ToString(), Weight = i.Weight}).ToList();
             if (EventAnalyticSettings != null)
             {
                 foreach (var combinedField in EventAnalyticSettings.CombinedFields)
@@ -179,6 +179,8 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
     public class ColumnField
     {
         public string Name { get; set; }
+
+        public float Weight { get; set; }
 
         public MarkupString MarkupName { get; set; }
 
