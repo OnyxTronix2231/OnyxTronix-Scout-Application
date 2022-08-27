@@ -23,6 +23,20 @@
         <InputText class="form-control" @bind-Value="field.Name"/>
         <ValidationMessage For="@(() => field.Name)"/>
     </div>
+    
+    @if (field.IsNumricField)
+    {
+        <div>
+            <label>Field weight</label>
+            <SfNumericTextBox Step=0.05f Format="p2" Max="1" Min="-1" @bind-Value="field.WeightPercent"/>
+            <ValidationMessage For="@(() => field.WeightPercent)"/>
+        </div>
+    }
+    else
+    {
+        field.WeightPercent = 1;
+    }
+
     <div>
         <label>Field type</label>
         <select class="form-control" @bind="field.FieldType" disabled="@(!safeToChnage)">

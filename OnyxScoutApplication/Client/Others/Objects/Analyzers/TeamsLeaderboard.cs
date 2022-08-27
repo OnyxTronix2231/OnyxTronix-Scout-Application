@@ -25,7 +25,7 @@ public class TeamsLeaderboard : TeamsAnalyzer
             {
                 string nameId = columnField.Id;
                 var score = float.Parse(teamData["RawValue" + nameId].ToString()!);
-                teamScore += score * columnField.Weight;
+                teamScore += score * columnField.WeightPercent;
             }
             TeamAndScore teamAndScore = new TeamAndScore()
             {

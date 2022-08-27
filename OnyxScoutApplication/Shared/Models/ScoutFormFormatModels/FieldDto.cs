@@ -42,11 +42,13 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
         public int Index { get; set; }
 
-        public float Weight { get; set; } = 1;
+        public float WeightPercent { get; set; }
 
         public bool IsCollapsed { get; set; } = true;
         
         public bool IsNew { get; set; }
+
+        public bool IsNumricField => FieldType != FieldType.TextField;
         
         public int CompareTo(FieldDto other)
         {
