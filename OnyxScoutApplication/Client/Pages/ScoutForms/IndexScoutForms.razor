@@ -78,7 +78,9 @@ else
     {
         var authState = await AuthenticationStateTask;
         user = authState.User;
-        scoutForms = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByType/{ScoutFormType.MainGame}");
+        var resScoutForms = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByType/{ScoutFormType.MainGame}");
+        resScoutForms.Sort();
+        scoutForms = resScoutForms;
     }
 
     private void Edit(FormDto form)
