@@ -1,9 +1,10 @@
-﻿@page "/ScoutForms"
+﻿@page "/LocalScoutForms"
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using System.Security.Claims
 @using FailureEventArgs = Syncfusion.Blazor.Inputs.FailureEventArgs
 @inject NavigationManager NavigationManager
 @inject HttpClientManager Http
+@inject ILocalStorageService LocalStorage
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 <h1>Scout forms</h1>
 @if (scoutForms == null)
@@ -14,6 +15,9 @@
 }
 else
 {
+    <SfButton  CssClass="e-success" @onclick="UploadAllAndDeleteLocally">
+        Upload all and delete locally
+    </SfButton>
     <SfGrid FrozenColumns="1" AllowTextWrap="false" DataSource="@scoutForms"
             AllowFiltering="true" AllowResizing="false" AllowSorting="true" AllowMultiSorting="true"
             ShowColumnChooser="true" Width="100%" Height="100%">
@@ -47,14 +51,13 @@ else
                     @{
                         var scoutForm = (FormDto)context;
                         <div>
-                            @{ bool isAllowedToEdit = user.Identity!.Name == scoutForm.WriterUserName
-                                                      || user.IsInRole(Role.Admin.ToString());}
-                            <SfButton CssClass="@(isAllowedToEdit ? "e-warning" : "")" @onclick="() => Edit(scoutForm)" 
-                                      Disabled="@(!isAllowedToEdit)">Edit
+                            <SfButton  CssClass="e-success" @onclick="() => UploadAndDeleteLocally(scoutForm)">
+                                Upload and delete locally
                             </SfButton>
-                            <ButtonTabOpener CssClass="e-info" Url="@($"ScoutForm/View/{scoutForm.Id}")" Style="margin-left :5px"  
-                                             Text="View">
-                            </ButtonTabOpener>
+                            
+                            <SfButton CssClass="e-danger" @onclick="() => DeleteFromLocalCache(scoutForm)">
+                                Delete from local cache
+                            </SfButton>
                         </div>
                     }
                 </Template>
@@ -73,18 +76,56 @@ else
     private Task<AuthenticationState> AuthenticationStateTask { get; set; }
     private ClaimsPrincipal user;
     private List<FormDto> scoutForms;
+    private Event selectedEvent;
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateTask;
         user = authState.User;
-        var resScoutForms = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByType/{ScoutFormType.MainGame}");
-        resScoutForms.Sort();
-        scoutForms = resScoutForms;
+        
+        if (!await LocalStorage.ContainKeyAsync("EventSelector/SelectedEventKey"))
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        
+        await UpdateLocalScoutForms();
+    //        await LocalStorage.SetItemAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}" ,form);
     }
 
-    private void Edit(FormDto form)
+    private async Task UpdateLocalScoutForms()
     {
-        NavigationManager.NavigateTo("ScoutForm/Edit/" + form.Id);
+        var keys = await LocalStorage.KeysAsync();
+        keys = keys.Where(k => k.StartsWith("ScoutForm/")).Where(k => k.Contains(selectedEvent.Key));
+        scoutForms = new List<FormDto>();
+        foreach (var key in keys)
+        {
+            scoutForms.Add(await LocalStorage.GetItemAsync<FormDto>(key));
+        }
+        StateHasChanged();
     }
+
+    private async Task DeleteFromLocalCache(FormDto scoutForm)
+    {
+        await LocalStorage.RemoveItemAsync($"ScoutForm/{scoutForm.KeyName}/{scoutForm.TeamNumber}");
+        await UpdateLocalScoutForms();
+    }
+
+    private async Task UploadAndDeleteLocally(FormDto scoutForm)
+    {
+        if (await Http.TryPostJson("ScoutForm", scoutForm))
+        {
+            await DeleteFromLocalCache(scoutForm);
+        }
+    }
+
+    private async Task UploadAllAndDeleteLocally()
+    {
+        foreach (var scoutForm in scoutForms)
+        {
+            await UploadAndDeleteLocally(scoutForm);
+        }
+    }
+
 }

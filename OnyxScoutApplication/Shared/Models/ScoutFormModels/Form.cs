@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Google.Cloud.Firestore;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 
@@ -9,6 +10,9 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
     {
         [FirestoreDocumentId]
         public string Id { get; set; }
+        
+        [FirestoreDocumentUpdateTimestamp]
+        public DateTimeOffset DateTime { get; set; }
 
         [FirestoreProperty]
         public int TeamNumber { get; set; }
