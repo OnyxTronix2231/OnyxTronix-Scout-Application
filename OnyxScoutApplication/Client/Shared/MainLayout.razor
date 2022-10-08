@@ -60,6 +60,10 @@
             
             var teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
             SessionStorage.SetItem("TheBlueAlliance.AllTeams", teams);
+            
+            
+            var form = await Http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + selectedEvent.Year);
+            SessionStorage.SetItem("ScoutFormFormat.TemplateScoutFormByYear." + selectedEvent.Year, form);
         }
         finishedInit = true;
     }

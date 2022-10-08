@@ -3,6 +3,7 @@
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
+@inject ISessionStorageService SessionStorage
 @inject NotificationManager NotificationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
@@ -32,7 +33,7 @@
 
         teamInMatch = await LocalStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
         
-        var newForm = await Http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + teamInMatch.Match.Date.Year);
+        var newForm = await SessionStorage.GetItemAsync<FormDto>("ScoutFormFormat.TemplateScoutFormByYear." + teamInMatch.Match.Date.Year);
         if (newForm == null)
         {
             NavigationManager.NavigateTo("/");
