@@ -4,12 +4,16 @@
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject ISessionStorageService SessionStorage
+@inject ILocalStorageService LocalStorage
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 <h1>Events</h1>
 
 <div>
     <EventSelector OnEventSelectionChange="UpdateMatchTable"></EventSelector>
+    <div style="float: right">
+        <SfButton class="e-warning" @onclick="RefreshData">Refresh</SfButton>
+    </div>
 </div>
 
 <div>
@@ -89,4 +93,40 @@
             NavigationManager.NavigateTo("TeamDetails/" + teamInMatch.TeamNumber);
         }
     }
+
+    private async Task RefreshData()
+    {
+        if (await LocalStorage.ContainKeyAsync("EventSelector/SelectedEventKey"))
+        {
+            Event selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+            var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
+            if (matches is not null)
+            {
+                await SessionStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
+            }
+
+            var scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+            if (scoutForms is not null)
+            {
+                await SessionStorage.SetItemAsync("ScoutForms.All", scoutForms);
+            }
+
+            var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
+            if (events != null) //user is probably not authorized 
+            {
+                events = events.Where(i => string.Equals(i.Country, selectedEvent.Country,
+                    StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
+                await SessionStorage.SetItemAsync("TheBlueAlliance.AllEvents", events);
+            }
+            
+            var teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
+            if (teams is not null)
+            {
+                await SessionStorage.SetItemAsync("TheBlueAlliance.AllTeams", teams);
+            }
+
+            await OnInitializedAsync();
+        }
+    }
+
 }
