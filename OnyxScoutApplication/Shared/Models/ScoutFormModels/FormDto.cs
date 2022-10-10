@@ -1,4 +1,6 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 
@@ -21,7 +23,32 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 
         public ScoutFormType Type { get; set; }
 
-        public string KeyName { get; set; }
+        public string KeyName
+        {
+            get => $"{EventName}_{MatchType}{MatchNumber}";
+            set
+            {
+                EventName = value.Split("_")[0];
+                var matchDetails = value.Contains("_") ? value.Split("_")[1] : "";
+                if (string.IsNullOrWhiteSpace(matchDetails))
+                {
+                    MatchType = "qm";
+                    MatchNumber = null;
+                    return;
+                }
+                MatchType = string.Join("", new Regex("[a-z]").Matches(matchDetails));
+                if (int.TryParse(string.Join("", new Regex("[0-9]").Matches(matchDetails)), out int res))
+                {
+                    MatchNumber = res;
+                }
+            }
+        }
+
+        public string EventName { get; set; }
+        
+        public string MatchType { get; set; }
+        
+        public int? MatchNumber { get; set; }
         
         public string WriterUserName { get; set; }
 
