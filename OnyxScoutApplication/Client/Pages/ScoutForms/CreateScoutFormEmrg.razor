@@ -3,6 +3,7 @@
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
+@inject ISessionStorageService SessionStorage
 @inject NotificationManager NotificationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
@@ -39,7 +40,7 @@
             return;
         }
         selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
-        form = await Http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + selectedEvent.Year);
+        form = await SessionStorage.GetItemAsync<FormDto>("ScoutFormFormat.TemplateScoutFormByYear." + selectedEvent.Year);
         if (form == null)
         {
             NavigationManager.NavigateTo("/");
