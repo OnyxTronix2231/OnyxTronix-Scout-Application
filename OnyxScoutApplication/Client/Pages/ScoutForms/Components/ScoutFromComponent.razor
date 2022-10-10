@@ -10,24 +10,35 @@
     <div class="form-group col-sm-5">
         <label for="teamNumber">Team number</label>
         <input class="form-control" disabled="@(!EmergencyMode)" style="@(TeamAllianceType switch
-                                           {
-                                               TeamAlliance.Blue => "background-color: #5c5cff",
-                                               TeamAlliance.Red => "background-color: #ff4949",
-                                               _ => ""
-                                               })" 
+                                                                        {
+                                                                            TeamAlliance.Blue => "background-color: #5c5cff",
+                                                                            TeamAlliance.Red => "background-color: #ff4949",
+                                                                            _ => ""
+                                                                            })" 
                type="number" id="teamNumber" @bind="@Form.TeamNumber"/>
+        <ValidationMessage For="@(() => Form.TeamNumber)"/>
     </div>
     <div class="form-group col-sm-5">
         <label for="year">Year</label>
         <input class="form-control" type="number" id="year" @bind="@Form.Year" readonly/>
     </div>
     <div class="form-group col-sm-5">
-        <label for="matchName">Key name</label>
-        <input class="form-control" disabled="@(!EmergencyMode)" type="text" id="matchName" @bind="@Form.KeyName"/>
+        <label for="eventName">Event name</label>
+        <input class="form-control" disabled="@true" type="text" id="eventName" @bind="@Form.EventName"/>
     </div>
     <div class="form-group col-sm-5">
-        <label for="matchName">Writer</label>
-        <input class="form-control" type="text" id="matchNumber" @bind="@Form.WriterUserName" readonly/>
+        <label for="matchType">Match type</label>
+        <SfDropDownList id="matchType" Enabled="@(EmergencyMode)" TValue="string" TItem="string" DataSource="matchTypes" @bind-Value="@Form.MatchType">
+        </SfDropDownList>
+    </div>
+    <div class="form-group col-sm-5">
+        <label for="matchNumber">Match number</label>
+        <input class="form-control" disabled="@(!EmergencyMode)" min="0" type="number" id="matchNumber" @bind="@Form.MatchNumber"/>
+        <ValidationMessage For="@(() => Form.MatchNumber)"/>
+    </div>
+    <div class="form-group col-sm-5">
+        <label for="writer">Writer</label>
+        <input class="form-control" type="text" id="writer" @bind="@Form.WriterUserName" readonly/>
     </div>
     @if (ShowImageUpload)
     {
@@ -81,11 +92,21 @@
     public MultipartFormDataContent Content { get; private set; }
 
     private Team team;
-    
+
+    private List<string> matchTypes;
+
     long maxFileSize = 1024 * 1024 * 15;
 
     protected override async Task OnInitializedAsync()
     {
+        matchTypes = new List<string>
+        {
+            "qm",
+            "qf",
+            "sf",
+            "f"
+        };
+        
         var teams = await SessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
         team = teams.SingleOrDefault(i => i.TeamNumber == Form.TeamNumber);
         TeamAllianceType = 
