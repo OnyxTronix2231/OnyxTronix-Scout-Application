@@ -309,7 +309,7 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("OnyxScoutApplication.Server.Models.ApplicationUser", b =>
+            modelBuilder.Entity("OnyxScoutApplication.AServer.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
@@ -373,14 +373,14 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("OnyxScoutApplication.Server.Models.ApplicationRole", b =>
+            modelBuilder.Entity("OnyxScoutApplication.AServer.Models.ApplicationRole", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole");
 
                     b.HasDiscriminator().HasValue("ApplicationRole");
                 });
 
-            modelBuilder.Entity("OnyxScoutApplication.Server.Models.ApplicationUserRole", b =>
+            modelBuilder.Entity("OnyxScoutApplication.AServer.Models.ApplicationUserRole", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<string>");
 
@@ -403,7 +403,7 @@ namespace OnyxScoutApplication.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("OnyxScoutApplication.Server.Models.ApplicationUser", null)
+                    b.HasOne("OnyxScoutApplication.AServer.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -412,7 +412,7 @@ namespace OnyxScoutApplication.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("OnyxScoutApplication.Server.Models.ApplicationUser", null)
+                    b.HasOne("OnyxScoutApplication.AServer.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -430,20 +430,20 @@ namespace OnyxScoutApplication.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("OnyxScoutApplication.Server.Models.ApplicationUser", null)
+                    b.HasOne("OnyxScoutApplication.AServer.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OnyxScoutApplication.Server.Models.ApplicationUserRole", b =>
+            modelBuilder.Entity("OnyxScoutApplication.AServer.Models.ApplicationUserRole", b =>
                 {
-                    b.HasOne("OnyxScoutApplication.Server.Models.ApplicationRole", "Role")
+                    b.HasOne("OnyxScoutApplication.AServer.Models.ApplicationRole", "Role")
                         .WithMany()
                         .HasForeignKey("ApplicationRoleId");
 
-                    b.HasOne("OnyxScoutApplication.Server.Models.ApplicationUser", "User")
+                    b.HasOne("OnyxScoutApplication.AServer.Models.ApplicationUser", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -454,7 +454,7 @@ namespace OnyxScoutApplication.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("OnyxScoutApplication.Server.Models.ApplicationUser", b =>
+            modelBuilder.Entity("OnyxScoutApplication.AServer.Models.ApplicationUser", b =>
                 {
                     b.Navigation("UserRoles");
                 });

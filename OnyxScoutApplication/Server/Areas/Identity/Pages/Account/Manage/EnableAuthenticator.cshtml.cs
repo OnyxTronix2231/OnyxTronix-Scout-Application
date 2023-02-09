@@ -151,7 +151,7 @@ namespace OnyxScoutApplication.Server.Areas.Identity.Pages.Account.Manage
         {
             return string.Format(
                 AuthenticatorUriFormat,
-                _urlEncoder.Encode("OnyxScoutApplication.Server"),
+                _urlEncoder.Encode("OnyxScoutApplication.AServer"),
                 _urlEncoder.Encode(email),
                 unformattedKey);
         }
