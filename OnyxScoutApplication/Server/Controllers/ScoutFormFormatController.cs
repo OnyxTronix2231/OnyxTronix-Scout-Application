@@ -74,7 +74,6 @@ namespace OnyxScoutApplication.Server.Controllers
             
             var response = await unitOfWork.ScoutFormFormats.Add(scoutFormFormatModel);
             return response;
-
         }
     }
 }
