@@ -113,14 +113,14 @@ namespace OnyxScoutApplication.Server
             services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatFirestoreRepository>();
             services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFaunaFormatUnitOfWork>();
 
-            services.AddScoped<IScoutFormRepository, ScoutFormRepository>();
-            services.AddScoped<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
+            services.AddTransient<IScoutFormRepository, ScoutFormRepository>();
+            services.AddTransient<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
 
-            services.AddScoped<ICustomEventRepository, CustomEventRepository>();
-            services.AddScoped<ICustomEventUnitOfWork, CustomEventUnitOfWork>();
+            services.AddTransient<ICustomEventRepository, CustomEventRepository>();
+            services.AddTransient<ICustomEventUnitOfWork, CustomEventUnitOfWork>();
 
-            services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
-            services.AddScoped<IApplicationUserUnitOfWork, ApplicationUserUnitOfWork>();
+            services.AddTransient<IApplicationUserRepository, ApplicationUserRepository>();
+            services.AddTransient<IApplicationUserUnitOfWork, ApplicationUserUnitOfWork>();
 
             var v = new FirestoreClientBuilder();
             if (!env.IsDevelopment())
