@@ -10,12 +10,12 @@ namespace OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance
 {
     public class TheBlueAllianceService : ITheBlueAllianceService
     {
+        private readonly TheBlueAllianceConfiguration configuration;
         private const string PREFIX = "https://www.thebluealliance.com/api/v3";
-        private readonly string key;
 
-        public TheBlueAllianceService(string key)
+        public TheBlueAllianceService(TheBlueAllianceConfiguration configuration)
         {
-            this.key = key;
+            this.configuration = configuration;
         }
 
         public async Task<List<string>> GetEventsKeysByTeamAndYear(int teamNumber, int year)
@@ -75,7 +75,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance
         private async Task<string> GetResponse(string request)
         {
             using var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("X-TBA-Auth-Key", key);
+            httpClient.DefaultRequestHeaders.Add("X-TBA-Auth-Key", configuration.Key);
             return await httpClient.GetStringAsync(request);
         }
     }

@@ -151,8 +151,8 @@ namespace OnyxScoutApplication.Server
                     }));
 
             services.AddAutoMapper(cfg => cfg.Internal().MethodMappingEnabled = false, typeof(ScoutFormProfile));
-            services.AddSingleton<ITheBlueAllianceService>(
-                new TheBlueAllianceService(environmentVariables["TBA-KEY"]!.ToString()));
+            services.AddTransient<ITheBlueAllianceService, TheBlueAllianceService>();
+            services.AddSingleton(new TheBlueAllianceConfiguration(environmentVariables["TBA-KEY"]!.ToString()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
