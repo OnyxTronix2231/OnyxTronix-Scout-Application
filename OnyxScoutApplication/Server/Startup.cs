@@ -29,6 +29,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
+using AutoMapper.Internal;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Services;
 using Google.Cloud.Firestore;
@@ -149,7 +150,7 @@ namespace OnyxScoutApplication.Server
                         RegionEndpoint = RegionEndpoint.EUWest1,
                     }));
 
-            services.AddAutoMapper(typeof(ScoutFormProfile));
+            services.AddAutoMapper(cfg => cfg.Internal().MethodMappingEnabled = false, typeof(ScoutFormProfile));
             services.AddSingleton<ITheBlueAllianceService>(
                 new TheBlueAllianceService(environmentVariables["TBA-KEY"]!.ToString()));
         }
