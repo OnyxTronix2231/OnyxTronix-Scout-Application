@@ -9,7 +9,7 @@
         <SfButton OnClick="SavePageNumber">Save page number</SfButton>
     }
 
-    <SfGrid @ref="grid" DataSource="@Matches" AllowSorting="true" AllowFiltering="true" Height="@Settings.Height" AllowPaging="@Settings.AllowPaging">
+    <SfGrid @ref="@grid" DataSource="@Matches" AllowSorting="true" AllowFiltering="true" Height="@Settings.Height" AllowPaging="@Settings.AllowPaging">
         <GridPageSettings PageSize="10"></GridPageSettings>
         <GridEvents Created="OnLoad" QueryCellInfo="CustomizeCell" TValue="Match"></GridEvents>
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
