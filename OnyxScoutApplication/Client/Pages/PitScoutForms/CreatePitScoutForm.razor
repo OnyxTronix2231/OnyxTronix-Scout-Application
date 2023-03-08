@@ -68,34 +68,64 @@
 
     private async Task OnValidSubmit()
     {
-        if (scoutForm.Content != null)
+        if (form.ImageRequired)
         {
-            if (imageUploadFailed)
+            await UploadWithImage();
+            return;
+        }
+
+        if (await Http.TryPostJson("ScoutForm", form))
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+        await SaveOnLocalCache();
+        await NotificationManager.NotifyAsync("Error",
+            "Error saving form in server\nThe form was saved localy for now", NotificationType.Warning);
+    }
+
+    private async Task UploadWithImage()
+    {
+        if (scoutForm.Content == null)
+        {
+            await NotificationManager.NotifyAsync("Error",
+                "Image is required\nMake sure to get the good side profile of the robot! :P", NotificationType.Warning);
+            return;
+        }
+        
+        if (imageUploadFailed)
+        {
+            var success =
+                await Http.TryPostJson($"/ScoutForm/SaveImage/{TeamNumber}/{form.KeyName}", scoutForm.Content);
+            if (success)
             {
-                var success = await Http.TryPostJson($"/ScoutForm/SaveImage/{TeamNumber}/{form.KeyName}", scoutForm.Content);
-                if (success)
-                {
-                    NavigationManager.NavigateTo("/");
-                    return;
-                }
+                NavigationManager.NavigateTo("/");
                 return;
             }
-            if (await Http.TryPostJson("ScoutForm", form))
+
+            return;
+        }
+
+        if (await Http.TryPostJson("ScoutForm", form))
+        {
+            var success =
+                await Http.TryPostJson($"/ScoutForm/SaveImage/{TeamNumber}/{form.KeyName}", scoutForm.Content);
+
+            if (success)
             {
-                var success = await Http.TryPostJson($"/ScoutForm/SaveImage/{TeamNumber}/{form.KeyName}", scoutForm.Content);
-    
-                if (success)
-                {
-                    NavigationManager.NavigateTo("/");
-                    return;
-                }
-                imageUploadFailed = true;
+                NavigationManager.NavigateTo("/");
+                return;
             }
-            else
-            {
-                await SaveOnLocalCache();
-                await NotificationManager.NotifyAsync("Error", "Error saving form in server\nThe form was saved localy for now", NotificationType.Warning);
-            }
+            await NotificationManager.NotifyAsync("Error",
+                "Failed uploading image!\nTry something else", NotificationType.Warning);
+
+            imageUploadFailed = true;
+        }
+        else
+        {
+            await SaveOnLocalCache();
+            await NotificationManager.NotifyAsync("Error",
+                "Error saving form in server\nThe form was saved localy for now", NotificationType.Warning);
         }
     }
 

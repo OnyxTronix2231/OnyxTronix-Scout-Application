@@ -26,16 +26,19 @@
         <label for="eventName">Event name</label>
         <input class="form-control" disabled="@true" type="text" id="eventName" @bind="@Form.EventName"/>
     </div>
-    <div class="form-group col-sm-5">
-        <label for="matchType">Match type</label>
-        <SfDropDownList id="matchType" Enabled="@(EmergencyMode)" TValue="string" TItem="string" DataSource="matchTypes" @bind-Value="@Form.MatchType">
-        </SfDropDownList>
-    </div>
-    <div class="form-group col-sm-5">
-        <label for="matchNumber">Match number</label>
-        <input class="form-control" disabled="@(!EmergencyMode)" min="0" type="number" id="matchNumber" @bind="@Form.MatchNumber"/>
-        <ValidationMessage For="@(() => Form.MatchNumber)"/>
-    </div>
+    @if (!ShowImageUpload)
+    {
+        <div class="form-group col-sm-5">
+            <label for="matchType">Match type</label>
+            <SfDropDownList id="matchType" Enabled="@(EmergencyMode)" TValue="string" TItem="string" DataSource="matchTypes" @bind-Value="@Form.MatchType">
+            </SfDropDownList>
+        </div>
+        <div class="form-group col-sm-5">
+            <label for="matchNumber">Match number</label>
+            <input class="form-control" disabled="@(!EmergencyMode)" min="0" type="number" id="matchNumber" @bind="@Form.MatchNumber"/>
+            <ValidationMessage For="@(() => Form.MatchNumber)"/>
+        </div>
+    }
     <div class="form-group col-sm-5">
         <label for="writer">Writer</label>
         <input class="form-control" type="text" id="writer" @bind="@Form.WriterUserName" readonly/>

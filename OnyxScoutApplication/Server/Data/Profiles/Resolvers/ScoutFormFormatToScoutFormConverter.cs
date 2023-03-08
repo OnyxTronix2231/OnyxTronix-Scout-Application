@@ -25,7 +25,8 @@ namespace OnyxScoutApplication.Server.Data.Profiles.Resolvers
         {
             destination = new FormDto
             {
-                FormDataInStages = source.FieldsInStages.Select(i => mapper.Map<FormDataInStageDto>(i)).ToList()
+                FormDataInStages = source.FieldsInStages.Select(i => mapper.Map<FormDataInStageDto>(i)).ToList(),
+                ImageRequired = source.ForceImageUpload
             };
 
             return destination;
