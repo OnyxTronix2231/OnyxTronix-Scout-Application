@@ -21,21 +21,36 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 
         public int Year { get; set; }
 
+        public bool ImageRequired { get; set; } = false;
+
         public ScoutFormType Type { get; set; }
 
         public string KeyName
         {
-            get => $"{EventName}_{MatchType}{MatchNumber}";
+            get
+            {
+                if (MatchType == "" || MatchNumber == null)
+                {
+                    return EventName;
+                }
+                return $"{EventName}_{MatchType}{MatchNumber}";
+            }
             set
             {
+                if (value == null)
+                {
+                    return;
+                }
                 EventName = value.Split("_")[0];
                 var matchDetails = value.Contains("_") ? value.Split("_")[1] : "";
                 if (string.IsNullOrWhiteSpace(matchDetails))
                 {
-                    MatchType = "qm";
+                    //MatchType = "qm";
+                    MatchType = "";
                     MatchNumber = null;
                     return;
                 }
+                Console.WriteLine("not nulllll");
                 MatchType = string.Join("", new Regex("[a-z]{0,2}.?[a-z]").Matches(matchDetails));
                 if (int.TryParse(string.Join("", new Regex("[0-9]{0,2}$").Matches(matchDetails)), out int res))
                 {
