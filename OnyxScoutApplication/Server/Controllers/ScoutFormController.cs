@@ -123,6 +123,8 @@ namespace OnyxScoutApplication.Server.Controllers
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEventWithData(string eventKey,
             ScoutFormType scoutFormType = ScoutFormType.MainGame)
         {
+            System.GC.Collect();
+            System.GC.WaitForPendingFinalizers();
             return await unitOfWork.ScoutForms.GetAllByEventWithData(eventKey, scoutFormType);
         }
 
