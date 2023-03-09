@@ -1,0 +1,49 @@
+<div>
+    <SfDateTimePicker Width="250px" TValue="DateTime" Step="5" Min="@MinDate" Max="@endDateTime" 
+                      @bind-Value="@startDateTime">
+        
+    </SfDateTimePicker>
+    
+    <SfDateTimePicker  Width="250px" TValue="DateTime" Step="5" Min="@startDateTime" Max="@MaxDate" 
+                       @bind-Value="@endDateTime">
+        
+    </SfDateTimePicker>
+    <br/>
+    <SfButton type="button" CssClass="e-success" 
+              @onclick="async () => await OnDateTimeRangeSelected.InvokeAsync(
+    new DateTimeSelectedEventArgs { StartDateTime = startDateTime, EndDateTime = endDateTime })">
+        Save
+    </SfButton>
+    <br/>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<DateTimeSelectedEventArgs> OnDateTimeRangeSelected { get; set; }
+    [Parameter]
+    public DateTime MinDate { get; set; }
+    [Parameter]
+    public DateTime MaxDate { get; set; }
+    private DateTime startDateTime;
+    private DateTime endDateTime;
+    private DateTime prevMinDate;
+    private DateTime prevMaxDate;
+    
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (MinDate != prevMinDate || MaxDate != prevMaxDate)
+        {
+            startDateTime = MinDate;
+            endDateTime = MaxDate;
+        }
+        prevMinDate = MinDate;
+        prevMaxDate = MaxDate;
+    }
+
+    public class DateTimeSelectedEventArgs
+    {
+        public DateTime StartDateTime { get; set; }
+        public DateTime EndDateTime { get; set; }
+    }
+}
