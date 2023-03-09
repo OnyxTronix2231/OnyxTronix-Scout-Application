@@ -50,7 +50,6 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
                     MatchNumber = null;
                     return;
                 }
-                Console.WriteLine("not nulllll");
                 MatchType = string.Join("", new Regex("[a-z]{0,2}.?[a-z]").Matches(matchDetails));
                 if (int.TryParse(string.Join("", new Regex("[0-9]{0,2}$").Matches(matchDetails)), out int res))
                 {

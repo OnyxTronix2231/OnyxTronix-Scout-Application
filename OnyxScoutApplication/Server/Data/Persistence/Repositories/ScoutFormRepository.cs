@@ -62,7 +62,6 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             var scoutForm = await CollectionReference.WhereEqualTo("EventName", eventKey)
                 .WhereEqualTo("Type", scoutFormType).GetSnapshotAsync();
             var v = Mapper.Map<List<FormDto>>(scoutForm.Select(i => i.ConvertTo<Form>()));
-            v.ForEach(i => Console.WriteLine(i.KeyName));
             return v;
         }
 
