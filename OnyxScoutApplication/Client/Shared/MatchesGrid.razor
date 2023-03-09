@@ -1,8 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Components.Rendering
+@using Syncfusion.Blazor.Popups
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService StorageService
+@inject ISessionStorageService SessionStorage
 @inject ISyncLocalStorageService SyncStorageService
-@if (Matches != null && Settings != null)
+
+@if (Matches != null && Settings != null && teamsNamesByNumber is not null)
 {
     if (!string.IsNullOrWhiteSpace(Settings.PagingScopeName))
     {
@@ -23,9 +26,16 @@
                 <GridColumn HeaderText="@headName" AutoFit="false" Width="50px">
                     <Template>
                         @{
-                            var match = (Match) context;
+                            var match = (Match)context;
                             var teamNumber = match.Alliances.Blue.GetTeamAt(index);
-                            <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="@(async () => await OnGridTeamClicked(match, teamNumber))">@(teamNumber)</span>
+                            string teamName = "Oops! who is that?!";
+                            if (teamsNamesByNumber.ContainsKey(teamNumber))
+                            {
+                                teamName = teamsNamesByNumber[teamNumber];
+                            }
+                            <SfTooltip ID="Tooltip" Target="#teamNumber" Content="@teamName">
+                                <span class="@GetTeamTextStyle(teamNumber, match.Key)" id="teamNumber" @onclick="@(async () => await OnGridTeamClicked(match, teamNumber))">@(teamNumber)</span>
+                            </SfTooltip>
                         }
                     </Template>
                 </GridColumn>
@@ -39,9 +49,16 @@
                 <GridColumn HeaderText="@headName" AutoFit="false" Width="50px">
                     <Template>
                         @{
-                            var match = (Match) context;
+                            var match = (Match)context;
                             var teamNumber = match.Alliances.Red.GetTeamAt(index);
-                            <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
+                            string teamName = "Oops! who is that?!";
+                            if (teamsNamesByNumber.ContainsKey(teamNumber))
+                            {
+                                teamName = teamsNamesByNumber[teamNumber];
+                            }
+                            <SfTooltip ID="Tooltip" Target="#teamNumber" Content="@teamName">
+                                <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
+                            </SfTooltip>
                         }
                     </Template>
                 </GridColumn>
@@ -49,14 +66,15 @@
             <GridColumn HeaderText="Win" AutoFit="false" Width="70px"></GridColumn>
         </GridColumns>
     </SfGrid>
-    
 }
 
 
 <CascadingValue Value="this" IsFixed="true">
     @ChildContent
 </CascadingValue>
+
 @code {
+
     [Parameter]
     public List<Match> Matches { get; set; }
 
@@ -65,11 +83,19 @@
 
     [Parameter]
     public EventCallback<TeamInMatch> OnTeamClicked { get; set; }
-    
+
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
     private SfGrid<Match> grid;
+    private Dictionary<int, string> teamsNamesByNumber;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        var teams = await SessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
+        teamsNamesByNumber = teams.ToDictionary(k => k.TeamNumber, i => i.Nickname);
+    }
 
     private async Task OnLoad(object obj)
     {
@@ -106,7 +132,7 @@
             classes += "filledTeamForm ";
             classes += "clickable ";
         }
-        else if(SyncStorageService.ContainKey($"ScoutForm/{matchName}/{teamNumber}"))
+        else if (SyncStorageService.ContainKey($"ScoutForm/{matchName}/{teamNumber}"))
         {
             classes += "locallyFilledTeamForm ";
         }
@@ -121,31 +147,37 @@
     {
         if (Settings.SubmittedForms == null)
         {
-            await OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match, 
-                IsFormExists = false});
+            await OnTeamClicked.InvokeAsync(new TeamInMatch
+            {
+                TeamNumber = teamNumber, Match = match,
+                IsFormExists = false
+            });
             return;
         }
 
         var form = Settings.SubmittedForms.SingleOrDefault(form => form.TeamNumber == teamNumber
                                                                    && form.KeyName == match.Key);
-        
-        await OnTeamClicked.InvokeAsync(new TeamInMatch {TeamNumber = teamNumber, Match = match, 
-            IsFormExists = form != null, Form = form});
+
+        await OnTeamClicked.InvokeAsync(new TeamInMatch
+        {
+            TeamNumber = teamNumber, Match = match,
+            IsFormExists = form != null, Form = form
+        });
     }
 
     private static void CustomizeCell(QueryCellInfoEventArgs<Match> args)
     {
         if (args.Column.Index is >= 2 and <= 5) //Cell color based on alliance color
         {
-            args.Cell.AddClass(new[] {"blue"});
+            args.Cell.AddClass(new[] { "blue" });
         }
         else if (args.Column.Index is >= 6 and <= 9)
         {
-            args.Cell.AddClass(new[] {"red"});
+            args.Cell.AddClass(new[] { "red" });
         }
         else if (args.Column.HeaderText == "Win") //"WinningAlliance" Cell color
         {
-            args.Cell.AddClass(new[] {args.Data.WinningAlliance});
+            args.Cell.AddClass(new[] { args.Data.WinningAlliance });
         }
     }
 
@@ -158,30 +190,37 @@
 
 <style>
     .red {
-        background-color: indianred;
+        background-color: indianred;    
+        font-size: 14px;
     }
 
     .blue {
-        background-color: royalblue
+        background-color: royalblue;
+        font-size: 14px;
     }
 
     .targetTeam {
-        font-weight: bold
+        font-weight: bold;
+        font-size: 14px;
     }
 
     .clickable {
-        cursor: pointer
+        cursor: pointer;
+        font-size: 14px;
     }
 
     .filledTeamForm {
         color: lawngreen;
+        font-size: 14px;
     }
     
     .locallyFilledTeamForm {
         color: orange;
+        font-size: 14px;
     }
 
     .notFilledTeamForm {
         color: black;
+        font-size: 14px;
     }
 </style>

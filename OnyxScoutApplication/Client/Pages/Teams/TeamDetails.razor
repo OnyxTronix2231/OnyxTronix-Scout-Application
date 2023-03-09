@@ -116,6 +116,10 @@
         }
         
         var formsByDates = data.OrderBy(f => f.DateTime).ToList();
+        if (!formsByDates.Any())
+        {
+            return;
+        }
         minDate = formsByDates.First().DateTime.DateTime - TimeSpan.FromMinutes(5);
         maxDate = formsByDates.Last().DateTime.DateTime + TimeSpan.FromMinutes(5);
         ChangeSelctedData(minDate, maxDate);
