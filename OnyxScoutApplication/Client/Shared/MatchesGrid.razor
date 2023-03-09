@@ -17,7 +17,7 @@
         <GridEvents Created="OnLoad" QueryCellInfo="CustomizeCell" TValue="Match"></GridEvents>
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
-            <GridColumn Field=@nameof(Match.MatchNumber) AutoFit="false" HeaderText="No." Width="80px"></GridColumn>
+            <GridColumn Field=@nameof(Match.FullMatchNumber) AutoFit="false" HeaderText="No." Width="80px"></GridColumn>
             <GridColumn Field=@nameof(Match.Date) AutoFit="false" HeaderText="Match date" Format="dd/MM/yyyy HH:mm" Type="ColumnType.DateTime" Width="135px"></GridColumn>
             @for (int i = 0; i < 3; i++)
             {
@@ -33,8 +33,8 @@
                             {
                                 teamName = teamsNamesByNumber[teamNumber];
                             }
-                            <SfTooltip ID="Tooltip" Target="#teamNumber" Content="@teamName">
-                                <span class="@GetTeamTextStyle(teamNumber, match.Key)" id="teamNumber" @onclick="@(async () => await OnGridTeamClicked(match, teamNumber))">@(teamNumber)</span>
+                            <SfTooltip ID="Tooltip" Target="#blueTeamNumber" Content="@teamName">
+                                <span class="@GetTeamTextStyle(teamNumber, match.Key)" id="blueTeamNumber" @onclick="@(async () => await OnGridTeamClicked(match, teamNumber))">@(teamNumber)</span>
                             </SfTooltip>
                         }
                     </Template>
@@ -56,8 +56,8 @@
                             {
                                 teamName = teamsNamesByNumber[teamNumber];
                             }
-                            <SfTooltip ID="Tooltip" Target="#teamNumber" Content="@teamName">
-                                <span class="@GetTeamTextStyle(teamNumber, match.Key)" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
+                            <SfTooltip ID="Tooltip" Target="#redTeamNumber" Content="@teamName">
+                                <span class="@GetTeamTextStyle(teamNumber, match.Key)" id="redTeamNumber" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
                             </SfTooltip>
                         }
                     </Template>

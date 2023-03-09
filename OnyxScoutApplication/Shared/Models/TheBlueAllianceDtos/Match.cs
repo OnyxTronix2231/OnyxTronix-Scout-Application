@@ -11,6 +11,14 @@ namespace OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos
     {
         [JsonProperty("match_number")]
         public int MatchNumber { get; set; }
+        
+        [JsonProperty("set_number")]
+        public int SetNumber { get; set; }
+
+        public string FullMatchNumber
+        {
+            get => $"{MatchNumber}({SetNumber})";
+        }
 
         [JsonProperty("winning_alliance")]
         public string WinningAlliance { get; set; }
