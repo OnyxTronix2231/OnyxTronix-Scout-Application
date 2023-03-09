@@ -13,9 +13,9 @@
     </SfDateTimePicker>
     <br/>
     
-    <SfButton type="button" CssClass="e-success"@onclick="Save">Save</SfButton>
+    <SfButton type="button" CssClass="e-success" @onclick="Save">Save</SfButton>
     
-    <SfButton type="button" CssClass="e-warning"@onclick="Reset">Reset</SfButton>
+    <SfButton type="button" CssClass="e-warning" @onclick="Reset">Reset</SfButton>
     <br/>
 </div>
 
@@ -59,7 +59,7 @@
         }
         prevMinDate = MinDate;
         prevMaxDate = MaxDate;
-        await Save();
+        await Save(); //Invokes the callback for first render when dates where loaded from storage
     }
 
     public class DateTimeSelectedEventArgs
@@ -74,7 +74,7 @@
         endDateTime = MaxDate;
         await LocalStorage.RemoveItemAsync("DateTimeRangePicker.StartDateTime");
         await LocalStorage.RemoveItemAsync("DateTimeRangePicker.EndDateTime");
-
+        await Save();
     }
 
     private async Task Save()

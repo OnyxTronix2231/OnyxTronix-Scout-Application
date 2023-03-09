@@ -9,7 +9,7 @@
 @inject NotificationManager NotificationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
-@if (teams != null)
+@if (teams is not null && selectedScoutForms is not null)
 {
     <DateTimeRangePicker MinDate="minDate" MaxDate="maxDate" OnDateTimeRangeSelected="OnDateTimeRangeSelected"></DateTimeRangePicker>
     <br/>
