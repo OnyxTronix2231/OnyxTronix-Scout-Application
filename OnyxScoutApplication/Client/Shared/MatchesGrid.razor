@@ -33,7 +33,7 @@
                             {
                                 teamName = teamsNamesByNumber[teamNumber];
                             }
-                            <SfTooltip ID="Tooltip" Target="#blueTeamNumber" Content="@teamName">
+                            <SfTooltip ID="Tooltip" Position="Position.TopCenter" WindowCollision="true" Target="#blueTeamNumber" Content="@teamName">
                                 <span class="@GetTeamTextStyle(teamNumber, match.Key)" id="blueTeamNumber" @onclick="@(async () => await OnGridTeamClicked(match, teamNumber))">@(teamNumber)</span>
                             </SfTooltip>
                         }
@@ -56,7 +56,7 @@
                             {
                                 teamName = teamsNamesByNumber[teamNumber];
                             }
-                            <SfTooltip ID="Tooltip" Target="#redTeamNumber" Content="@teamName">
+                            <SfTooltip ID="Tooltip" Position="Position.TopCenter" WindowCollision="true" Target="#redTeamNumber" Content="@teamName">
                                 <span class="@GetTeamTextStyle(teamNumber, match.Key)" id="redTeamNumber" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
                             </SfTooltip>
                         }
