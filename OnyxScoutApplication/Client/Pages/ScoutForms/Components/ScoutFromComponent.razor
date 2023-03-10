@@ -38,6 +38,11 @@
             <input class="form-control" disabled="@(!EmergencyMode)" min="0" type="number" id="matchNumber" @bind="@Form.MatchNumber"/>
             <ValidationMessage For="@(() => Form.MatchNumber)"/>
         </div>
+        <div class="form-group col-sm-5">
+            <label for="matchNumber">Set number</label>
+            <input class="form-control" disabled="@(!EmergencyMode)" min="0" type="number" id="setNumber" @bind="@Form.SetNumber"/>
+            <ValidationMessage For="@(() => Form.SetNumber)"/>
+        </div>
     }
     <div class="form-group col-sm-5">
         <label for="writer">Writer</label>
@@ -105,25 +110,9 @@
         matchTypes = new List<string>
         {
             "qm",
-            "qf1m",
-            "qf2m",
-            "qf3m",
-            "qf4m",
-            "sf1m",
-            "sf2m",
-            "sf3m",
-            "sf4m",
-            "sf5m",
-            "sf6m",
-            "sf7m",
-            "sf8m",
-            "sf9m",
-            "sf10m",
-            "sf11m",
-            "sf12m",
-            "sf13m",
-            "f1m",
-            "f2m"
+            "qf",
+            "sf",
+            "f",
         };
         
         var teams = await SessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");

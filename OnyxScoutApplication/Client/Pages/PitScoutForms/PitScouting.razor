@@ -60,7 +60,7 @@
         classes += "clickable ";
 
 
-        if (scoutForms.Any(form => form.TeamNumber == teamNumber && form.KeyName == selectedEvent.Key))
+        if (scoutForms.Any(form => form.TeamNumber == teamNumber && form.KeyName == selectedEvent.Key + "_pitForm"))
         {
             classes += "filledTeamForm ";
         }

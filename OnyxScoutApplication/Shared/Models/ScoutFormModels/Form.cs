@@ -33,6 +33,15 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
         public string EventName { get; set; }
         
         [FirestoreProperty]
+        public string MatchType { get; set; }
+        
+        [FirestoreProperty]
+        public int? MatchNumber { get; set; }
+        
+        [FirestoreProperty]
+        public int? SetNumber { get; set; }
+        
+        [FirestoreProperty]
         public string WriterUserName { get; set; }
 
         [FirestoreProperty]

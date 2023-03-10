@@ -62,7 +62,10 @@
         form.TeamNumber = TeamNumber;
         form.Year = selectedYear!.Value;
         form.Type = ScoutFormType.Pit;
-        form.KeyName = selectedEvent.Key;
+        // form.KeyName = selectedEvent.Key;
+        form.EventName = selectedEvent.Key;
+        form.MatchNumber = null;
+        form.SetNumber = null;
         form.WriterUserName = user.Identity!.Name;
     }
 
