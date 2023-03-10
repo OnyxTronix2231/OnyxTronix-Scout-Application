@@ -59,16 +59,17 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEventWithData(string eventKey,
             ScoutFormType scoutFormType)
         {
-            var scoutForm = await CollectionReference.WhereGreaterThanOrEqualTo("KeyName", eventKey)
+            var scoutForm = await CollectionReference.WhereEqualTo("EventName", eventKey)
                 .WhereEqualTo("Type", scoutFormType).GetSnapshotAsync();
-            return Mapper.Map<List<FormDto>>(scoutForm.Select(i => i.ConvertTo<Form>()));
+            var v = Mapper.Map<List<FormDto>>(scoutForm.Select(i => i.ConvertTo<Form>()));
+            return v;
         }
 
         public async Task<ActionResult<FormDto>> GetByTeamAndKey(int teamNumber, string key,
             ScoutFormType scoutFormType)
         {
             var scoutForms = await CollectionReference.WhereEqualTo("TeamNumber", teamNumber)
-                .WhereEqualTo("KeyName", key)
+                .WhereEqualTo("EventName", key)
                 .WhereEqualTo("Type", scoutFormType).GetSnapshotAsync();
             if (scoutForms.Count == 0)
             {
@@ -83,7 +84,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey,
             ScoutFormType scoutFormType)
         {
-            var scoutForm = await CollectionReference.WhereGreaterThanOrEqualTo("KeyName", eventKey)
+            var scoutForm = await CollectionReference.WhereEqualTo("EventName", eventKey)
                 .WhereEqualTo("Type", scoutFormType).GetSnapshotAsync();
             return Mapper.Map<List<FormDto>>(scoutForm.Select(i => i.ConvertTo<Form>()));
         }
@@ -93,7 +94,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         {
             
             var scoutForms = await CollectionReference.WhereEqualTo("TeamNumber", teamNumber)
-                .WhereGreaterThanOrEqualTo("KeyName", eventKey)
+                .WhereEqualTo("EventName", eventKey)
                 .WhereEqualTo("Type", scoutFormType).GetSnapshotAsync();
             
             return Mapper.Map<List<FormDto>>(scoutForms.Select(i => i.ConvertTo<Form>()));

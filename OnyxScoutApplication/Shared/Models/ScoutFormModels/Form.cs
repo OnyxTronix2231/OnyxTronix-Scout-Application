@@ -19,12 +19,27 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
 
         [FirestoreProperty]
         public int Year { get; set; }
+        
+        [FirestoreProperty]
+        public bool ImageRequired { get; set; }
 
         [FirestoreProperty]
         public ScoutFormType Type { get; set; }
         
         [FirestoreProperty]
         public string KeyName { get; set; }
+        
+        [FirestoreProperty]
+        public string EventName { get; set; }
+        
+        [FirestoreProperty]
+        public string MatchType { get; set; }
+        
+        [FirestoreProperty]
+        public int? MatchNumber { get; set; }
+        
+        [FirestoreProperty]
+        public int? SetNumber { get; set; }
         
         [FirestoreProperty]
         public string WriterUserName { get; set; }

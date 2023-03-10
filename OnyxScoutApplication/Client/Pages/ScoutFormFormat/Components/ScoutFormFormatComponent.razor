@@ -20,6 +20,21 @@
         </div>
         <br/>
     </div>
+    @if (ScoutFormFormat.ScoutFormType == ScoutFormType.Pit)
+    {
+        <div class="form-group col-sm-5">
+            <div>
+                <label>Force image</label>
+                <SfCheckBox CssClass="e-info" @bind-Checked="ScoutFormFormat.ForceImageUpload"/>
+                <ValidationMessage For="@(() => ScoutFormFormat.ScoutFormType)"/>
+            </div>
+            <br/>
+        </div>
+    }
+    else
+    {
+        ScoutFormFormat.ForceImageUpload = false;
+    }
     <div class="form-group col-sm-5">
         <div>
             <label>Stage name</label>

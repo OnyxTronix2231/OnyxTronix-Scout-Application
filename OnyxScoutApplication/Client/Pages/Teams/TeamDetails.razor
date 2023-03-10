@@ -3,6 +3,7 @@
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using System.IO
+@using Syncfusion.Blazor.Data
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
 @inject ISessionStorageService SessionStorage
@@ -11,17 +12,22 @@
 
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
-@if (calculatedScoutDataByStages is not null && calculatedPitScoutDataByStages is not null)
+
+@if (calculatedScoutDataByStages is not null && calculatedPitScoutDataByStages is not null && selectedData is not null)
 {
     <h3>Team @TeamNumber</h3>
     <h4>@teamName</h4>
     <h4>@selectedEvent?.Name</h4>
+    <DateTimeRangePicker MinDate="minDate" MaxDate="maxDate" OnDateTimeRangeSelected="OnDateTimeRangeSelected"></DateTimeRangePicker>
+    <br/>
+    <h6>Selected @selectedData.Count forms</h6>
+    <br/>
     @*<a href="/TeamDetails/Notes/@TeamNumber">Notes</a>*@
     <div>
     <CollapsibleView ValueChanged="@(i => isCollapsed = !i)"></CollapsibleView>
     </div>
     <div class="form-group col-lg-6 col-md-6 collapse @(!isCollapsed ? "show" : "")" style="padding-left:2em">
-        <TeamNotes Forms="data"></TeamNotes>
+        <TeamNotes Forms="selectedData"></TeamNotes>
          @if (pitScoutForms.Count != 0 && pitScoutForms[0].IsImageUploaded && !isCollapsed)
          {
              <br>
@@ -52,7 +58,7 @@
 
     <br/>
     <MatchesGrid Matches="@matches" OnTeamClicked="@(async t => await OnTeamClicked(t))">
-        <MatchGridSettings SubmittedForms = "@data" TeamNumber = "@TeamNumber" ></MatchGridSettings>
+        <MatchGridSettings SubmittedForms = "@selectedData" TeamNumber = "@TeamNumber" ></MatchGridSettings>
     </MatchesGrid>
 }
 
@@ -64,11 +70,15 @@
     private string teamName;
     private Event selectedEvent;
     private List<FormDto> data;
+    private List<FormDto> selectedData;
     private Dictionary<string, List<TeamFieldAverage>> calculatedScoutDataByStages;
     private Dictionary<string, List<TeamFieldAverage>> calculatedPitScoutDataByStages;
     private List<FormDto> pitScoutForms;
     private List<Match> matches;
     private bool isCollapsed = true;
+    private DateTime minDate;
+    private DateTime maxDate;
+    private ScoutFormFormatDto format;
 
     protected override async Task OnInitializedAsync()
     {
@@ -87,16 +97,11 @@
         {
             return;
         }
-        var format = await Http.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{selectedEvent.Year}");
+        format = await Http.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{selectedEvent.Year}");
         var result = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByTeam/{TeamNumber}/{selectedEvent.Key}");
-        calculatedScoutDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
-        foreach (var fieldsInStage in format.FieldsInStages)
-        {
-            calculatedScoutDataByStages.Add(fieldsInStage.Name, 
-                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, result, _ => true));
-        }
         
         data = result.OrderBy(i => i.KeyName).ToList();
+        
         matches = (await Http.GetJson<List<Match>>
             ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))
             .OrderBy(i => i.Date).ToList();
@@ -109,6 +114,15 @@
             calculatedPitScoutDataByStages.Add(fieldsInStage.Name, 
                 TeamDataAnalyzer.CalculateDataFor(fieldsInStage, pitScoutForms, _ => true, true));
         }
+        
+        var formsByDates = data.OrderBy(f => f.DateTime).ToList();
+        if (!formsByDates.Any())
+        {
+            return;
+        }
+        minDate = formsByDates.First().DateTime.DateTime - TimeSpan.FromMinutes(5);
+        maxDate = formsByDates.Last().DateTime.DateTime + TimeSpan.FromMinutes(5);
+        ChangeSelctedData(minDate, maxDate);
     }
 
     private async Task OnTeamClicked(TeamInMatch teamInMatch)
@@ -126,4 +140,21 @@
             await JsRuntime.InvokeVoidAsync("open", $"ScoutForm/View/{teamInMatch.Form.Id}", "_blank");
         }
     }
+    
+    private void OnDateTimeRangeSelected(DateTimeRangePicker.DateTimeSelectedEventArgs obj)
+    {
+        ChangeSelctedData(obj.StartDateTime, obj.EndDateTime);
+    }
+
+    private void ChangeSelctedData(DateTime startDateTime, DateTime endDateTime)
+    {
+        selectedData = data.Where(f => f.DateTime <= endDateTime && f.DateTime >= startDateTime).ToList();
+        calculatedScoutDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
+        foreach (var fieldsInStage in format.FieldsInStages)
+        {
+            calculatedScoutDataByStages.Add(fieldsInStage.Name,
+                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, selectedData, _ => true));
+        }
+    }
+
 }

@@ -14,6 +14,9 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         public int Year { get; set; }
         
         [FirestoreProperty]
+        public bool ForceImageUpload { get; set; }
+        
+        [FirestoreProperty]
         public ScoutFormType ScoutFormType { get; set; }
 
         [FirestoreProperty]

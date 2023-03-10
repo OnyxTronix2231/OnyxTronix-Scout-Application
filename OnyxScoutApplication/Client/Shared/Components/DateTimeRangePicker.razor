@@ -1,0 +1,91 @@
+@inject ILocalStorageService LocalStorage
+
+<div>
+    <h5>Select time range for data collection:</h5>
+    <SfDateTimePicker Width="250px" TValue="DateTime" Step="5" Min="@MinDate" Max="@endDateTime"
+                      @bind-Value="@startDateTime">
+
+    </SfDateTimePicker>
+
+    <SfDateTimePicker Width="250px" TValue="DateTime" Step="5" Min="@startDateTime" Max="@MaxDate"
+                      @bind-Value="@endDateTime">
+
+    </SfDateTimePicker>
+    <br/>
+    
+    <SfButton type="button" CssClass="e-success" @onclick="Save">Save</SfButton>
+    
+    <SfButton type="button" CssClass="e-warning" @onclick="Reset">Reset</SfButton>
+    <br/>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<DateTimeSelectedEventArgs> OnDateTimeRangeSelected { get; set; }
+    [Parameter]
+    public DateTime MinDate { get; set; }
+    [Parameter]
+    public DateTime MaxDate { get; set; }
+    private DateTime startDateTime;
+    private DateTime endDateTime;
+    private DateTime prevMinDate;
+    private DateTime prevMaxDate;
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (MinDate == prevMinDate && MaxDate == prevMaxDate)
+        {
+            return;
+        }
+        
+        if (await LocalStorage.ContainKeyAsync("DateTimeRangePicker.StartDateTime"))
+        {
+            startDateTime = await LocalStorage.GetItemAsync<DateTime>("DateTimeRangePicker.StartDateTime");
+        }
+        else
+        {
+            startDateTime = MinDate;
+        }
+        
+        if (await LocalStorage.ContainKeyAsync("DateTimeRangePicker.EndDateTime"))
+        {
+            endDateTime = await LocalStorage.GetItemAsync<DateTime>("DateTimeRangePicker.EndDateTime");
+        }
+        else
+        {
+            endDateTime = MaxDate;
+        }
+        prevMinDate = MinDate;
+        prevMaxDate = MaxDate;
+        await Save(); //Invokes the callback for first render when dates where loaded from storage
+    }
+
+    public class DateTimeSelectedEventArgs
+    {
+        public DateTime StartDateTime { get; set; }
+        public DateTime EndDateTime { get; set; }
+    }
+
+    private async Task Reset()
+    {
+        startDateTime = MinDate;
+        endDateTime = MaxDate;
+        await LocalStorage.RemoveItemAsync("DateTimeRangePicker.StartDateTime");
+        await LocalStorage.RemoveItemAsync("DateTimeRangePicker.EndDateTime");
+        await Save();
+    }
+
+    private async Task Save()
+    {
+        await LocalStorage.SetItemAsync("DateTimeRangePicker.StartDateTime", startDateTime);
+        await LocalStorage.SetItemAsync("DateTimeRangePicker.EndDateTime", endDateTime);    
+        await OnDateTimeRangeSelected.InvokeAsync(new DateTimeSelectedEventArgs
+        {
+            StartDateTime = startDateTime,
+            EndDateTime = endDateTime
+        });
+       
+    }
+}

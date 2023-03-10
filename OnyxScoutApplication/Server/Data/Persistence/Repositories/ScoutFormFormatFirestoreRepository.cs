@@ -90,10 +90,16 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
         {
             foreach (var stage in scoutFormFormat.FieldsInStages)
             {
-                foreach (var field in stage.Fields)
-                {
-                    field.Id = field.Id == Guid.Empty ? Guid.NewGuid(): field.Id;
-                }
+                GenerateFieldId(stage.Fields);
+            }
+        }
+
+        private void GenerateFieldId(List<FieldDto> fields)
+        {
+            foreach (var field in fields)
+            {
+                field.Id = field.Id == Guid.Empty ? Guid.NewGuid() : field.Id;
+                GenerateFieldId(field.CascadeFields);
             }
         }
 

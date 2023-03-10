@@ -29,6 +29,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
+using AutoMapper.Internal;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Services;
 using Google.Cloud.Firestore;
@@ -113,14 +114,14 @@ namespace OnyxScoutApplication.Server
             services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatFirestoreRepository>();
             services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFaunaFormatUnitOfWork>();
 
-            services.AddScoped<IScoutFormRepository, ScoutFormRepository>();
-            services.AddScoped<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
+            services.AddTransient<IScoutFormRepository, ScoutFormRepository>();
+            services.AddTransient<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
 
-            services.AddScoped<ICustomEventRepository, CustomEventRepository>();
-            services.AddScoped<ICustomEventUnitOfWork, CustomEventUnitOfWork>();
+            services.AddTransient<ICustomEventRepository, CustomEventRepository>();
+            services.AddTransient<ICustomEventUnitOfWork, CustomEventUnitOfWork>();
 
-            services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
-            services.AddScoped<IApplicationUserUnitOfWork, ApplicationUserUnitOfWork>();
+            services.AddTransient<IApplicationUserRepository, ApplicationUserRepository>();
+            services.AddTransient<IApplicationUserUnitOfWork, ApplicationUserUnitOfWork>();
 
             var v = new FirestoreClientBuilder();
             if (!env.IsDevelopment())
@@ -149,9 +150,9 @@ namespace OnyxScoutApplication.Server
                         RegionEndpoint = RegionEndpoint.EUWest1,
                     }));
 
-            services.AddAutoMapper(typeof(ScoutFormProfile));
-            services.AddSingleton<ITheBlueAllianceService>(
-                new TheBlueAllianceService(environmentVariables["TBA-KEY"]!.ToString()));
+            services.AddAutoMapper(cfg => cfg.Internal().MethodMappingEnabled = false, typeof(ScoutFormProfile));
+            services.AddTransient<ITheBlueAllianceService, TheBlueAllianceService>();
+            services.AddSingleton(new TheBlueAllianceConfiguration(environmentVariables["TBA-KEY"]!.ToString()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

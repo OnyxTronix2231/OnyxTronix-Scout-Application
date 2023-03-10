@@ -1,6 +1,7 @@
 ﻿@page "/PitScoutForm/Edit/{Id}"
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
+@inject NotificationManager NotificationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (form != null)
@@ -41,7 +42,10 @@
         newForm.TeamNumber = oldForm.TeamNumber;
         newForm.Year = oldForm.Year;
         newForm.Type = oldForm.Type;
-        newForm.KeyName = oldForm.KeyName;
+        // newForm.KeyName = oldForm.KeyName;
+        newForm.EventName = oldForm.EventName;
+        newForm.MatchNumber = oldForm.MatchNumber;
+        newForm.SetNumber = oldForm.SetNumber;
         newForm.WriterUserName = oldForm.WriterUserName;
         newForm.Id = oldForm.Id;
         newForm.IsImageUploaded = oldForm.IsImageUploaded;
@@ -81,19 +85,52 @@
 
     private async Task OnValidSubmit()
     {
-       // if (!await http.TryPutJson("ScoutForm/" + Id, form))
+    // if (!await http.TryPutJson("ScoutForm/" + Id, form))
         {
           //  return;
         }
-        
-        if (scoutForm.Content != null)
+
+        if (form.ImageRequired)
         {
-            var success = await Http.TryPostJson($"/ScoutForm/SaveImage/{form.TeamNumber}/{form.KeyName}", scoutForm.Content);
-            if (!success)
-            {
-                return;
-            }
+            await UploadWithImage();
+            return;
         }
+        if (await Http.TryPutJson("ScoutForm/" + Id, form))
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+        
+        await NotificationManager.NotifyAsync("Error",
+            "Error saving form in server\n", NotificationType.Warning);
+    }
+
+    private async Task UploadWithImage()
+    {
+        if (scoutForm.Content == null)
+        {
+            await NotificationManager.NotifyAsync("Error",
+                "Image is required\nMake sure to get the good side profile of the robot! :P", NotificationType.Warning);
+            return;
+        }
+        
+        var success =
+            await Http.TryPostJson($"/ScoutForm/SaveImage/{form.TeamNumber}/{form.KeyName}", scoutForm.Content);
+        if (!success)
+        {
+            await NotificationManager.NotifyAsync("Error",
+                "Failed uploading image!\nTry something else", NotificationType.Warning);
+            return;
+        }
+        
+        if (await Http.TryPutJson("ScoutForm/" + Id, form))
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+
         NavigationManager.NavigateTo("/");
     }
+
 }
