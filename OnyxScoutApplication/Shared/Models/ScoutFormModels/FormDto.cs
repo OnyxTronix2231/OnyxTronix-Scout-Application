@@ -29,33 +29,42 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
         {
             get
             {
-                if (MatchType == "" || MatchNumber == null)
+                // if (MatchType == "" || MatchNumber == null)
+                // {
+                //     return EventName;
+                // }
+                if (MatchType == null)
                 {
-                    return EventName;
+                    return $"{EventName}_pitForm";
                 }
-                return $"{EventName}_{MatchType}{MatchNumber}";
+                
+                if (MatchType == "qm")
+                {
+                    return $"{EventName}_{MatchType}{MatchNumber}";
+                }
+                return $"{EventName}_{MatchType}{SetNumber}m{MatchNumber}";
             }
-            set
-            {
-                if (value == null)
-                {
-                    return;
-                }
-                EventName = value.Split("_")[0];
-                var matchDetails = value.Contains("_") ? value.Split("_")[1] : "";
-                if (string.IsNullOrWhiteSpace(matchDetails))
-                {
-                    //MatchType = "qm";
-                    MatchType = "";
-                    MatchNumber = null;
-                    return;
-                }
-                MatchType = string.Join("", new Regex("[a-z]{0,2}.?[a-z]").Matches(matchDetails));
-                if (int.TryParse(string.Join("", new Regex("[0-9]{0,2}$").Matches(matchDetails)), out int res))
-                {
-                    MatchNumber = res;
-                }
-            }
+            // set
+            // {
+            //     if (value == null)
+            //     {
+            //         return;
+            //     }
+            //     EventName = value.Split("_")[0];
+            //     var matchDetails = value.Contains("_") ? value.Split("_")[1] : "";
+            //     if (string.IsNullOrWhiteSpace(matchDetails))
+            //     {
+            //         //MatchType = "qm";
+            //         MatchType = "";
+            //         MatchNumber = null;
+            //         return;
+            //     }
+            //     MatchType = string.Join("", new Regex("[a-z]{0,2}.?[a-z]").Matches(matchDetails));
+            //     if (int.TryParse(string.Join("", new Regex("[0-9]{0,2}$").Matches(matchDetails)), out int res))
+            //     {
+            //         MatchNumber = res;
+            //     }
+            // }
         }
 
         public string EventName { get; set; }
@@ -63,6 +72,8 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
         public string MatchType { get; set; }
         
         public int? MatchNumber { get; set; }
+        
+        public int? SetNumber { get; set; }
         
         public string WriterUserName { get; set; }
 

@@ -49,7 +49,10 @@
         newForm.TeamNumber = teamInMatch.TeamNumber;
         newForm.Year = teamInMatch.Match.Date.Year;
         newForm.Type = ScoutFormType.MainGame;
-        newForm.KeyName = teamInMatch.Match.Key;
+        newForm.MatchType = teamInMatch.Match.Level;
+        newForm.EventName = teamInMatch.Match.EventKey;
+        newForm.MatchNumber = teamInMatch.Match.MatchNumber;
+        newForm.SetNumber = teamInMatch.Match.SetNumber;
         newForm.WriterUserName = user.Identity!.Name;
         form = newForm;
     }

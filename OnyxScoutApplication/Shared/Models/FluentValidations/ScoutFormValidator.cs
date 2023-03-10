@@ -18,6 +18,8 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
             RuleFor(x => x.MatchType).NotEmpty().When(f => f.Type != ScoutFormType.Pit);
             RuleFor(x => x.MatchNumber).NotEmpty().GreaterThanOrEqualTo(1).LessThanOrEqualTo(500).
                 When(f => f.Type != ScoutFormType.Pit);
+            RuleFor(x => x.SetNumber).NotEmpty().GreaterThanOrEqualTo(1).LessThanOrEqualTo(500).
+                When(f => f.Type != ScoutFormType.Pit);
             RuleFor(x => x.TeamNumber).NotEmpty().GreaterThanOrEqualTo(1).LessThanOrEqualTo(9999);
             RuleFor(x => x.WriterUserName).NotEmpty();
             RuleForEach(x => x.FormDataInStages).SetValidator(new ScoutFormDataByStagesValidator());

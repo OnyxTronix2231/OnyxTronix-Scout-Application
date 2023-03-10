@@ -14,6 +14,9 @@ namespace OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos
         
         [JsonProperty("set_number")]
         public int SetNumber { get; set; }
+        
+        [JsonProperty("event_key")]
+        public string EventKey { get; set; }
 
         public string FullMatchNumber
         {

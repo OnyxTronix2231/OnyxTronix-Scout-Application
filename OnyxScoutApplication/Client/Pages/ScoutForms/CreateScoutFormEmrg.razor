@@ -56,8 +56,9 @@
         // form.TeamNumber = teamInMatch.TeamNumber;
         form.Year = selectedEvent.Year;
         // form.Type = ScoutFormType.MainGame;
-         form.KeyName = selectedEvent.Key;
-         form.WriterUserName = user.Identity!.Name;
+         // form.KeyName = selectedEvent.Key;
+        form.EventName = selectedEvent.Key;
+        form.WriterUserName = user.Identity!.Name;
     }
 
     private async Task OnValidSubmit()
