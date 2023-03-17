@@ -112,7 +112,7 @@ namespace OnyxScoutApplication.Server.Controllers
 
         [HttpGet("GetAllByEvent/{eventKey}")]
         [HttpGet("GetAllByEvent/{eventKey}/{scoutFormType}")]
-        public async Task<ActionResult<IEnumerable<FormDto>>>
+        public async Task<ActionResult<IEnumerable<SimpleFormDto>>>
             GetAllByEvent(string eventKey, ScoutFormType scoutFormType = ScoutFormType.MainGame)
         {
             return await unitOfWork.ScoutForms.GetAllByEvent(eventKey, scoutFormType);

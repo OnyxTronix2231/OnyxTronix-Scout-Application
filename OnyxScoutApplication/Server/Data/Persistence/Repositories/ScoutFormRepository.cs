@@ -81,12 +81,12 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return Mapper.Map<FormDto>(scoutForms[0].ConvertTo<Form>());
         }
         
-        public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey,
+        public async Task<ActionResult<IEnumerable<SimpleFormDto>>> GetAllByEvent(string eventKey,
             ScoutFormType scoutFormType)
         {
             var scoutForm = await CollectionReference.WhereEqualTo("EventName", eventKey)
                 .WhereEqualTo("Type", scoutFormType).GetSnapshotAsync();
-            return Mapper.Map<List<FormDto>>(scoutForm.Select(i => i.ConvertTo<Form>()));
+            return Mapper.Map<List<SimpleFormDto>>(scoutForm.Select(i => i.ConvertTo<Form>()));
         }
 
         public async Task<ActionResult<IEnumerable<FormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey,

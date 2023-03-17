@@ -46,7 +46,7 @@
             return;
         }
 
-        scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEventWithData/" + selectedEvent.Key);
+        scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEventWithData/" + selectedEvent.Key)
         selectedScoutForms = scoutForms.ToList();
         
         if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
