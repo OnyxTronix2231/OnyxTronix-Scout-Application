@@ -23,14 +23,10 @@
                        
                        />
 }
-@* ScoutForms="selectedScoutForms" *@
-                       @* EventAnalyticSettings="analyticSettings" *@
 @code {
     private Event selectedEvent;
     private List<SimpleFormDto> scoutForms;
     private List<SimpleFormDto> selectedScoutForms;
-    // private List<Team> teams;
-    // private ScoutFormFormatDto format;
     private EventAnalyticSettingsDto analyticSettings;
     private List<ExpandoObject> calculatedTeamsData;
     private List<ColumnField> columnsFields;
@@ -47,23 +43,11 @@
             return;
         }
         
-        // format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
-        // if (format is null)
-        // {
-        //     NavigationManager.NavigateTo("/");
-        //     return;
-        // }
-        //
-        // scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
-        // selectedScoutForms = scoutForms.ToList();
-        //
-        // if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
-        // {
-        //     analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
-        // }
-        //
-        // teams = await SessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
-        //
+        if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
+        {
+            analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
+        }
+        
         scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
         selectedScoutForms = scoutForms.ToList();
 

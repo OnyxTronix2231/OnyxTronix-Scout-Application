@@ -33,31 +33,24 @@ public class EventAnalyticsController : Controller
         this.blueAllianceService = blueAllianceService;
     }
     
-    
-    
     [HttpPost("GetEventAnalytics/{year:int}/{eventKey}")]
     public async Task<ActionResult<AnalyticsResult>> GetEventAnalytics(int year, string eventKey, AnalyticsSettings analyticsSettings)
     {
-        Console.WriteLine($"GetEventAnalytics: {analyticsSettings.StartDate} {analyticsSettings.EndDate}");
         var scoutFormsRes = await scoutFormUnitOfWork.ScoutForms.GetAllByEventWithData(eventKey, ScoutFormType.MainGame);
         var scoutForms = scoutFormsRes.Value!
             .Where(f => f.DateTime >= analyticsSettings.StartDate && f.DateTime <= analyticsSettings.EndDate).ToList();
-        Console.WriteLine($"{scoutForms.Count}");
 
-        // if (scoutForms.Result is not OkObjectResult)
-        // {
-        //     Console.WriteLine("Error!!!!!!!!!!!!!!!!");
-        //     return scoutForms.Result;
-        // }
+        if (scoutFormsRes.Result is not null)
+        {
+            return scoutFormsRes.Result;
+        }
         var scoutFormFormat = await scoutFormFormatUnitOfWork.ScoutFormFormats.GetWithFieldsByYear(year, ScoutFormType.MainGame);
-        // if (scoutFormFormat.Result is not OkObjectResult)
-        // {
-        //     Console.WriteLine("Error!!!!!!!!!!!!!!!!");
-        //     return scoutFormFormat.Result;
-        // }
+        if (scoutFormFormat.Result is not null)
+        {
+            return scoutFormFormat.Result;
+        }
         var teams = await blueAllianceService.GetTeamsByEvent(eventKey);
         TeamsAnalyzer analyzer = new TeamsAnalyzer(teams, scoutForms, scoutFormFormat.Value, analyticsSettings.EventAnalyticSettingsDto);
-        Console.WriteLine("Returning ok res");
         return Ok(analyzer.Calc());
     }
     
