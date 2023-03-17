@@ -1,62 +1,62 @@
-﻿using Microsoft.AspNetCore.Components;
-using OnyxScoutApplication.Client.Others.Managers;
-using OnyxScoutApplication.Shared.Models;
-using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
-using OnyxScoutApplication.Client.Others.Extensions;
-using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData;
+using Microsoft.AspNetCore.Components;
+using OnyxScoutApplication.Shared.Models;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 using OnyxScoutApplication.Shared.Models.ScoutFormModels;
-using OnyxScoutApplication.Shared.Other;
+using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
+using OnyxScoutApplication.Shared.Other.Analyzers.TeamData;
 
-namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
+namespace OnyxScoutApplication.Shared.Other.Analyzers
 {
-    public abstract class TeamsAnalyzer : ComponentBase
+    public class TeamsAnalyzer
     {
-        [Inject]
-        // ReSharper disable once UnusedAutoPropertyAccessor.Local
-        private NavigationManager NavigationManager { get; set; }
+        // [Inject]
+        // // ReSharper disable once UnusedAutoPropertyAccessor.Local
+        // private NavigationManager NavigationManager { get; set; }
+        //
+        // [Inject]
+        // // ReSharper disable once UnusedAutoPropertyAccessor.Local
+        // private NotificationManager NotificationManager { get; set; }
 
-        [Inject]
-        // ReSharper disable once UnusedAutoPropertyAccessor.Local
-        private NotificationManager NotificationManager { get; set; }
+        private readonly List<Team> teams;
 
-        [Parameter]
-        public List<Team> Teams { get; set; }
+        private readonly List<FormDto> scoutForms;
 
-        [Parameter]
-        public List<FormDto> ScoutForms { get; set; }
+        private readonly ScoutFormFormatDto scoutFormFormatDto;
 
-        [Parameter]
-        public ScoutFormFormatDto ScoutFormFormatDto { get; set; }
+        private readonly EventAnalyticSettingsDto eventAnalyticSettings;
 
-        [Parameter]
-        public Func<FormDto, List<FormDataDto>> GetTargetList { get; set; }
+        public TeamsAnalyzer(List<Team> teams, List<FormDto> scoutForms, ScoutFormFormatDto scoutFormFormatDto, 
+            EventAnalyticSettingsDto eventAnalyticSettings)
+        {
+            this.teams = teams;
+            this.scoutForms = scoutForms;
+            this.scoutFormFormatDto = scoutFormFormatDto;
+            this.eventAnalyticSettings = eventAnalyticSettings;
+        }
 
-        [Parameter]
-        public EventAnalyticSettingsDto EventAnalyticSettings { get; set; }
+      //  public Func<FormDto, List<FormDataDto>> GetTargetList { get; set; }
 
-        protected List<ExpandoObject> CalculatedTeamsData { get; private set; }
 
-        protected List<ColumnField> ColumnsFields { get; private set; }
+        //public List<ExpandoObject> CalculatedTeamsData { get; private set; }
+
+       // public List<ColumnField> ColumnsFields { get; private set; }
         
         private List<FieldDto> scoutFormFieldsToCalculate;
 
-        protected override async Task OnParametersSetAsync()
+        public AnalyticsResult Calc()
         {
-//List<FieldDto> combinedFields = new List<FieldDto>();
-            // scoutFormFieldsToCalculate = new List<FieldDto>(Fields);
-            scoutFormFieldsToCalculate = ScoutFormFormatDto.FieldsInStages.SelectMany(i => i.Fields.WithCascadeFields()
+            scoutFormFieldsToCalculate = scoutFormFormatDto.FieldsInStages.SelectMany(i => i.Fields.WithCascadeFields()
                 .Where(f => f.FieldType != FieldType.TextField)).ToList();
-            ColumnsFields = scoutFormFieldsToCalculate.Select(i => new ColumnField
+            var columnsFields = scoutFormFieldsToCalculate.Select(i => new ColumnField
                 {Name = i.Name, MarkupName = new MarkupString(i.Name), Id = i.Id.ToString()}).ToList();
-            if (EventAnalyticSettings != null)
+            if (eventAnalyticSettings != null)
             {
-                foreach (var combinedField in EventAnalyticSettings.CombinedFields)
+                foreach (var combinedField in eventAnalyticSettings.CombinedFields)
                 {
                     ColumnField newColumnField = new ColumnField();
                     FieldDto lastField = null;
@@ -68,9 +68,9 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                         }
                         else
                         {
-                            NavigationManager.NavigateTo("EventAnalytics/Settings");
-                            await NotificationManager.NotifyAsync("Please update the event settings",
-                                $"Missing scout forms field: {field.Name}", NotificationType.Warning);
+                            // NavigationManager.NavigateTo("EventAnalytics/Settings");
+                            // await NotificationManager.NotifyAsync("Please update the event settings",
+                            //     $"Missing scout forms field: {field.Name}", NotificationType.Warning);
                         }
                     }
 
@@ -79,23 +79,29 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                     newColumnField.Name = combinedField.Name;
                     newColumnField.MarkupName = combinedField.MarkupName;
                     newColumnField.Id = combinedField.Id;
-                    ColumnsFields.Insert(
-                        ColumnsFields.IndexOf(ColumnsFields.FirstOrDefault(i => i.Id == lastField?.Id.ToString())) + 1,
+                    columnsFields.Insert(
+                        columnsFields.IndexOf(columnsFields.FirstOrDefault(i => i.Id == lastField?.Id.ToString())) + 1,
                         newColumnField);
                 }
             }
 
-            CalculateData();
+            var data = CalculateData();
+            AnalyticsResult analyticsResult = new AnalyticsResult
+            {
+                CalculatedTeamsData = data,
+                ColumnsFields = columnsFields 
+            };
+            return analyticsResult;
         }
 
 
-        private void CalculateData()
+        private List<ExpandoObject> CalculateData()
         {
             var data = new List<ExpandoObject>();
-            foreach (var team in Teams)
+            foreach (var team in teams)
             {
-                List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(ScoutFormFormatDto,
-                    ScoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), _ => true).ToList();
+                List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(scoutFormFormatDto,
+                    scoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), _ => true).ToList();
 
                 IDictionary<string, object> rows = new ExpandoObject();
 
@@ -109,9 +115,9 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                     rows.Add("RawValue" + avg.Field.Id, teamAvg.GetRelativeValue());
                 }
 
-                if (EventAnalyticSettings != null)
+                if (eventAnalyticSettings != null)
                 {
-                    foreach (var combinedField in EventAnalyticSettings.CombinedFields)
+                    foreach (var combinedField in eventAnalyticSettings.CombinedFields)
                     {
                         switch (combinedField.CombinedFieldsType)
                         {
@@ -130,7 +136,7 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
                 data.Add((ExpandoObject) rows);
             }
 
-            CalculatedTeamsData = data;
+            return data;
         }
         
         private static void CalculateFieldSum(CombinedFieldsDto combinedField, IDictionary<string, object> rows)

@@ -1,8 +1,10 @@
-﻿@page "/TeamDetails/{TeamNumber:int}"
-@using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
+﻿@*
+@page "/TeamDetails/{TeamNumber:int}"
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using System.IO
+@using OnyxScoutApplication.Shared.Other.Analyzers
+@using OnyxScoutApplication.Shared.Other.Analyzers.TeamData
 @using Syncfusion.Blazor.Data
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
@@ -22,7 +24,7 @@
     <br/>
     <h6>Selected @selectedData.Count forms</h6>
     <br/>
-    @*<a href="/TeamDetails/Notes/@TeamNumber">Notes</a>*@
+    $1$<a href="/TeamDetails/Notes/@TeamNumber">Notes</a>#1#
     <div>
     <CollapsibleView ValueChanged="@(i => isCollapsed = !i)"></CollapsibleView>
     </div>
@@ -158,3 +160,4 @@
     }
 
 }
+*@

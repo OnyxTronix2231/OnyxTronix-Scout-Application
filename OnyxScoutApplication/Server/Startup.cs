@@ -115,7 +115,7 @@ namespace OnyxScoutApplication.Server
             services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFaunaFormatUnitOfWork>();
 
             services.AddSingleton<IScoutFormRepository, ScoutFormFormatFirestoreRepositorySmart>();
-            services.AddTransient<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
+            services.AddSingleton<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
 
             services.AddTransient<ICustomEventRepository, CustomEventRepository>();
             services.AddTransient<ICustomEventUnitOfWork, CustomEventUnitOfWork>();

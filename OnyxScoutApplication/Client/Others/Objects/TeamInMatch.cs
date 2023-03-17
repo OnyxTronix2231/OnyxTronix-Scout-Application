@@ -15,6 +15,6 @@ namespace OnyxScoutApplication.Client.Others.Objects
 
         public bool IsFormExists { get; set; }
 
-        public FormDto Form { get; set; }
+        public SimpleFormDto Form { get; set; }
     }
 }

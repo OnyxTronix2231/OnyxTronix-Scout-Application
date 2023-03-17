@@ -1,7 +1,9 @@
 ﻿@page "/EventAnalytics"
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
+@using OnyxScoutApplication.Shared.Other.Analyzers
 @using Syncfusion.Blazor.Data
+@using System.Dynamic
 @inject ILocalStorageService LocalStorage
 @inject ISessionStorageService SessionStorage
 @inject HttpClientManager Http
@@ -9,23 +11,29 @@
 @inject NotificationManager NotificationManager
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
-@if (teams is not null && selectedScoutForms is not null)
+<DateTimeRangePicker MinDate="minDate" MaxDate="maxDate" OnDateTimeRangeSelected="OnDateTimeRangeSelected"></DateTimeRangePicker>
+
+@if (selectedScoutForms is not null && calculatedTeamsData is not null && columnsFields is not null)
 {
-    <DateTimeRangePicker MinDate="minDate" MaxDate="maxDate" OnDateTimeRangeSelected="OnDateTimeRangeSelected"></DateTimeRangePicker>
     <br/>
     <h6>Selected @selectedScoutForms.Count forms</h6>
     <br/>
-    <EventAnalyticGrid Teams="teams" ScoutFormFormatDto="format" ScoutForms="selectedScoutForms"
-                       EventAnalyticSettings="analyticSettings"/>
+    <EventAnalyticGrid CalculatedTeamsData=@calculatedTeamsData ColumnsFields="@columnsFields"
+                        
+                       
+                       />
 }
-
+@* ScoutForms="selectedScoutForms" *@
+                       @* EventAnalyticSettings="analyticSettings" *@
 @code {
     private Event selectedEvent;
-    private List<FormDto> scoutForms = new();
-    private List<FormDto> selectedScoutForms = new();
-    private List<Team> teams = new();
-    private ScoutFormFormatDto format = new();
+    private List<SimpleFormDto> scoutForms;
+    private List<SimpleFormDto> selectedScoutForms;
+    // private List<Team> teams;
+    // private ScoutFormFormatDto format;
     private EventAnalyticSettingsDto analyticSettings;
+    private List<ExpandoObject> calculatedTeamsData;
+    private List<ColumnField> columnsFields;
     private DateTime minDate;
     private DateTime maxDate;
 
@@ -39,23 +47,26 @@
             return;
         }
         
-        format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
-        if (format is null)
-        {
-            NavigationManager.NavigateTo("/");
-            return;
-        }
-
-        scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEventWithData/" + selectedEvent.Key)
+        // format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        // if (format is null)
+        // {
+        //     NavigationManager.NavigateTo("/");
+        //     return;
+        // }
+        //
+        // scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+        // selectedScoutForms = scoutForms.ToList();
+        //
+        // if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
+        // {
+        //     analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
+        // }
+        //
+        // teams = await SessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
+        //
+        scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
         selectedScoutForms = scoutForms.ToList();
-        
-        if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
-        {
-            analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
-        }
-        
-        teams = await SessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
-        
+
         var formsByDates = scoutForms.OrderBy(f => f.DateTime).ToList();
         if (!scoutForms.Any())
         {
@@ -65,20 +76,13 @@
         maxDate = formsByDates.Last().DateTime.DateTime + TimeSpan.FromMinutes(5);
     }
     
-    /*private void RangeSelectHandler(RangePickerEventArgs<DateTime?> args)
-    {
-        selectedScoutForms = scoutForms.Where(f => f.DateTime <= maxDate && f.DateTime >= minDate).ToList();
-    }*/
-    /*private void StartValueChangeHandler(ChangedEventArgs<DateTime?> args)
-    {
-        selectedScoutForms = scoutForms.Where(f => f.DateTime <= endDateTime && f.DateTime >= startDateTime).ToList();
-        StateHasChanged();
-        Console.WriteLine($"chose {selectedScoutForms.Count} forms");
-    }*/
-
-    private void OnDateTimeRangeSelected(DateTimeRangePicker.DateTimeSelectedEventArgs obj)
+    private async Task OnDateTimeRangeSelected(DateTimeRangePicker.DateTimeSelectedEventArgs obj)
     {
         selectedScoutForms = scoutForms.
             Where(f => f.DateTime <= obj.EndDateTime && f.DateTime >= obj.StartDateTime).ToList();
+        var analyticsRes = await Http.TryPostJson<AnalyticsResult>
+            ($"EventAnalytics/GetEventAnalytics/{selectedEvent.Year}/{selectedEvent.Key}", new AnalyticsSettings {StartDate = obj.StartDateTime, EndDate = obj.EndDateTime, EventAnalyticSettingsDto = analyticSettings});
+        calculatedTeamsData = analyticsRes.CalculatedTeamsData;
+        columnsFields = analyticsRes.ColumnsFields;
     }
 }
