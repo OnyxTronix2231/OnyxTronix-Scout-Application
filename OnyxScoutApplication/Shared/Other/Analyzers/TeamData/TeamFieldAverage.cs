@@ -17,5 +17,8 @@ public abstract class TeamFieldAverage : IComparable<TeamFieldAverage>
 
     public abstract double GetRelativeValue();
 
-    public abstract int CompareTo(TeamFieldAverage other);
+    public int CompareTo(TeamFieldAverage other)
+    {
+        return GetRelativeValue().CompareTo(other.GetRelativeValue());
+    }
 }

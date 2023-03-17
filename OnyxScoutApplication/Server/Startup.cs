@@ -108,7 +108,10 @@ namespace OnyxScoutApplication.Server
                 options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
 
             services.AddControllersWithViews().AddNewtonsoftJson(settings =>
-                settings.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+            {
+                settings.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                settings.SerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
+            });
             services.AddRazorPages();
 
             services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatFirestoreRepository>();

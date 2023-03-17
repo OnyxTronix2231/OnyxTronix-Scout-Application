@@ -24,16 +24,6 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers.TeamData
             return v;
         }
 
-        public override int CompareTo(TeamFieldAverage other)
-        {
-            if (other is OptionSelectTeamFieldAverage optionFieldAverage)
-            {
-                return GetRelativeValue().CompareTo(optionFieldAverage.GetRelativeValue());
-            }
-
-            throw new ArgumentException($"Cannot compare {nameof(NumericTeamFieldAverage)} type to {other.GetType()}");
-        }
-
         public override double GetRelativeValue()
         {
             double value = 0;

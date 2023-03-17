@@ -19,11 +19,6 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers.TeamData
             return (MarkupString) string.Join("<br />", Texts.ToArray());
         }
 
-        public override int CompareTo(TeamFieldAverage other)
-        {
-            return 0;
-        }
-
         public override double GetRelativeValue()
         {
             return GetAverage();
