@@ -10,7 +10,7 @@
     @if (CalculatedTeamsData != null && CalculatedTeamsData.Count != 0)
     {
         <SfGrid @ref="Grid" FrozenColumns="1" AllowTextWrap="false" DataSource="@CalculatedTeamsData" AllowReordering="true"
-                AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true"
+                AllowFiltering="true" AllowResizing="true" AllowSorting="true"     AllowMultiSorting="true"
                 Toolbar="@toolbarItems" ShowColumnChooser="true" Width="auto" Height="100%">
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
             <GridEvents Created="LoadHandler" TValue="ExpandoObject"></GridEvents>

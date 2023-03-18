@@ -30,7 +30,7 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
 
         private readonly EventAnalyticSettingsDto eventAnalyticSettings;
 
-        public TeamsAnalyzer(List<Team> teams, List<FormDto> scoutForms, ScoutFormFormatDto scoutFormFormatDto, 
+        public TeamsAnalyzer(List<Team> teams, List<FormDto> scoutForms, ScoutFormFormatDto scoutFormFormatDto,
             EventAnalyticSettingsDto eventAnalyticSettings)
         {
             this.teams = teams;
@@ -39,13 +39,13 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
             this.eventAnalyticSettings = eventAnalyticSettings;
         }
 
-      //  public Func<FormDto, List<FormDataDto>> GetTargetList { get; set; }
+        //  public Func<FormDto, List<FormDataDto>> GetTargetList { get; set; }
 
 
         //public List<ExpandoObject> CalculatedTeamsData { get; private set; }
 
-       // public List<ColumnField> ColumnsFields { get; private set; }
-        
+        // public List<ColumnField> ColumnsFields { get; private set; }
+
         private List<FieldDto> scoutFormFieldsToCalculate;
 
         public AnalyticsResult Calc()
@@ -53,7 +53,7 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
             scoutFormFieldsToCalculate = scoutFormFormatDto.FieldsInStages.SelectMany(i => i.Fields.WithCascadeFields()
                 .Where(f => f.FieldType != FieldType.TextField)).ToList();
             var columnsFields = scoutFormFieldsToCalculate.Select(i => new ColumnField
-                {Name = i.Name, MarkupName = new MarkupString(i.Name), Id = i.Id.ToString()}).ToList();
+                { Name = i.Name, MarkupName = new MarkupString(i.Name), Id = i.Id.ToString() }).ToList();
             if (eventAnalyticSettings != null)
             {
                 foreach (var combinedField in eventAnalyticSettings.CombinedFields)
@@ -89,7 +89,7 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
             AnalyticsResult analyticsResult = new AnalyticsResult
             {
                 CalculatedTeamsData = data,
-                ColumnsFields = columnsFields 
+                ColumnsFields = columnsFields
             };
             return analyticsResult;
         }
@@ -100,8 +100,10 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
             var data = new List<ExpandoObject>();
             foreach (var team in teams)
             {
-                List<TeamFieldAverage> avgs = TeamDataAnalyzer.CalculateDataFor(scoutFormFormatDto,
-                    scoutForms.Where(i => i.TeamNumber == team.TeamNumber).ToList(), _ => true).ToList();
+                var teamScoutForms = scoutForms.Where(i => i.TeamNumber == team.TeamNumber).OrderBy(i => i.MatchNumber)
+                    .ToList();
+                List<TeamFieldAverage> avgs = TeamDataAnalyzer
+                    .CalculateDataFor(scoutFormFormatDto, teamScoutForms, _ => true).ToList();
 
                 IDictionary<string, object> rows = new ExpandoObject();
 
@@ -122,25 +124,53 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
                         switch (combinedField.CombinedFieldsType)
                         {
                             case CombinedFieldsType.Sum:
-                                CalculateFieldSum(combinedField, rows);
+                                CalculateFieldSum(combinedField, rows, teamScoutForms);
                                 break;
-                            case CombinedFieldsType.Avg:
-                                CalculateFieldAvg(combinedField, rows);
-                                break;
+                            // case CombinedFieldsType.Avg:
+                            //     CalculateFieldAvg(combinedField, rows);
+                            //     break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
                     }
                 }
 
-                data.Add((ExpandoObject) rows);
+                data.Add((ExpandoObject)rows);
             }
 
             return data;
         }
-        
-        private static void CalculateFieldSum(CombinedFieldsDto combinedField, IDictionary<string, object> rows)
+
+        private static void CalculateFieldSum(CombinedFieldsDto combinedField, IDictionary<string, object> rows,
+            List<FormDto> teamScoutForms)
         {
+            string sums = "";
+            foreach (var scoutForm in teamScoutForms)
+            {
+                var allData = scoutForm.FormDataInStages.SelectMany(i => i.FormData.WithCascadeData()).ToList();
+                double formSum = 0;
+                foreach (var field in combinedField.Fields)
+                {
+                    var data = allData.FirstOrDefault(i => i.Field.Id == field.Id);
+                    if (data is null)
+                    {
+                        Console.Error.WriteLine(
+                            $"Missing data in scout form in match: {scoutForm.MatchNumber}, data name: {field.Name}");
+                        continue;
+                    }
+
+                    if (data.NumericValue is null)
+                    {
+                        continue;
+                    }
+
+                    formSum += data.NumericValue.Value;
+                }
+
+                sums += $"{formSum},";
+            }
+
+
             double sum = 0;
             foreach (var field in combinedField.Fields)
             {
@@ -154,32 +184,33 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
                         $"Warning, some scouts forms missing some data to calculate combined averages ({field.Name}) ");
                 }
             }
-            rows.Add(combinedField.Id, sum);
+
+            rows.Add(combinedField.Id, new MarkupString(Math.Round(sum, 2) + "<br />" + sums).Value);
             rows.Add("RawValue" + combinedField.Id, sum);
         }
 
-        private static void CalculateFieldAvg(CombinedFieldsDto combinedField, IDictionary<string, object> rows)
-        {
-            double sumAvg = 0;
-            int index = 0;
-            foreach (var field in combinedField.Fields)
-            {
-                if (rows.ContainsKey("RawValue" + field.Id))
-                {
-                    sumAvg += (double)rows["RawValue" + field.Id];
-                    index++;
-                }
-                else
-                {
-                    Console.WriteLine(
-                        $"Warning, some scouts forms missing some data to calculate combined averages ({field.Name}) ");
-                }
-            }
-
-            sumAvg /= index;
-            rows.Add(combinedField.Id, sumAvg);
-            rows.Add("RawValue" + combinedField.Id, sumAvg);
-        }
+        // private static void CalculateFieldAvg(CombinedFieldsDto combinedField, IDictionary<string, object> rows)
+        // {
+        //     double sumAvg = 0;
+        //     int index = 0;
+        //     foreach (var field in combinedField.Fields)
+        //     {
+        //         if (rows.ContainsKey("RawValue" + field.Id))
+        //         {
+        //             sumAvg += (double)rows["RawValue" + field.Id];
+        //             index++;
+        //         }
+        //         else
+        //         {
+        //             Console.WriteLine(
+        //                 $"Warning, some scouts forms missing some data to calculate combined averages ({field.Name}) ");
+        //         }
+        //     }
+        //
+        //     sumAvg /= index;
+        //     rows.Add(combinedField.Id, sumAvg);
+        //     rows.Add("RawValue" + combinedField.Id, sumAvg);
+        // }
     }
 
     public class ColumnField

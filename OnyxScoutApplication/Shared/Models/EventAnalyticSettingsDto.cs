@@ -31,6 +31,6 @@ namespace OnyxScoutApplication.Shared.Models
     public enum CombinedFieldsType
     {
         Sum,
-        Avg
+        // Avg
     }
 }
