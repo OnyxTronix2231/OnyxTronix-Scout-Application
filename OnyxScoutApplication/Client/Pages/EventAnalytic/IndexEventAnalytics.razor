@@ -65,7 +65,7 @@
         var analyticsRes = await Http.TryPostJson<AnalyticsResult>
             ($"EventAnalytics/GetEventAnalytics/{selectedEvent.Year}/{selectedEvent.Key}", new AnalyticsSettings { StartDate = obj.StartDateTime, EndDate = obj.EndDateTime, EventAnalyticSettingsDto = analyticSettings });
         calculatedTeamsData = analyticsRes.CalculatedTeamsData;
-        analyticsRes.ColumnsFields.ForEach(i => Console.WriteLine(i.MarkupName));
+        analyticsRes.ColumnsFields.ForEach(i => Console.WriteLine(i.MarkupName.Value));
         columnsFields = analyticsRes.ColumnsFields;
     }
 
