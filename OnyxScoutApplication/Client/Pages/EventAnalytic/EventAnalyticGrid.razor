@@ -6,11 +6,11 @@
 @inject HttpClientManager Http
 
 @* @inherits TeamsAnalyzer *@
-<div style="width: calc(90vw); height: 90vh">   
+<div style="width: calc(90vw); height: 90vh">
     @if (CalculatedTeamsData != null && CalculatedTeamsData.Count != 0)
     {
         <SfGrid @ref="Grid" FrozenColumns="1" AllowTextWrap="false" DataSource="@CalculatedTeamsData" AllowReordering="true"
-                AllowFiltering="true" AllowResizing="true" AllowSorting="true"     AllowMultiSorting="true"
+                AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true"
                 Toolbar="@toolbarItems" ShowColumnChooser="true" Width="auto" Height="100%">
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
             <GridEvents Created="LoadHandler" TValue="ExpandoObject"></GridEvents>
@@ -35,7 +35,7 @@
                     string nameId = ColumnsFields[index].Id;
                     string name = ColumnsFields[index].Name;
                     var rawValue = "RawValue" + nameId;
-                    Console.WriteLine("@name: " + name);
+                    Console.WriteLine("@name: " + ColumnsFields[index].MarkupName);
 
                     <GridColumn AutoFit="false" HeaderText="@name" Field="@rawValue" AllowReordering="true"
                                 AllowResizing="true" Type="ColumnType.Number">
@@ -59,25 +59,27 @@
 </div>
 
 @code {
+
     [Parameter]
     public List<ExpandoObject> CalculatedTeamsData { get; set; }
+
     [Parameter]
     public List<ColumnField> ColumnsFields { get; set; }
+
     private readonly string[] toolbarItems = { "ColumnChooser" };
     public SfGrid<ExpandoObject> Grid { get; set; }
-    
+
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-       
     }
 
     private async Task LoadHandler()
     {
         await Grid.AutoFitColumnsAsync(ColumnsFields.Select(i => "RawValue" + i.Id).ToArray());
     }
-    
+
 }
 
 
