@@ -49,7 +49,7 @@ public class EventAnalyticsController : Controller
         var scoutForms = scoutFormsRes.Value!
             .Where(f => f.DateTime >= analyticsSettings.StartDate && f.DateTime <= analyticsSettings.EndDate).ToList();
 
-
+        Console.WriteLine("Selected: " + scoutForms.Count);
         var scoutFormFormat =
             await scoutFormFormatUnitOfWork.ScoutFormFormats.GetWithFieldsByYear(year, ScoutFormType.MainGame);
         if (scoutFormFormat.Result is not null)
@@ -60,7 +60,9 @@ public class EventAnalyticsController : Controller
         var teams = await blueAllianceService.GetTeamsByEvent(eventKey);
         TeamsAnalyzer analyzer = new TeamsAnalyzer(teams, scoutForms, scoutFormFormat.Value,
             analyticsSettings.EventAnalyticSettingsDto);
-        return Ok(analyzer.Calc());
+        var calc = analyzer.Calc();
+        calc.ColumnsFields.ForEach(i => Console.WriteLine(i.Name));
+        return Ok(calc);
     }
 
     [HttpPost("GetTeamEventAnalytics/{year:int}/{eventKey}/{teamNumber:int}")]

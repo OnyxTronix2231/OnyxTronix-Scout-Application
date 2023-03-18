@@ -18,11 +18,9 @@
     <br/>
     <h6>Selected @selectedScoutForms.Count forms</h6>
     <br/>
-    <EventAnalyticGrid CalculatedTeamsData=@calculatedTeamsData ColumnsFields="@columnsFields"
-                        
-                       
-                       />
+    <EventAnalyticGrid CalculatedTeamsData=@calculatedTeamsData ColumnsFields="@columnsFields"/>
 }
+
 @code {
     private Event selectedEvent;
     private List<SimpleFormDto> scoutForms;
@@ -42,12 +40,12 @@
             NavigationManager.NavigateTo("/");
             return;
         }
-        
+
         if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
         {
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
-        
+
         scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
         selectedScoutForms = scoutForms.ToList();
 
@@ -59,14 +57,16 @@
         minDate = formsByDates.First().DateTime.DateTime - TimeSpan.FromMinutes(5);
         maxDate = formsByDates.Last().DateTime.DateTime + TimeSpan.FromMinutes(5);
     }
-    
+
     private async Task OnDateTimeRangeSelected(DateTimeRangePicker.DateTimeSelectedEventArgs obj)
     {
         selectedScoutForms = scoutForms.
             Where(f => f.DateTime <= obj.EndDateTime && f.DateTime >= obj.StartDateTime).ToList();
         var analyticsRes = await Http.TryPostJson<AnalyticsResult>
-            ($"EventAnalytics/GetEventAnalytics/{selectedEvent.Year}/{selectedEvent.Key}", new AnalyticsSettings {StartDate = obj.StartDateTime, EndDate = obj.EndDateTime, EventAnalyticSettingsDto = analyticSettings});
+            ($"EventAnalytics/GetEventAnalytics/{selectedEvent.Year}/{selectedEvent.Key}", new AnalyticsSettings { StartDate = obj.StartDateTime, EndDate = obj.EndDateTime, EventAnalyticSettingsDto = analyticSettings });
         calculatedTeamsData = analyticsRes.CalculatedTeamsData;
+        analyticsRes.ColumnsFields.ForEach(i => Console.WriteLine(i.Name));
         columnsFields = analyticsRes.ColumnsFields;
     }
+
 }
