@@ -1,8 +1,10 @@
 @inject IJSRuntime JsRuntime
 
-    <a href=""
-       @onclick="@(async ()=> await JsRuntime.InvokeVoidAsync("open", Url , "_blank"))" @onclick:preventDefault > @Text
-    </a>
+<a href=""
+   @onclick="@(async ()=> await JsRuntime.InvokeVoidAsync("open", Url , "_blank"))" @onclick:preventDefault > @Text
+</a>
+
+
 
 @code {
     [Parameter]

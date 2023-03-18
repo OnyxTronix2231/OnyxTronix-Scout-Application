@@ -19,7 +19,7 @@
     <div class="main">
         <div class="top-row px-4 auth">
             <LoginDisplay/>
-            <span>V2.5.5</span>
+            <span>V2.6.0</span>
         </div>
         <div class="content px-4">
             @if (finishedInit)
@@ -47,7 +47,7 @@
             var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
             SessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
 
-            var scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+            var scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
             SessionStorage.SetItem("ScoutForms.All", scoutForms);
 
             var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);

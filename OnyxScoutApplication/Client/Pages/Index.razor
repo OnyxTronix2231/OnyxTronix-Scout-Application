@@ -48,14 +48,14 @@
     private List<Match> qfMatches = new();
     private List<Match> sfMatches = new();
     private List<Match> fMatches = new();
-    private List<FormDto> scoutForms;
+    private List<SimpleFormDto> scoutForms;
 
     protected override async Task OnInitializedAsync()
     {
         if (await SessionStorage.ContainKeyAsync("TheBlueAlliance.AllMatches"))
         {
             var matches = await SessionStorage.GetItemAsync<List<Match>>("TheBlueAlliance.AllMatches");
-            scoutForms = await SessionStorage.GetItemAsync<List<FormDto>>("ScoutForms.All");
+            scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
             UpdateByMatches(matches);
         }
     }
@@ -64,7 +64,7 @@
     {
         var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
         await SessionStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
-        scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+        scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
         await SessionStorage.SetItemAsync("ScoutForms.All", scoutForms);
         var teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
         await SessionStorage.SetItemAsync("TheBlueAlliance.AllTeams", teams);

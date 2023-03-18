@@ -44,6 +44,7 @@ namespace OnyxScoutApplication.Server.Data.Profiles
             CreateMap<Form, Form>();
             CreateMap<FormDto, Form>();
             CreateMap<Form, FormDto>();
+            CreateMap<Form, SimpleFormDto>();
 
             CreateMap<ScoutFormFormatDto, FormDto>().ConvertUsing<ScoutFormFormatToScoutFormConverter>();
 

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 using OnyxScoutApplication.Shared.Models;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 
-namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
+namespace OnyxScoutApplication.Shared.Other.Analyzers.TeamData
 {
     public class NumericTeamFieldAverage : TeamFieldAverage
     {
@@ -29,16 +29,6 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
         public string GetFormattedLowValuesByCount(int count)
         {
             return GetFormattedValues(GetSortedValues().TakeLast(count).ToArray());
-        }
-
-        public override int CompareTo(TeamFieldAverage other)
-        {
-            if (other is NumericTeamFieldAverage numericTeamFieldAverage)
-            {
-                return GetRelativeValue().CompareTo(numericTeamFieldAverage.GetRelativeValue());
-            }
-
-            throw new ArgumentException($"Cannot compare {nameof(NumericTeamFieldAverage)} type to {other.GetType()}");
         }
 
         public override double GetRelativeValue()

@@ -15,7 +15,6 @@ using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Web;
 using OnyxScoutApplication.Client.Others.Extensions;
 using OnyxScoutApplication.Client.Others.Objects;
-using OnyxScoutApplication.Client.Others.Objects.Analyzers;
 using OnyxScoutApplication.Shared.Models.CustomeEventModels;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 using OnyxScoutApplication.Shared.Models.ScoutFormModels;

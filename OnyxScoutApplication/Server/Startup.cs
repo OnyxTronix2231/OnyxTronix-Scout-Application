@@ -108,14 +108,17 @@ namespace OnyxScoutApplication.Server
                 options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
 
             services.AddControllersWithViews().AddNewtonsoftJson(settings =>
-                settings.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+            {
+                settings.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                settings.SerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
+            });
             services.AddRazorPages();
 
             services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatFirestoreRepository>();
             services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFaunaFormatUnitOfWork>();
 
-            services.AddTransient<IScoutFormRepository, ScoutFormRepository>();
-            services.AddTransient<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
+            services.AddSingleton<IScoutFormRepository, ScoutFormFormatFirestoreRepositorySmart>();
+            services.AddSingleton<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
 
             services.AddTransient<ICustomEventRepository, CustomEventRepository>();
             services.AddTransient<ICustomEventUnitOfWork, CustomEventUnitOfWork>();

@@ -1,13 +1,11 @@
-﻿using OnyxScoutApplication.Shared.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 using OnyxScoutApplication.Shared.Models.ScoutFormModels;
+using OnyxScoutApplication.Shared.Other.Analyzers.TeamData;
 
-namespace OnyxScoutApplication.Client.Others.Objects.Analyzers
+namespace OnyxScoutApplication.Shared.Other.Analyzers
 {
     public class BooleanAnalyzer : IFieldAnalyzer
     {

@@ -1,8 +1,9 @@
 ﻿@page "/TeamDetails/{TeamNumber:int}"
-@using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using System.IO
+@using OnyxScoutApplication.Shared.Other.Analyzers
+@using OnyxScoutApplication.Shared.Other.Analyzers.TeamData
 @using Syncfusion.Blazor.Data
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
@@ -12,13 +13,14 @@
 
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
+<h3>Team @TeamNumber</h3>
+<h4>@teamName</h4>
+<h4>@selectedEvent?.Name</h4>
+<DateTimeRangePicker MinDate="minDate" MaxDate="maxDate" OnDateTimeRangeSelected="OnDateTimeRangeSelected"></DateTimeRangePicker>
 
 @if (calculatedScoutDataByStages is not null && calculatedPitScoutDataByStages is not null && selectedData is not null)
 {
-    <h3>Team @TeamNumber</h3>
-    <h4>@teamName</h4>
-    <h4>@selectedEvent?.Name</h4>
-    <DateTimeRangePicker MinDate="minDate" MaxDate="maxDate" OnDateTimeRangeSelected="OnDateTimeRangeSelected"></DateTimeRangePicker>
+    
     <br/>
     <h6>Selected @selectedData.Count forms</h6>
     <br/>
@@ -27,7 +29,7 @@
     <CollapsibleView ValueChanged="@(i => isCollapsed = !i)"></CollapsibleView>
     </div>
     <div class="form-group col-lg-6 col-md-6 collapse @(!isCollapsed ? "show" : "")" style="padding-left:2em">
-        <TeamNotes Forms="selectedData"></TeamNotes>
+        <TeamNotes TeamNumber="TeamNumber" SelectedEvent="selectedEvent" ></TeamNotes>
          @if (pitScoutForms.Count != 0 && pitScoutForms[0].IsImageUploaded && !isCollapsed)
          {
              <br>
@@ -44,6 +46,7 @@
         <TeamAnalyticGrid CalculatedData="@value"></TeamAnalyticGrid>
         <br/>
     }
+    
     
     <br/>
     <h4>Pit scouting</h4>
@@ -69,8 +72,8 @@
 
     private string teamName;
     private Event selectedEvent;
-    private List<FormDto> data;
-    private List<FormDto> selectedData;
+    private List<SimpleFormDto> data;
+    private List<SimpleFormDto> selectedData;
     private Dictionary<string, List<TeamFieldAverage>> calculatedScoutDataByStages;
     private Dictionary<string, List<TeamFieldAverage>> calculatedPitScoutDataByStages;
     private List<FormDto> pitScoutForms;
@@ -78,7 +81,7 @@
     private bool isCollapsed = true;
     private DateTime minDate;
     private DateTime maxDate;
-    private ScoutFormFormatDto format;
+    // private ScoutFormFormatDto format;
 
     protected override async Task OnInitializedAsync()
     {
@@ -97,8 +100,9 @@
         {
             return;
         }
-        format = await Http.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{selectedEvent.Year}");
-        var result = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByTeam/{TeamNumber}/{selectedEvent.Key}");
+        // format = await Http.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{selectedEvent.Year}");
+        var result = (await SessionStorage.GetItemAsync<List<SimpleFormDto>>($"ScoutForms.All")).
+            Where(s => s.TeamNumber == TeamNumber);
         
         data = result.OrderBy(i => i.KeyName).ToList();
         
@@ -106,15 +110,10 @@
             ("TheBlueAlliance/GetMatchesByTeamAndEvent/" + TeamNumber + "/" + selectedEvent.Key))
             .OrderBy(i => i.Date).ToList();
         
-        var pirScoutFormat = await Http.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{selectedEvent.Year}/{ScoutFormType.Pit}");
+        // var pirScoutFormat = await Http.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{selectedEvent.Year}/{ScoutFormType.Pit}");
         pitScoutForms = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByTeam/{TeamNumber}/{selectedEvent.Key}/{ScoutFormType.Pit}");
         calculatedPitScoutDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
-        foreach (var fieldsInStage in pirScoutFormat.FieldsInStages)
-        {
-            calculatedPitScoutDataByStages.Add(fieldsInStage.Name, 
-                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, pitScoutForms, _ => true, true));
-        }
-        
+
         var formsByDates = data.OrderBy(f => f.DateTime).ToList();
         if (!formsByDates.Any())
         {
@@ -122,7 +121,7 @@
         }
         minDate = formsByDates.First().DateTime.DateTime - TimeSpan.FromMinutes(5);
         maxDate = formsByDates.Last().DateTime.DateTime + TimeSpan.FromMinutes(5);
-        ChangeSelctedData(minDate, maxDate);
+        // ChangeSelctedData(minDate, maxDate);
     }
 
     private async Task OnTeamClicked(TeamInMatch teamInMatch)
@@ -141,20 +140,19 @@
         }
     }
     
-    private void OnDateTimeRangeSelected(DateTimeRangePicker.DateTimeSelectedEventArgs obj)
+    private async Task OnDateTimeRangeSelected(DateTimeRangePicker.DateTimeSelectedEventArgs obj)
     {
-        ChangeSelctedData(obj.StartDateTime, obj.EndDateTime);
+       await ChangeSelctedData(obj.StartDateTime, obj.EndDateTime);
     }
+    
 
-    private void ChangeSelctedData(DateTime startDateTime, DateTime endDateTime)
+    private async Task ChangeSelctedData(DateTime startDateTime, DateTime endDateTime)
     {
         selectedData = data.Where(f => f.DateTime <= endDateTime && f.DateTime >= startDateTime).ToList();
-        calculatedScoutDataByStages = new Dictionary<string, List<TeamFieldAverage>>();
-        foreach (var fieldsInStage in format.FieldsInStages)
-        {
-            calculatedScoutDataByStages.Add(fieldsInStage.Name,
-                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, selectedData, _ => true));
-        }
+        var analyticsRes = await Http.TryPostJson<AnalyticsTeamResult>
+            ($"EventAnalytics/GetTeamEventAnalytics/{selectedEvent.Year}/{selectedEvent.Key}/{TeamNumber}", new AnalyticsSettings {StartDate = startDateTime, EndDate = endDateTime});
+        calculatedScoutDataByStages = analyticsRes.CalculatedScoutDataByStages;
+        calculatedPitScoutDataByStages = analyticsRes.CalculatedScoutDataByStagesPit;
     }
 
 }

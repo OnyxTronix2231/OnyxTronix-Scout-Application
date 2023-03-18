@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -38,7 +39,12 @@ namespace OnyxScoutApplication.Client.Others.Managers
             return await TrySetAsync(async () => await httpClient.PostAsync(command, Serialize(objectToPost)));
         }
         
-        public async Task<bool> TryPostJson(string command, HttpContent content)
+        public async Task<T> TryPostJson<T>(string command, object objectToPost) where T : class
+        {
+            return await TryGetAsync<T>(async () => await httpClient.PostAsJsonAsync(command, objectToPost));
+        }
+        
+        public async Task<bool> TryPostJson(string command, HttpContent content) 
         {
             return await TrySetAsync(async () => await httpClient.PostAsync(command, content));
         }
@@ -51,10 +57,12 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 return null;
             }
             string json = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(json);
             var result = JsonConvert.DeserializeObject<T>(json,
                 new JsonSerializerSettings
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    TypeNameHandling = TypeNameHandling.Auto
                 });
             return result;
         }
@@ -107,6 +115,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
             var inputJson = JsonConvert.SerializeObject(objectToSerialize, new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.Auto
             });
             return new StringContent(inputJson, Encoding.UTF8, "application/json");
         }
