@@ -110,7 +110,7 @@ namespace OnyxScoutApplication.Server
             services.AddControllersWithViews().AddNewtonsoftJson(settings =>
             {
                 settings.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                settings.SerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
+                settings.SerializerSettings.TypeNameHandling = TypeNameHandling.All;
             });
             services.AddRazorPages();
 
