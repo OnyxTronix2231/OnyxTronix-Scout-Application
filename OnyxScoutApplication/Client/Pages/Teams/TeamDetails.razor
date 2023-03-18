@@ -29,7 +29,7 @@
     <CollapsibleView ValueChanged="@(i => isCollapsed = !i)"></CollapsibleView>
     </div>
     <div class="form-group col-lg-6 col-md-6 collapse @(!isCollapsed ? "show" : "")" style="padding-left:2em">
-        @* <TeamNotes Forms="selectedData"></TeamNotes> *@
+        <TeamNotes TeamNumber="TeamNumber" SelectedEvent="selectedEvent" ></TeamNotes>
          @if (pitScoutForms.Count != 0 && pitScoutForms[0].IsImageUploaded && !isCollapsed)
          {
              <br>
@@ -144,6 +144,7 @@
     {
        await ChangeSelctedData(obj.StartDateTime, obj.EndDateTime);
     }
+    
 
     private async Task ChangeSelctedData(DateTime startDateTime, DateTime endDateTime)
     {

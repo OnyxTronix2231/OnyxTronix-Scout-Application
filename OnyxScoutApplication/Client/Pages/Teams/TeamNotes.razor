@@ -8,6 +8,7 @@
 { 
 @*     <h3>Team @TeamNumber</h3> *@
 @*     <h4>@selectedEvent?.Name</h4> *@
+    
      <div> 
         @foreach (var (stage, textByWirters) in notesByStage)
         {
@@ -32,20 +33,23 @@
 
     [Parameter]
     public int TeamNumber { get; set; }
-
+    
     [Parameter]
-    public List<FormDto> Forms
-    {
-        get => forms;
-        set
-        {
-            forms = value;
-            var v = forms.SelectMany(i => i.FormDataInStages.ToDictionary(ii => ii.Name, ii => 
-                new Tuple<FormDataDto[], string>(ii.FormData.Where(d => d.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)));
-            notesByStage = v.ToLookup(i => i.Key, i => i.Value).ToDictionary(i => i.Key, i => i.ToList());
-        }
-    }
-
+    public Event SelectedEvent { get; set; }
+    
     private Dictionary<string, List<Tuple<FormDataDto[], string>>> notesByStage;
-    private List<FormDto> forms;
+
+            // forms = value;
+            // var v = forms.SelectMany(i => i.FormDataInStages.ToDictionary(ii => ii.Name, ii => 
+            //     new Tuple<FormDataDto[], string>(ii.FormData.Where(d => d.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)));
+            // notesByStage = v.ToLookup(i => i.Key, i => i.Value).ToDictionary(i => i.Key, i => i.ToList());
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        notesByStage = 
+            await Http.GetJson<Dictionary<string, List<Tuple<FormDataDto[], string>>>>(
+                $"EventAnalytics/GetNotesOnTeam/{SelectedEvent.Year}/{SelectedEvent.Key}/{TeamNumber}");
+    }
 }
