@@ -1,12 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Generic;
-using System;
-using System.Collections.Generic;
-using System.Collections.Generic;
-using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 
 namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
