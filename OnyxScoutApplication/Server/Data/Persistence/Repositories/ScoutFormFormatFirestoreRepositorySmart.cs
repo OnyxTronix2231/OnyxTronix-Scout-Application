@@ -43,7 +43,7 @@ public class ScoutFormFormatFirestoreRepositorySmart : FirestoreRepository<Form,
     {
         // await Init();
         // return Mapper.Map<FormDto>(formDtos.Find(s => s.Id == id));
-        return Mapper.Map<FormDto>(await Get(id));
+        return await Get(id);
     }
 
     public async Task<ActionResult> Update(string id, FormDto scoutFormDto)
