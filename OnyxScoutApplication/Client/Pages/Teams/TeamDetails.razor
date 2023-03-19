@@ -150,7 +150,8 @@
     {
         selectedData = data.Where(f => f.DateTime <= endDateTime && f.DateTime >= startDateTime).ToList();
         var analyticsRes = await Http.TryPostJson<AnalyticsTeamResult>
-            ($"EventAnalytics/GetTeamEventAnalytics/{selectedEvent.Year}/{selectedEvent.Key}/{TeamNumber}", new AnalyticsSettings {StartDate = startDateTime, EndDate = endDateTime});
+            ($"EventAnalytics/GetTeamEventAnalytics/{selectedEvent.Year}/{selectedEvent.Key}/{TeamNumber}",
+                new AnalyticsSettings {StartDate = startDateTime, EndDate = endDateTime});
         calculatedScoutDataByStages = analyticsRes.CalculatedScoutDataByStages;
         calculatedPitScoutDataByStages = analyticsRes.CalculatedScoutDataByStagesPit;
     }

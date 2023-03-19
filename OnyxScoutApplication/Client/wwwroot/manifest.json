@@ -1,6 +1,6 @@
 {
-  "name": "OnyxScoutApplication",
-  "short_name": "OnyxScoutApplication",
+  "name": "Onyx scouter",
+  "short_name": Onyx scouter",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",

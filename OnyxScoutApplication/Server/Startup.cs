@@ -110,7 +110,7 @@ namespace OnyxScoutApplication.Server
             services.AddControllersWithViews().AddNewtonsoftJson(settings =>
             {
                 settings.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                settings.SerializerSettings.TypeNameHandling = TypeNameHandling.All;
+                settings.SerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
             });
             services.AddRazorPages();
 
@@ -173,7 +173,7 @@ namespace OnyxScoutApplication.Server
                 {
                     ctx.Request.Scheme = "https";
                     ctx.Request.Host =
-                        new HostString(Environment.GetEnvironmentVariables()["PublicOrigin"]!.ToString()!);
+                        new HostString("localhost:5001");
                     return next();
                 });
                 app.UseExceptionHandler("/Error");
