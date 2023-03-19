@@ -110,7 +110,7 @@ namespace OnyxScoutApplication.Server
             services.AddControllersWithViews().AddNewtonsoftJson(settings =>
             {
                 settings.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                settings.SerializerSettings.TypeNameHandling = TypeNameHandling.All;
+                settings.SerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
             });
             services.AddRazorPages();
 
@@ -127,7 +127,7 @@ namespace OnyxScoutApplication.Server
             services.AddTransient<IApplicationUserUnitOfWork, ApplicationUserUnitOfWork>();
 
             var v = new FirestoreClientBuilder();
-            if (!env.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 v.JsonCredentials = "{" +
                                         "\"type\": " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_TYPE"] +

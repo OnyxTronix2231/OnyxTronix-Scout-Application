@@ -67,7 +67,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 new JsonSerializerSettings
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    TypeNameHandling = TypeNameHandling.All
+                    TypeNameHandling = TypeNameHandling.Auto
                 });
             return result;
         }
@@ -134,7 +134,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
             var inputJson = JsonConvert.SerializeObject(objectToSerialize, new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.All
+                TypeNameHandling = TypeNameHandling.Auto
             });
             return new StringContent(inputJson, Encoding.UTF8, "application/json");
         }
