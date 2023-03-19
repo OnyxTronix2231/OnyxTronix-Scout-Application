@@ -4,6 +4,8 @@
 @using FailureEventArgs = Syncfusion.Blazor.Inputs.FailureEventArgs
 @inject NavigationManager NavigationManager
 @inject HttpClientManager Http
+@inject ILocalStorageService LocalStorage
+@inject NotificationManager NotificationManager;
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 <h1>Scout forms</h1>
 @if (scoutForms == null)
@@ -19,28 +21,28 @@ else
             ShowColumnChooser="true" Width="100%" Height="100%">
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
-            <GridColumn ShowInColumnChooser="false" HeaderText="Team" Field="TeamNumber" 
+            <GridColumn ShowInColumnChooser="false" HeaderText="Team" Field="TeamNumber"
                         AllowFiltering="true"
                         FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"
                         Width="70px">
             </GridColumn>
-            
+
             <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Year" Field="Year"
-                        AllowFiltering="true" 
+                        AllowFiltering="true"
                         FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
             </GridColumn>
-            
+
             <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Key name" Field="KeyName"
                         AllowFiltering="true" Type="ColumnType.String"
                         FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
             </GridColumn>
-            
-            <GridColumn  AutoFit="true" ShowInColumnChooser="false" HeaderText="Writer user name" Field="WriterUserName"
-                         AllowFiltering="true" Type="ColumnType.String"
-                         FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
+
+            <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Writer user name" Field="WriterUserName"
+                        AllowFiltering="true" Type="ColumnType.String"
+                        FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
             </GridColumn>
-            
-    
+
+
             <GridColumn AutoFit="true" AllowReordering="false" ShowInColumnChooser="false" HeaderText=""
                         Field="" AllowFiltering="false">
                 <Template>
@@ -48,29 +50,30 @@ else
                         var scoutForm = (FormDto)context;
                         <div>
                             @{ bool isAllowedToEdit = user.Identity!.Name == scoutForm.WriterUserName
-                                                      || user.IsInRole(Role.Admin.ToString());}
-                            <SfButton CssClass="@(isAllowedToEdit ? "e-warning" : "")" @onclick="() => Edit(scoutForm)" 
-                                      Disabled="@(!isAllowedToEdit)">Edit
+                                                      || user.IsInRole(Role.Admin.ToString()); }
+                            <SfButton CssClass="@(isAllowedToEdit ? "e-warning" : "")" @onclick="() => Edit(scoutForm)"
+                                      Disabled="@(!isAllowedToEdit)">
+                                Edit
                             </SfButton>
-                            <ButtonTabOpener CssClass="e-info" Url="@($"ScoutForm/View/{scoutForm.Id}")" Style="margin-left :5px"  
+                            <ButtonTabOpener CssClass="e-info" Url="@($"ScoutForm/View/{scoutForm.Id}")" Style="margin-left :5px"
                                              Text="View">
                             </ButtonTabOpener>
                         </div>
                     }
                 </Template>
             </GridColumn>
-            
-    
-    
+
+
         </GridColumns>
     </SfGrid>
 }
 
 
 @code {
-    
+
     [CascadingParameter]
     private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
     private ClaimsPrincipal user;
     private List<FormDto> scoutForms;
 
@@ -78,7 +81,16 @@ else
     {
         var authState = await AuthenticationStateTask;
         user = authState.User;
-        var resScoutForms = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByType/{ScoutFormType.MainGame}");
+
+        Event selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        if (selectedEvent is null)
+        {
+            await NotificationManager.NotifyAsync("Please select an event first", "", NotificationType.Warning);
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        var resScoutForms = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByEvent/{selectedEvent.Key}/{ScoutFormType.MainGame}");
         resScoutForms.Sort();
         scoutForms = resScoutForms;
     }
@@ -87,4 +99,5 @@ else
     {
         NavigationManager.NavigateTo("ScoutForm/Edit/" + form.Id);
     }
+
 }
