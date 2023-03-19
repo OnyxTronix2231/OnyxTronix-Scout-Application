@@ -131,7 +131,7 @@ public class EventAnalyticsController : Controller
 
 
     [HttpGet("GetNotesOnTeam/{year:int}/{eventKey}/{teamNumber:int}")]
-    public async Task<ActionResult<Dictionary<string, List<Tuple<FormDataDto[], string>>>>> GetNotesOnTeam(int year,
+    public async Task<ActionResult<Dictionary<string, List<DataAndWriter>>>> GetNotesOnTeam(int year,
         string eventKey, int teamNumber)
     {
         var scoutFormsRes =
@@ -144,13 +144,16 @@ public class EventAnalyticsController : Controller
 
         var scoutForms = scoutFormsRes.Value!;
 
-        var v = scoutForms.SelectMany(i => i.FormDataInStages.
-            Where(i => i.FormData.WithCascadeData().Any(ii => ii.Field.FieldType == FieldType.TextField)).
-            ToDictionary(ii => ii.Name, ii =>
-            new Tuple<FormDataDto[], string>(ii.FormData.Where(d => d.Field.FieldType == FieldType.TextField).ToArray(),
-                i.WriterUserName)));
-
-        var notesByStage = v.ToLookup(i => i.Key, i => i.Value).ToDictionary(i => i.Key, i => i.ToList());
+        var v = scoutForms.SelectMany(i => i.FormDataInStages
+            .Where(i => i.FormData.WithCascadeData().Any(ii => ii.Field.FieldType == FieldType.TextField)).ToDictionary(
+                ii => ii.Name, ii =>
+                    new DataAndWriter
+                    {
+                        FormDataDtos = ii.FormData.Where(d => d.Field.FieldType == FieldType.TextField).ToArray(),
+                        WriterUserName = i.WriterUserName
+                    }));
+        var notesByStage = v.ToLookup(i => i.Key, i => i.Value).ToDictionary(i => i.Key,
+            i => i.ToList());
         return Ok(notesByStage);
     }
 }
