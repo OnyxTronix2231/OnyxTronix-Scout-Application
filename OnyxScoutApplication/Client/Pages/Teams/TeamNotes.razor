@@ -6,9 +6,6 @@
 @inject ILocalStorageService LocalStorage
 @if (notesByStage != null)
 {
-@*     <h3>Team @TeamNumber</h3> *@
-@*     <h4>@selectedEvent?.Name</h4> *@
-
     <div>
         @foreach (var (stage, textByWirters) in notesByStage)
         {
