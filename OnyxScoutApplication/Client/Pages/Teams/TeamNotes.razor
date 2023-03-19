@@ -47,7 +47,7 @@
         await base.OnParametersSetAsync();
 
         notesByStage =
-            await Http.GetJson<Dictionary<string, List<Tuple<FormDataDto[], string>>>>(
+            await Http.GetJsonByJsonText<Dictionary<string, List<Tuple<FormDataDto[], string>>>>(
                 $"EventAnalytics/GetNotesOnTeam/{SelectedEvent.Year}/{SelectedEvent.Key}/{TeamNumber}");
     }
 

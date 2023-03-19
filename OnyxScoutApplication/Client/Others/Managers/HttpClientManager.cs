@@ -23,6 +23,11 @@ namespace OnyxScoutApplication.Client.Others.Managers
             this.httpClient = httpClient;
             this.notificationService = notificationService;
         }
+        
+        public async Task<T> GetJsonByJsonText<T>(string command) where T : class
+        {
+            return await TryGetAsyncByJsonText<T>(async () => await httpClient.GetAsync(command));
+        }
 
         public async Task<T> GetJson<T>(string command) where T : class
         {
@@ -64,6 +69,20 @@ namespace OnyxScoutApplication.Client.Others.Managers
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                     TypeNameHandling = TypeNameHandling.All
                 });
+            return result;
+        }
+        
+        private async Task<T> TryGetAsyncByJsonText<T>(Func<Task<HttpResponseMessage>> action) where T : class
+        {
+            var response = await TryExecuteAsync(action);
+            if(!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+            string json = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(json);
+
+            var result = await response.Content.ReadFromJsonAsync<T>();
             return result;
         }
         
