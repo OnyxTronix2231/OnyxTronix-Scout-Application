@@ -118,7 +118,7 @@ public class EventAnalyticsController : Controller
         foreach (var fieldsInStage in scoutFormFormatPit.Value!.FieldsInStages)
         {
             calculatedScoutDataByStagesPit.Add(fieldsInStage.Name,
-                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, scoutFormsPit, _ => true));
+                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, scoutFormsPit, _ => true, true));
         }
 
         return Ok(new AnalyticsTeamResult

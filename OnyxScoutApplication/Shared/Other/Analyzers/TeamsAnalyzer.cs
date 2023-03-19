@@ -185,7 +185,7 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
                 }
             }
 
-            rows.Add(combinedField.Id, new MarkupString(Math.Round(sum, 2) + "<br />" + sums).Value);
+            rows.Add(combinedField.Id, new MarkupString($"<b>{Math.Round(sum, 2)}</b><br />{sums}").Value);
             rows.Add("RawValue" + combinedField.Id, sum);
         }
 
