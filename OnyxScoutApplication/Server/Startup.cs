@@ -173,7 +173,7 @@ namespace OnyxScoutApplication.Server
                 {
                     ctx.Request.Scheme = "https";
                     ctx.Request.Host =
-                        new HostString("localhost:5001");
+                        new HostString(Environment.GetEnvironmentVariables()["PublicOrigin"]!.ToString()!);
                     return next();
                 });
                 app.UseExceptionHandler("/Error");
