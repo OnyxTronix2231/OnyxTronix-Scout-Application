@@ -35,7 +35,6 @@
                     string nameId = ColumnsFields[index].Id;
                     string name = ColumnsFields[index].Name;
                     var rawValue = "RawValue" + nameId;
-                    Console.WriteLine("@name: " + ColumnsFields[index].MarkupName.Value);
 
                     <GridColumn AutoFit="false" HeaderText="@name" Field="@rawValue" AllowReordering="true"
                                 AllowResizing="true" Type="ColumnType.Number">
