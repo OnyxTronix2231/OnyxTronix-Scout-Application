@@ -61,7 +61,6 @@ public class EventAnalyticsController : Controller
         TeamsAnalyzer analyzer = new TeamsAnalyzer(teams, scoutForms, scoutFormFormat.Value,
             analyticsSettings.EventAnalyticSettingsDto);
         var calc = analyzer.Calc();
-        calc.ColumnsFields.ForEach(i => Console.WriteLine(i.MarkupName));
         return Ok(calc);
     }
 
