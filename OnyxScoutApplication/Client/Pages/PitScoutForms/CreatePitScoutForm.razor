@@ -24,7 +24,7 @@
 
     [CascadingParameter]
     public Task<AuthenticationState> AuthenticationStateTask { get; set; }
-    
+
     [Parameter]
     public int TeamNumber { get; set; }
 
@@ -43,7 +43,7 @@
             await NotificationManager.NotifyAsync("Please select event and year first!", "", NotificationType.Danger);
             return;
         }
-        
+
         form = await Http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" +
                                            $"{selectedYear!.Value}/{ScoutFormType.Pit}");
         if (form == null)
@@ -52,17 +52,17 @@
             NavigationManager.NavigateTo("/");
             return;
         }
-        
-        if(await LocalStorage.ContainKeyAsync($"ScoutForm/{selectedEvent.Key}/{TeamNumber}"))
+
+        if (await LocalStorage.ContainKeyAsync($"ScoutForm/{selectedEvent.Key}_pitForm/{TeamNumber}"))
         {
-            form = await LocalStorage.GetItemAsync<FormDto>($"ScoutForm/{selectedEvent.Key}/{TeamNumber}");
+            form = await LocalStorage.GetItemAsync<FormDto>($"ScoutForm/{selectedEvent.Key}_pitForm/{TeamNumber}");
             return;
         }
-        
+
         form.TeamNumber = TeamNumber;
         form.Year = selectedYear!.Value;
         form.Type = ScoutFormType.Pit;
-        // form.KeyName = selectedEvent.Key;
+    // form.KeyName = selectedEvent.Key;
         form.EventName = selectedEvent.Key;
         form.MatchNumber = null;
         form.SetNumber = null;
@@ -95,7 +95,7 @@
                 "Image is required\nMake sure to get the good side profile of the robot! :P", NotificationType.Warning);
             return;
         }
-        
+
         if (imageUploadFailed)
         {
             var success =
@@ -134,9 +134,9 @@
 
     private async Task SaveOnLocalCache()
     {
-        await LocalStorage.SetItemAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}" ,form);
+        await LocalStorage.SetItemAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}", form);
     }
-    
+
     private async Task DeleteLocalCache()
     {
         if (!await LocalStorage.ContainKeyAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}"))
@@ -146,4 +146,5 @@
         }
         await LocalStorage.RemoveItemAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}");
     }
+
 }

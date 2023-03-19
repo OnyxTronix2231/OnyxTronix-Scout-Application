@@ -61,7 +61,6 @@ public class EventAnalyticsController : Controller
         TeamsAnalyzer analyzer = new TeamsAnalyzer(teams, scoutForms, scoutFormFormat.Value,
             analyticsSettings.EventAnalyticSettingsDto);
         var calc = analyzer.Calc();
-        calc.ColumnsFields.ForEach(i => Console.WriteLine(i.MarkupName));
         return Ok(calc);
     }
 
@@ -119,7 +118,7 @@ public class EventAnalyticsController : Controller
         foreach (var fieldsInStage in scoutFormFormatPit.Value!.FieldsInStages)
         {
             calculatedScoutDataByStagesPit.Add(fieldsInStage.Name,
-                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, scoutFormsPit, _ => true));
+                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, scoutFormsPit, _ => true, true));
         }
 
         return Ok(new AnalyticsTeamResult

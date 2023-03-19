@@ -64,7 +64,7 @@
         {
             classes += "filledTeamForm ";
         }
-        else if (SyncLocalStorage.ContainKey($"ScoutForm/{selectedEvent.Key}/{teamNumber}"))
+        else if (SyncLocalStorage.ContainKey($"ScoutForm/{selectedEvent.Key}_pitForm/{teamNumber}"))
         {
             classes += "locallyFilledTeamForm ";
         }
@@ -77,7 +77,7 @@
 
     private void OnGridTeamClicked(Team team)
     {
-        if (scoutForms.Any(form => form.TeamNumber == team.TeamNumber && form.KeyName == selectedEvent.Key))
+        if (scoutForms.Any(form => form.TeamNumber == team.TeamNumber && form.KeyName == selectedEvent.Key + "_pitForm"))
         {
             NavigationManager.NavigateTo($"TeamDetails/{team.TeamNumber}");
             return;

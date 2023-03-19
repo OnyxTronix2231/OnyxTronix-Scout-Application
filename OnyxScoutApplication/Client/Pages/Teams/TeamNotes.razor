@@ -47,6 +47,10 @@
     {
         await base.OnParametersSetAsync();
 
+        if (notesByStage is not null)
+        {
+            return;
+        }
         notesByStage =
             await Http.GetJsonByJsonText<Dictionary<string, List<DataAndWriter>>>(
                 $"EventAnalytics/GetNotesOnTeam/{SelectedEvent.Year}/{SelectedEvent.Key}/{TeamNumber}");
