@@ -105,7 +105,7 @@
                 await SessionStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
             }
 
-            var scoutForms = await Http.GetJson<List<FormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+            var scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
             if (scoutForms is not null)
             {
                 await SessionStorage.SetItemAsync("ScoutForms.All", scoutForms);

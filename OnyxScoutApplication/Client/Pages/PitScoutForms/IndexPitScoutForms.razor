@@ -47,7 +47,7 @@ else
                         Field="" AllowFiltering="false">
                 <Template>
                     @{
-                        var scoutForm = (FormDto)context;
+                        var scoutForm = (SimpleFormDto)context;
                         <div>
                             @{ bool isAllowedToEdit = user.Identity!.Name == scoutForm.WriterUserName
                                                       || user.IsInRole(Role.Admin.ToString());}
@@ -74,7 +74,7 @@ else
     [CascadingParameter]
     private Task<AuthenticationState> AuthenticationStateTask { get; set; }
     private ClaimsPrincipal user;
-    private List<FormDto> scoutForms;
+    private List<SimpleFormDto> scoutForms;
 
     protected override async Task OnInitializedAsync()
     {
@@ -87,10 +87,10 @@ else
             NavigationManager.NavigateTo("/");
             return;
         }
-        scoutForms = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByEvent/{selectedEvent.Key}/{ScoutFormType.Pit}" );
+        scoutForms = await Http.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{selectedEvent.Key}/{ScoutFormType.Pit}" );
     }
 
-    private void Edit(FormDto form)
+    private void Edit(SimpleFormDto form)
     {
         NavigationManager.NavigateTo("PitScoutForm/Edit/" + form.Id);
     }

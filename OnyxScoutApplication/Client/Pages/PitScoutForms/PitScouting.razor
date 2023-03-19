@@ -29,7 +29,7 @@
 
     private SfGrid<Team> grid;
     private List<Team> teams;
-    private List<FormDto> scoutForms;
+    private List<SimpleFormDto> scoutForms;
     private Event selectedEvent;
 
     protected override async Task OnInitializedAsync()
@@ -42,7 +42,7 @@
         }
         
         teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
-        scoutForms = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByEvent/{selectedEvent.Key}/{ScoutFormType.Pit}");
+        scoutForms = await Http.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{selectedEvent.Key}/{ScoutFormType.Pit}");
     }
 
     // private void CustomizeCell(QueryCellInfoEventArgs<Team> args)
