@@ -1,6 +1,7 @@
 ﻿@* @page "/TeamDetails/Notes/{teamNumber:int}" *@
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
+@using OnyxScoutApplication.Shared.Other.Analyzers
 
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
@@ -10,13 +11,13 @@
         @foreach (var (stage, textByWirters) in notesByStage)
         {
             <h5>@stage</h5>
-            foreach (var (texts, writer) in textByWirters)
+            foreach (var textsAndWriter in textByWirters)
             {
-                foreach (var text in texts)
+                foreach (var text in textsAndWriter.FormDataDtos)
                 {
                     <div>
                         <SfTextBox CssClass="multiline" Value="@text.StringValue" Width="100%" Readonly="true" Multiline="true"></SfTextBox>
-                        <span>@writer</span>
+                        <span>@textsAndWriter.WriterUserName</span>
                     </div>
                     <br/>
                 }
@@ -35,7 +36,7 @@
     [Parameter]
     public Event SelectedEvent { get; set; }
 
-    private Dictionary<string, List<Tuple<FormDataDto[], string>>> notesByStage;
+    private Dictionary<string, List<DataAndWriter>> notesByStage;
 
     // forms = value;
     // var v = forms.SelectMany(i => i.FormDataInStages.ToDictionary(ii => ii.Name, ii => 
@@ -47,7 +48,7 @@
         await base.OnParametersSetAsync();
 
         notesByStage =
-            await Http.GetJsonByJsonText<Dictionary<string, List<Tuple<FormDataDto[], string>>>>(
+            await Http.GetJsonByJsonText<Dictionary<string, List<DataAndWriter>>>(
                 $"EventAnalytics/GetNotesOnTeam/{SelectedEvent.Year}/{SelectedEvent.Key}/{TeamNumber}");
     }
 
