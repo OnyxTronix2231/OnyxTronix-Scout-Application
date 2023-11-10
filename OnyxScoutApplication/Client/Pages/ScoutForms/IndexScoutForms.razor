@@ -6,6 +6,8 @@
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
 @inject NotificationManager NotificationManager;
+@inject ScoutFormService ScoutFormService
+
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 <h1>Scout forms</h1>
 @if (scoutForms == null)
@@ -90,9 +92,11 @@ else
             return;
         }
 
-        var resScoutForms = await Http.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{selectedEvent.Key}/{ScoutFormType.MainGame}");
-        resScoutForms.Sort();
-        scoutForms = resScoutForms;
+        // var resScoutForms = await Http.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{selectedEvent.Key}/{ScoutFormType.MainGame}");
+        // resScoutForms.Sort();
+        Console.WriteLine("geting fomrssss: ");
+        scoutForms = await ScoutFormService.GetMainGameForms();
+        Console.WriteLine("fomrssss: " + scoutForms);
     }
 
     private void Edit(SimpleFormDto form)

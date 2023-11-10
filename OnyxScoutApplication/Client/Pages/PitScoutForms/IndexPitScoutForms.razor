@@ -1,11 +1,14 @@
 ﻿@page "/PitScoutForms"
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using System.Security.Claims
+@using OnyxScoutApplication.Client.Shared.Services
 @using FailureEventArgs = Syncfusion.Blazor.Inputs.FailureEventArgs
 @inject NavigationManager NavigationManager
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
 @inject NotificationManager NotificationManager;
+@inject ScoutFormService ScoutFormService
+
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 <h1>ScoutForms</h1>
 @if (scoutForms == null)
@@ -87,7 +90,8 @@ else
             NavigationManager.NavigateTo("/");
             return;
         }
-        scoutForms = await Http.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{selectedEvent.Key}/{ScoutFormType.Pit}" );
+        // scoutForms = await Http.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{selectedEvent.Key}/{ScoutFormType.Pit}" );
+        scoutForms = await ScoutFormService.GetPitForms();
     }
 
     private void Edit(SimpleFormDto form)

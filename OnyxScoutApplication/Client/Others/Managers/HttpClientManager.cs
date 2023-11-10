@@ -17,11 +17,13 @@ namespace OnyxScoutApplication.Client.Others.Managers
     {
         private readonly HttpClient httpClient;
         private readonly NotificationManager notificationService;
+        private readonly AppManager appManager;
 
-        public HttpClientManager(HttpClient httpClient, NotificationManager notificationService)
+        public HttpClientManager(HttpClient httpClient, NotificationManager notificationService, AppManager appManager)
         {
             this.httpClient = httpClient;
             this.notificationService = notificationService;
+            this.appManager = appManager;
         }
         
         public async Task<T> GetJsonByJsonText<T>(string command) where T : class
@@ -104,6 +106,10 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 response = await action();
                 if (!response.IsSuccessStatusCode)
                 {
+                    if (response.StatusCode == HttpStatusCode.ServiceUnavailable)
+                    {
+                        appManager.IsOnlineMode = false;
+                    }
                     await NotifyFailer(response);
                 }
             }

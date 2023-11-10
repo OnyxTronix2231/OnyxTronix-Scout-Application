@@ -1,10 +1,13 @@
 ﻿@page "/"
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
+@using OnyxScoutApplication.Client.Shared.Services
 @inject ISyncLocalStorageService SyncLocalStorage
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject ISessionStorageService SessionStorage
 @inject ILocalStorageService LocalStorage
+@inject ScoutFormService ScoutFormService
+
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 <h1>Events</h1>
@@ -55,7 +58,8 @@
         if (await SessionStorage.ContainKeyAsync("TheBlueAlliance.AllMatches"))
         {
             var matches = await SessionStorage.GetItemAsync<List<Match>>("TheBlueAlliance.AllMatches");
-            scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
+            // scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
+            scoutForms = await ScoutFormService.GetMainGameForms();
             UpdateByMatches(matches);
         }
     }
@@ -64,8 +68,11 @@
     {
         var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
         await SessionStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
-        scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
-        await SessionStorage.SetItemAsync("ScoutForms.All", scoutForms);
+        // scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+        // await SessionStorage.SetItemAsync("ScoutForms.All", scoutForms);
+        await ScoutFormService.OnInit(selectedEvent.Key);
+        scoutForms = await ScoutFormService.GetMainGameForms();
+        
         var teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
         await SessionStorage.SetItemAsync("TheBlueAlliance.AllTeams", teams);
         UpdateByMatches(matches);
@@ -105,11 +112,14 @@
                 await SessionStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
             }
 
-            var scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
-            if (scoutForms is not null)
-            {
-                await SessionStorage.SetItemAsync("ScoutForms.All", scoutForms);
-            }
+            // var scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+            // if (scoutForms is not null)
+            // {
+                // await SessionStorage.SetItemAsync("ScoutForms.All", scoutForms);
+            // }
+
+            await ScoutFormService.OnInit(selectedEvent.Key);
+            
 
             var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
             if (events != null) //user is probably not authorized 

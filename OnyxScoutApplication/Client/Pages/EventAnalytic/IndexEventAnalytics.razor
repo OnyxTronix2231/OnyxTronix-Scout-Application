@@ -9,6 +9,7 @@
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject NotificationManager NotificationManager
+@inject ScoutFormService ScoutFormService
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 <DateTimeRangePicker MinDate="minDate" MaxDate="maxDate" OnDateTimeRangeSelected="OnDateTimeRangeSelected"></DateTimeRangePicker>
@@ -46,7 +47,8 @@
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
 
-        scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
+        // scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
+        scoutForms = await ScoutFormService.GetMainGameForms();
         selectedScoutForms = scoutForms.ToList();
 
         var formsByDates = scoutForms.OrderBy(f => f.DateTime).ToList();
