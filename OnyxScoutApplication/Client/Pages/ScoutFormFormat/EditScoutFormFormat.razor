@@ -3,6 +3,7 @@
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
+@inject ScoutFormFormatService ScoutFormFormatService
 @attribute [OnyxAuthorize(Role = Role.Admin)]
 
 <h3>Edit</h3>
@@ -22,7 +23,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        scoutFormFormat = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/" + Id);
+        scoutFormFormat = await ScoutFormFormatService.GetScoutFormById(Id);
     }
 
     private async Task Update()

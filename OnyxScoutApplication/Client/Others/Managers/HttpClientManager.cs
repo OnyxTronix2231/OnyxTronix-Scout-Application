@@ -106,7 +106,9 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 response = await action();
                 if (!response.IsSuccessStatusCode)
                 {
-                    if (response.StatusCode == HttpStatusCode.ServiceUnavailable)
+                    if (response.StatusCode is HttpStatusCode.ServiceUnavailable or 
+                        HttpStatusCode.InternalServerError or
+                        0)
                     {
                         appManager.IsOnlineMode = false;
                     }

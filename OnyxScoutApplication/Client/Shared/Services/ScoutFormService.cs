@@ -14,31 +14,42 @@ public class ScoutFormService: IService
     private readonly AppManager appManager;
     private readonly ILocalStorageService localStorageService;
     private readonly HttpClientManager httpClient;
+    private readonly EventService eventService;
     private List<SimpleFormDto> mainGameScoutForms;
     private List<SimpleFormDto> pitScoutForms;
+    private FormDto templateScoutForm;
 
-    public ScoutFormService(HttpClientManager httpClient, AppManager appManager, ILocalStorageService localStorageService)
+    public ScoutFormService(HttpClientManager httpClient, EventService eventService, AppManager appManager, ILocalStorageService localStorageService)
     {
         this.appManager = appManager;
         this.localStorageService = localStorageService;
         this.httpClient = httpClient;
+        this.eventService = eventService;
     }
     
-    public async Task OnInit(string eventKey)
+    public async Task OnInit()
     {
-        Console.WriteLine("initionalzingggg");
+        Console.WriteLine("initionalzingggg, online mode:" + appManager.IsOnlineMode);
+        var eventKey = eventService.GetSelectedEvent().Key;
+        var year = eventService.GetSelectedEvent().Year;
         if (appManager.IsOnlineMode)
         {
             mainGameScoutForms = await httpClient.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{eventKey}/{ScoutFormType.MainGame}");
-            await localStorageService.SetItemAsync($"ScoutForms.MainGame.{eventKey}", mainGameScoutForms);
+            mainGameScoutForms.Sort();
+            await localStorageService.SetItemAsync($"ScoutFormService.ScoutForms.MainGame.{eventKey}", mainGameScoutForms);
             
             pitScoutForms = await httpClient.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{eventKey}/{ScoutFormType.Pit}");
-            await localStorageService.SetItemAsync($"ScoutForms.Pit.{eventKey}", pitScoutForms);
+            pitScoutForms.Sort();
+            await localStorageService.SetItemAsync($"ScoutFormService.ScoutForms.Pit.{eventKey}", pitScoutForms);
+            
+            templateScoutForm = await httpClient.GetJson<FormDto>($"ScoutFormFormat/TemplateScoutFormByYear/{year}"); 
+            await localStorageService.SetItemAsync($"ScoutFormService.TemplateScoutForm.{year}", templateScoutForm);
             return;
         }
         
-        mainGameScoutForms = await localStorageService.GetItemAsync<List<SimpleFormDto>>($"ScoutForms.MainGame.{eventKey}");
-        pitScoutForms = await localStorageService.GetItemAsync<List<SimpleFormDto>>($"ScoutForms.Pit.{eventKey}");
+        mainGameScoutForms = await localStorageService.GetItemAsync<List<SimpleFormDto>>($"ScoutFormService.ScoutForms.MainGame.{eventKey}");
+        pitScoutForms = await localStorageService.GetItemAsync<List<SimpleFormDto>>($"ScoutFormService.ScoutForms.Pit.{eventKey}");
+        templateScoutForm = await localStorageService.GetItemAsync<FormDto>($"ScoutFormService.TemplateScoutForm.{year}");
     }
 
     public async Task<List<SimpleFormDto>> GetMainGameForms()
@@ -49,6 +60,11 @@ public class ScoutFormService: IService
     public async Task<List<SimpleFormDto>> GetPitForms()
     {
         return pitScoutForms;
+    }
+    
+    public async Task<FormDto> GetTemplateForm()
+    {
+        return templateScoutForm;
     }
     
     

@@ -56,6 +56,10 @@ namespace OnyxScoutApplication.Client
             services.AddSingleton<AppManager>();
             services.AddSingleton<ScoutFormService>();
             services.AddSingleton<LocalUserManager>();
+            services.AddSingleton<EventService>();
+            services.AddSingleton<ScoutFormFormatService>();
+            services.AddSingleton<TheBlueAllianceService>();
+            services.AddSingleton<ServiceManager>();
             services.AddTransient<IValidator<ScoutFormFormatDto>, ScoutFormFormatValidator>();
             services.AddTransient<IValidator<FieldDto>, FieldValidator>();
             services.AddTransient<IValidator<ApplicationUserDto>, ApplicationUserValidator>();

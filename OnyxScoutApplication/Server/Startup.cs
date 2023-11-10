@@ -156,6 +156,7 @@ namespace OnyxScoutApplication.Server
                 app.UseDeveloperExceptionPage();
                 app.UseMigrationsEndPoint();
                 app.UseWebAssemblyDebugging();
+                app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             }
             else
             {
