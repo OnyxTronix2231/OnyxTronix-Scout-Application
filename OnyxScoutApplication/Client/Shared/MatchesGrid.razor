@@ -136,7 +136,7 @@
             classes += "clickable ";
         }
         // else if (SyncStorageService.ContainKey($"ScoutForm/{matchName}/{teamNumber}"))
-        else if (forms.Any(f => f.TeamNumber == teamNumber && f.KeyName == matchName))
+        else if (SyncStorageService.ContainKey($"ScoutForm/{matchName}/{teamNumber}"))
         {
             classes += "locallyFilledTeamForm ";
         }

@@ -30,8 +30,9 @@ public class ScoutFormService: IService
     public async Task OnInit()
     {
         Console.WriteLine("initionalzingggg, online mode:" + appManager.IsOnlineMode);
-        var eventKey = eventService.GetSelectedEvent().Key;
-        var year = eventService.GetSelectedEvent().Year;
+        var selectedEvent = await eventService.GetSelectedEvent();
+        var eventKey = selectedEvent.Key;
+        var year = selectedEvent.Year;
         if (appManager.IsOnlineMode)
         {
             mainGameScoutForms = await httpClient.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{eventKey}/{ScoutFormType.MainGame}");
@@ -66,7 +67,16 @@ public class ScoutFormService: IService
     {
         return templateScoutForm;
     }
-    
-    
-    
+
+
+    public async Task<List<FormDto>> GetPitFormsByTeamNumber(int teamNumber)
+    {
+        var selectedEvent = await eventService.GetSelectedEvent();
+        if (appManager.IsOnlineMode)
+        {
+            return await httpClient.GetJson<List<FormDto>>($"ScoutForm/GetAllByTeam/{teamNumber}/{selectedEvent.Key}/{ScoutFormType.Pit}");
+        }
+        
+        return new List<FormDto>(); //Not supported in offline mode
+    }
 }

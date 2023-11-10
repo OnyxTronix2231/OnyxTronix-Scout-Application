@@ -27,7 +27,7 @@ public class ScoutFormFormatService: IService
     
     public async Task OnInit()
     {
-        var year = eventService.GetSelectedEvent().Year;
+        var year = (await eventService.GetSelectedEvent()).Year;
 
         if (appManager.IsOnlineMode)
         {

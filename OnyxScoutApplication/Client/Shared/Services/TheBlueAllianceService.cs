@@ -31,9 +31,10 @@ public class TheBlueAllianceService : IService
 
     public async Task OnInit()
     {
-        var eventKey = eventService.GetSelectedEvent().Key;
-        var year = eventService.GetSelectedEvent().Year;
-        var country = eventService.GetSelectedEvent().Country;
+        var selectedEvent = await eventService.GetSelectedEvent();
+        var eventKey = selectedEvent.Key;
+        var year = selectedEvent.Year;
+        var country = selectedEvent.Country;
 
         if (appManager.IsOnlineMode)
         {
@@ -73,5 +74,17 @@ public class TheBlueAllianceService : IService
     public async Task<List<Team>> GetTeams()
     {
         return teams;
+    }
+
+    public async Task<List<Match>> GetMatchesByTeamNumber(int teamNumber)
+    {
+        var selectedEvent = await eventService.GetSelectedEvent();
+        if (appManager.IsOnlineMode)
+        {
+            return await httpClient.GetJson<List<Match>>($"TheBlueAlliance/GetMatchesByTeamAndEvent/" +
+                                                         $"{teamNumber}/{selectedEvent.Key}");
+        }
+
+        return matches.Where(m => m.Alliances.IsInTeamBlue(teamNumber) || m.Alliances.IsInTeamRed(teamNumber)).ToList();
     }
 }

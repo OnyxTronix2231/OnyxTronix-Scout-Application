@@ -19,7 +19,7 @@ public class EventService : IService
         selectedEvent = await localStorageService.GetItemAsync<Event>("EventService.SelectedEvent");
     }
 
-    public Event GetSelectedEvent()
+    public async Task<Event> GetSelectedEvent()
     {
         return selectedEvent;
     }
