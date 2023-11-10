@@ -20,6 +20,9 @@ namespace OnyxScoutApplication.Server
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    
+                    webBuilder.UseUrls("https://0.0.0.0:5001");
+                    webBuilder.UseKestrel();
                     webBuilder.UseStaticWebAssets();
                     webBuilder.UseStartup<Startup>();
                 });

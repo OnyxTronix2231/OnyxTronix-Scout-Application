@@ -4,6 +4,8 @@
 @inject ILocalStorageService StorageService
 @inject ISessionStorageService SessionStorage
 @inject ISyncLocalStorageService SyncStorageService
+@inject TheBlueAllianceService TheBlueAllianceService
+@inject ScoutFormService ScoutFormService
 
 @if (Matches != null && Settings != null && teamsNamesByNumber is not null)
 {
@@ -29,9 +31,9 @@
                             var match = (Match)context;
                             var teamNumber = match.Alliances.Blue.GetTeamAt(index);
                             string teamName = "Oops! who is that?!";
-                            if (teamsNamesByNumber.ContainsKey(teamNumber))
+                            if (teamsNamesByNumber.TryGetValue(teamNumber, out var value))
                             {
-                                teamName = teamsNamesByNumber[teamNumber];
+                                teamName = value;
                             }
                             <SfTooltip ID="Tooltip" Position="Position.TopCenter" WindowCollision="true" Target="#blueTeamNumber" Content="@teamName">
                                 <span class="@GetTeamTextStyle(teamNumber, match.Key)" id="blueTeamNumber" @onclick="@(async () => await OnGridTeamClicked(match, teamNumber))">@(teamNumber)</span>
@@ -52,9 +54,9 @@
                             var match = (Match)context;
                             var teamNumber = match.Alliances.Red.GetTeamAt(index);
                             string teamName = "Oops! who is that?!";
-                            if (teamsNamesByNumber.ContainsKey(teamNumber))
+                            if (teamsNamesByNumber.TryGetValue(teamNumber, out var value))
                             {
-                                teamName = teamsNamesByNumber[teamNumber];
+                                teamName = value;
                             }
                             <SfTooltip ID="Tooltip" Position="Position.TopCenter" WindowCollision="true" Target="#redTeamNumber" Content="@teamName">
                                 <span class="@GetTeamTextStyle(teamNumber, match.Key)" id="redTeamNumber" @onclick="() => OnGridTeamClicked(match, teamNumber)">@(teamNumber)</span>
@@ -88,12 +90,14 @@
 
     private SfGrid<Match> grid;
     private Dictionary<int, string> teamsNamesByNumber;
+    private List<SimpleFormDto> forms;
 
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        var teams = await SessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
+        var teams = await TheBlueAllianceService.GetTeams();
         teamsNamesByNumber = teams.ToDictionary(k => k.TeamNumber, i => i.Nickname);
+        forms = await ScoutFormService.GetMainGameForms();
     }
 
     private async Task OnLoad(object obj)
@@ -131,6 +135,7 @@
             classes += "filledTeamForm ";
             classes += "clickable ";
         }
+        // else if (SyncStorageService.ContainKey($"ScoutForm/{matchName}/{teamNumber}"))
         else if (SyncStorageService.ContainKey($"ScoutForm/{matchName}/{teamNumber}"))
         {
             classes += "locallyFilledTeamForm ";

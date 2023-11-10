@@ -5,10 +5,9 @@
 @inherits LayoutComponentBase
 @inject NotificationManager NotificationManager
 @inject NavigationManager NavigationManager
-@inject HttpClientManager Http
-@inject ISyncLocalStorageService LocalStorage
-@inject ISyncSessionStorageService SessionStorage
 @inject IJSRuntime JsRuntime
+@inject AppManager AppManager
+@inject ServiceManager ServiceManager
 
 <div class="page">
     <div class="sidebar">
@@ -18,8 +17,13 @@
 
     <div class="main">
         <div class="top-row px-4 auth">
+            <SfButton CssClass="@(AppManager.IsOnlineMode ? "e-danger" : "e-success")" 
+                      @onclick="() => AppManager.IsOnlineMode = !AppManager.IsOnlineMode"
+                      style="padding-right: 5px">
+                @(AppManager.IsOnlineMode ? "Switch to offline" : "Switch to online")
+            </SfButton>
             <LoginDisplay/>
-            <span>V2.7.1</span>
+            <span>V2.8.0</span>
         </div>
         <div class="content px-4">
             @if (finishedInit)
@@ -41,29 +45,36 @@
                 new object[] {DotNetObjectReference.Create(this)}
             );
 
-        if (LocalStorage.ContainKey("EventSelector/SelectedEventKey"))
+        await ServiceManager.CleanAndInitAllServices();
+
+        // if (LocalStorage.ContainKey("EventSelector/SelectedEventKey"))
         {
-            Event selectedEvent = LocalStorage.GetItem<Event>("EventSelector/SelectedEventKey");
-            var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
-            SessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
+            // Event selectedEvent = LocalStorage.GetItem<Event>("EventSelector/SelectedEventKey");
+            
+            // var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
+            // SessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
+            
+            // await TheBlueAllianceService.OnInit();
+            
+            // var scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+            // SessionStorage.SetItem("ScoutForms.All", scoutForms);
+            
+            //await ScoutFormService.OnInit();
 
-            var scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
-            SessionStorage.SetItem("ScoutForms.All", scoutForms);
-
-            var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
-            if (events != null) //user is probably not authorized 
-            {
-                events = events.Where(i => string.Equals(i.Country, selectedEvent.Country,
-                    StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
-                SessionStorage.SetItem("TheBlueAlliance.AllEvents", events);
-            }
+            // var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
+            // if (events != null) //user is probably not authorized 
+            // {
+            //     events = events.Where(i => string.Equals(i.Country, selectedEvent.Country,
+            //         StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
+            //     SessionStorage.SetItem("TheBlueAlliance.AllEvents", events);
+            // }
             
-            var teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
-            SessionStorage.SetItem("TheBlueAlliance.AllTeams", teams);
+            // var teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
+            // SessionStorage.SetItem("TheBlueAlliance.AllTeams", teams);
             
             
-            var form = await Http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + selectedEvent.Year);
-            SessionStorage.SetItem("ScoutFormFormat.TemplateScoutFormByYear." + selectedEvent.Year, form);
+            // var form = await Http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + selectedEvent.Year);
+            // SessionStorage.SetItem("ScoutFormFormat.TemplateScoutFormByYear." + selectedEvent.Year, form);
         }
         finishedInit = true;
     }

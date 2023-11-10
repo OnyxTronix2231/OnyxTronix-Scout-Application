@@ -3,8 +3,10 @@
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
-@inject ISessionStorageService SessionStorage
 @inject NotificationManager NotificationManager
+@inject EventService EventService
+@inject ScoutFormService ScoutFormService
+
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (form != null)
@@ -28,35 +30,28 @@
 
     protected override async Task OnInitializedAsync()
     {
+               
         var authState = await AuthenticationStateTask;
         var user = authState.User;
 
-        //teamInMatch = await localStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
-        //isBlue = teamInMatch.Match.Alliances.Blue.TeamKeys.Any(i => i.Contains(teamInMatch.TeamNumber.ToString()));
-        Event selectedEvent = null;
-        if (!await LocalStorage.ContainKeyAsync("EventSelector/SelectedEventKey"))
+        var selectedEvent = await EventService.GetSelectedEvent();
+        if (selectedEvent == null)
         {
+            Console.WriteLine("No selected event!");
             NavigationManager.NavigateTo("/");
             return;
         }
-        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
-        form = await SessionStorage.GetItemAsync<FormDto>("ScoutFormFormat.TemplateScoutFormByYear." + selectedEvent.Year);
+        
+        form = await ScoutFormService.GetTemplateForm();
         if (form == null)
         {
+            Console.WriteLine("No template found!");
             NavigationManager.NavigateTo("/");
             return;
         }
         
-        // if(await localStorage.ContainKeyAsync($"ScoutForm/{teamInMatch.Match.Key}/{teamInMatch.TeamNumber}"))
-        // {
-        //     form = await localStorage.GetItemAsync<FormDto>($"ScoutForm/{teamInMatch.Match.Key}/{teamInMatch.TeamNumber}");
-        //     return;
-        // }
-        
-        // form.TeamNumber = teamInMatch.TeamNumber;
+
         form.Year = selectedEvent.Year;
-        // form.Type = ScoutFormType.MainGame;
-         // form.KeyName = selectedEvent.Key;
         form.EventName = selectedEvent.Key;
         form.WriterUserName = user.Identity!.Name;
     }
@@ -72,7 +67,7 @@
         await NotificationManager.NotifyAsync("Error", "Error saving form in server\nThe form was saved localy for now", NotificationType.Warning);
     }
 
-    private async Task SaveOnLocalCache()
+        private async Task SaveOnLocalCache()
     {
         await LocalStorage.SetItemAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}" ,form);
     }
