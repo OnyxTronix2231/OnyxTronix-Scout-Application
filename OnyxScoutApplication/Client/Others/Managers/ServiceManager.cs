@@ -23,7 +23,7 @@ public class ServiceManager
     public async Task CleanAndInitAllServices()
     {
         await eventService.OnInit();
-        if (eventService.GetSelectedEvent() is null)
+        if (await eventService.GetSelectedEvent() is null)
         {
             Console.WriteLine("no event was selected yet!");
             return;
