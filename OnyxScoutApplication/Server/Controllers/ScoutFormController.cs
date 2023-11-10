@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices.JavaScript;
 using System.Threading.Tasks;
 using Amazon.S3;
 using Duende.IdentityServer.Extensions;
+using Google.Type;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -18,6 +20,7 @@ using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 using static OnyxScoutApplication.Server.Data.Extensions.Result;
 using OnyxScoutApplication.Shared.Other;
+using DateTime = System.DateTime;
 
 namespace OnyxScoutApplication.Server.Controllers
 {
@@ -162,5 +165,13 @@ namespace OnyxScoutApplication.Server.Controllers
         {
             return await unitOfWork.ScoutForms.GetAllByTeamWithData(teamNumber, eventKey, scoutFormType);
         }
+        
+        
+        [HttpGet("ServerStatus")]
+        public async Task<ActionResult<ServerStatus>> GetServerStatus()
+        {
+            return await Task.FromResult(new ServerStatus{Date =DateTime.Now, IsAlive = true});
+        }
+
     }
 }
