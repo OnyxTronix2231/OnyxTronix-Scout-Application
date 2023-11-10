@@ -24,10 +24,12 @@ public class OfflineAccountClaimsPrincipalFactory : RolesClaimsPrincipalFactory
         var result = await base.CreateUserAsync(account, options);
         if (result.Identity.IsAuthenticated)
         {
+            Console.WriteLine("User is AUTHENTICATED saving to cache");
             await localVehiclesStore.SaveUserAccountAsync(result);
         }
         else
         {
+            Console.WriteLine("USER IS NOT AUTHENTICATED loading from cache");
             result = await localVehiclesStore.LoadUserAccountAsync();
         }
 
