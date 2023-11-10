@@ -1,6 +1,7 @@
 ﻿@using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using System.Net.Http.Headers
 @inject ISessionStorageService SessionStorage
+@inject TheBlueAllianceService TheBlueAllianceService
 
 
 <h4>@team?.Nickname</h4>
@@ -26,12 +27,14 @@
         <label for="eventName">Event name</label>
         <input class="form-control" disabled="@true" type="text" id="eventName" @bind="@Form.EventName"/>
     </div>
+    
     @if (!ShowImageUpload)
     {
         <div class="form-group col-sm-5">
             <label for="matchType">Match type</label>
             <SfDropDownList id="matchType" Enabled="@(EmergencyMode)" TValue="string" TItem="string" DataSource="matchTypes" @bind-Value="@Form.MatchType">
             </SfDropDownList>
+            <ValidationMessage For="@(() => Form.MatchType)"/>
         </div>
         <div class="form-group col-sm-5">
             <label for="matchNumber">Match number</label>
@@ -64,6 +67,10 @@
                 <SectionEdit FormType="@Type" SectionData="@formDataInStages.FormData"></SectionEdit>
             </div>
         }
+    </div>
+
+    <div>
+        <ValidationSummary/>
     </div>
 
     @if (Type != FormType.View)
@@ -115,7 +122,8 @@
             "f",
         };
         
-        var teams = await SessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
+        // var teams = await SessionStorage.GetItemAsync<List<Team>>("TheBlueAlliance.AllTeams");
+        var teams = await TheBlueAllianceService.GetTeams();
         team = teams.SingleOrDefault(i => i.TeamNumber == Form.TeamNumber);
         TeamAllianceType = 
             TeamInMatch != null ? 
