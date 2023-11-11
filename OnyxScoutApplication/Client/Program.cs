@@ -48,9 +48,12 @@ namespace OnyxScoutApplication.Client
             builder.Services.AddApiAuthorization()
                 .AddAccountClaimsPrincipalFactory<OfflineAccountClaimsPrincipalFactory>();
 
-            builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
+            builder.Services.AddSyncfusionBlazor(options =>
+            {
+                // options.IgnoreScriptIsolation = true;
+            });
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(
-                "MTM2NzYzNEAzMjMwMmUzNDJlMzBLNWR1MklOZllCTU5QaStWN1lHdkZMU0xSbkZoc2ppaFNQYy9tVUl3NmVnPQ==");
+                "MjgwODE2OUAzMjMzMmUzMDJlMzBUY29PUG9uNUYxbm96dlNDSDV6c09zRG9NT21jQVRoc0xJM0YwZDRrdjI4PQ==");
             services.AddTransient<HttpClientManager>();
             services.AddSingleton<NotificationManager>();
             services.AddSingleton<AppManager>();
