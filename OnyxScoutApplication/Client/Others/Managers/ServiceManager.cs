@@ -31,13 +31,17 @@ public class ServiceManager
         this.notificationManager = notificationManager;
     }
 
+    public bool IsLoading { get; set; }
+
     public async Task<bool> CleanAndInitAllServices(bool forceOnlineMode = false)
     {
+        IsLoading = true;
         if (await httpClientManager.GetJson<ServerStatus>("ScoutForm/ServerStatus") is null)
         {
             appManager.IsOnlineMode = false;
             if (forceOnlineMode)
             {
+                IsLoading = false;
                 return false;
             }
         }
@@ -48,6 +52,7 @@ public class ServiceManager
         if (selectedEvent is null)
         {
             Console.WriteLine("no event was selected yet!");
+            IsLoading = false;
             return false;
         }
 
@@ -56,8 +61,9 @@ public class ServiceManager
             if (!await localStorageService.GetItemAsync<bool>($"ServiceManager.CachedEvent.{selectedEvent.Key}"))
             {
                 await notificationManager.NotifyAsync("Error",
-                    $"No cache was found for the selected event{selectedEvent.Name}.\n" +
+                    $"No cache was found for the selected event {selectedEvent.Name}.\n" +
                     $"Please switch to online mode", NotificationType.Danger);
+                IsLoading = false;
                 return false;
             }
         }
@@ -68,6 +74,7 @@ public class ServiceManager
             formService.OnInit(forceOnlineMode));
         
         await localStorageService.SetItemAsync($"ServiceManager.CachedEvent.{selectedEvent.Key}", true);
+        IsLoading = false;
         return true;
     }
 }
