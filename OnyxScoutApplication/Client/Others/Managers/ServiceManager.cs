@@ -36,7 +36,7 @@ public class ServiceManager
     public async Task<bool> CleanAndInitAllServices(bool forceOnlineMode = false)
     {
         IsLoading = true;
-        if (await httpClientManager.GetJson<ServerStatus>("ScoutForm/ServerStatus") is null)
+        if ((appManager.IsOnlineMode || forceOnlineMode) && await httpClientManager.GetJson<ServerStatus>("ScoutForm/ServerStatus") is null)
         {
             appManager.IsOnlineMode = false;
             if (forceOnlineMode)
