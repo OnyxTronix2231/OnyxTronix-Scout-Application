@@ -4,8 +4,8 @@
 @inject ILocalStorageService LocalStorage
 @inject ScoutFormService ScoutFormService
 @inject TheBlueAllianceService TheBlueAllianceService
-@inject EventService EventService
 @inject ServiceManager ServiceManager
+@inject AppManager AppManager
 
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
@@ -14,6 +14,24 @@
 <div>
     <EventSelector OnEventSelectionChange="UpdateMatchTable"></EventSelector>
 </div>
+
+<div style="float: right">
+    <SfButton class="e-warning" @onclick="HandleRefreshButtonClick" style="margin-right: 5px">
+        Refresh
+    </SfButton>
+    
+    <SfButton CssClass="e-danger" Disabled="!AppManager.IsOnlineMode"
+              @onclick="() => AppManager.IsOnlineMode = false">
+        Offline
+    </SfButton>
+
+    <SfButton CssClass="e-success" Disabled="AppManager.IsOnlineMode"
+              @onclick="() => AppManager.IsOnlineMode = true">
+        Online
+    </SfButton>
+</div>
+<br/>
+
 
 @if (!isInit)
 {
@@ -66,29 +84,17 @@
         {
             return;
         }
-    // scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
         scoutForms = await ScoutFormService.GetMainGameForms();
         UpdateByMatches(matches);
     }
 
     private async Task UpdateMatchTable(Event selectedEvent)
     {
-        // await EventService.SetSelectedEvent(selectedEvent);
-
         await ServiceManager.CleanAndInitAllServices();
 
         var matches = await TheBlueAllianceService.GetMatches();
 
-    // var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
-    // await SessionStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
-
-
         scoutForms = await ScoutFormService.GetMainGameForms();
-    // scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
-    // await SessionStorage.SetItemAsync("ScoutForms.All", scoutForms);
-
-    // var teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
-    // await SessionStorage.SetItemAsync("TheBlueAlliance.AllTeams", teams);
 
         UpdateByMatches(matches);
     }
@@ -116,43 +122,8 @@
         }
     }
 
-    private async Task RefreshData()
+    private async Task HandleRefreshButtonClick()
     {
-        if (await LocalStorage.ContainKeyAsync("EventSelector/SelectedEventKey"))
-        {
-    // Event selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
-
-    // var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
-    // if (matches is not null)
-    // {
-    // await SessionStorage.SetItemAsync("TheBlueAlliance.AllMatches", matches);
-    // }
-
-    // var scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
-    // if (scoutForms is not null)
-    // {
-    // await SessionStorage.SetItemAsync("ScoutForms.All", scoutForms);
-    // }
-
-    // await ScoutFormService.OnInit();
-
-
-    // var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
-    // if (events != null) //user is probably not authorized 
-    // {
-    // events = events.Where(i => string.Equals(i.Country, selectedEvent.Country,
-    // StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
-    // await SessionStorage.SetItemAsync("TheBlueAlliance.AllEvents", events);
-    // }
-
-    // var teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
-    // if (teams is not null)
-    // {
-    // await SessionStorage.SetItemAsync("TheBlueAlliance.AllTeams", teams);
-    // }
-
-            await OnInitializedAsync();
-        }
+        await ServiceManager.CleanAndInitAllServices(true);
     }
-
 }
