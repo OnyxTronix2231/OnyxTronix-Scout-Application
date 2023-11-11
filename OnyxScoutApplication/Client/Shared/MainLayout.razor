@@ -15,28 +15,12 @@
 
     <div class="main">
         <div class="top-row px-4 auth">
-            <div >
-                <SfButton class="e-warning" @onclick="HandleRefreshButtonClick" style="margin-right: 5px">
-                    Refresh
-                </SfButton>
-            </div>
             <div>
                 <SfSpinner @bind-Visible="@ServiceManager.IsLoading">
                 </SfSpinner>
             </div>
-
-            <SfButton CssClass="e-danger" Disabled="!AppManager.IsOnlineMode"
-                      @onclick="() => AppManager.IsOnlineMode = false">
-                Offline
-            </SfButton>
-
-            <SfButton CssClass="e-success" Disabled="AppManager.IsOnlineMode"
-                      @onclick="() => AppManager.IsOnlineMode = true">
-                Online
-            </SfButton>
-
             <LoginDisplay/>
-            <span>V3.0.0</span>
+            <span>V3.0.1</span>
         </div>
         <div class="content px-4">
             @if (finishedInit)
@@ -58,9 +42,17 @@
                 new object[] { DotNetObjectReference.Create(this) }
             );
 
+        ServiceManager.OnStateChanged += () =>
+        {
+            StateHasChanged();
+            return Task.CompletedTask;
+        };
+        
         await ServiceManager.CleanAndInitAllServices();
 
         finishedInit = true;
+
+        
     }
 
     [JSInvokable("onUpdateAvailable")]
@@ -78,9 +70,5 @@
         NavigationManager.NavigateTo("/", true);
     }
 
-    private async Task HandleRefreshButtonClick()
-    {
-        await ServiceManager.CleanAndInitAllServices(true);
-    }
-
+   
 }

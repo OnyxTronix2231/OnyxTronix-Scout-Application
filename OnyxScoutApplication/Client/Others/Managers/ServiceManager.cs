@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components;
 using OnyxScoutApplication.Client.Shared.Services;
 using OnyxScoutApplication.Shared.Models;
 
@@ -32,16 +33,19 @@ public class ServiceManager
     }
 
     public bool IsLoading { get; set; }
+    public Func<Task> OnStateChanged { get; set; }
 
     public async Task<bool> CleanAndInitAllServices(bool forceOnlineMode = false)
     {
         IsLoading = true;
+        await OnStateChanged.Invoke();
         if ((appManager.IsOnlineMode || forceOnlineMode) && await httpClientManager.GetJson<ServerStatus>("ScoutForm/ServerStatus") is null)
         {
             appManager.IsOnlineMode = false;
             if (forceOnlineMode)
             {
                 IsLoading = false;
+                await OnStateChanged.Invoke();
                 return false;
             }
         }
@@ -53,6 +57,7 @@ public class ServiceManager
         {
             Console.WriteLine("no event was selected yet!");
             IsLoading = false;
+            await OnStateChanged!.Invoke();
             return false;
         }
 
@@ -64,6 +69,7 @@ public class ServiceManager
                     $"No cache was found for the selected event {selectedEvent.Name}.\n" +
                     $"Please switch to online mode", NotificationType.Danger);
                 IsLoading = false;
+                await OnStateChanged!.Invoke();
                 return false;
             }
         }
@@ -75,6 +81,7 @@ public class ServiceManager
         
         await localStorageService.SetItemAsync($"ServiceManager.CachedEvent.{selectedEvent.Key}", true);
         IsLoading = false;
+        await OnStateChanged!.Invoke();
         return true;
     }
 }
