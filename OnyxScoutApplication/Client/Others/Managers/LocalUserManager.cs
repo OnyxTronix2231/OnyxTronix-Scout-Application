@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -19,8 +21,13 @@ public class LocalUserManager
         // user != null
         if (user is not null)
         {
+            var map = new Dictionary<string, string>
+            { 
+                {"role", ClaimTypes.Role},
+                {"name", ClaimTypes.Name}
+            };
             await localStorageService.SetItemAsync("metadata.userAccount",
-                user.Claims.Select(c => new ClaimData { Type = c.Type, Value = c.Value }));
+                user.Claims.Select(c => new ClaimData { Type = map.GetValueOrDefault(c.Type, c.Type), Value = c.Value }));
             return;
         }
         await localStorageService.RemoveItemAsync("metadata.userAccount");
@@ -29,6 +36,7 @@ public class LocalUserManager
     public async Task<ClaimsPrincipal> LoadUserAccountAsync()
     {
         var storedClaims = await localStorageService.GetItemAsync<ClaimData[]>("metadata.userAccount");
+        Console.WriteLine(ClaimTypes.Name);
         return storedClaims != null
             ? new ClaimsPrincipal(new ClaimsIdentity(storedClaims.Select(c => new Claim(c.Type, c.Value)), "appAuth"))
             : new ClaimsPrincipal(new ClaimsIdentity());
