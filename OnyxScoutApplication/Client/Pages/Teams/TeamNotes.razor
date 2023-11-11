@@ -1,25 +1,23 @@
 ﻿@* @page "/TeamDetails/Notes/{teamNumber:int}" *@
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
+@using OnyxScoutApplication.Shared.Other.Analyzers
 
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
 @if (notesByStage != null)
-{ 
-@*     <h3>Team @TeamNumber</h3> *@
-@*     <h4>@selectedEvent?.Name</h4> *@
-     <div> 
+{
+    <div>
         @foreach (var (stage, textByWirters) in notesByStage)
         {
             <h5>@stage</h5>
-            foreach (var (texts, writer) in textByWirters)
+            foreach (var textsAndWriter in textByWirters)
             {
-
-                foreach (var text in texts)
+                foreach (var text in textsAndWriter.FormDataDtos)
                 {
                     <div>
-                        <SfTextBox Value="@text.StringValue" Width="60%" Readonly="true" Multiline="true"></SfTextBox>
-                        <span>@writer</span>
+                        <SfTextBox CssClass="multiline" Value="@text.StringValue" Width="100%" Readonly="true" Multiline="true"></SfTextBox>
+                        <span>@textsAndWriter.WriterUserName</span>
                     </div>
                     <br/>
                 }
@@ -28,24 +26,41 @@
     </div>
 }
 
+
+
 @code {
 
     [Parameter]
     public int TeamNumber { get; set; }
 
     [Parameter]
-    public List<FormDto> Forms
+    public Event SelectedEvent { get; set; }
+
+    private Dictionary<string, List<DataAndWriter>> notesByStage;
+
+    // forms = value;
+    // var v = forms.SelectMany(i => i.FormDataInStages.ToDictionary(ii => ii.Name, ii => 
+    //     new Tuple<FormDataDto[], string>(ii.FormData.Where(d => d.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)));
+    // notesByStage = v.ToLookup(i => i.Key, i => i.Value).ToDictionary(i => i.Key, i => i.ToList());
+
+    protected override async Task OnParametersSetAsync()
     {
-        get => forms;
-        set
+        await base.OnParametersSetAsync();
+
+        if (notesByStage is not null)
         {
-            forms = value;
-            var v = forms.SelectMany(i => i.FormDataInStages.ToDictionary(ii => ii.Name, ii => 
-                new Tuple<FormDataDto[], string>(ii.FormData.Where(d => d.Field.FieldType == FieldType.TextField).ToArray(), i.WriterUserName)));
-            notesByStage = v.ToLookup(i => i.Key, i => i.Value).ToDictionary(i => i.Key, i => i.ToList());
+            return;
         }
+        notesByStage =
+            await Http.GetJsonByJsonText<Dictionary<string, List<DataAndWriter>>>(
+                $"EventAnalytics/GetNotesOnTeam/{SelectedEvent.Year}/{SelectedEvent.Key}/{TeamNumber}");
     }
 
-    private Dictionary<string, List<Tuple<FormDataDto[], string>>> notesByStage;
-    private List<FormDto> forms;
+
 }
+
+<style>
+     .multiline{
+        height: 150px;
+    }
+</style>

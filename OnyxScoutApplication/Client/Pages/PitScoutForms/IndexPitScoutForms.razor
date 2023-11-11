@@ -1,9 +1,14 @@
 ﻿@page "/PitScoutForms"
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using System.Security.Claims
+@using OnyxScoutApplication.Client.Shared.Services
 @using FailureEventArgs = Syncfusion.Blazor.Inputs.FailureEventArgs
 @inject NavigationManager NavigationManager
 @inject HttpClientManager Http
+@inject ILocalStorageService LocalStorage
+@inject NotificationManager NotificationManager;
+@inject ScoutFormService ScoutFormService
+
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 <h1>ScoutForms</h1>
 @if (scoutForms == null)
@@ -45,7 +50,7 @@ else
                         Field="" AllowFiltering="false">
                 <Template>
                     @{
-                        var scoutForm = (FormDto)context;
+                        var scoutForm = (SimpleFormDto)context;
                         <div>
                             @{ bool isAllowedToEdit = user.Identity!.Name == scoutForm.WriterUserName
                                                       || user.IsInRole(Role.Admin.ToString());}
@@ -72,16 +77,24 @@ else
     [CascadingParameter]
     private Task<AuthenticationState> AuthenticationStateTask { get; set; }
     private ClaimsPrincipal user;
-    private List<FormDto> scoutForms;
+    private List<SimpleFormDto> scoutForms;
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateTask;
         user = authState.User;
-        scoutForms = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByType/{ScoutFormType.Pit}" );
+        Event selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        if (selectedEvent is null)
+        {
+            await NotificationManager.NotifyAsync("Please select an event first", "", NotificationType.Warning);
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+        // scoutForms = await Http.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{selectedEvent.Key}/{ScoutFormType.Pit}" );
+        scoutForms = await ScoutFormService.GetPitForms();
     }
 
-    private void Edit(FormDto form)
+    private void Edit(SimpleFormDto form)
     {
         NavigationManager.NavigateTo("PitScoutForm/Edit/" + form.Id);
     }

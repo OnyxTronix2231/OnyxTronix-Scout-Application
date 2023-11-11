@@ -59,7 +59,7 @@
         }
         prevMinDate = MinDate;
         prevMaxDate = MaxDate;
-        await Save(); //Invokes the callback for first render when dates where loaded from storage
+        await InvokeOnDateTimeRangeSelected(); //Invokes the callback for first render when dates where loaded from storage
     }
 
     public class DateTimeSelectedEventArgs
@@ -74,18 +74,22 @@
         endDateTime = MaxDate;
         await LocalStorage.RemoveItemAsync("DateTimeRangePicker.StartDateTime");
         await LocalStorage.RemoveItemAsync("DateTimeRangePicker.EndDateTime");
-        await Save();
     }
 
     private async Task Save()
     {
         await LocalStorage.SetItemAsync("DateTimeRangePicker.StartDateTime", startDateTime);
-        await LocalStorage.SetItemAsync("DateTimeRangePicker.EndDateTime", endDateTime);    
+        await LocalStorage.SetItemAsync("DateTimeRangePicker.EndDateTime", endDateTime);
+
+        await InvokeOnDateTimeRangeSelected();
+    }
+
+    private async Task InvokeOnDateTimeRangeSelected()
+    {
         await OnDateTimeRangeSelected.InvokeAsync(new DateTimeSelectedEventArgs
         {
             StartDateTime = startDateTime,
             EndDateTime = endDateTime
         });
-       
     }
 }

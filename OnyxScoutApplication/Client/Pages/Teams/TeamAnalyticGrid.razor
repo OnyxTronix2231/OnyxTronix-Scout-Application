@@ -1,4 +1,4 @@
-﻿@using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
+﻿@using OnyxScoutApplication.Shared.Other.Analyzers.TeamData
 <div>
     <SfGrid DataSource="@CalculatedData" AllowResizing="true" Width="100%">
         <GridColumns>
@@ -15,7 +15,7 @@
                         var f = (TeamFieldAverage) context;
                         var text = f.GetFormattedAverage();
                     }
-                    <span>@text</span>
+                    <span class="text">@text</span>
                 </Template>
             </GridColumn>
             <GridColumn HeaderText="Min" AllowResizing="true" Width="10%">
@@ -52,3 +52,9 @@
     public List<TeamFieldAverage> CalculatedData { get; set; }
 
 }
+<style>
+    .text {
+        white-space: pre-wrap;
+    }
+</style>
+

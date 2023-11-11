@@ -34,7 +34,7 @@ namespace OnyxScoutApplication.Server.Controllers
             var customEvents = await customEventRepository.GetAllEventsByYear(year);
             var tbaEvents = await theBlueAllianceService.GetEventsByYear(year);
             var mappedCustomEvents = mapper.Map<IEnumerable<Event>>(customEvents.Value);
-            return tbaEvents.Concat(mappedCustomEvents).ToList();
+            return tbaEvents.Concat(mappedCustomEvents).OrderBy(i => i.StartDate).ToList();
         }
 
         [HttpGet("GetAllMatches/{eventKey}")]
@@ -45,10 +45,10 @@ namespace OnyxScoutApplication.Server.Controllers
             {
                 var customMatches = await customEventRepository.GetMatchesByEventKey(eventKey);
                 results = mapper.Map<List<Match>>(customMatches.Value);
-                return results;
+                return results.OrderBy(i => i.Date).ToList();
             }
             results = await theBlueAllianceService.GetMatchesByEvent(eventKey);
-            return results;
+            return results.OrderBy(i => i.Date).ToList();
         }
 
         [HttpGet("GetAllTeams/{eventKey}")]
@@ -80,10 +80,10 @@ namespace OnyxScoutApplication.Server.Controllers
             {
                 var customMatches = await customEventRepository.GetMatchesByTeamAndEventKey(teamNumber ,eventKey);
                 results = mapper.Map<List<Match>>(customMatches.Value);
-                return results;
+                return results.OrderBy(i => i.Date).ToList();
             }
             results = await theBlueAllianceService.GetMatchesByTeamAndEvent(teamNumber, eventKey);
-            return results;
+            return results.OrderBy(i => i.Date).ToList();
         }
     }
 }

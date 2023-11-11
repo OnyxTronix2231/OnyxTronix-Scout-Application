@@ -13,10 +13,10 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces
     {
         Task<ActionResult<FormDto>> GetWithFields(string id);
 
-        Task<ActionResult> Update(string id, FormDto formFormatDto);
+        Task<ActionResult> Update(string id, FormDto scoutFormDto);
         Task<ActionResult<IEnumerable<FormDto>>> GetAllByTeamWithData(int teamNumber, string eventKey,
             ScoutFormType scoutFormType);
-        Task<ActionResult<IEnumerable<FormDto>>> GetAllByEvent(string eventKey, ScoutFormType scoutFormType);
+        Task<ActionResult<IEnumerable<SimpleFormDto>>> GetAllByEvent(string eventKey, ScoutFormType scoutFormType);
         Task<ActionResult<IEnumerable<FormDto>>> GetAllByEventWithData(string eventKey, ScoutFormType scoutFormType);
         Task<ActionResult<IEnumerable<FormDto>>> GetAllByType(ScoutFormType scoutFormType);
         Task<ActionResult<FormDto>> GetByTeamAndKey(int teamNumber, string key,

@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
-using OnyxScoutApplication.Shared.Models;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 
-namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
+namespace OnyxScoutApplication.Shared.Other.Analyzers.TeamData
 {
     public class OptionSelectTeamFieldAverage : TeamFieldAverage
     {
@@ -23,16 +22,6 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
                 OptionsAverage.Select(i => $"{i.Key}: {i.Value.Count}/{TotalCount}")));
             v = new MarkupString(v + "<br />" + GetRelativeValue().ToString("N2"));
             return v;
-        }
-
-        public override int CompareTo(TeamFieldAverage other)
-        {
-            if (other is OptionSelectTeamFieldAverage optionFieldAverage)
-            {
-                return GetRelativeValue().CompareTo(optionFieldAverage.GetRelativeValue());
-            }
-
-            throw new ArgumentException($"Cannot compare {nameof(NumericTeamFieldAverage)} type to {other.GetType()}");
         }
 
         public override double GetRelativeValue()

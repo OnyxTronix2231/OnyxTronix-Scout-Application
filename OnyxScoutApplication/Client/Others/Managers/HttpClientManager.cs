@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -16,11 +17,18 @@ namespace OnyxScoutApplication.Client.Others.Managers
     {
         private readonly HttpClient httpClient;
         private readonly NotificationManager notificationService;
+        private readonly AppManager appManager;
 
-        public HttpClientManager(HttpClient httpClient, NotificationManager notificationService)
+        public HttpClientManager(HttpClient httpClient, NotificationManager notificationService, AppManager appManager)
         {
             this.httpClient = httpClient;
             this.notificationService = notificationService;
+            this.appManager = appManager;
+        }
+        
+        public async Task<T> GetJsonByJsonText<T>(string command) where T : class
+        {
+            return await TryGetAsyncByJsonText<T>(async () => await httpClient.GetAsync(command));
         }
 
         public async Task<T> GetJson<T>(string command) where T : class
@@ -38,7 +46,12 @@ namespace OnyxScoutApplication.Client.Others.Managers
             return await TrySetAsync(async () => await httpClient.PostAsync(command, Serialize(objectToPost)));
         }
         
-        public async Task<bool> TryPostJson(string command, HttpContent content)
+        public async Task<T> TryPostJson<T>(string command, object objectToPost) where T : class
+        {
+            return await TryGetAsync<T>(async () => await httpClient.PostAsJsonAsync(command, objectToPost));
+        }
+        
+        public async Task<bool> TryPostJson(string command, HttpContent content) 
         {
             return await TrySetAsync(async () => await httpClient.PostAsync(command, content));
         }
@@ -51,11 +64,27 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 return null;
             }
             string json = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(json);
             var result = JsonConvert.DeserializeObject<T>(json,
                 new JsonSerializerSettings
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    TypeNameHandling = TypeNameHandling.Auto
                 });
+            return result;
+        }
+        
+        private async Task<T> TryGetAsyncByJsonText<T>(Func<Task<HttpResponseMessage>> action) where T : class
+        {
+            var response = await TryExecuteAsync(action);
+            if(!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+            string json = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(json);
+
+            var result = await response.Content.ReadFromJsonAsync<T>();
             return result;
         }
         
@@ -77,6 +106,12 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 response = await action();
                 if (!response.IsSuccessStatusCode)
                 {
+                    if (response.StatusCode is HttpStatusCode.ServiceUnavailable or 
+                        HttpStatusCode.InternalServerError or
+                        0)
+                    {
+                        appManager.IsOnlineMode = false;
+                    }
                     await NotifyFailer(response);
                 }
             }
@@ -107,6 +142,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
             var inputJson = JsonConvert.SerializeObject(objectToSerialize, new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.Auto
             });
             return new StringContent(inputJson, Encoding.UTF8, "application/json");
         }

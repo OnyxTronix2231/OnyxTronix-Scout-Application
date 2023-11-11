@@ -5,6 +5,9 @@
 @inject ILocalStorageService LocalStorage
 @inject ISessionStorageService SessionStorage
 @inject NotificationManager NotificationManager
+@inject TheBlueAllianceService TheBlueAllianceService
+@inject ScoutFormService ScoutFormService
+
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (form != null)
@@ -33,16 +36,19 @@
 
         teamInMatch = await LocalStorage.GetItemAsync<TeamInMatch>("ScoutForm/TeamInMatch");
         
-        var newForm = await SessionStorage.GetItemAsync<FormDto>("ScoutFormFormat.TemplateScoutFormByYear." + teamInMatch.Match.Date.Year);
-        if (newForm == null)
-        {
-            NavigationManager.NavigateTo("/");
-            return;
-        }
-        
+        // var newForm = await SessionStorage.GetItemAsync<FormDto>("ScoutFormFormat.TemplateScoutFormByYear." + teamInMatch.Match.Date.Year);
+       
         if(await LocalStorage.ContainKeyAsync($"ScoutForm/{teamInMatch.Match.Key}/{teamInMatch.TeamNumber}"))
         {
             form = await LocalStorage.GetItemAsync<FormDto>($"ScoutForm/{teamInMatch.Match.Key}/{teamInMatch.TeamNumber}");
+            return;
+        }
+        
+        var newForm = await ScoutFormService.GetTemplateForm();
+        if (newForm == null)
+        {
+            Console.WriteLine("No template found!");
+            NavigationManager.NavigateTo("/");
             return;
         }
         

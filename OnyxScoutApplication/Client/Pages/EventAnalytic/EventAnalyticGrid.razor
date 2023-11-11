@@ -1,9 +1,12 @@
 ﻿@using System.Dynamic
 @using System.Security
 @using Newtonsoft.Json
-@using OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
-@inherits TeamsAnalyzer
-<div style="width: calc(90vw); height: 90vh">   
+@using OnyxScoutApplication.Shared.Other.Analyzers
+@using Syncfusion.Blazor.Schedule.Internal
+@inject HttpClientManager Http
+
+@* @inherits TeamsAnalyzer *@
+<div style="width: calc(90vw); height: 90vh">
     @if (CalculatedTeamsData != null && CalculatedTeamsData.Count != 0)
     {
         <SfGrid @ref="Grid" FrozenColumns="1" AllowTextWrap="false" DataSource="@CalculatedTeamsData" AllowReordering="true"
@@ -32,11 +35,12 @@
                     string nameId = ColumnsFields[index].Id;
                     string name = ColumnsFields[index].Name;
                     var rawValue = "RawValue" + nameId;
+
                     <GridColumn AutoFit="false" HeaderText="@name" Field="@rawValue" AllowReordering="true"
                                 AllowResizing="true" Type="ColumnType.Number">
                         <HeaderTemplate>
                             <div>
-                                <span>@ColumnsFields[index].MarkupName</span>
+                                <span>@ColumnsFields[index].Name</span>
                             </div>
                         </HeaderTemplate>
                         <Template>
@@ -54,14 +58,27 @@
 </div>
 
 @code {
+
+    [Parameter]
+    public List<ExpandoObject> CalculatedTeamsData { get; set; }
+
+    [Parameter]
+    public List<ColumnField> ColumnsFields { get; set; }
+
     private readonly string[] toolbarItems = { "ColumnChooser" };
     public SfGrid<ExpandoObject> Grid { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
 
     private async Task LoadHandler()
     {
         await Grid.AutoFitColumnsAsync(ColumnsFields.Select(i => "RawValue" + i.Id).ToArray());
     }
-    
+
 }
 
 

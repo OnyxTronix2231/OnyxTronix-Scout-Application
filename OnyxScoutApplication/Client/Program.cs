@@ -15,7 +15,7 @@ using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Web;
 using OnyxScoutApplication.Client.Others.Extensions;
 using OnyxScoutApplication.Client.Others.Objects;
-using OnyxScoutApplication.Client.Others.Objects.Analyzers;
+using OnyxScoutApplication.Client.Shared.Services;
 using OnyxScoutApplication.Shared.Models.CustomeEventModels;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 using OnyxScoutApplication.Shared.Models.ScoutFormModels;
@@ -42,24 +42,31 @@ namespace OnyxScoutApplication.Client
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
             // Supply HttpClient instances that include access tokens when making requests to the server project
-            services.AddScoped(sp =>
+            services.AddTransient(sp =>
                 sp.GetRequiredService<IHttpClientFactory>().CreateClient("OnyxScoutApplication.ServerAPI"));
 
             builder.Services.AddApiAuthorization()
-                .AddAccountClaimsPrincipalFactory<RolesClaimsPrincipalFactory>();
+                .AddAccountClaimsPrincipalFactory<OfflineAccountClaimsPrincipalFactory>();
 
-            builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
+            builder.Services.AddSyncfusionBlazor();
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(
-                "MTI1MDMzMEAzMjMwMmUzNDJlMzBZTUNaM3pQZnNiVTc4Q3JBdmJta0R1WFNGakF0TGl1Q2cvWnduT2RVWXRBPQ==");
+                "MjgwODE2OUAzMjMzMmUzMDJlMzBUY29PUG9uNUYxbm96dlNDSDV6c09zRG9NT21jQVRoc0xJM0YwZDRrdjI4PQ==");
             services.AddTransient<HttpClientManager>();
             services.AddSingleton<NotificationManager>();
+            services.AddSingleton<AppManager>();
+            services.AddSingleton<ScoutFormService>();
+            services.AddSingleton<LocalUserManager>();
+            services.AddSingleton<EventService>();
+            services.AddSingleton<ScoutFormFormatService>();
+            services.AddSingleton<TheBlueAllianceService>();
+            services.AddSingleton<ServiceManager>();
             services.AddTransient<IValidator<ScoutFormFormatDto>, ScoutFormFormatValidator>();
             services.AddTransient<IValidator<FieldDto>, FieldValidator>();
             services.AddTransient<IValidator<ApplicationUserDto>, ApplicationUserValidator>();
             services.AddTransient<IValidator<FormDto>, ScoutFormValidator>();
             services.AddTransient<IValidator<CustomEventDto>, CustomEventValidator>();
-            services.AddBlazoredLocalStorage();
-            services.AddBlazoredSessionStorage();
+            services.AddBlazoredLocalStorageAsSingleton();
+            services.AddBlazoredSessionStorageAsSingleton();
         }
     }
 }

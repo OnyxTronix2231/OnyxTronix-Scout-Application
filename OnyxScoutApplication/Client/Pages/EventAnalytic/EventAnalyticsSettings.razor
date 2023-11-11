@@ -4,10 +4,11 @@
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject NotificationManager NotificationManager
+@inject ScoutFormFormatService ScoutFormFormatService
+
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 <h3>Select numric field to show combined result</h3>
-
 
 <br/>
 @if (analyticSettings != null)
@@ -77,7 +78,8 @@
             NavigationManager.NavigateTo("/");
             return;
         }
-        format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        // format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+        format = await ScoutFormFormatService.GetMainGameScoutFormFormat();
         if (format == null)
         {
             NavigationManager.NavigateTo("/");

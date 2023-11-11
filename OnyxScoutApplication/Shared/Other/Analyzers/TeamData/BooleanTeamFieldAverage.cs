@@ -1,9 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
-using OnyxScoutApplication.Shared.Models;
 using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels;
 
-namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
+namespace OnyxScoutApplication.Shared.Other.Analyzers.TeamData
 {
     public class BooleanTeamFieldAverage : TeamFieldAverage
     {
@@ -19,16 +18,6 @@ namespace OnyxScoutApplication.Client.Others.Objects.Analyzers.TeamData
         public override MarkupString GetFormattedAverage()
         {
             return new((GetAverage() * 100).ToString("N2") + "%" + "<br />" + $"{TrueCount}/{TotalCount}");
-        }
-
-        public override int CompareTo(TeamFieldAverage other)
-        {
-            if (other is BooleanTeamFieldAverage booleanTeamFieldAverage)
-            {
-                return GetRelativeValue().CompareTo(booleanTeamFieldAverage.GetRelativeValue());
-            }
-
-            throw new ArgumentException($"Cannot compare {nameof(NumericTeamFieldAverage)} type to {other.GetType()}");
         }
 
         public override double GetRelativeValue()

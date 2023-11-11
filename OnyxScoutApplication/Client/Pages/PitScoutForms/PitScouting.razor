@@ -4,6 +4,8 @@
 @inject ISyncLocalStorageService SyncLocalStorage
 @inject NotificationManager NotificationManager
 @inject NavigationManager NavigationManager
+@inject ScoutFormService ScoutFormService
+
 
 <h3>Pit scouting</h3>
 @if (teams != null)
@@ -29,7 +31,7 @@
 
     private SfGrid<Team> grid;
     private List<Team> teams;
-    private List<FormDto> scoutForms;
+    private List<SimpleFormDto> scoutForms;
     private Event selectedEvent;
 
     protected override async Task OnInitializedAsync()
@@ -40,9 +42,10 @@
             await NotificationManager.NotifyAsync("Please select event and year first!", "", NotificationType.Danger);
             return;
         }
+        
         teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
-        scoutForms = await Http.GetJson<List<FormDto>>($"ScoutForm/GetAllByType/{ScoutFormType.Pit}");
-
+        // scoutForms = await Http.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{selectedEvent.Key}/{ScoutFormType.Pit}");
+        scoutForms = await ScoutFormService.GetPitForms();
     }
 
     // private void CustomizeCell(QueryCellInfoEventArgs<Team> args)
@@ -64,7 +67,7 @@
         {
             classes += "filledTeamForm ";
         }
-        else if (SyncLocalStorage.ContainKey($"ScoutForm/{selectedEvent.Key}/{teamNumber}"))
+        else if (SyncLocalStorage.ContainKey($"ScoutForm/{selectedEvent.Key}_pitForm/{teamNumber}"))
         {
             classes += "locallyFilledTeamForm ";
         }
@@ -77,7 +80,7 @@
 
     private void OnGridTeamClicked(Team team)
     {
-        if (scoutForms.Any(form => form.TeamNumber == team.TeamNumber && form.KeyName == selectedEvent.Key))
+        if (scoutForms.Any(form => form.TeamNumber == team.TeamNumber && form.KeyName == selectedEvent.Key + "_pitForm"))
         {
             NavigationManager.NavigateTo($"TeamDetails/{team.TeamNumber}");
             return;

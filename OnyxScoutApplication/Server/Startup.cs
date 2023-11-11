@@ -1,11 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,24 +13,17 @@ using OnyxScoutApplication.Server.Data.Persistence.Repositories;
 using OnyxScoutApplication.Server.Data.Persistence.Repositories.Interfaces;
 using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork;
 using OnyxScoutApplication.Server.Data.Persistence.UnitsOfWork.interfaces;
-using AutoMapper;
 using System;
-using System.Collections;
 using OnyxScoutApplication.Server.Data.Profiles;
 using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
 using AutoMapper.Internal;
-using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Services;
 using Google.Cloud.Firestore;
 using Google.Cloud.Firestore.V1;
-using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http;
 using OnyxScoutApplication.Server.Data.Extensions;
 using Newtonsoft.Json;
@@ -108,14 +97,17 @@ namespace OnyxScoutApplication.Server
                 options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
 
             services.AddControllersWithViews().AddNewtonsoftJson(settings =>
-                settings.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+            {
+                settings.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                settings.SerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
+            });
             services.AddRazorPages();
 
             services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatFirestoreRepository>();
             services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFaunaFormatUnitOfWork>();
 
-            services.AddTransient<IScoutFormRepository, ScoutFormRepository>();
-            services.AddTransient<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
+            services.AddSingleton<IScoutFormRepository, ScoutFormFormatFirestoreRepositorySmart>();
+            services.AddSingleton<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
 
             services.AddTransient<ICustomEventRepository, CustomEventRepository>();
             services.AddTransient<ICustomEventUnitOfWork, CustomEventUnitOfWork>();
@@ -124,7 +116,7 @@ namespace OnyxScoutApplication.Server
             services.AddTransient<IApplicationUserUnitOfWork, ApplicationUserUnitOfWork>();
 
             var v = new FirestoreClientBuilder();
-            if (!env.IsDevelopment())
+            // if (!env.IsDevelopment())
             {
                 v.JsonCredentials = "{" +
                                         "\"type\": " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_TYPE"] +
@@ -143,7 +135,8 @@ namespace OnyxScoutApplication.Server
             services.AddTransient(_ => FirestoreDb.Create("onyxdb-2bc25", v.Build()));
 
             services.AddTransient(_ =>
-                new AmazonS3Client(Environment.GetEnvironmentVariables()["CLOUD_CUBE-ACCESS_KEY_ID"]!.ToString(),
+                new AmazonS3Client(
+                    Environment.GetEnvironmentVariables()["CLOUD_CUBE-ACCESS_KEY_ID"]!.ToString(),
                     Environment.GetEnvironmentVariables()["CLOUD_CUBE-SECRET_ACCESS_KEY"]!.ToString(),
                     new AmazonS3Config
                     {
@@ -163,6 +156,7 @@ namespace OnyxScoutApplication.Server
                 app.UseDeveloperExceptionPage();
                 app.UseMigrationsEndPoint();
                 app.UseWebAssemblyDebugging();
+                app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             }
             else
             {
