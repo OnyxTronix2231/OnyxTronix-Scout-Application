@@ -8,6 +8,7 @@
 @inject ScoutFormService ScoutFormService
 @inject TheBlueAllianceService TheBlueAllianceService
 @inject EventService EventService
+@inject NotificationManager NotificationManager
 
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
@@ -152,6 +153,12 @@
         selectedData = data.Where(f => f.DateTime <= endDateTime && f.DateTime >= startDateTime).ToList();
         var analyticsRes = await Http.TryPostJson<AnalyticsTeamResult>
             ($"EventAnalytics/GetTeamEventAnalytics/{selectedEvent.Year}/{selectedEvent.Key}/{TeamNumber}", new AnalyticsSettings { StartDate = startDateTime, EndDate = endDateTime });
+        if (analyticsRes is null)
+        {
+            await NotificationManager.NotifyAsync("Error fetching data", "", NotificationType.Danger);
+            NavigationManager.NavigateTo("");
+            return;
+        }
         calculatedScoutDataByStages = analyticsRes.CalculatedScoutDataByStages;
         calculatedPitScoutDataByStages = analyticsRes.CalculatedScoutDataByStagesPit;
     }

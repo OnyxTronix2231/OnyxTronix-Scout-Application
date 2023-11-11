@@ -17,13 +17,18 @@
 
     <div class="main">
         <div class="top-row px-4 auth">
-            <SfButton CssClass="@(AppManager.IsOnlineMode ? "e-danger" : "e-success")" 
+            <div >
+                <SfButton class="e-warning" @onclick="HandleRefreshButtonClick" style="margin-right: 5px">Refresh</SfButton>
+            </div>
+            <SfButton CssClass="@(AppManager.IsOnlineMode ? "e-danger" : "e-success")"
                       @onclick="() => AppManager.IsOnlineMode = !AppManager.IsOnlineMode"
-                      style="padding-right: 5px">
+                      >
                 @(AppManager.IsOnlineMode ? "Switch to offline" : "Switch to online")
+
+
             </SfButton>
             <LoginDisplay/>
-            <span>V2.8.0</span>
+            <span>V2.8.2</span>
         </div>
         <div class="content px-4">
             @if (finishedInit)
@@ -42,39 +47,39 @@
         await JsRuntime
             .InvokeAsync<object>(
                 "blazorFuncs.registerClient",
-                new object[] {DotNetObjectReference.Create(this)}
+                new object[] { DotNetObjectReference.Create(this) }
             );
 
         await ServiceManager.CleanAndInitAllServices();
 
-        // if (LocalStorage.ContainKey("EventSelector/SelectedEventKey"))
+    // if (LocalStorage.ContainKey("EventSelector/SelectedEventKey"))
         {
-            // Event selectedEvent = LocalStorage.GetItem<Event>("EventSelector/SelectedEventKey");
-            
-            // var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
-            // SessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
-            
-            // await TheBlueAllianceService.OnInit();
-            
-            // var scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
-            // SessionStorage.SetItem("ScoutForms.All", scoutForms);
-            
-            //await ScoutFormService.OnInit();
+    // Event selectedEvent = LocalStorage.GetItem<Event>("EventSelector/SelectedEventKey");
 
-            // var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
-            // if (events != null) //user is probably not authorized 
-            // {
-            //     events = events.Where(i => string.Equals(i.Country, selectedEvent.Country,
-            //         StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
-            //     SessionStorage.SetItem("TheBlueAlliance.AllEvents", events);
-            // }
-            
-            // var teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
-            // SessionStorage.SetItem("TheBlueAlliance.AllTeams", teams);
-            
-            
-            // var form = await Http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + selectedEvent.Year);
-            // SessionStorage.SetItem("ScoutFormFormat.TemplateScoutFormByYear." + selectedEvent.Year, form);
+    // var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
+    // SessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
+
+    // await TheBlueAllianceService.OnInit();
+
+    // var scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
+    // SessionStorage.SetItem("ScoutForms.All", scoutForms);
+
+    //await ScoutFormService.OnInit();
+
+    // var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
+    // if (events != null) //user is probably not authorized 
+    // {
+    //     events = events.Where(i => string.Equals(i.Country, selectedEvent.Country,
+    //         StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
+    //     SessionStorage.SetItem("TheBlueAlliance.AllEvents", events);
+    // }
+
+    // var teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
+    // SessionStorage.SetItem("TheBlueAlliance.AllTeams", teams);
+
+
+    // var form = await Http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + selectedEvent.Year);
+    // SessionStorage.SetItem("ScoutFormFormat.TemplateScoutFormByYear." + selectedEvent.Year, form);
         }
         finishedInit = true;
     }
@@ -84,7 +89,7 @@
     {
         Console.WriteLine("New version available");
         StateHasChanged();
-        await NotificationManager.NotifyAsync("Update available", "Please refresh the page", NotificationType.Warning, 
+        await NotificationManager.NotifyAsync("Update available", "Please refresh the page", NotificationType.Warning,
             0, new NotficationButton { Content = "Refresh", Action = RefreshPage });
         return await Task.FromResult("Alerted client");
     }
@@ -92,6 +97,11 @@
     private void RefreshPage(object arg)
     {
         NavigationManager.NavigateTo("/", true);
+    }
+
+    private async Task HandleRefreshButtonClick()
+    {
+        await ServiceManager.CleanAndInitAllServices(true);
     }
 
 }

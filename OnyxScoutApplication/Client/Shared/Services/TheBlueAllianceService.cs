@@ -29,28 +29,30 @@ public class TheBlueAllianceService : IService
     }
 
 
-    public async Task OnInit()
+    public async Task OnInit(bool forceOnlineMode = false)
     {
         var selectedEvent = await eventService.GetSelectedEvent();
         var eventKey = selectedEvent.Key;
         var year = selectedEvent.Year;
         var country = selectedEvent.Country;
 
-        if (appManager.IsOnlineMode)
+        if (appManager.IsOnlineMode || forceOnlineMode)
         {
-            matches = await httpClient.GetJson<List<Match>>($"TheBlueAlliance/GetAllMatches/{eventKey}");
+            var matchesTask = httpClient.GetJson<List<Match>>($"TheBlueAlliance/GetAllMatches/{eventKey}");
+            var eventsTask = httpClient.GetJson<List<Event>>($"TheBlueAlliance/GetAllEvents/{year}");
+            var teamsTask = httpClient.GetJson<List<Team>>($"TheBlueAlliance/GetAllTeams/{eventKey}");
+            
+            await Task.WhenAll(matchesTask, eventsTask, teamsTask);
+
+            matches = await matchesTask;
             await localStorageService.SetItemAsync($"TheBlueAllianceService.Matches.{eventKey}", matches);
 
-            events = await httpClient.GetJson<List<Event>>($"TheBlueAlliance/GetAllEvents/{year}");
-            // if (events != null) //user is probably not authorized 
-            // {
+            events = await eventsTask;
             events = events.Where(i => string.Equals(i.Country, country,
                 StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
-
             await localStorageService.SetItemAsync($"TheBlueAllianceService.Events.{year}", events);
-            // }
-            
-            teams = await httpClient.GetJson<List<Team>>($"TheBlueAlliance/GetAllTeams/{eventKey}");
+
+            teams = await teamsTask;
             await localStorageService.SetItemAsync($"TheBlueAllianceService.Teams.{eventKey}", teams);
 
             return;

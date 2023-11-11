@@ -25,11 +25,11 @@ public class ScoutFormFormatService: IService
         this.eventService = eventService;
     }
     
-    public async Task OnInit()
+    public async Task OnInit(bool forceOnlineMode = false)
     {
         var year = (await eventService.GetSelectedEvent()).Year;
 
-        if (appManager.IsOnlineMode)
+        if (appManager.IsOnlineMode || forceOnlineMode)
         {
             mainGameScoutFormFormat = await httpClient.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{year}/{ScoutFormType.MainGame}");
             await localStorageService.SetItemAsync($"ScoutFormFormatService.MainGame.{year}", mainGameScoutFormFormat);
