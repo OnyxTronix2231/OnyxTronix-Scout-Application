@@ -18,13 +18,13 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
                     $"Value must be a number between {model.Field.MinValue} and {model.Field.MaxValue}")
                 .When(c => c.Field.FieldType is FieldType.Integer or FieldType.Timer);
             
-            RuleFor(x => x.NumericValue).NotEmpty().WithMessage((model, _) => $"Field {model.Field.Name} is required")
+            RuleFor(x => x.NumericValue).NotEmpty().WithMessage((model, _) => $"Field: \"{model.Field.Name}\" is required")
                 .When(m => m.Field.Required && m.Field.FieldType is FieldType.Integer or FieldType.Timer);
             
-            RuleFor(x => x.StringValue).NotEmpty().WithMessage((model, _) => $"Field {model.Field.Name} is required")
+            RuleFor(x => x.StringValue).NotEmpty().WithMessage((model, _) => $"Field: \"{model.Field.Name}\" is required")
                 .When(m => m.Field.Required && m.Field.FieldType is FieldType.TextField or FieldType.BooleanChooser);
             
-            RuleFor(x => x.SelectedOptions).NotEmpty().WithMessage((model, _) => $"Field {model.Field.Name} is required")
+            RuleFor(x => x.SelectedOptions).NotEmpty().WithMessage((model, _) => $"Field: \"{model.Field.Name}\" is required")
                 .When(m => m.Field.Required && m.Field.FieldType is FieldType.MultipleChoice or FieldType.OptionSelect);
             
             RuleForEach(x => x.CascadeData).SetValidator(this)

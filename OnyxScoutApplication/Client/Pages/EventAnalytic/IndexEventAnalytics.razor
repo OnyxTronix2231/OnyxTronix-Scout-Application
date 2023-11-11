@@ -9,6 +9,7 @@
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject NotificationManager NotificationManager
+@inject ScoutFormService ScoutFormService
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 <DateTimeRangePicker MinDate="minDate" MaxDate="maxDate" OnDateTimeRangeSelected="OnDateTimeRangeSelected"></DateTimeRangePicker>
@@ -46,7 +47,8 @@
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
 
-        scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
+        // scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
+        scoutForms = await ScoutFormService.GetMainGameForms();
         selectedScoutForms = scoutForms.ToList();
 
         var formsByDates = scoutForms.OrderBy(f => f.DateTime).ToList();
@@ -64,6 +66,12 @@
             Where(f => f.DateTime <= obj.EndDateTime && f.DateTime >= obj.StartDateTime).ToList();
         var analyticsRes = await Http.TryPostJson<AnalyticsResult>
             ($"EventAnalytics/GetEventAnalytics/{selectedEvent.Year}/{selectedEvent.Key}", new AnalyticsSettings { StartDate = obj.StartDateTime, EndDate = obj.EndDateTime, EventAnalyticSettingsDto = analyticSettings });
+        if (analyticsRes is null)
+        {
+            await NotificationManager.NotifyAsync("Error fetching data", "", NotificationType.Danger);
+            NavigationManager.NavigateTo("");
+            return;
+        }
         calculatedTeamsData = analyticsRes.CalculatedTeamsData;
         columnsFields = analyticsRes.ColumnsFields;
     }
