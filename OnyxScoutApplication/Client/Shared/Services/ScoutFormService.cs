@@ -26,23 +26,29 @@ public class ScoutFormService: IService
         this.eventService = eventService;
     }
     
-    public async Task OnInit()
+    public async Task OnInit(bool forceOnlineMode = false)
     {
         Console.WriteLine("initionalzingggg, online mode:" + appManager.IsOnlineMode);
         var selectedEvent = await eventService.GetSelectedEvent();
         var eventKey = selectedEvent.Key;
         var year = selectedEvent.Year;
-        if (appManager.IsOnlineMode)
+        if (appManager.IsOnlineMode || forceOnlineMode)
         {
-            mainGameScoutForms = await httpClient.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{eventKey}/{ScoutFormType.MainGame}");
+            var mainGameScoutFormsTask = httpClient.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{eventKey}/{ScoutFormType.MainGame}");
+            var pitScoutFormsTask = httpClient.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{eventKey}/{ScoutFormType.Pit}");
+            var templateScoutFormTask = httpClient.GetJson<FormDto>($"ScoutFormFormat/TemplateScoutFormByYear/{year}");
+
+            await Task.WhenAll(mainGameScoutFormsTask, pitScoutFormsTask, templateScoutFormTask);
+
+            mainGameScoutForms = await mainGameScoutFormsTask;
             mainGameScoutForms.Sort();
             await localStorageService.SetItemAsync($"ScoutFormService.ScoutForms.MainGame.{eventKey}", mainGameScoutForms);
-            
-            pitScoutForms = await httpClient.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{eventKey}/{ScoutFormType.Pit}");
+
+            pitScoutForms = await pitScoutFormsTask;
             pitScoutForms.Sort();
             await localStorageService.SetItemAsync($"ScoutFormService.ScoutForms.Pit.{eventKey}", pitScoutForms);
-            
-            var templateScoutForm = await httpClient.GetJson<FormDto>($"ScoutFormFormat/TemplateScoutFormByYear/{year}"); 
+
+            var templateScoutForm = await templateScoutFormTask;
             await localStorageService.SetItemAsync($"ScoutFormService.TemplateScoutForm.{year}", templateScoutForm);
             return;
         }

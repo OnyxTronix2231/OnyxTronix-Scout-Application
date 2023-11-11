@@ -4,5 +4,5 @@ namespace OnyxScoutApplication.Client.Shared.Services;
 
 public interface IService
 {
-    Task OnInit();
+    Task OnInit(bool forceOnlineMode = false);
 }

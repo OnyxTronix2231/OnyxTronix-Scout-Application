@@ -14,7 +14,7 @@ public class EventService : IService
         this.localStorageService = localStorageService;
     }
     
-    public async Task OnInit()
+    public async Task OnInit(bool forceOnlineMode = false)
     {
         selectedEvent = await localStorageService.GetItemAsync<Event>("EventService.SelectedEvent");
     }

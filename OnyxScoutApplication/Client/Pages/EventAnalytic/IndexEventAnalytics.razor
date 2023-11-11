@@ -66,6 +66,12 @@
             Where(f => f.DateTime <= obj.EndDateTime && f.DateTime >= obj.StartDateTime).ToList();
         var analyticsRes = await Http.TryPostJson<AnalyticsResult>
             ($"EventAnalytics/GetEventAnalytics/{selectedEvent.Year}/{selectedEvent.Key}", new AnalyticsSettings { StartDate = obj.StartDateTime, EndDate = obj.EndDateTime, EventAnalyticSettingsDto = analyticSettings });
+        if (analyticsRes is null)
+        {
+            await NotificationManager.NotifyAsync("Error fetching data", "", NotificationType.Danger);
+            NavigationManager.NavigateTo("");
+            return;
+        }
         calculatedTeamsData = analyticsRes.CalculatedTeamsData;
         columnsFields = analyticsRes.ColumnsFields;
     }
