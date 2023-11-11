@@ -1,6 +1,4 @@
-﻿@using Microsoft.JSInterop;
-@using OnyxScoutApplication.Shared.Models.ScoutFormModels
-@using Action = System.Action
+﻿@using Syncfusion.Blazor.Spinner
 
 @inherits LayoutComponentBase
 @inject NotificationManager NotificationManager
@@ -18,15 +16,25 @@
     <div class="main">
         <div class="top-row px-4 auth">
             <div >
-                <SfButton class="e-warning" @onclick="HandleRefreshButtonClick" style="margin-right: 5px">Refresh</SfButton>
+                <SfButton class="e-warning" @onclick="HandleRefreshButtonClick" style="margin-right: 5px">
+                    Refresh
+                </SfButton>
             </div>
-            <SfButton CssClass="@(AppManager.IsOnlineMode ? "e-danger" : "e-success")"
-                      @onclick="() => AppManager.IsOnlineMode = !AppManager.IsOnlineMode"
-                      >
-                @(AppManager.IsOnlineMode ? "Switch to offline" : "Switch to online")
+            <div>
+                <SfSpinner @bind-Visible="@ServiceManager.IsLoading">
+                </SfSpinner>
+            </div>
 
-
+            <SfButton CssClass="e-danger" Disabled="!AppManager.IsOnlineMode"
+                      @onclick="() => AppManager.IsOnlineMode = false">
+                Offline
             </SfButton>
+
+            <SfButton CssClass="e-success" Disabled="AppManager.IsOnlineMode"
+                      @onclick="() => AppManager.IsOnlineMode = true">
+                Online
+            </SfButton>
+
             <LoginDisplay/>
             <span>V2.8.2</span>
         </div>
@@ -52,35 +60,6 @@
 
         await ServiceManager.CleanAndInitAllServices();
 
-    // if (LocalStorage.ContainKey("EventSelector/SelectedEventKey"))
-        {
-    // Event selectedEvent = LocalStorage.GetItem<Event>("EventSelector/SelectedEventKey");
-
-    // var matches = await Http.GetJson<List<Match>>("TheBlueAlliance/GetAllMatches/" + selectedEvent.Key);
-    // SessionStorage.SetItem("TheBlueAlliance.AllMatches", matches);
-
-    // await TheBlueAllianceService.OnInit();
-
-    // var scoutForms = await Http.GetJson<List<SimpleFormDto>>("ScoutForm/GetAllByEvent/" + selectedEvent.Key);
-    // SessionStorage.SetItem("ScoutForms.All", scoutForms);
-
-    //await ScoutFormService.OnInit();
-
-    // var events = await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedEvent.Year);
-    // if (events != null) //user is probably not authorized 
-    // {
-    //     events = events.Where(i => string.Equals(i.Country, selectedEvent.Country,
-    //         StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
-    //     SessionStorage.SetItem("TheBlueAlliance.AllEvents", events);
-    // }
-
-    // var teams = await Http.GetJson<List<Team>>("TheBlueAlliance/GetAllTeams/" + selectedEvent.Key);
-    // SessionStorage.SetItem("TheBlueAlliance.AllTeams", teams);
-
-
-    // var form = await Http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" + selectedEvent.Year);
-    // SessionStorage.SetItem("ScoutFormFormat.TemplateScoutFormByYear." + selectedEvent.Year, form);
-        }
         finishedInit = true;
     }
 
