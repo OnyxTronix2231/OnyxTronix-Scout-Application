@@ -127,7 +127,7 @@ namespace OnyxScoutApplication.Server
             services.AddTransient<IApplicationUserUnitOfWork, ApplicationUserUnitOfWork>();
 
             var v = new FirestoreClientBuilder();
-            if (!env.IsDevelopment())
+            // if (!env.IsDevelopment())
             {
                 v.JsonCredentials = "{" +
                                         "\"type\": " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_TYPE"] +
@@ -163,6 +163,7 @@ namespace OnyxScoutApplication.Server
         {
             if (env.IsDevelopment())
             {
+
                 app.UseDeveloperExceptionPage();
                 app.UseMigrationsEndPoint();
                 app.UseWebAssemblyDebugging();
@@ -188,6 +189,8 @@ namespace OnyxScoutApplication.Server
             app.UseRouting();
 
             app.UseIdentityServer();
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -233,7 +236,8 @@ namespace OnyxScoutApplication.Server
 
         private string GetConnectionString()
         {
-            var connectionString = "";
+            var connectionString = "server=c8u4r7fp8i8qaniw.chr7pe7iynqr.eu-west-1.rds.amazonaws.com;port=3306;database=y83orqid9m8vthd5;uid=dfmd6uujkl07y6hb;password=v8ysmpmft5lsxdzm;";
+            return connectionString;
             if (env.IsDevelopment())
             {
                // connectionString = configuration.GetConnectionString("DefaultConnection");

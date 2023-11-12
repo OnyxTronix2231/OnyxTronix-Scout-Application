@@ -21,7 +21,7 @@ using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Server.Controllers
 {
-    [OnyxAuthorize(Role = Role.Scouter)]
+    // [OnyxAuthorize(Role = Role.Scouter)]
     [ApiController]
     [Route("[controller]")]
     public class ScoutFormController : Controller
@@ -135,11 +135,14 @@ namespace OnyxScoutApplication.Server.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateScoutForm(string id, [FromBody] FormDto formModel)
         {
-            if (!User.IsInRole(Role.Admin.ToString()) && User.GetDisplayName() != formModel.WriterUserName)
-            {
-                return new UnauthorizedObjectResult($"Only {Role.Admin.ToString()} or" +
-                                                    $" {formModel.WriterUserName} can edit this form!");
-            }
+            Console.WriteLine("putt");
+            // if (!User.IsInRole(Role.Admin.ToString()) && User.GetDisplayName() != formModel.WriterUserName)
+            // {
+            //     Console.WriteLine("UnauthorizedObjectResult");
+            //     return new UnauthorizedObjectResult($"Only {Role.Admin.ToString()} or" +
+            //                                         $" {formModel.WriterUserName} can edit this form!");
+            // }
+            Console.WriteLine("unitOfWork");
             var response = await unitOfWork.ScoutForms.Update(id, formModel);
             return response;
         }

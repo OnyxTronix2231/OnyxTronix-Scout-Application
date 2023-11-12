@@ -15,7 +15,7 @@ using OnyxScoutApplication.Shared.Other;
 
 namespace OnyxScoutApplication.Server.Controllers
 {
-    [OnyxAuthorize(Role = Role.Scouter)]
+    // [OnyxAuthorize(Role = Role.Scouter)]
     [ApiController]
     [Route("[controller]")]
     public class ScoutFormFormatController : Controller
@@ -56,7 +56,7 @@ namespace OnyxScoutApplication.Server.Controllers
             return await unitOfWork.ScoutFormFormats.GetTemplateScoutFormByYear(year, scoutFormType);
         }
 
-        [OnyxAuthorize(Role = Role.Admin)]
+        // [OnyxAuthorize(Role = Role.Admin)]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateScoutFormFormat(string id,
             [FromBody] ScoutFormFormatDto scoutFormFormatModel)
@@ -65,7 +65,7 @@ namespace OnyxScoutApplication.Server.Controllers
             return response;
         }
 
-        [OnyxAuthorize(Role = Role.Admin)]
+        // [OnyxAuthorize(Role = Role.Admin)]
         [HttpPost]
         public async Task<ActionResult> CreateScoutFormFormat([FromBody] ScoutFormFormatDto scoutFormFormatModel)
         {

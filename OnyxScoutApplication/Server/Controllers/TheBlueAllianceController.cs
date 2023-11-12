@@ -11,7 +11,7 @@ using OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos;
 
 namespace OnyxScoutApplication.Server.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class TheBlueAllianceController : Controller
