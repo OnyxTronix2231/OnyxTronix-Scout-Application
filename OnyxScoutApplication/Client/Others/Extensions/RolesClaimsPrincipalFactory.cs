@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -8,10 +7,9 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication.Internal;
 
 namespace OnyxScoutApplication.Client.Others.Extensions
 {
-    public class RolesClaimsPrincipalFactory : OfflineAccountClaimsPrincipalFactory
+    public class RolesClaimsPrincipalFactory : AccountClaimsPrincipalFactory<RemoteUserAccount>
     {
-        public RolesClaimsPrincipalFactory(IAccessTokenProviderAccessor accessor, IServiceProvider services)
-            : base(accessor, services)
+        public RolesClaimsPrincipalFactory(IAccessTokenProviderAccessor accessor) : base(accessor)
         {
         }
 
@@ -37,7 +35,7 @@ namespace OnyxScoutApplication.Client.Others.Extensions
 
             var rolesElem = account.AdditionalProperties[identity.RoleClaimType];
             
-            if (rolesElem is not JsonElement roles) return user;
+            if (!(rolesElem is JsonElement roles)) return user;
             
             if (roles.ValueKind == JsonValueKind.Array)
             {

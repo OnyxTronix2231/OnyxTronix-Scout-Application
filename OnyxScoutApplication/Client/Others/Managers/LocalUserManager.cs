@@ -21,8 +21,13 @@ public class LocalUserManager
         // user != null
         if (user is not null)
         {
+            var map = new Dictionary<string, string>
+            { 
+                {"role", ClaimTypes.Role},
+                {"name", ClaimTypes.Name}
+            };
             await localStorageService.SetItemAsync("metadata.userAccount",
-                user.Claims.Select(c => new ClaimData { Type = c.Type, Value = c.Value }));
+                user.Claims.Select(c => new ClaimData { Type = map.GetValueOrDefault(c.Type, c.Type), Value = c.Value }));
             return;
         }
         await localStorageService.RemoveItemAsync("metadata.userAccount");

@@ -11,7 +11,7 @@ using OnyxScoutApplication.Client.Others.Managers;
 
 namespace OnyxScoutApplication.Client.Others.Extensions;
 
-public class OfflineAccountClaimsPrincipalFactory : AccountClaimsPrincipalFactory<RemoteUserAccount>
+public class OfflineAccountClaimsPrincipalFactory : RolesClaimsPrincipalFactory
 {
     private readonly IServiceProvider services;
 
