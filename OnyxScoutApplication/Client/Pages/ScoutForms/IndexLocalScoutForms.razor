@@ -5,6 +5,7 @@
 @inject NavigationManager NavigationManager
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
+@inject EventService EventService
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 <h1>Scout forms</h1>
 @if (scoutForms == null)
@@ -82,13 +83,13 @@ else
     {
         var authState = await AuthenticationStateTask;
         user = authState.User;
-        
-        if (!await LocalStorage.ContainKeyAsync("EventSelector/SelectedEventKey"))
+
+        selectedEvent = await EventService.GetSelectedEvent();
+        if (selectedEvent is null)
         {
             NavigationManager.NavigateTo("/");
             return;
         }
-        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         
         await UpdateLocalScoutForms();
     //        await LocalStorage.SetItemAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}" ,form);

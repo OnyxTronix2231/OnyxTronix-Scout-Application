@@ -30,19 +30,19 @@ public class MatchesDataProcessor
     }
 
     private List<FieldDto> scoutFormFieldsToCalculate;
-    
+
     public AnalyticsResult GetMatchesData()
     {
         scoutFormFieldsToCalculate = scoutFormFormatDto.FieldsInStages.SelectMany(i => i.Fields.WithCascadeFields()
             .Where(f => f.FieldType != FieldType.TextField)).ToList();
         var columnsFields = scoutFormFieldsToCalculate.Select(i => new ColumnField
             { Name = i.Name, MarkupName = new MarkupString(i.Name), Id = i.Id.ToString() }).ToList();
-       
+
         // columnsFields.Insert(0, new ColumnField
         //     { Name = "Team", MarkupName = new MarkupString("Team"), Id = "Team" });
         // columnsFields.Insert(1, new ColumnField
         //     { Name = "Match N.", MarkupName = new MarkupString("Match N."), Id = "Match N." });
-        
+
         if (eventAnalyticSettings != null)
         {
             foreach (var combinedField in eventAnalyticSettings.CombinedFields)
@@ -73,7 +73,7 @@ public class MatchesDataProcessor
                     newColumnField);
             }
         }
-        
+
         var data = CalculateData();
         AnalyticsResult analyticsResult = new AnalyticsResult
         {
@@ -93,18 +93,20 @@ public class MatchesDataProcessor
             {
                 continue;
             }
+
             IDictionary<string, object> row = new ExpandoObject();
-                
+
             row.Add("TeamNumber", team.TeamNumber);
             row.Add("Nickname", team.Nickname);
             row.Add("Match N.", scoutForm.MatchNumber);
 
             foreach (var formData in scoutForm.FormDataInStages.SelectMany(i => i.FormData.WithCascadeData()))
             {
-                row.Add("RawValue" + formData.Field.Id, formData.NumericValue?.ToString() ?? (formData.BooleanValue ? "1" : "0"));
+                row.Add("RawValue" + formData.Field.Id,
+                    formData.NumericValue?.ToString() ?? (formData.BooleanValue ? "1" : "0"));
             }
-            
-            foreach (var combinedFields in eventAnalyticSettings.CombinedFields)
+
+            eventAnalyticSettings?.CombinedFields.ForEach(combinedFields =>
             {
                 double sum = 0;
                 foreach (var field in combinedFields.Fields)
@@ -112,13 +114,13 @@ public class MatchesDataProcessor
                     sum += scoutForm.FormDataInStages.SelectMany(i => i.FormData.WithCascadeData())
                         .FirstOrDefault(i => i.Field.Id == field.Id)?.NumericValue ?? 0;
                 }
+
                 row.Add("RawValue" + combinedFields.Id, sum);
-            }
-            
-            data.Add((ExpandoObject) row);
+            });
+
+            data.Add((ExpandoObject)row);
         }
 
-        
 
         return data;
     }

@@ -39,9 +39,9 @@ public class ServiceManager
     {
         IsLoading = true;
         await OnStateChanged.Invoke();
-        if ((appManager.IsOnlineMode || forceOnlineMode) && await httpClientManager.GetJson<ServerStatus>("ScoutForm/ServerStatus") is null)
+        if ((appManager.IsOnlineMode || forceOnlineMode) && await httpClientManager.GetJson<ServerStatus>("Status/ServerStatus") is null)
         {
-            appManager.IsOnlineMode = false;
+            // appManager.IsOnlineMode = false;
             if (forceOnlineMode)
             {
                 IsLoading = false;

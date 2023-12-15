@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using Blazored.LocalStorage;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -18,12 +19,15 @@ namespace OnyxScoutApplication.Client.Others.Managers
         private readonly HttpClient httpClient;
         private readonly NotificationManager notificationService;
         private readonly AppManager appManager;
+        private readonly ILocalStorageService localStorageService;
 
-        public HttpClientManager(HttpClient httpClient, NotificationManager notificationService, AppManager appManager)
+        public HttpClientManager(HttpClient httpClient, NotificationManager notificationService, AppManager appManager,
+            ILocalStorageService localStorageService)
         {
             this.httpClient = httpClient;
             this.notificationService = notificationService;
             this.appManager = appManager;
+            this.localStorageService = localStorageService;
         }
         
         public async Task<T> GetJsonByJsonText<T>(string command) where T : class
@@ -107,7 +111,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 if (!response.IsSuccessStatusCode)
                 {
                     if (response.StatusCode is HttpStatusCode.ServiceUnavailable or 
-                        HttpStatusCode.InternalServerError or
+                        //HttpStatusCode.InternalServerError or
                         0)
                     {
                         appManager.IsOnlineMode = false;
