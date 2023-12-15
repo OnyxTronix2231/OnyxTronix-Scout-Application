@@ -20,6 +20,9 @@
     </div>
     <div>
         <label>Field name</label>
+        <div style="float: right">
+            <SfColorPicker @bind-Value="field.Color"></SfColorPicker>
+        </div>
         <InputText class="form-control" @bind-Value="field.Name"/>
         <ValidationMessage For="@(() => field.Name)"/>
     </div>

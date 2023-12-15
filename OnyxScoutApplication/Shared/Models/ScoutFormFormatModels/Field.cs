@@ -28,6 +28,9 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
         public string Name { get; set; }
 
         [FirestoreProperty]
+        public string Color { get; set; } = "#000000";
+
+        [FirestoreProperty]
         public string DefaultValue { get; set; }
 
         [FirestoreProperty]

@@ -12,6 +12,8 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 
         public string Name { get; set; }
 
+        public string Color { get; set; } = "#000000";
+
         public string TextDefaultValue { get; set; }
 
         public bool BoolDefaultValue { get; set; }
