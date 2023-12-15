@@ -14,6 +14,7 @@ using OnyxScoutApplication.Shared.Models.ScoutFormModels;
 using OnyxScoutApplication.Shared.Other;
 using OnyxScoutApplication.Shared.Other.Analyzers;
 using OnyxScoutApplication.Shared.Other.Analyzers.TeamData;
+using OnyxScoutApplication.Shared.Other.MatchesData;
 
 namespace OnyxScoutApplication.Server.Controllers;
 
@@ -32,6 +33,36 @@ public class EventAnalyticsController : Controller
         this.scoutFormUnitOfWork = scoutFormUnitOfWork;
         this.scoutFormFormatUnitOfWork = scoutFormFormatUnitOfWork;
         this.blueAllianceService = blueAllianceService;
+    }
+    
+    [HttpPost("GetEventMatchesData/{year:int}/{eventKey}")]
+    public async Task<ActionResult<AnalyticsResult>> GetEventMatchesData(int year, string eventKey,
+        AnalyticsSettings analyticsSettings)
+    {
+        var scoutFormsRes =
+            await scoutFormUnitOfWork.ScoutForms.GetAllByEventWithData(eventKey, ScoutFormType.MainGame);
+
+        if (scoutFormsRes.Result is not null)
+        {
+            return scoutFormsRes.Result;
+        }
+
+        var scoutForms = scoutFormsRes.Value!
+            .Where(f => f.DateTime >= analyticsSettings.StartDate && f.DateTime <= analyticsSettings.EndDate).ToList();
+
+        Console.WriteLine("Selected: " + scoutForms.Count);
+        var scoutFormFormat =
+            await scoutFormFormatUnitOfWork.ScoutFormFormats.GetWithFieldsByYear(year, ScoutFormType.MainGame);
+        if (scoutFormFormat.Result is not null)
+        {
+            return scoutFormFormat.Result;
+        }
+
+        var teams = await blueAllianceService.GetTeamsByEvent(eventKey);
+        MatchesDataProcessor analyzer = new MatchesDataProcessor(teams, scoutForms, scoutFormFormat.Value,
+            analyticsSettings.EventAnalyticSettingsDto);
+        var calc = analyzer.GetMatchesData();
+        return Ok(calc);
     }
 
     [HttpPost("GetEventAnalytics/{year:int}/{eventKey}")]

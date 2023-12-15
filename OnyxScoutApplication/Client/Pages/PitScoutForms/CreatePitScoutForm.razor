@@ -6,6 +6,7 @@
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
 @inject NotificationManager NotificationManager
+@inject EventService EventService;
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (form != null)
@@ -36,16 +37,15 @@
     {
         var authState = await AuthenticationStateTask;
         var user = authState.User;
-        var selectedYear = await LocalStorage.GetItemAsync<int?>("EventSelector/SelectedYearFilter");
-        var selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
-        if (selectedEvent is null || selectedYear is null)
+        var selectedEvent = await EventService.GetSelectedEvent();
+        if (selectedEvent is null)
         {
-            await NotificationManager.NotifyAsync("Please select event and year first!", "", NotificationType.Danger);
+            await NotificationManager.NotifyAsync("Please select an event!", "", NotificationType.Danger);
             return;
         }
 
         form = await Http.GetJson<FormDto>("ScoutFormFormat/TemplateScoutFormByYear/" +
-                                           $"{selectedYear!.Value}/{ScoutFormType.Pit}");
+                                           $"{selectedEvent.Year}/{ScoutFormType.Pit}");
         if (form == null)
         {
             await NotificationManager.NotifyAsync("No scout form found for  pit scouting!", "", NotificationType.Danger);
@@ -60,7 +60,7 @@
         }
 
         form.TeamNumber = TeamNumber;
-        form.Year = selectedYear!.Value;
+        form.Year = selectedEvent.Year;
         form.Type = ScoutFormType.Pit;
     // form.KeyName = selectedEvent.Key;
         form.EventName = selectedEvent.Key;

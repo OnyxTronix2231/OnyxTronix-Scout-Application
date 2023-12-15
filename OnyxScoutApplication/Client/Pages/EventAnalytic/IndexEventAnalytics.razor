@@ -3,7 +3,11 @@
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using OnyxScoutApplication.Shared.Other.Analyzers
 @using Syncfusion.Blazor.Data
+@using Syncfusion.ExcelExport
 @using System.Dynamic
+@using System.IO
+@using Syncfusion.XlsIO
+@using System.Data
 @inject ILocalStorageService LocalStorage
 @inject ISessionStorageService SessionStorage
 @inject HttpClientManager Http
@@ -11,6 +15,7 @@
 @inject NotificationManager NotificationManager
 @inject ScoutFormService ScoutFormService
 @inject EventService EventService
+@inject Microsoft.JSInterop.IJSRuntime JS
 
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
@@ -21,8 +26,19 @@
     <br/>
     <h6>Selected @selectedScoutForms.Count forms</h6>
     <br/>
+    
+    <div>
+        <button class="btn btn-primary" @onclick="@CreateDocument">Export all matches</button>
+    </div>
+    
+    <br/>
+
     <EventAnalyticGrid CalculatedTeamsData=@calculatedTeamsData ColumnsFields="@columnsFields"/>
+
+    
 }
+
+
 
 @code {
     private Event selectedEvent;
@@ -33,10 +49,11 @@
     private List<ColumnField> columnsFields;
     private DateTime minDate;
     private DateTime maxDate;
+    private DateTime startDateTime;
+    private DateTime endDateTime;
 
     protected override async Task OnInitializedAsync()
     {
-        // selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
         selectedEvent = await EventService.GetSelectedEvent();
         if (selectedEvent is null)
         {
@@ -50,7 +67,7 @@
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
 
-        // scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
+    // scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
         scoutForms = await ScoutFormService.GetMainGameForms();
         selectedScoutForms = scoutForms.ToList();
 
@@ -65,6 +82,8 @@
 
     private async Task OnDateTimeRangeSelected(DateTimeRangePicker.DateTimeSelectedEventArgs obj)
     {
+        startDateTime = obj.StartDateTime;
+        endDateTime = obj.EndDateTime;
         selectedScoutForms = scoutForms.
             Where(f => f.DateTime <= obj.EndDateTime && f.DateTime >= obj.StartDateTime).ToList();
         var analyticsRes = await Http.TryPostJson<AnalyticsResult>
@@ -77,6 +96,76 @@
         }
         calculatedTeamsData = analyticsRes.CalculatedTeamsData;
         columnsFields = analyticsRes.ColumnsFields;
+    }
+
+    private async Task CreateDocument()
+    {
+        var analyticsRes = await Http.TryPostJson<AnalyticsResult>
+            ($"EventAnalytics/GetEventMatchesData/{selectedEvent.Year}/{selectedEvent.Key}", new AnalyticsSettings { StartDate = startDateTime, EndDate = endDateTime, EventAnalyticSettingsDto = analyticSettings });
+        if (analyticsRes is null)
+        {
+            await NotificationManager.NotifyAsync("Error fetching data", "", NotificationType.Danger);
+            return;
+        }
+
+    // calculatedTeamsData = analyticsRes.CalculatedTeamsData;
+    // columnsFields = analyticsRes.ColumnsFields;
+        using (ExcelEngine excelEngine = new ExcelEngine())
+        {
+            IApplication application = excelEngine.Excel;
+            application.DefaultVersion = ExcelVersion.Xlsx;
+
+    //Create a workbook.
+            IWorkbook workbook = application.Workbooks.Create(1);
+            IWorksheet worksheet = workbook.Worksheets[0];
+
+    //Initialize DataTable and data get from SampleDataTable method.
+            DataTable table = DataTable(analyticsRes.ColumnsFields, analyticsRes.CalculatedTeamsData);
+
+    //Export data from DataTable to Excel worksheet.
+            worksheet.ImportDataTable(table, true, 1, 1);
+
+            worksheet.UsedRange.AutofitColumns();
+
+
+    //Save the document as a stream and return the stream.
+            using (MemoryStream stream = new MemoryStream())
+            {
+    //Save the created Excel document to MemoryStream
+                workbook.SaveAs(stream);
+
+    //Download the excel file.
+                await JS.SaveAs("Sample.xlsx", stream.ToArray());
+            }
+        }
+    }
+
+    private DataTable DataTable(List<ColumnField> columnFields, List<ExpandoObject> rows)
+    {
+        DataTable reports = new DataTable();
+        reports.Columns.Add("Team");
+        reports.Columns.Add("Match N.");
+        foreach (var column in columnFields)
+        {
+            reports.Columns.Add(column.Name);
+        }
+        
+        
+        
+
+        foreach (var row in rows.Cast<IDictionary<string, object>>())
+        {
+            List<object> data = new List<object>();
+            data.Add($"{row["TeamNumber"]}\n{row["Nickname"]}");
+            data.Add(row["Match N."]?.ToString());
+            
+            foreach (var column in columnFields)
+            {
+                data.Add(((IDictionary<string, object>)row)["RawValue" + column.Id]?.ToString());
+            }
+            reports.Rows.Add(data.ToArray());
+        }
+        return reports;
     }
 
 }

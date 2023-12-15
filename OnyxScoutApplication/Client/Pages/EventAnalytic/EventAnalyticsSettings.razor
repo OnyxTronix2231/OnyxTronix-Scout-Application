@@ -5,6 +5,7 @@
 @inject NavigationManager NavigationManager
 @inject NotificationManager NotificationManager
 @inject ScoutFormFormatService ScoutFormFormatService
+@inject EventService EventService
 
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
@@ -71,7 +72,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        selectedEvent = await EventService.GetSelectedEvent();
         if (selectedEvent == null)
         {
             await NotificationManager.NotifyAsync("Please select an event first", "", NotificationType.Warning);

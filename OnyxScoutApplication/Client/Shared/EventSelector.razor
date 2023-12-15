@@ -42,14 +42,6 @@
             filterYears.Add(i);
         }
         filterCountries.Add("Israel");
-        // if (await LocalStorage.ContainKeyAsync("EventSelector/SelectedEventKey"))
-        // {
-            // selectedYearFilter = await LocalStorage.GetItemAsync<int>("EventSelector/SelectedYearFilter");
-            // selectedCountryFilter = await LocalStorage.GetItemAsync<string>("EventSelector/SelectedCountryFilter");
-            // selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
-            // UpdateEventsList(await LocalStorage.GetItemAsync<List<Event>>("TheBlueAlliance.AllEvents"));
-            // UpdateSelectedEvent(selectedEvent);
-        // }
         selectedEvent = await EventService.GetSelectedEvent();
         if (selectedEvent is not null)
         {
@@ -102,7 +94,6 @@
     private async Task OnEventChange(SelectEventArgs<Event> args)
     {
         UpdateSelectedEvent(args.ItemData);
-        // await LocalStorage.SetItemAsync("EventSelector/SelectedEventKey", selectedEvent);
         await EventService.SetSelectedEvent(args.ItemData);
         await OnEventSelectionChange.InvokeAsync(selectedEvent);
     }

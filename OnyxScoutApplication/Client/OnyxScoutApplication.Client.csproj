@@ -23,6 +23,7 @@
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />
     <PackageReference Include="Syncfusion.Blazor" Version="23.1.44" />
     <PackageReference Include="Syncfusion.Licensing" Version="23.1.44" />
+    <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="23.1.44" />
     <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
   </ItemGroup>
 
@@ -44,6 +45,7 @@
     <_ContentIncludedByDefault Remove="Pages\PitScoutForms\Components\PitSectionEdit.razor" />
     <_ContentIncludedByDefault Remove="Pages\PitScoutForms\Components\TextFieldComponent.razor" />
     <_ContentIncludedByDefault Remove="Pages\PitScoutForms\Components\TimeCounterFieldComponent.razor" />
+    <_ContentIncludedByDefault Remove="Pages\EventTable\IndexEventTable.razor" />
   </ItemGroup>
 
 </Project>
