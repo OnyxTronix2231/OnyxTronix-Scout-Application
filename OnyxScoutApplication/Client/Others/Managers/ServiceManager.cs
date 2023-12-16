@@ -42,6 +42,11 @@ public class ServiceManager
         if ((appManager.IsOnlineMode || forceOnlineMode) && await httpClientManager.GetJson<ServerStatus>("Status/ServerStatus") is null)
         {
             // appManager.IsOnlineMode = false;
+            if (appManager.IsOnlineMode)
+            {
+                //User is probably online but not logged in 
+                return false;
+            }
             if (forceOnlineMode)
             {
                 IsLoading = false;

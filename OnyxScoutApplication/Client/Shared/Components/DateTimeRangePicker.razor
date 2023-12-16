@@ -74,6 +74,7 @@
         endDateTime = MaxDate;
         await LocalStorage.RemoveItemAsync("DateTimeRangePicker.StartDateTime");
         await LocalStorage.RemoveItemAsync("DateTimeRangePicker.EndDateTime");
+        await InvokeOnDateTimeRangeSelected();
     }
 
     private async Task Save()
