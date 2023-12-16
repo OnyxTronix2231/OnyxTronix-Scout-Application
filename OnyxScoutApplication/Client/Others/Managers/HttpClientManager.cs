@@ -65,6 +65,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
             var response = await TryExecuteAsync(action);
             if(!response.IsSuccessStatusCode)
             {
+                Console.WriteLine(response.StatusCode);
                 return null;
             }
             string json = await response.Content.ReadAsStringAsync();
@@ -122,10 +123,12 @@ namespace OnyxScoutApplication.Client.Others.Managers
             catch (AccessTokenNotAvailableException exception)
             {
                 exception.Redirect();
+                Console.WriteLine("AccessTokenNotAvailableException");
             }
             catch (Exception exception)
             {
                 await NotifyFailer("Error", exception.Message);
+                Console.WriteLine($"Error{exception.Message}");
             }
             return response ?? new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
