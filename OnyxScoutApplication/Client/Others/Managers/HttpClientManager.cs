@@ -111,6 +111,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 response = await action();
                 if (!response.IsSuccessStatusCode)
                 {
+                    Console.WriteLine($"Real error code {response.StatusCode}");
                     if (response.StatusCode is HttpStatusCode.ServiceUnavailable or 
                         //HttpStatusCode.InternalServerError or
                         0)
