@@ -165,13 +165,5 @@ namespace OnyxScoutApplication.Server.Controllers
         {
             return await unitOfWork.ScoutForms.GetAllByTeamWithData(teamNumber, eventKey, scoutFormType);
         }
-        
-        
-        [HttpGet("ServerStatus")]
-        public async Task<ActionResult<ServerStatus>> GetServerStatus()
-        {
-            return await Task.FromResult(new ServerStatus{Date =DateTime.Now, IsAlive = true});
-        }
-
     }
 }

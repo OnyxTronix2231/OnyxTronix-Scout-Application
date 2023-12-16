@@ -5,7 +5,7 @@
 @inject NotificationManager NotificationManager
 @inject NavigationManager NavigationManager
 @inject ScoutFormService ScoutFormService
-
+@inject EventService EventService;
 
 <h3>Pit scouting</h3>
 @if (teams != null)
@@ -36,7 +36,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        selectedEvent = await LocalStorage.GetItemAsync<Event>("EventSelector/SelectedEventKey");
+        selectedEvent = await EventService.GetSelectedEvent();
         if (selectedEvent is null)
         {
             await NotificationManager.NotifyAsync("Please select event and year first!", "", NotificationType.Danger);

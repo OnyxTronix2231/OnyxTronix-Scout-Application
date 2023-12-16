@@ -9,11 +9,11 @@
 <div style="width: calc(90vw); height: 90vh">
     @if (CalculatedTeamsData != null && CalculatedTeamsData.Count != 0)
     {
-        <SfGrid @ref="Grid" FrozenColumns="1" AllowTextWrap="false" DataSource="@CalculatedTeamsData" AllowReordering="true"
-                AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true"
+        <SfGrid ID="Grid" @ref="Grid" FrozenColumns="1" AllowTextWrap="false" DataSource="@CalculatedTeamsData" AllowReordering="true"
+                AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true" AllowExcelExport="true"
                 Toolbar="@toolbarItems" ShowColumnChooser="true" Width="auto" Height="100%">
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
-            <GridEvents Created="LoadHandler" TValue="ExpandoObject"></GridEvents>
+            <GridEvents OnToolbarClick="ToolbarClickHandler" Created="LoadHandler" TValue="ExpandoObject"></GridEvents>
             <GridColumns>
                 <GridColumn AllowReordering="false" ShowInColumnChooser="false" HeaderText="Team" Field="TeamNumber" AllowFiltering="true"
                             FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"
@@ -46,7 +46,8 @@
                         <Template>
                             @{
                                 var v = (IDictionary<string, object>)context;
-                                var s = new MarkupString(v[nameId].ToString() ?? "");
+                                object res;
+                                var s = new MarkupString(v.TryGetValue(nameId, out res) ? res.ToString()! : "");
                             }
                             <span>@s</span>
                         </Template>
@@ -65,10 +66,20 @@
     [Parameter]
     public List<ColumnField> ColumnsFields { get; set; }
 
-    private readonly string[] toolbarItems = { "ColumnChooser" };
+    private readonly string[] toolbarItems = { "ColumnChooser", "ExcelExport" };
     public SfGrid<ExpandoObject> Grid { get; set; }
 
-
+    public async Task ToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+    {
+        if (args.Item.Id == "Grid_excelexport") //Id is combination of Grid's ID and itemname
+        {
+            ExcelExportProperties exportProperties = new ExcelExportProperties();
+            exportProperties.ExportType = ExportType.CurrentPage;
+            exportProperties.IncludeTemplateColumn = true;
+            await Grid.ExportToExcelAsync(exportProperties);
+        }
+    }
+    
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -78,7 +89,6 @@
     {
         await Grid.AutoFitColumnsAsync(ColumnsFields.Select(i => "RawValue" + i.Id).ToArray());
     }
-
 }
 
 

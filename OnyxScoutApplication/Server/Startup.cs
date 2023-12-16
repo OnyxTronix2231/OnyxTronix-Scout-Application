@@ -116,7 +116,7 @@ namespace OnyxScoutApplication.Server
             services.AddTransient<IApplicationUserUnitOfWork, ApplicationUserUnitOfWork>();
 
             var v = new FirestoreClientBuilder();
-            // if (!env.IsDevelopment())
+            if (!env.IsDevelopment())
             {
                 v.JsonCredentials = "{" +
                                         "\"type\": " + Environment.GetEnvironmentVariables()["GOOGLE_CREDS_TYPE"] +

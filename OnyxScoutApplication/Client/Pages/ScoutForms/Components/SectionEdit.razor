@@ -2,7 +2,7 @@
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @foreach (var data in SectionData)
 {
-    <label>@data.Field.Name</label>
+    <label style="color:@(data.Field.Color ?? "black"); font-weight: bold" >@data.Field.Name</label>
     <div class="form-group" style="padding-left:1em">
         @switch (data.Field.FieldType)
         {
