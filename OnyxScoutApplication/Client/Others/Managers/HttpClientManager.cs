@@ -130,7 +130,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
             {
                 await NotifyFailer("Error", exception.Message);
                 Console.WriteLine($"Error{exception.Message}");
-                if (exception.Message.Equals("Failed to fetch"))
+                if (exception.Message.Contains("Failed to fetch"))
                 {
                     appManager.IsOnlineMode = false;
                 }
