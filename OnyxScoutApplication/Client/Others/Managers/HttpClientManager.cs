@@ -117,6 +117,8 @@ namespace OnyxScoutApplication.Client.Others.Managers
                         0)
                     {
                         appManager.IsOnlineMode = false;
+                        await notificationService.NotifyAsync("Offline mode",
+                            "Switching to offline mode due to network error", NotificationType.Warning);
                     }
                     await NotifyFailer(response);
                 }
@@ -133,6 +135,8 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 if (exception.Message.Contains("Failed to fetch"))
                 {
                     appManager.IsOnlineMode = false;
+                    await notificationService.NotifyAsync("Offline mode",
+                        "Switching to offline mode due to network error", NotificationType.Warning);
                 }
             }
             return response ?? new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
@@ -140,7 +144,7 @@ namespace OnyxScoutApplication.Client.Others.Managers
 
         private async Task NotifyFailer(HttpResponseMessage response)
         {
-            await notificationService.NotifyAsync($"Error: {response.StatusCode}", await response.Content.ReadAsStringAsync(),
+            await notificationService.NotifyAsync($"Error: {response.StatusCode}", $"{await response.Content.ReadAsStringAsync()}",
                 NotificationType.Danger);
         }
          
