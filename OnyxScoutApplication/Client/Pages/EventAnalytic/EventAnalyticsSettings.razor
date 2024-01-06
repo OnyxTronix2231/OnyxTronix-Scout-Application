@@ -1,7 +1,6 @@
 ﻿@page "/EventAnalytics/Settings"
 @using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
 @inject ILocalStorageService LocalStorage
-@inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject NotificationManager NotificationManager
 @inject ScoutFormFormatService ScoutFormFormatService
@@ -9,7 +8,7 @@
 
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
-<h3>Select numric field to show combined result</h3>
+<h3>Select numeric field to show combined result</h3>
 
 <br/>
 @if (analyticSettings != null)

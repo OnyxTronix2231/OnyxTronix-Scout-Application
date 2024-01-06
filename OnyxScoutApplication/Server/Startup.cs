@@ -34,12 +34,10 @@ namespace OnyxScoutApplication.Server
 {
     public class Startup
     {
-        private readonly IConfiguration configuration;
         private readonly IWebHostEnvironment env;
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
-            this.configuration = configuration;
             this.env = env;
         }
 

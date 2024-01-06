@@ -63,19 +63,19 @@ public class TheBlueAllianceService : IService
         teams = await localStorageService.GetItemAsync<List<Team>>($"TheBlueAllianceService.Teams.{eventKey}");
     }
     
-    public async Task<List<Match>> GetMatches()
+    public async ValueTask<List<Match>> GetMatches()
     {
-        return matches;
+        return await Task.FromResult(matches);
     }
 
-    public async Task<List<Event>> GetEvents()
+    public async ValueTask<List<Event>> GetEvents()
     {
-        return events;
+        return await Task.FromResult(events);
     }
     
-    public async Task<List<Team>> GetTeams()
+    public async ValueTask<List<Team>> GetTeams()
     {
-        return teams;
+        return await Task.FromResult(teams);
     }
 
     public async Task<List<Match>> GetMatchesByTeamNumber(int teamNumber)

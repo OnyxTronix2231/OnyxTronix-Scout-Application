@@ -43,14 +43,14 @@ public class ScoutFormFormatService: IService
         pitScoutFormFormat = await localStorageService.GetItemAsync<ScoutFormFormatDto>($"ScoutFormFormatService.Pit.{year}");
     }
 
-    public async Task<ScoutFormFormatDto> GetMainGameScoutFormFormat()
+    public async ValueTask<ScoutFormFormatDto> GetMainGameScoutFormFormat()
     {
-        return mainGameScoutFormFormat;
+        return await Task.FromResult(mainGameScoutFormFormat);
     }
     
-    public async Task<ScoutFormFormatDto> GetPitScoutFormFormat()
+    public async ValueTask<ScoutFormFormatDto> GetPitScoutFormFormat()
     {
-        return pitScoutFormFormat;
+        return await Task.FromResult(pitScoutFormFormat);
     }
 
     public async Task<ScoutFormFormatDto> GetScoutFormById(string id)

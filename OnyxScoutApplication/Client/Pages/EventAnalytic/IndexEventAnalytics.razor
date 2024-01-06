@@ -9,13 +9,12 @@
 @using Syncfusion.XlsIO
 @using System.Data
 @inject ILocalStorageService LocalStorage
-@inject ISessionStorageService SessionStorage
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
 @inject NotificationManager NotificationManager
 @inject ScoutFormService ScoutFormService
 @inject EventService EventService
-@inject Microsoft.JSInterop.IJSRuntime JS
+@inject IJSRuntime Js
 
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
@@ -135,7 +134,7 @@
                 workbook.SaveAs(stream);
 
     //Download the excel file.
-                await JS.SaveAs("Sample.xlsx", stream.ToArray());
+                await Js.SaveAs("Sample.xlsx", stream.ToArray());
             }
         }
     }
@@ -161,7 +160,7 @@
             
             foreach (var column in columnFields)
             {
-                data.Add(((IDictionary<string, object>)row)["RawValue" + column.Id]?.ToString());
+                data.Add(row["RawValue" + column.Id]?.ToString());
             }
             reports.Rows.Add(data.ToArray());
         }

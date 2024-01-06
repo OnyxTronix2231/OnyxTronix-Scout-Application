@@ -58,20 +58,20 @@ public class ScoutFormService: IService
         // templateScoutForm = await localStorageService.GetItemAsync<FormDto>($"ScoutFormService.TemplateScoutForm.{year}");
     }
 
-    public async Task<List<SimpleFormDto>> GetMainGameForms()
+    public async ValueTask<List<SimpleFormDto>> GetMainGameForms()
     {
-        return mainGameScoutForms;
+        return await Task.FromResult(mainGameScoutForms);
     }
     
-    public async Task<List<SimpleFormDto>> GetPitForms()
+    public async ValueTask<List<SimpleFormDto>> GetPitForms()
     {
-        return pitScoutForms;
+        return await Task.FromResult(pitScoutForms);
     }
     
     public async Task<FormDto> GetTemplateForm()
     {
         var selectedEvent = await eventService.GetSelectedEvent();
-        return await localStorageService.GetItemAsync<FormDto>($"ScoutFormService.TemplateScoutForm.{selectedEvent.Year}");;
+        return await localStorageService.GetItemAsync<FormDto>($"ScoutFormService.TemplateScoutForm.{selectedEvent.Year}");
     }
 
 
