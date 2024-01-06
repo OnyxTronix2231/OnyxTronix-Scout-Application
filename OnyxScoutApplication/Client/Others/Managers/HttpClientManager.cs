@@ -124,6 +124,9 @@ namespace OnyxScoutApplication.Client.Others.Managers
             {
                 exception.Redirect();
                 Console.WriteLine("AccessTokenNotAvailableException");
+                appManager.IsOnlineMode = false;
+                await notificationService.NotifyAsync("Offline mode",
+                    "Switching to offline mode due to network error", NotificationType.Warning);
             }
             catch (Exception exception)
             {
