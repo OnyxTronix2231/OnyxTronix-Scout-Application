@@ -42,7 +42,7 @@ public class TheBlueAllianceService : IService
             var eventsTask = httpClient.GetJson<List<Event>>($"TheBlueAlliance/GetAllEvents/{year}");
             var teamsTask = httpClient.GetJson<List<Team>>($"TheBlueAlliance/GetAllTeams/{eventKey}");
             
-            await Task.WhenAll(matchesTask, eventsTask, teamsTask);
+            await Task.WhenAny(matchesTask, eventsTask, teamsTask);
 
             matches = await matchesTask;
             await localStorageService.SetItemAsync($"TheBlueAllianceService.Matches.{eventKey}", matches);
