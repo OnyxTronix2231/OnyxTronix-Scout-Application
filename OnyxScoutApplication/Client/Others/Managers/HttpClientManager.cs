@@ -19,15 +19,12 @@ namespace OnyxScoutApplication.Client.Others.Managers
         private readonly HttpClient httpClient;
         private readonly NotificationManager notificationService;
         private readonly AppManager appManager;
-        private readonly ILocalStorageService localStorageService;
 
-        public HttpClientManager(HttpClient httpClient, NotificationManager notificationService, AppManager appManager,
-            ILocalStorageService localStorageService)
+        public HttpClientManager(HttpClient httpClient, NotificationManager notificationService, AppManager appManager)
         {
             this.httpClient = httpClient;
             this.notificationService = notificationService;
             this.appManager = appManager;
-            this.localStorageService = localStorageService;
         }
         
         public async Task<T> GetJsonByJsonText<T>(string command) where T : class

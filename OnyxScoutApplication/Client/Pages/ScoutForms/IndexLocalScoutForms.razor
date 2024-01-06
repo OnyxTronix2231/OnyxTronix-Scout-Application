@@ -75,15 +75,11 @@ else
     
     [CascadingParameter]
     private Task<AuthenticationState> AuthenticationStateTask { get; set; }
-    private ClaimsPrincipal user;
     private List<FormDto> scoutForms;
     private Event selectedEvent;
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateTask;
-        user = authState.User;
-
         selectedEvent = await EventService.GetSelectedEvent();
         if (selectedEvent is null)
         {

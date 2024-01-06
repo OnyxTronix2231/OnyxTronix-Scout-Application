@@ -175,7 +175,7 @@ public class EventAnalyticsController : Controller
         var scoutForms = scoutFormsRes.Value!;
 
         var v = scoutForms.SelectMany(i => i.FormDataInStages
-            .Where(i => i.FormData.WithCascadeData().Any(ii => ii.Field.FieldType == FieldType.TextField)).ToDictionary(
+            .Where(fd => fd.FormData.WithCascadeData().Any(ii => ii.Field.FieldType == FieldType.TextField)).ToDictionary(
                 ii => ii.Name, ii =>
                     new DataAndWriter
                     {

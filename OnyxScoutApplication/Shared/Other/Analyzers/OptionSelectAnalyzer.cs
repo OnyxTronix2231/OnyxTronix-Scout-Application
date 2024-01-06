@@ -43,9 +43,9 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
             foreach (var option in field.Options)
             {
                 int count = 0;
-                if (optionsCount.ContainsKey(option.Name))
+                if (optionsCount.TryGetValue(option.Name, out var value))
                 {
-                    count = optionsCount[option.Name];
+                    count = value;
                 }
 
                 fieldAverage.OptionsAverage.Add(option.Name, new OptionCalc{Count = count,
