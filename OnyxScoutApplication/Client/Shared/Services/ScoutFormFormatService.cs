@@ -34,7 +34,7 @@ public class ScoutFormFormatService: IService
             mainGameScoutFormFormat = await httpClient.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{year}/{ScoutFormType.MainGame}");
             await localStorageService.SetItemAsync($"ScoutFormFormatService.MainGame.{year}", mainGameScoutFormFormat);
             
-            pitScoutFormFormat = await httpClient.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{year}/{ScoutFormType.Pit}");
+            pitScoutFormFormat = await httpClient.GetJson<ScoutFormFormatDto>($"ScoutFormFormat/ByYear/{year}/{ScoutFormType.Pit}", false);
             await localStorageService.SetItemAsync($"ScoutFormFormatService.Pit.{year}", pitScoutFormFormat);
             return;
         }

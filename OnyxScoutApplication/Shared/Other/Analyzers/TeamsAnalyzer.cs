@@ -89,7 +89,8 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
             AnalyticsResult analyticsResult = new AnalyticsResult
             {
                 CalculatedTeamsData = data,
-                ColumnsFields = columnsFields
+                ColumnsFields = columnsFields,
+                NumberOfCalculatedForms = scoutForms.Count
             };
             return analyticsResult;
         }

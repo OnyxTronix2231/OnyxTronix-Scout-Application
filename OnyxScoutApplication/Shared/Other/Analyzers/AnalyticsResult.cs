@@ -8,4 +8,6 @@ public class AnalyticsResult
     public List<ExpandoObject> CalculatedTeamsData { get; set; }
 
     public List<ColumnField> ColumnsFields { get; set; }
+
+    public int NumberOfCalculatedForms { get; set; }
 }

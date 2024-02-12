@@ -102,8 +102,7 @@ public class EventAnalyticsController : Controller
         Dictionary<string, List<TeamFieldAverage>> calculatedScoutDataByStages =
             new Dictionary<string, List<TeamFieldAverage>>();
 
-        Dictionary<string, List<TeamFieldAverage>> calculatedScoutDataByStagesPit =
-            new Dictionary<string, List<TeamFieldAverage>>();
+        
 
 
         var scoutFormsRes =
@@ -130,32 +129,12 @@ public class EventAnalyticsController : Controller
         }
 
 
-        var scoutFormsPitRes =
-            await scoutFormUnitOfWork.ScoutForms.GetAllByTeamWithData(teamNumber, eventKey, ScoutFormType.Pit);
-        if (scoutFormsPitRes.Result is not null)
-        {
-            return scoutFormsPitRes.Result;
-        }
-
-        var scoutFormsPit = scoutFormsPitRes.Value!.ToList();
-
-        var scoutFormFormatPit =
-            await scoutFormFormatUnitOfWork.ScoutFormFormats.GetWithFieldsByYear(year, ScoutFormType.Pit);
-        if (scoutFormFormatPit.Result is not null)
-        {
-            return scoutFormFormatPit.Result;
-        }
-
-        foreach (var fieldsInStage in scoutFormFormatPit.Value!.FieldsInStages)
-        {
-            calculatedScoutDataByStagesPit.Add(fieldsInStage.Name,
-                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, scoutFormsPit, _ => true, true));
-        }
+        
 
         return Ok(new AnalyticsTeamResult
         {
             CalculatedScoutDataByStages = calculatedScoutDataByStages,
-            CalculatedScoutDataByStagesPit = calculatedScoutDataByStagesPit
+            CalculatedScoutDataByStagesPit = await GeneratePitEventAnalytic(teamNumber, eventKey, year)
         });
     }
 
@@ -185,5 +164,36 @@ public class EventAnalyticsController : Controller
         var notesByStage = v.ToLookup(i => i.Key, i => i.Value).ToDictionary(i => i.Key,
             i => i.ToList());
         return Ok(notesByStage);
+    }
+
+    private async Task<Dictionary<string, List<TeamFieldAverage>>> GeneratePitEventAnalytic(int teamNumber, string eventKey, int year)
+    {
+        Dictionary<string, List<TeamFieldAverage>> calculatedScoutDataByStagesPit =
+            new Dictionary<string, List<TeamFieldAverage>>();
+        
+        var scoutFormsPitRes =
+            await scoutFormUnitOfWork.ScoutForms.GetAllByTeamWithData(teamNumber, eventKey, ScoutFormType.Pit);
+        if (scoutFormsPitRes.Result is not null)
+        {
+            return calculatedScoutDataByStagesPit;
+        }
+
+        var scoutFormsPit = scoutFormsPitRes.Value!.ToList();
+
+        var scoutFormFormatPit =
+            await scoutFormFormatUnitOfWork.ScoutFormFormats.GetWithFieldsByYear(year, ScoutFormType.Pit);
+        if (scoutFormFormatPit.Result is not null)
+        {
+            return calculatedScoutDataByStagesPit;
+        }
+
+        
+        
+        foreach (var fieldsInStage in scoutFormFormatPit.Value!.FieldsInStages)
+        {
+            calculatedScoutDataByStagesPit.Add(fieldsInStage.Name,
+                TeamDataAnalyzer.CalculateDataFor(fieldsInStage, scoutFormsPit, _ => true, true));
+        }
+        return calculatedScoutDataByStagesPit;
     }
 }
