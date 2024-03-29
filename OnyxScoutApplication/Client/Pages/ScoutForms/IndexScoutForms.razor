@@ -17,12 +17,23 @@
 }
 else
 {
-    <SfGrid FrozenColumns="1" AllowTextWrap="false" DataSource="@scoutForms"
+    <div>
+        <OnyxAuthorizeView Role="@(Role.Admin)">
+            <SfButton CssClass="@("float-right " + (!isInDangerMode ? "e-danger" : "e-success"))" @onclick="ToggleIsInDangerMode">
+                @(!isInDangerMode ? "Enable Danger Mode" : "Disable Danger Mode")
+            </SfButton>
+        </OnyxAuthorizeView>
+        <br/>
+        <br>
+    </div>
+
+
+    <SfGrid @ref="grid" TValue="SimpleFormDto" FrozenColumns="1" AllowTextWrap="false" DataSource="@scoutForms"
             AllowFiltering="true" AllowResizing="false" AllowSorting="true" AllowMultiSorting="true"
             ShowColumnChooser="true" Width="100%" Height="100%">
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
-            <GridColumn ShowInColumnChooser="false" HeaderText="Team" Field="TeamNumber"
+            <GridColumn ShowInColumnChooser="false" HeaderText="T" Field="TeamNumber"
                         AllowFiltering="true"
                         FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"
                         Width="70px">
@@ -30,6 +41,11 @@ else
 
             <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Year" Field="Year"
                         AllowFiltering="true"
+                        FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
+            </GridColumn>
+
+            <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Last edit" Field="DateTime"
+                        AllowFiltering="true" Type="ColumnType.Date" Format="HH:mm dd/MM/yyyy"
                         FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
             </GridColumn>
 
@@ -59,6 +75,12 @@ else
                             <ButtonTabOpener CssClass="e-info" Url="@($"ScoutForm/View/{scoutForm.Id}")" Style="margin-left :5px"
                                              Text="View">
                             </ButtonTabOpener>
+                            @if (isInDangerMode)
+                            {
+                                <SfButton CssClass="e-danger" @onclick="() => Delete(scoutForm)" Style="margin-left :5px">
+                                    Delete
+                                </SfButton>
+                            }
                         </div>
                     }
                 </Template>
@@ -75,11 +97,15 @@ else
     [CascadingParameter]
     private Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
+    private SfGrid<SimpleFormDto> grid;
+
     private ClaimsPrincipal user;
     private List<SimpleFormDto> scoutForms;
+    private bool isInDangerMode;
 
     protected override async Task OnInitializedAsync()
     {
+        isInDangerMode = false;
         var authState = await AuthenticationStateTask;
         user = authState.User;
 
@@ -91,11 +117,12 @@ else
             return;
         }
 
-        // var resScoutForms = await Http.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{selectedEvent.Key}/{ScoutFormType.MainGame}");
-        // resScoutForms.Sort();
-        Console.WriteLine("geting fomrssss: ");
         scoutForms = await ScoutFormService.GetMainGameForms();
-        Console.WriteLine("fomrssss: " + scoutForms);
+    }
+
+    private void Change(object l)
+    {
+        Console.WriteLine("Change!");
     }
 
     private void Edit(SimpleFormDto form)
@@ -103,4 +130,31 @@ else
         NavigationManager.NavigateTo("ScoutForm/Edit/" + form.Id);
     }
 
+    private async Task Delete(SimpleFormDto form)
+    {
+        Console.WriteLine("DELETING FORM!");
+        if (await ScoutFormService.DeleteForm(form.Id))
+        {
+            Console.WriteLine("Removed: " + form.Id);
+            await ScoutFormService.UpdateMainGameForms();
+            scoutForms = await ScoutFormService.GetMainGameForms();
+            return;
+        }
+        Console.WriteLine("Failed removing: " + form.Id);
+    }
+
+    private async Task ToggleIsInDangerMode()
+    {
+        isInDangerMode = !isInDangerMode;
+        await Task.Delay(1); //Wait for template to update
+        await grid.AutoFitColumnsAsync();
+    }
+
 }
+
+
+<style>
+    .float-right {
+        float:  right;
+    }
+</style>

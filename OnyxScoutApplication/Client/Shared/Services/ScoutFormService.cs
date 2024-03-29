@@ -34,15 +34,10 @@ public class ScoutFormService: IService
         var year = selectedEvent.Year;
         if (appManager.IsOnlineMode || forceOnlineMode)
         {
-            var mainGameScoutFormsTask = httpClient.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{eventKey}/{ScoutFormType.MainGame}");
             var pitScoutFormsTask = httpClient.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{eventKey}/{ScoutFormType.Pit}");
             var templateScoutFormTask = httpClient.GetJson<FormDto>($"ScoutFormFormat/TemplateScoutFormByYear/{year}");
 
-            await Task.WhenAll(mainGameScoutFormsTask, pitScoutFormsTask, templateScoutFormTask);
-
-            mainGameScoutForms = await mainGameScoutFormsTask;
-            mainGameScoutForms.Sort();
-            await localStorageService.SetItemAsync($"ScoutFormService.ScoutForms.MainGame.{eventKey}", mainGameScoutForms);
+            await Task.WhenAll(UpdateMainGameForms(), pitScoutFormsTask, templateScoutFormTask);
 
             pitScoutForms = await pitScoutFormsTask;
             pitScoutForms.Sort();
@@ -84,5 +79,21 @@ public class ScoutFormService: IService
         }
         
         return new List<FormDto>(); //Not supported in offline mode
+    }
+
+    public async Task<bool> DeleteForm(string formId)
+    {
+        return await httpClient.TryDelete($"ScoutForm/{formId}");
+    }
+
+    public async Task UpdateMainGameForms()
+    {
+        var selectedEvent = await eventService.GetSelectedEvent();
+        var eventKey = selectedEvent.Key;
+        
+        var mainGameScoutFormsTask = httpClient.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{eventKey}/{ScoutFormType.MainGame}");
+        mainGameScoutForms = await mainGameScoutFormsTask;
+        mainGameScoutForms.Sort();
+        await localStorageService.SetItemAsync($"ScoutFormService.ScoutForms.MainGame.{eventKey}", mainGameScoutForms);
     }
 }

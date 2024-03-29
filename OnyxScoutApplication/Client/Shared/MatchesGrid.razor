@@ -20,7 +20,7 @@
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
             <GridColumn Field=@nameof(Match.FullMatchNumber) AutoFit="false" HeaderText="No." Width="80px"></GridColumn>
-            <GridColumn Field=@nameof(Match.Date) AutoFit="false" HeaderText="Match date" Format="dd/MM/yyyy HH:mm" Type="ColumnType.DateTime" Width="135px"></GridColumn>
+            <GridColumn Field=@nameof(Match.Date) AutoFit="false" HeaderText="Match date" Format="HH:mm dd/MM/yyyy" Type="ColumnType.DateTime" Width="135px"></GridColumn>
             @for (int i = 0; i < 3; i++)
             {
                 var headName = "T" + (i + 1);

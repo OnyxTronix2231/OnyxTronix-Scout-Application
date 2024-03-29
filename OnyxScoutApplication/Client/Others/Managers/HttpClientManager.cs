@@ -56,6 +56,11 @@ namespace OnyxScoutApplication.Client.Others.Managers
         {
             return await TrySetAsync(async () => await httpClient.PostAsync(command, content));
         }
+        
+        public async Task<bool> TryDelete(string command)
+        {
+            return await TrySetAsync(async () => await httpClient.DeleteAsync(command));
+        }
 
         private async Task<T> TryGetAsync<T>(Func<Task<HttpResponseMessage>> action, bool showError = true) where T : class
         {
@@ -97,7 +102,9 @@ namespace OnyxScoutApplication.Client.Others.Managers
             var response = await TryExecuteAsync(action);
             if (response.IsSuccessStatusCode)
             {
-                await notificationService.NotifyAsync("Success", "Pushed successfully", NotificationType.Success);
+                var resMsg = await response.Content.ReadAsStringAsync();
+                await notificationService.NotifyAsync("Success", 
+                    string.IsNullOrWhiteSpace(resMsg) ?  "Pushed successfully" : resMsg, NotificationType.Success);
             }
 
             return response.IsSuccessStatusCode;

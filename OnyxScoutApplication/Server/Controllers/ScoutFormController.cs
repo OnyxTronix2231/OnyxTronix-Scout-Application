@@ -157,6 +157,15 @@ namespace OnyxScoutApplication.Server.Controllers
             return response;
 
         }
+        
+        [OnyxAuthorize(Role = Role.Admin)]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteScoutForm(string id)
+        {
+            var response = await unitOfWork.ScoutForms.Remove(id);
+            return response;
+
+        }
 
         [HttpGet("GetAllByTeam/{teamNumber}/{eventKey}")]
         [HttpGet("GetAllByTeam/{teamNumber}/{eventKey}/{scoutFormType}")]

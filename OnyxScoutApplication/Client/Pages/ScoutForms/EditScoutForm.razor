@@ -1,6 +1,8 @@
 ﻿@page "/ScoutForm/Edit/{Id}"
 @inject HttpClientManager Http
 @inject NavigationManager NavigationManager
+@inject ScoutFormService ScoutFormService
+
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
 @if (form != null)
@@ -83,6 +85,7 @@
     {
         if (await Http.TryPutJson("ScoutForm/" + Id, form))
         {
+            await ScoutFormService.UpdateMainGameForms();
             NavigationManager.NavigateTo("/");
         }
     }
