@@ -12,12 +12,12 @@ namespace OnyxScoutApplication.Shared.Other
     {
         public static List<FieldDto> WithCascadeFields(this List<FieldDto> field)
         {
-            return field.Concat(field.SelectMany(i => WithCascadeFields(i.CascadeFields)).ToList()).ToList();
+            return field.SelectMany(i => new[] {i}.Concat(WithCascadeFields(i.CascadeFields))).ToList();
         }
         
         public static List<FormDataDto> WithCascadeData(this List<FormDataDto> field)
         {
-            return field.Concat(field.SelectMany(i => WithCascadeData(i.CascadeData)).ToList()).ToList();
+            return field.SelectMany(i => new[] {i}.Concat(WithCascadeData(i.CascadeData))).ToList();
         }
         
         public static List<Field> WithCascadeFields(this List<Field> field)
@@ -27,7 +27,7 @@ namespace OnyxScoutApplication.Shared.Other
         
         public static List<FormData> WithCascadeData(this List<FormData> field)
         {
-            return field.Concat(field.SelectMany(i => WithCascadeData(i.CascadeData)).ToList()).ToList();
+            return field.SelectMany(i => new[] {i}.Concat(WithCascadeData(i.CascadeData))).ToList();
         }
     }
 }

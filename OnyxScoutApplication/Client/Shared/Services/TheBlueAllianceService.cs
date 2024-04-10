@@ -73,6 +73,11 @@ public class TheBlueAllianceService : IService
         return await Task.FromResult(events);
     }
     
+    public async ValueTask<List<Event>> GetAllEventsByYear(int year)
+    {
+        return await httpClient.GetJson<List<Event>>($"TheBlueAlliance/GetAllEvents/{year}");
+    }
+    
     public async ValueTask<List<Team>> GetTeams()
     {
         return await Task.FromResult(teams);

@@ -134,7 +134,7 @@
                 workbook.SaveAs(stream);
 
     //Download the excel file.
-                await Js.SaveAs("Sample.xlsx", stream.ToArray());
+                await Js.SaveAs($"Samples_{analyticsRes.NumberOfCalculatedForms}_{selectedEvent.Key}.xlsx", stream.ToArray());
             }
         }
     }
@@ -160,6 +160,12 @@
             
             foreach (var column in columnFields)
             {
+                if (!row.ContainsKey("RawValue" + column.Id))
+                {
+                    Console.WriteLine($"Warning: field '{column.Name}' does not exist in team form {row["TeamNumber"]} at match {row["Match N."]}");
+                    data.Add("");
+                    continue;
+                }
                 data.Add(row["RawValue" + column.Id]?.ToString());
             }
             reports.Rows.Add(data.ToArray());

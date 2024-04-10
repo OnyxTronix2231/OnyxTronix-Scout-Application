@@ -65,6 +65,7 @@
     {
         if (await Http.TryPostJson("ScoutForm", form))
         {
+            await ScoutFormService.UpdateMainGameForms();
             NavigationManager.NavigateTo("/");
             return;
         }

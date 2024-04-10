@@ -54,17 +54,18 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             return await Task.Run(() => new OkResult());
         }
 
-        public virtual Task<ActionResult> Remove(string id)
+        public virtual async Task<ActionResult> Remove(string id)
         {
-            // var entity = await Context.Set<TDbEntity>().FindAsync(id.ToString());
-            // if (entity == null)
-            // {
-            //     return new NotFoundResult();
-            // }
-            //
-            // Context.Set<TDbEntity>().Remove(Mapper.Map<TDbEntity>(entity));
-            //return new OkResult();
-            throw new NotImplementedException();
+            Query query = CollectionReference.WhereEqualTo(FieldPath.DocumentId, id);
+            QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+            
+            if (querySnapshot.Count == 0)
+            {
+                return new NotFoundObjectResult("No record found with the id of: " + id);
+            }
+
+            var res = await querySnapshot.Documents[0].Reference.DeleteAsync();
+            return new OkObjectResult("Form removed successfully");
         }
 
         public Task UpdateFromTracking(TDtoEntity obj)

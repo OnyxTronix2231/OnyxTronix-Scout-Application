@@ -5,7 +5,7 @@
 
 
 <h4>@team?.Nickname</h4>
-<EditForm Model="@Form" OnValidSubmit="@OnValidSubmit">
+<EditForm Model="@Form" OnValidSubmit="@ValidSubmit">
     <FluentValidationValidator/>
     <ValidationSummary/>
     <div class="form-group col-sm-5">
@@ -76,7 +76,7 @@
     @if (Type != FormType.View)
     {
         <div>
-            <button type="submit" class="btn btn-primary">@(Type == FormType.Create ? "Add" : "Save")</button>
+            <button type="submit" class="btn btn-primary" disabled="@isLoading">@(Type == FormType.Create ? "Add" : "Save")</button>
         </div>
     }
 </EditForm>
@@ -110,10 +110,13 @@
 
     private List<string> matchTypes;
 
+    private bool isLoading;
+
     long maxFileSize = 1024 * 1024 * 15;
 
     protected override async Task OnInitializedAsync()
     {
+        isLoading = false;
         matchTypes = new List<string>
         {
             "qm",
@@ -148,6 +151,18 @@
             content: fileContent,
             name: "\"files\"",
             fileName: e.File.Name);
+    }
+
+    private async Task ValidSubmit()
+    {
+        if (isLoading)
+        {
+            return;
+        }
+        
+        isLoading = true;
+        await OnValidSubmit.InvokeAsync();
+        isLoading = false;
     }
 
     public enum TeamAlliance

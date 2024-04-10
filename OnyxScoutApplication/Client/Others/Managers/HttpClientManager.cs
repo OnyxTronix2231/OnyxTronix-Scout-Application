@@ -26,17 +26,17 @@ namespace OnyxScoutApplication.Client.Others.Managers
             this.notificationService = notificationService;
             this.appManager = appManager;
         }
-        
+
         public async Task<T> GetJsonByJsonText<T>(string command) where T : class
         {
             return await TryGetAsyncByJsonText<T>(async () => await httpClient.GetAsync(command));
         }
 
-        public async Task<T> GetJson<T>(string command) where T : class
+        public async Task<T> GetJson<T>(string command, bool showError = true) where T : class
         {
-            return await TryGetAsync<T>(async () => await httpClient.GetAsync(command));
+            return await TryGetAsync<T>(async () => await httpClient.GetAsync(command), showError);
         }
-        
+
         public async Task<bool> TryPutJson(string command, object objectToPut)
         {
             return await TrySetAsync(async () => await httpClient.PutAsync(command, Serialize(objectToPut)));
@@ -46,25 +46,31 @@ namespace OnyxScoutApplication.Client.Others.Managers
         {
             return await TrySetAsync(async () => await httpClient.PostAsync(command, Serialize(objectToPost)));
         }
-        
+
         public async Task<T> TryPostJson<T>(string command, object objectToPost) where T : class
         {
             return await TryGetAsync<T>(async () => await httpClient.PostAsJsonAsync(command, objectToPost));
         }
-        
-        public async Task<bool> TryPostJson(string command, HttpContent content) 
+
+        public async Task<bool> TryPostJson(string command, HttpContent content)
         {
             return await TrySetAsync(async () => await httpClient.PostAsync(command, content));
         }
-
-        private async Task<T> TryGetAsync<T>(Func<Task<HttpResponseMessage>> action) where T : class
+        
+        public async Task<bool> TryDelete(string command)
         {
-            var response = await TryExecuteAsync(action);
-            if(!response.IsSuccessStatusCode)
+            return await TrySetAsync(async () => await httpClient.DeleteAsync(command));
+        }
+
+        private async Task<T> TryGetAsync<T>(Func<Task<HttpResponseMessage>> action, bool showError = true) where T : class
+        {
+            var response = await TryExecuteAsync(action, showError);
+            if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine(response.StatusCode);
                 return null;
             }
+
             string json = await response.Content.ReadAsStringAsync();
             Console.WriteLine(json);
             var result = JsonConvert.DeserializeObject<T>(json,
@@ -75,41 +81,45 @@ namespace OnyxScoutApplication.Client.Others.Managers
                 });
             return result;
         }
-        
+
         private async Task<T> TryGetAsyncByJsonText<T>(Func<Task<HttpResponseMessage>> action) where T : class
         {
             var response = await TryExecuteAsync(action);
-            if(!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
                 return null;
             }
+
             string json = await response.Content.ReadAsStringAsync();
             Console.WriteLine(json);
 
             var result = await response.Content.ReadFromJsonAsync<T>();
             return result;
         }
-        
+
         private async Task<bool> TrySetAsync(Func<Task<HttpResponseMessage>> action)
         {
             var response = await TryExecuteAsync(action);
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                await notificationService.NotifyAsync("Success", "Pushed successfully", NotificationType.Success);
+                var resMsg = await response.Content.ReadAsStringAsync();
+                await notificationService.NotifyAsync("Success", 
+                    string.IsNullOrWhiteSpace(resMsg) ?  "Pushed successfully" : resMsg, NotificationType.Success);
             }
+
             return response.IsSuccessStatusCode;
         }
-        
-        private async Task<HttpResponseMessage> TryExecuteAsync(Func<Task<HttpResponseMessage>> action)
+
+        private async Task<HttpResponseMessage> TryExecuteAsync(Func<Task<HttpResponseMessage>> action, bool showError = true)
         {
             HttpResponseMessage response = null;
             try
             {
                 response = await action();
-                if (!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode && showError)
                 {
                     Console.WriteLine($"Real error code {response.StatusCode}");
-                    if (response.StatusCode is HttpStatusCode.ServiceUnavailable or 
+                    if (response.StatusCode is HttpStatusCode.ServiceUnavailable or
                         //HttpStatusCode.InternalServerError or
                         0)
                     {
@@ -117,12 +127,19 @@ namespace OnyxScoutApplication.Client.Others.Managers
                         await notificationService.NotifyAsync("Offline mode",
                             "Switching to offline mode due to network error", NotificationType.Warning);
                     }
+
                     await NotifyFailer(response);
                 }
             }
             catch (AccessTokenNotAvailableException exception)
             {
                 exception.Redirect();
+                
+                if (!showError)
+                {
+                    return response ?? new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
+                }
+                
                 Console.WriteLine("AccessTokenNotAvailableException");
                 appManager.IsOnlineMode = false;
                 await notificationService.NotifyAsync("Offline mode",
@@ -130,6 +147,10 @@ namespace OnyxScoutApplication.Client.Others.Managers
             }
             catch (Exception exception)
             {
+                if (!showError)
+                {
+                    return response ?? new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
+                }
                 await NotifyFailer("Error", exception.Message);
                 Console.WriteLine($"Error{exception.Message}");
                 if (exception.Message.Contains("Failed to fetch"))
@@ -139,15 +160,17 @@ namespace OnyxScoutApplication.Client.Others.Managers
                         "Switching to offline mode due to network error", NotificationType.Warning);
                 }
             }
+
             return response ?? new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
 
         private async Task NotifyFailer(HttpResponseMessage response)
         {
-            await notificationService.NotifyAsync($"Error: {response.StatusCode}", $"{await response.Content.ReadAsStringAsync()}",
+            await notificationService.NotifyAsync($"Error: {response.StatusCode}",
+                $"{await response.Content.ReadAsStringAsync()}",
                 NotificationType.Danger);
         }
-         
+
         private async Task NotifyFailer(string title, string message)
         {
             await notificationService.NotifyAsync(title, message, NotificationType.Danger);
