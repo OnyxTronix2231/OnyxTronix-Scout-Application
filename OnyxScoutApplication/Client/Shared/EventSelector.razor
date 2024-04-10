@@ -2,6 +2,7 @@
 @inject HttpClientManager Http
 @inject ILocalStorageService LocalStorage
 @inject EventService EventService
+@inject TheBlueAllianceService TheBlueAllianceService
 
 <SfDropDownList TValue="int?" TItem="int?" Width="150px" PopupHeight="150px" PopupWidth="150px" Placeholder="Select a year" Value="selectedYearFilter" DataSource="@filterYears">
     <DropDownListEvents TItem="int?" TValue="int?" OnValueSelect="OnYearFilterChange"></DropDownListEvents>
@@ -12,9 +13,9 @@
     <DropDownListEvents TItem="string" TValue="string" OnValueSelect="OnCountryFilterChange"></DropDownListEvents>
 </SfDropDownList>
 <br/>
-@if (events != null)
+@if (filteredEvents != null)
 {
-    <SfDropDownList TValue="string" TItem="Event" Width="355px" PopupHeight="355px" PopupWidth="355px" Placeholder="Select an event" Value="lastEventKey" DataSource="@events">
+    <SfDropDownList TValue="string" TItem="Event" Width="355px" PopupHeight="355px" PopupWidth="355px" Placeholder="Select an event" Value="lastEventKey" DataSource="@filteredEvents">
         <DropDownListEvents TItem="Event" TValue="string" OnValueSelect="OnEventChange"></DropDownListEvents>
         <DropDownListFieldSettings Text="Name" Value="Key"></DropDownListFieldSettings>
     </SfDropDownList>
@@ -29,7 +30,8 @@
     private int? selectedYearFilter = 0;
     private string selectedCountryFilter;
     private Event selectedEvent = new();
-    private List<Event> events;
+    private List<Event> allEvents;
+    private List<Event> filteredEvents;
     private List<int?> filterYears = new();
     private List<string> filterCountries = new();
     private string lastEventKey;
@@ -41,13 +43,15 @@
         {
             filterYears.Add(i);
         }
-        filterCountries.Add("Israel");
+        // filterCountries.Add("Israel");
         selectedEvent = await EventService.GetSelectedEvent();
         if (selectedEvent is not null)
         {
             selectedYearFilter = selectedEvent.Year;
+            allEvents = await TheBlueAllianceService.GetAllEventsByYear(selectedYearFilter.Value);
+            filterCountries = allEvents.Select(e => e.Country).ToHashSet().ToList();
             selectedCountryFilter = selectedEvent.Country;
-            await UpdateEventsList(await LocalStorage.GetItemAsync<List<Event>>("EventSelector.Filtered"));
+            await UpdateEventsList();
             UpdateSelectedEvent(selectedEvent);
         }
         else
@@ -57,6 +61,8 @@
             // await OnCountryFilterChange(new SelectEventArgs<string> {ItemData = filterCountries[0]});
                         // await HandleOnCountryFilterChange();
             selectedYearFilter = DateTime.Now.Year;
+            allEvents = await TheBlueAllianceService.GetAllEventsByYear(selectedYearFilter.Value);
+            filterCountries = allEvents.Select(e => e.Country).ToHashSet().ToList();
             selectedCountryFilter = filterCountries[0];
             await HandleOnFilterChange();
         }
@@ -69,6 +75,7 @@
             return;
         }
         selectedYearFilter  = args.ItemData.Value;
+        allEvents = await TheBlueAllianceService.GetAllEventsByYear(selectedYearFilter.Value);
         await HandleOnFilterChange();
     }
 
@@ -80,15 +87,15 @@
     
     private async Task HandleOnFilterChange()
     {
-        await UpdateEventsList(await Http.GetJson<List<Event>>("TheBlueAlliance/GetAllEvents/" + selectedYearFilter));
+        await UpdateEventsList();
         StateHasChanged();
     }
     
-    private async Task UpdateEventsList(List<Event> eventsToOrder)
+    private async Task UpdateEventsList()
     {
-        events = eventsToOrder.Where(i => string.Equals(i.Country, selectedCountryFilter, 
+        filteredEvents = allEvents.Where(i => string.Equals(i.Country, selectedCountryFilter, 
             StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
-        await LocalStorage.SetItemAsync("EventSelector.Filtered", events);
+        await LocalStorage.SetItemAsync("EventSelector.Filtered", filteredEvents);
     }
 
     private async Task OnEventChange(SelectEventArgs<Event> args)

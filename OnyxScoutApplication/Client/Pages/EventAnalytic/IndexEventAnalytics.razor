@@ -162,7 +162,8 @@
             {
                 if (!row.ContainsKey("RawValue" + column.Id))
                 {
-                    Console.WriteLine($"Warning: field '{column.Name}' does not exist in {row["TeamNumber"]} at match {row["Match N."]}");
+                    Console.WriteLine($"Warning: field '{column.Name}' does not exist in team form {row["TeamNumber"]} at match {row["Match N."]}");
+                    data.Add("");
                     continue;
                 }
                 data.Add(row["RawValue" + column.Id]?.ToString());
