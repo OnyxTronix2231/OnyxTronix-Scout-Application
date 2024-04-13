@@ -16,6 +16,8 @@ namespace OnyxScoutApplication.Shared.Models
     {
         public List<FieldDto> Fields { get; set;} = new();
 
+        public List<double> Multipliers { get; set; } = new();
+
         public CombinedFieldsType CombinedFieldsType { get; set; }
 
         public string Name { get; set; }

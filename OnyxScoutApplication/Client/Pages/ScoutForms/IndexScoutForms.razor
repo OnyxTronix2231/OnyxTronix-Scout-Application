@@ -6,6 +6,7 @@
 @inject NotificationManager NotificationManager;
 @inject ScoutFormService ScoutFormService
 @inject EventService EventService;
+@inject IJSRuntime JsRuntime
 
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 <h1>Scout forms</h1>
@@ -30,23 +31,28 @@ else
 
     <SfGrid @ref="grid" TValue="SimpleFormDto" FrozenColumns="1" AllowTextWrap="false" DataSource="@scoutForms"
             AllowFiltering="true" AllowResizing="false" AllowSorting="true" AllowMultiSorting="true"
-            ShowColumnChooser="true" Width="100%" Height="100%">
+            ShowColumnChooser="true" Width="100 %" Height="100 %">
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
-            <GridColumn ShowInColumnChooser="false" HeaderText="T" Field="TeamNumber"
-                        AllowFiltering="true"
-                        FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"
-                        Width="70px">
-            </GridColumn>
+            <gridcolum ShowInColumnChooser="false" HeaderText="T" Field="TeamNumber"
+                       AllowFiltering="true"
+                       FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"
+                       Width="70px">
+            </gridcolum>
 
             <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Year" Field="Year"
                         AllowFiltering="true"
                         FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
             </GridColumn>
 
-            <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Last edit" Field="DateTime"
-                        AllowFiltering="true" Type="ColumnType.Date" Format="HH:mm dd/MM/yyyy"
+            <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="No." Field="MatchNumber"
+                        AllowFiltering="true"
                         FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
+            </GridColumn>
+
+            <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Last edit" Field="DateTime"
+                        AllowFiltering="true" Type="ColumnType.Date" Format="HH:mm dd / MM / yyyy"
+                        FilterSettings="@(                                            new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
             </GridColumn>
 
             <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Key name" Field="KeyName"
@@ -77,7 +83,7 @@ else
                             </ButtonTabOpener>
                             @if (isInDangerMode)
                             {
-                                <SfButton CssClass="e-danger" @onclick="() => Delete(scoutForm)" Style="margin-left :5px">
+                                <SfButton CssClass="e - danger" @onclick="() => Delete(scoutForm)" Style="margin-left :5px">
                                     Delete
                                 </SfButton>
                             }
@@ -132,7 +138,11 @@ else
 
     private async Task Delete(SimpleFormDto form)
     {
-        Console.WriteLine("DELETING FORM!");
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete form: {form.KeyName}?"); // Confirm
+        if (!confirmed)
+        {
+            return;
+        }
         if (await ScoutFormService.DeleteForm(form.Id))
         {
             Console.WriteLine("Removed: " + form.Id);

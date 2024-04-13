@@ -57,7 +57,7 @@ namespace OnyxScoutApplication.Shared.Models.ScoutFormModels
         
         public int CompareTo(SimpleFormDto other)
         {
-            return other.DateTime.CompareTo(DateTime);
+            return (other.MatchNumber ?? -1) - (MatchNumber ?? -1);
         }
     }
 }

@@ -29,7 +29,9 @@
             </SfDropDownList>
             <br/>
             <br/>
-            <div>
+            <div style="
+                     width: 450px;
+                 ">
                 <label>Columns:</label>
                 <br/>
                 @for (int i = 0; i < combinedField.Fields.Count; i++)
@@ -37,11 +39,21 @@
                     FieldDto field = combinedField.Fields[i];
                     int index = i;
                     <div>
-                        <SfDropDownList TItem="FieldDto" TValue="Guid" Placeholder="Select field" DataSource="fields" Value="field.Id" Width="250px">
-                            <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
-                            <DropDownListEvents TItem="FieldDto" TValue="Guid" ValueChange="e => OnFieldSelected(e, combinedField.Fields, index)"></DropDownListEvents>
-                        </SfDropDownList>
-                        <SfButton CssClass="e-danger" @onclick="() => combinedField.Fields.Remove(field)">Remove this column</SfButton>
+                        <div style="
+                                 display: flex;
+                                 width: 100%;
+                                 margin-bottom: 10px;
+                                 gap: 10px;
+                                 ">
+                            <SfDropDownList TItem="FieldDto" TValue="Guid" Placeholder="Select field" DataSource="fields" Value="field.Id">
+                                <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
+                                <DropDownListEvents TItem="FieldDto" TValue="Guid" ValueChange="e => OnFieldSelected(e, combinedField.Fields, index)"></DropDownListEvents>
+                            </SfDropDownList>
+
+                            <SfNumericTextBox Step=0.05f Format="p2" Max="1" Min="-1" @bind-Value="combinedField.Multipliers[index]"/>
+                        </div>
+
+                        <SfButton CssClass="e-danger" @onclick="() => { combinedField.Fields.Remove(field); combinedField.Multipliers.RemoveAt(index); }">Remove this column</SfButton>
                     </div>
                     <br/>
                 }
@@ -78,7 +90,7 @@
             NavigationManager.NavigateTo("/");
             return;
         }
-        // format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
+    // format = await Http.GetJson<ScoutFormFormatDto>("ScoutFormFormat/ByYear/" + selectedEvent.Year);
         format = await ScoutFormFormatService.GetMainGameScoutFormFormat();
         if (format == null)
         {
@@ -122,6 +134,9 @@
     private static void AddField(CombinedFieldsDto combinedFields)
     {
         combinedFields.Fields.Add(new FieldDto());
+        combinedFields.Multipliers.Add(1);
     }
 
 }
+
+
