@@ -48,8 +48,10 @@ public class TheBlueAllianceService : IService
             await localStorageService.SetItemAsync($"TheBlueAllianceService.Matches.{eventKey}", matches);
 
             events = await eventsTask;
-            events = events.Where(i => string.Equals(i.Country, country,
-                StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.StartDate).ToList();
+            events = events
+                // .Where(i => string.Equals(i.Country, country,
+                // StringComparison.OrdinalIgnoreCase))
+                .OrderBy(i => i.StartDate).ToList();
             await localStorageService.SetItemAsync($"TheBlueAllianceService.Events.{year}", events);
 
             teams = await teamsTask;
@@ -75,6 +77,11 @@ public class TheBlueAllianceService : IService
     
     public async ValueTask<List<Event>> GetAllEventsByYear(int year)
     {
+        if (await localStorageService.ContainKeyAsync($"TheBlueAllianceService.Events.{year}"))
+        {
+            return await localStorageService.GetItemAsync<List<Event>>($"TheBlueAllianceService.Events.{year}");
+        }
+
         return await httpClient.GetJson<List<Event>>($"TheBlueAlliance/GetAllEvents/{year}");
     }
     
