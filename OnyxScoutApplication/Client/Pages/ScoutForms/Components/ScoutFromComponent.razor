@@ -10,7 +10,7 @@
     <ValidationSummary/>
     <div class="form-group col-sm-5">
         <label for="teamNumber">Team number</label>
-        <input class="form-control" disabled="@(!EmergencyMode)" style="@(TeamAllianceType switch
+        <input class="form-control" disabled="@(!IsSuperMode())" style="@(TeamAllianceType switch
                                                                         {
                                                                             TeamAlliance.Blue => "background-color: #5c5cff",
                                                                             TeamAlliance.Red => "background-color: #ff4949",
@@ -32,18 +32,18 @@
     {
         <div class="form-group col-sm-5">
             <label for="matchType">Match type</label>
-            <SfDropDownList id="matchType" Enabled="@(EmergencyMode)" TValue="string" TItem="string" DataSource="matchTypes" @bind-Value="@Form.MatchType">
+            <SfDropDownList id="matchType" disabled="@(!IsSuperMode())" TValue="string" TItem="string" DataSource="matchTypes" @bind-Value="@Form.MatchType">
             </SfDropDownList>
             <ValidationMessage For="@(() => Form.MatchType)"/>
         </div>
         <div class="form-group col-sm-5">
             <label for="matchNumber">Match number</label>
-            <input class="form-control" disabled="@(!EmergencyMode)" min="0" type="number" id="matchNumber" @bind="@Form.MatchNumber"/>
+            <input class="form-control" disabled="@(!IsSuperMode())" min="0" type="number" id="matchNumber" @bind="@Form.MatchNumber"/>
             <ValidationMessage For="@(() => Form.MatchNumber)"/>
         </div>
         <div class="form-group col-sm-5">
             <label for="matchNumber">Set number</label>
-            <input class="form-control" disabled="@(!EmergencyMode)" min="0" type="number" id="setNumber" @bind="@Form.SetNumber"/>
+            <input class="form-control" disabled="@(!IsSuperMode())" min="0" type="number" id="setNumber" @bind="@Form.SetNumber"/>
             <ValidationMessage For="@(() => Form.SetNumber)"/>
         </div>
     }
@@ -82,7 +82,9 @@
 </EditForm>
 
 @code {
-
+    [CascadingParameter]
+    private Task<AuthenticationState> authStateTask {get; set;}
+    
     [Parameter]
     public FormDto Form { get; set; }
 
@@ -112,10 +114,14 @@
 
     private bool isLoading;
 
+    private bool isAdmin;
+
     long maxFileSize = 1024 * 1024 * 15;
 
     protected override async Task OnInitializedAsync()
     {
+        var authstate = await authStateTask;
+        isAdmin = authstate.User.IsInRole("admin");
         isLoading = false;
         matchTypes = new List<string>
         {
@@ -163,6 +169,11 @@
         isLoading = true;
         await OnValidSubmit.InvokeAsync();
         isLoading = false;
+    }
+
+    private bool IsSuperMode()
+    {
+        return EmergencyMode || (Type == FormType.Update && isAdmin);
     }
 
     public enum TeamAlliance

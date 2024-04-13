@@ -150,8 +150,9 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
             {
                 var allData = scoutForm.FormDataInStages.SelectMany(i => i.FormData.WithCascadeData()).ToList();
                 double formSum = 0;
-                foreach (var field in combinedField.Fields)
+                for (var i = 0; i < combinedField.Fields.Count; i++)
                 {
+                    var field = combinedField.Fields[i];
                     var data = allData.FirstOrDefault(i => i.Field.Id == field.Id);
                     if (data is null)
                     {
@@ -165,19 +166,20 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
                         continue;
                     }
 
-                    formSum += data.NumericValue.Value;
+                    formSum += data.NumericValue.Value * combinedField.Multipliers[i];
                 }
 
-                sums += $"{formSum},";
+                sums += $"{Math.Round(formSum, 2)}, ";
             }
 
 
             double sum = 0;
-            foreach (var field in combinedField.Fields)
+            for (var i = 0; i < combinedField.Fields.Count; i++)
             {
+                var field = combinedField.Fields[i];
                 if (rows.ContainsKey("RawValue" + field.Id))
                 {
-                    sum += (double)rows["RawValue" + field.Id];
+                    sum += (double)rows["RawValue" + field.Id] * combinedField.Multipliers[i];
                 }
                 else
                 {
