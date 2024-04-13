@@ -100,6 +100,10 @@
         if (await LocalStorage.ContainKeyAsync("EventAnalyticSettings/" + selectedEvent.Key))
         {
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
+            if (analyticSettings.CombinedFields.Any(cF => !cF.Multipliers.Any())) //Older vesion does not have Multipliers, this if statement can be removed in the future 
+            {
+                analyticSettings = new EventAnalyticSettingsDto();
+            }
         }
         else
         {
