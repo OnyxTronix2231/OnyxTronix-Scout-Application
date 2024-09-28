@@ -1,0 +1,87 @@
+﻿@page "/AdminScoutForms/Create"
+@using OnyxScoutApplication.Shared.Models.ScoutFormModels
+@inject HttpClientManager Http
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+@inject NotificationManager NotificationManager
+@inject EventService EventService
+@inject ScoutFormService ScoutFormService
+
+@attribute [OnyxAuthorize(Role = Role.Admin)]
+
+@if (form != null)
+{
+    <h3>ScoutForm</h3>
+    <div style="float: right;">
+        <SfButton type="button" CssClass="e-success" @onclick="SaveOnLocalCache">Save locally</SfButton>
+        <SfButton type="button" CssClass="e-danger" @onclick="DeleteLocalCache">Delete local cache</SfButton>
+    </div>
+    <ScoutFromComponent EmergencyMode="@true" Form="form" Type="FormType.Create" OnValidSubmit="OnValidSubmit"></ScoutFromComponent>
+}
+
+@code {
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    //private TeamInMatch teamInMatch;
+    private FormDto form;
+    //private bool isBlue;
+
+    protected override async Task OnInitializedAsync()
+    {
+               
+        var authState = await AuthenticationStateTask;
+        var user = authState.User;
+
+        var selectedEvent = await EventService.GetSelectedEvent();
+        if (selectedEvent == null)
+        {
+            await NotificationManager.NotifyAsync("Error", "Please select an event first!", NotificationType.Danger);
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+        
+        form = await ScoutFormService.GetTemplateFormAdmin();
+        if (form == null)
+        {
+            await NotificationManager.NotifyAsync("Error", "Scout form format does not exists for this type of form!", NotificationType.Danger);
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+        
+
+        form.Year = selectedEvent.Year;
+        form.EventName = selectedEvent.Key;
+        form.WriterUserName = user.Identity!.Name;
+        form.Type = ScoutFormType.Admin;
+    }
+
+    private async Task OnValidSubmit()
+    {
+        if (await Http.TryPostJson("ScoutForm", form))
+        {
+            await ScoutFormService.UpdateAdminForms();
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+        await SaveOnLocalCache();
+        await NotificationManager.NotifyAsync("Error", "Error saving form in server\nThe form was saved localy for now", NotificationType.Warning);
+    }
+
+        private async Task SaveOnLocalCache()
+    {
+        await LocalStorage.SetItemAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}/{ScoutFormType.Admin}" ,form);
+    }
+    
+    private async Task DeleteLocalCache()
+    {
+        if (!await LocalStorage.ContainKeyAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}/{ScoutFormType.Admin}"))
+        {
+            await NotificationManager.NotifyAsync("No form was found on local cache!", "", NotificationType.Warning);
+            return;
+        }
+        await LocalStorage.RemoveItemAsync($"ScoutForm/{form.KeyName}/{form.TeamNumber}/{ScoutFormType.Admin}");
+    }
+}
+

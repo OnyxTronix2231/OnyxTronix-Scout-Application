@@ -29,7 +29,10 @@ public class ScoutFormFormatFirestoreRepositorySmart : FirestoreRepository<Form,
     {
         var result = await CollectionReference.WhereEqualTo("Year", form.Year)
             .WhereEqualTo("Year", form.Year)
-            .WhereEqualTo("KeyName", form.KeyName).WhereEqualTo("TeamNumber", form.TeamNumber).GetSnapshotAsync();
+            .WhereEqualTo("KeyName", form.KeyName)
+            .WhereEqualTo("TeamNumber", form.TeamNumber)
+                .WhereEqualTo("Type", form.Type)
+            .GetSnapshotAsync();
 
         if (result.Count != 0)
         {

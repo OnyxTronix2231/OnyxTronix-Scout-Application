@@ -17,6 +17,7 @@ public class ScoutFormService: IService
     private readonly EventService eventService;
     private List<SimpleFormDto> mainGameScoutForms;
     private List<SimpleFormDto> pitScoutForms;
+    private List<SimpleFormDto> adminGameScoutForms;
 
     public ScoutFormService(HttpClientManager httpClient, EventService eventService, AppManager appManager, ILocalStorageService localStorageService)
     {
@@ -36,8 +37,10 @@ public class ScoutFormService: IService
         {
             var pitScoutFormsTask = httpClient.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{eventKey}/{ScoutFormType.Pit}");
             var templateScoutFormTask = httpClient.GetJson<FormDto>($"ScoutFormFormat/TemplateScoutFormByYear/{year}");
+            var templateScoutFormAdminTask = httpClient.GetJson<FormDto>($"ScoutFormFormat/TemplateScoutFormByYear/{year}/{ScoutFormType.Admin}", 
+                showError: false); //We dont care if admin scout form template is missing here
 
-            await Task.WhenAll(UpdateMainGameForms(), pitScoutFormsTask, templateScoutFormTask);
+            await Task.WhenAll(UpdateMainGameForms(), UpdateAdminForms(), pitScoutFormsTask, templateScoutFormTask, templateScoutFormAdminTask);
 
             pitScoutForms = await pitScoutFormsTask;
             pitScoutForms.Sort();
@@ -45,6 +48,9 @@ public class ScoutFormService: IService
 
             var templateScoutForm = await templateScoutFormTask;
             await localStorageService.SetItemAsync($"ScoutFormService.TemplateScoutForm.{year}", templateScoutForm);
+            
+            var templateScoutFormAdmin = await templateScoutFormAdminTask;
+            await localStorageService.SetItemAsync($"ScoutFormService.TemplateScoutForm.Admin.{year}", templateScoutFormAdmin);
             return;
         }
         
@@ -58,6 +64,11 @@ public class ScoutFormService: IService
         return await Task.FromResult(mainGameScoutForms);
     }
     
+    public async ValueTask<List<SimpleFormDto>> GetAdminGameForms()
+    {
+        return await Task.FromResult(adminGameScoutForms);
+    }
+    
     public async ValueTask<List<SimpleFormDto>> GetPitForms()
     {
         return await Task.FromResult(pitScoutForms);
@@ -68,6 +79,13 @@ public class ScoutFormService: IService
         var selectedEvent = await eventService.GetSelectedEvent();
         return await localStorageService.GetItemAsync<FormDto>($"ScoutFormService.TemplateScoutForm.{selectedEvent.Year}");
     }
+    
+    public async Task<FormDto> GetTemplateFormAdmin()
+    {
+        var selectedEvent = await eventService.GetSelectedEvent();
+        return await localStorageService.GetItemAsync<FormDto>($"ScoutFormService.TemplateScoutForm.Admin.{selectedEvent.Year}");
+    }
+
 
 
     public async Task<List<FormDto>> GetPitFormsByTeamNumber(int teamNumber)
@@ -95,5 +113,16 @@ public class ScoutFormService: IService
         mainGameScoutForms = await mainGameScoutFormsTask;
         mainGameScoutForms.Sort();
         await localStorageService.SetItemAsync($"ScoutFormService.ScoutForms.MainGame.{eventKey}", mainGameScoutForms);
+    }
+    
+    public async Task UpdateAdminForms()
+    {
+        var selectedEvent = await eventService.GetSelectedEvent();
+        var eventKey = selectedEvent.Key;
+        
+        var adminGameScoutFormsTask = httpClient.GetJson<List<SimpleFormDto>>($"ScoutForm/GetAllByEvent/{eventKey}/{ScoutFormType.Admin}");
+        adminGameScoutForms = await adminGameScoutFormsTask;
+        adminGameScoutForms.Sort();
+        await localStorageService.SetItemAsync($"ScoutFormService.ScoutForms.MainGame.{eventKey}", adminGameScoutForms);
     }
 }
