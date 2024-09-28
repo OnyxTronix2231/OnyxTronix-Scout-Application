@@ -42,21 +42,29 @@ public class EventAnalyticsController : Controller
         var scoutFormsRes =
             await scoutFormUnitOfWork.ScoutForms.GetAllByEventWithData(eventKey, ScoutFormType.MainGame);
 
-        if (scoutFormsRes.Result is not null)
+        if (scoutFormsRes.Result is not null || scoutFormsRes.Value is null)
         {
             return scoutFormsRes.Result;
         }
 
         var scoutForms = scoutFormsRes.Value!
+            .Concat((await scoutFormUnitOfWork.ScoutForms.GetAllByEventWithData(eventKey, ScoutFormType.Admin)).Value ?? new List<FormDto>())
             .Where(f => f.DateTime >= analyticsSettings.StartDate && f.DateTime <= analyticsSettings.EndDate).ToList();
 
         Console.WriteLine("Selected: " + scoutForms.Count);
         var scoutFormFormat =
             await scoutFormFormatUnitOfWork.ScoutFormFormats.GetWithFieldsByYear(year, ScoutFormType.MainGame);
-        if (scoutFormFormat.Result is not null)
+        
+        var adminScoutFormFormat =
+            await scoutFormFormatUnitOfWork.ScoutFormFormats.GetWithFieldsByYear(year, ScoutFormType.Admin);
+        
+        if (scoutFormFormat.Result is not null || scoutFormFormat.Value is null)
         {
             return scoutFormFormat.Result;
         }
+        
+        scoutFormFormat.Value.FieldsInStages = scoutFormFormat.Value.FieldsInStages
+            .Concat(adminScoutFormFormat?.Value?.FieldsInStages ?? new List<FieldsInStageDto>()).ToList();
 
         var teams = await blueAllianceService.GetTeamsByEvent(eventKey);
         MatchesDataProcessor analyzer = new MatchesDataProcessor(teams, scoutForms, scoutFormFormat.Value,
@@ -71,22 +79,31 @@ public class EventAnalyticsController : Controller
     {
         var scoutFormsRes =
             await scoutFormUnitOfWork.ScoutForms.GetAllByEventWithData(eventKey, ScoutFormType.MainGame);
+        
 
-        if (scoutFormsRes.Result is not null)
+        if (scoutFormsRes.Result is not null || scoutFormsRes.Value is null)
         {
             return scoutFormsRes.Result;
         }
 
-        var scoutForms = scoutFormsRes.Value!
+        var scoutForms = scoutFormsRes.Value
+            .Concat((await scoutFormUnitOfWork.ScoutForms.GetAllByEventWithData(eventKey, ScoutFormType.Admin)).Value ?? new List<FormDto>())
             .Where(f => f.DateTime >= analyticsSettings.StartDate && f.DateTime <= analyticsSettings.EndDate).ToList();
 
         Console.WriteLine("Selected: " + scoutForms.Count);
         var scoutFormFormat =
             await scoutFormFormatUnitOfWork.ScoutFormFormats.GetWithFieldsByYear(year, ScoutFormType.MainGame);
-        if (scoutFormFormat.Result is not null)
+        
+        var adminScoutFormFormat =
+            await scoutFormFormatUnitOfWork.ScoutFormFormats.GetWithFieldsByYear(year, ScoutFormType.Admin);
+        
+        if (scoutFormFormat.Result is not null || scoutFormFormat.Value is null)
         {
             return scoutFormFormat.Result;
         }
+
+        scoutFormFormat.Value.FieldsInStages = scoutFormFormat.Value.FieldsInStages
+            .Concat(adminScoutFormFormat?.Value?.FieldsInStages ?? new List<FieldsInStageDto>()).ToList();
 
         var teams = await blueAllianceService.GetTeamsByEvent(eventKey);
         TeamsAnalyzer analyzer = new TeamsAnalyzer(teams, scoutForms, scoutFormFormat.Value,
