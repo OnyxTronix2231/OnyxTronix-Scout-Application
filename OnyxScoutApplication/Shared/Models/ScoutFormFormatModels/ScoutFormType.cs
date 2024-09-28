@@ -3,6 +3,7 @@
     public enum ScoutFormType
     {
         MainGame,
-        Pit
+        Pit,
+        Admin
     }
 }

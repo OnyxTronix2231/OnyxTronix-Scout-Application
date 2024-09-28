@@ -1,4 +1,4 @@
-﻿@page "/ScoutForms"
+﻿@page "/AdminScoutForms"
 @using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using System.Security.Claims
 @using FailureEventArgs = Syncfusion.Blazor.Inputs.FailureEventArgs
@@ -8,7 +8,7 @@
 @inject EventService EventService;
 @inject IJSRuntime JsRuntime
 
-@attribute [OnyxAuthorize(Role = Role.Scouter)]
+@attribute [OnyxAuthorize(Role = Role.Admin)]
 <h1>Scout forms</h1>
 @if (scoutForms == null)
 {
@@ -52,7 +52,7 @@ else
 
             <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Last edit" Field="DateTime"
                         AllowFiltering="true" Type="ColumnType.Date" Format="HH:mm dd/MM/yyyy"
-                        FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
+                        FilterSettings="@(                                            new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
             </GridColumn>
 
             <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Key name" Field="KeyName"
@@ -123,7 +123,7 @@ else
             return;
         }
 
-        scoutForms = await ScoutFormService.GetMainGameForms();
+        scoutForms = await ScoutFormService.GetAdminGameForms();
     }
 
     private void Change(object l)
@@ -146,8 +146,8 @@ else
         if (await ScoutFormService.DeleteForm(form.Id))
         {
             Console.WriteLine("Removed: " + form.Id);
-            await ScoutFormService.UpdateMainGameForms();
-            scoutForms = await ScoutFormService.GetMainGameForms();
+            await ScoutFormService.UpdateAdminForms();
+            scoutForms = await ScoutFormService.GetAdminGameForms();
             return;
         }
         Console.WriteLine("Failed removing: " + form.Id);

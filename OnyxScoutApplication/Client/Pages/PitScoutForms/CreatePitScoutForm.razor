@@ -48,7 +48,7 @@
                                            $"{selectedEvent.Year}/{ScoutFormType.Pit}");
         if (form == null)
         {
-            await NotificationManager.NotifyAsync("No scout form found for  pit scouting!", "", NotificationType.Danger);
+            await NotificationManager.NotifyAsync("No scout form template found for pit scouting!", "", NotificationType.Danger);
             NavigationManager.NavigateTo("/");
             return;
         }
