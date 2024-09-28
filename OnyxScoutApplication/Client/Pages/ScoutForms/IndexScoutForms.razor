@@ -52,7 +52,7 @@ else
 
             <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Last edit" Field="DateTime"
                         AllowFiltering="true" Type="ColumnType.Date" Format="HH:mm dd / MM / yyyy"
-                        FilterSettings="@(                                            new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
+                        FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.Excel })">
             </GridColumn>
 
             <GridColumn AutoFit="true" ShowInColumnChooser="false" HeaderText="Key name" Field="KeyName"
@@ -83,7 +83,7 @@ else
                             </ButtonTabOpener>
                             @if (isInDangerMode)
                             {
-                                <SfButton CssClass="e - danger" @onclick="() => Delete(scoutForm)" Style="margin-left :5px">
+                                <SfButton CssClass="e-danger" @onclick="() => Delete(scoutForm)" Style="margin-left :5px">
                                     Delete
                                 </SfButton>
                             }
