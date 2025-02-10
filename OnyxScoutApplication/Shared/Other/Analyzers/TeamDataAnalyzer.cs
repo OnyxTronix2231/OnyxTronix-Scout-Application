@@ -37,7 +37,7 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
         {
             List<TeamFieldAverage> averages = new List<TeamFieldAverage>();
             averages.AddRange(CalculateDataFor(
-                fieldsInStage.Fields.WithCascadeFields().Where(field => field.FieldType != FieldType.TextField || shouldIncludeTextFields),
+                fieldsInStage.Fields.Where(field => field.FieldType != FieldType.TextField || shouldIncludeTextFields),
                 formDataInStage.SelectMany(i => i.FormData).
                     Where(field => field.Field.FieldType != FieldType.TextField || shouldIncludeTextFields).ToList(),
                 shouldCount, shouldIncludeTextFields));
@@ -55,13 +55,13 @@ namespace OnyxScoutApplication.Shared.Other.Analyzers
                 if (field.FieldType != FieldType.CascadeField)
                     continue;
 
-                // averages.AddRange(CalculateDataFor(field.CascadeFields.Where(f =>
-                //         f.FieldType != FieldType.TextField || shouldIncludeTextFields),
-                //
-                //     formData.SelectMany(i => i.CascadeData).ToList(), data =>
-                //         formData.Where(i => i.Field.Id == field.Id).First(i =>
-                //             i.CascadeData.Contains(data)).BooleanValue,
-                //     shouldIncludeTextFields));
+                averages.AddRange(CalculateDataFor(field.CascadeFields.Where(f =>
+                        f.FieldType != FieldType.TextField || shouldIncludeTextFields),
+                
+                    formData.SelectMany(i => i.CascadeData).ToList(), data =>
+                        formData.Where(i => i.Field.Id == field.Id).First(i =>
+                            i.CascadeData.Contains(data)).BooleanValue,
+                    shouldIncludeTextFields));
             }
 
             return averages;

@@ -111,7 +111,7 @@ public class ScoutFormFormatFirestoreRepositorySmart : FirestoreRepository<Form,
         formsByEventKey[eventKey] = forms.Select(i => i.ConvertTo<Form>()).ToList();
         collection.Listen(snapshot =>
         {
-            Console.WriteLine($"New chage in {eventKey} ScoutForms, updating cache");
+            Console.WriteLine($"New change in {eventKey} ScoutForms, updating cache");
             formsByEventKey[eventKey] = snapshot.Select(i => i.ConvertTo<Form>()).ToList();
         });
     }

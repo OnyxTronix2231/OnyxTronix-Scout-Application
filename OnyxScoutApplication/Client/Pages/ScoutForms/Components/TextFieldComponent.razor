@@ -1,6 +1,6 @@
 ﻿@using System.Diagnostics.CodeAnalysis
 @inherits FormInputBase<string>
-<SfTextBox CssClass="multiline" Width="100%" Multiline="true" class="form-control" @bind-Value="CurrentValue" Readonly="@(FormType == FormType.View)"/>
+    <SfTextBox CssClass="multiline" Width="100%" Multiline="true" class="form-control" @bind-Value="CurrentValue" Readonly="@(FormType == FormType.View)"/>
 <ValidationMessage For="@ValueExpression"/>
 
 @code {
