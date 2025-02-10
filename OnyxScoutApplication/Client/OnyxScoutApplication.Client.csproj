@@ -24,7 +24,7 @@
     <PackageReference Include="Syncfusion.Blazor" Version="23.1.44" />
     <PackageReference Include="Syncfusion.Licensing" Version="23.1.44" />
     <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="23.1.44" />
-    <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
+    <PackageReference Include="System.Net.Http.Json" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>
