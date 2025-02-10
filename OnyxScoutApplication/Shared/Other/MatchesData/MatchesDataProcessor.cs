@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
@@ -103,8 +104,34 @@ public class MatchesDataProcessor
 
             foreach (var formData in scoutForm.FormDataInStages.SelectMany(i => i.FormData.WithCascadeData()))
             {
-                row.Add("RawValue" + formData.Field.Id,
-                    formData.NumericValue?.ToString() ?? (formData.BooleanValue ? "1" : "0"));
+                string value;
+                switch (formData.Field.FieldType)
+                {
+                    case FieldType.Timer:
+                    case FieldType.Integer:
+                        value = formData.NumericValue.ToString();
+                        break;
+                    case FieldType.Boolean:
+                    case FieldType.CascadeField:
+                        value = formData.BooleanValue ? "1" : "0";
+                        break;
+                    case FieldType.OptionSelect:
+                    case FieldType.MultipleChoice:
+                        if (formData.SelectedOptions is not null)
+                            value = string.Join(", ", formData.SelectedOptions.Select(opt => opt.Index));
+                        else
+                            value = "";
+                        break;
+                    case FieldType.BooleanChooser:
+                        value = formData.StringValue is not null ? formData.StringValue == "True" ? "1" : "0" : "";
+                        break;
+                    case FieldType.TextField:
+                        value = formData.StringValue;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                row.Add("RawValue" + formData.Field.Id, value);
             }
 
             eventAnalyticSettings?.CombinedFields.ForEach(combinedFields =>

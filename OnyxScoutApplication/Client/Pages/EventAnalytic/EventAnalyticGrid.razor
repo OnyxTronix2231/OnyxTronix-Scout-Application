@@ -13,7 +13,7 @@
                 AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true" AllowExcelExport="true"
                 Toolbar="@toolbarItems" ShowColumnChooser="true" Width="auto" Height="100%">
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
-            <GridEvents OnToolbarClick="ToolbarClickHandler" Created="LoadHandler" TValue="ExpandoObject"></GridEvents>
+            <GridEvents ExcelQueryCellInfoEvent="ExcelQueryCellInfoHandler" OnToolbarClick="ToolbarClickHandler" Created="LoadHandler" TValue="ExpandoObject"></GridEvents>
             <GridColumns>
                 <GridColumn AllowReordering="false" ShowInColumnChooser="false" HeaderText="Team" Field="TeamNumber" AllowFiltering="true"
                             FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"
@@ -34,7 +34,7 @@
                     int index = i;
                     string nameId = ColumnsFields[index].Id;
                     string name = ColumnsFields[index].Name;
-                    var rawValue = "RawValue" + nameId;
+                    var rawValue = nameId;
 
                     <GridColumn AutoFit="false" HeaderText="@name" Field="@rawValue" AllowReordering="true"
                                 AllowResizing="true" Type="ColumnType.Double">
@@ -68,6 +68,18 @@
 
     private readonly string[] toolbarItems = { "ColumnChooser", "ExcelExport" };
     public SfGrid<ExpandoObject> Grid { get; set; }
+    
+    public void ExcelQueryCellInfoHandler(ExcelQueryCellInfoEventArgs<ExpandoObject> args)
+    {
+        Console.WriteLine(args.Column.Field);
+        if (args.Column.Field == "TeamNumber") 
+            return;
+        
+        var v = (IDictionary<string, object>)args.Data;
+        var s = new MarkupString(v.TryGetValue(args.Column.Field, out var res) ? res.ToString()! : "").ToString();
+        s = s.Replace("<b>", "").Replace("</b>", "").Replace("<br>", "\n").Replace("<br />", "\n");
+        args.Cell.Value = s;
+    }
 
     public async Task ToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
     {
@@ -87,7 +99,7 @@
 
     private async Task LoadHandler()
     {
-        await Grid.AutoFitColumnsAsync(ColumnsFields.Select(i => "RawValue" + i.Id).ToArray());
+        await Grid.AutoFitColumnsAsync(ColumnsFields.Select(i => i.Id).ToArray());
     }
 }
 

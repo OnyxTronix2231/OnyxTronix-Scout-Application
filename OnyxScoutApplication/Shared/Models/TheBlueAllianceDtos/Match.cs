@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
 namespace OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos
@@ -70,7 +71,7 @@ namespace OnyxScoutApplication.Shared.Models.TheBlueAllianceDtos
 
         public int GetTeamAt(int index)
         {
-            return int.Parse(TeamKeys[index].Replace("frc", ""));
-        }
+            return int.Parse(Regex.Replace(TeamKeys[index],  @"[^\d]", ""));
+        }   
     }
 }
