@@ -12,13 +12,14 @@ using static OnyxScoutApplication.Server.Data.Extensions.Result;
 
 namespace OnyxScoutApplication.Server.Data.Persistence.Repositories;
 
-public class ScoutFormFormatFirestoreRepositorySmart : FirestoreRepository<Form, FormDto>, IScoutFormRepository
+public class ScoutFormFirestoreRepositorySmart : FirestoreRepository<Form, FormDto>, IScoutFormRepository
 {
     // private List<Form> formDtos;
     // private bool isInit;
-    private Dictionary<string, List<Form>> formsByEventKey;
+    private readonly Dictionary<string, List<Form>> formsByEventKey;
+    private readonly Dictionary<string, Task> initAwaits;
 
-    public ScoutFormFormatFirestoreRepositorySmart(FirestoreDb client, IMapper mapper) : base(client, mapper,
+    public ScoutFormFirestoreRepositorySmart(FirestoreDb client, IMapper mapper) : base(client, mapper,
         "ScoutForms")
     {
         // isInit = false;
