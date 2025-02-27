@@ -62,7 +62,13 @@ namespace OnyxScoutApplication.Server
                 options.Password.RequireNonAlphanumeric = false;
             }).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddTransient<IProfileService, ProfileService>();
-            services.AddIdentityServer(opt => opt.LicenseKey = environmentVariables["DUENDE_IDENTITY_SERVER_KEY"]!.ToString()
+            services.AddIdentityServer(opt =>
+                    {
+                        opt.LicenseKey = environmentVariables["DUENDE_IDENTITY_SERVER_KEY"]!.ToString();
+                        opt.KeyManagement.Enabled = false;
+                        opt.ServerSideSessions.RemoveExpiredSessions = true;
+                        opt.ServerSideSessions.RemoveExpiredSessionsFrequency = TimeSpan.FromMinutes(10);
+                    }
                     //     options =>
                     // {
                     //     if (!env.IsDevelopment())
@@ -70,7 +76,13 @@ namespace OnyxScoutApplication.Server
                     //       //  options.PublicOrigin = configuration.GetValue<string>("PublicOrigin");
                     //     }
                     // }
-                )
+                    
+                ).AddOperationalStore(opt =>
+                {
+                    opt.EnableTokenCleanup = true;
+                    opt.RemoveConsumedTokens = true;
+                    opt.TokenCleanupInterval = 3600;
+                })
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
                 {
                     options.IdentityResources["openid"].UserClaims.Add("name");
@@ -104,7 +116,7 @@ namespace OnyxScoutApplication.Server
             services.AddScoped<IScoutFormFormatRepository, ScoutFormFormatFirestoreRepository>();
             services.AddScoped<IScoutFormFormatUnitOfWork, ScoutFormFaunaFormatUnitOfWork>();
 
-            services.AddSingleton<IScoutFormRepository, ScoutFormFormatFirestoreRepositorySmart>();
+            services.AddSingleton<IScoutFormRepository, ScoutFormFirestoreRepositorySmart>();
             services.AddSingleton<IScoutFormUnitOfWork, ScoutFormUnitOfWork>();
 
             services.AddTransient<ICustomEventRepository, CustomEventRepository>();
