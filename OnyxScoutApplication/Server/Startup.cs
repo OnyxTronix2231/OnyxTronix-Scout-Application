@@ -66,6 +66,8 @@ namespace OnyxScoutApplication.Server
                     {
                         opt.LicenseKey = environmentVariables["DUENDE_IDENTITY_SERVER_KEY"]!.ToString();
                         opt.KeyManagement.Enabled = false;
+                        opt.ServerSideSessions.RemoveExpiredSessions = true;
+                        opt.ServerSideSessions.RemoveExpiredSessionsFrequency = TimeSpan.FromMinutes(10);
                     }
                     //     options =>
                     // {
@@ -74,7 +76,13 @@ namespace OnyxScoutApplication.Server
                     //       //  options.PublicOrigin = configuration.GetValue<string>("PublicOrigin");
                     //     }
                     // }
-                )
+                    
+                ).AddOperationalStore(opt =>
+                {
+                    opt.EnableTokenCleanup = true;
+                    opt.RemoveConsumedTokens = true;
+                    opt.TokenCleanupInterval = 3600;
+                })
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
                 {
                     options.IdentityResources["openid"].UserClaims.Add("name");
