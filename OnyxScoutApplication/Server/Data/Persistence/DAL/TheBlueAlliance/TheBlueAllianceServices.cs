@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -43,7 +44,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.DAL.TheBlueAlliance
         public async Task<List<Team>> GetTeamsByEvent(string eventKey)
         {
             var response = await GetResponse(Path.Combine(PREFIX, "event", eventKey, "teams", "simple"));
-            var result = GetObject<List<Team>>(response);
+            var result = GetObject<List<Team>>(response).OrderBy(t => t.TeamNumber).ToList();
             return result;
         }
 

@@ -90,17 +90,38 @@ public class MatchesDataProcessor
         var data = new List<ExpandoObject>();
         foreach (var scoutForm in scoutForms)
         {
+            if (scoutForm.MatchNumber == 49 && scoutForm.TeamNumber == 5987)
+            {
+                Console.WriteLine("");
+            }
             var team = teams.FirstOrDefault(t => t.TeamNumber == scoutForm.TeamNumber);
             if (team is null)
             {
                 continue;
             }
 
-            IDictionary<string, object> row = new ExpandoObject();
-
-            row.Add("TeamNumber", team.TeamNumber);
-            row.Add("Nickname", team.Nickname);
-            row.Add("Match N.", scoutForm.MatchNumber);
+            var isNew = false;
+            IDictionary<string, object> row = data.FirstOrDefault(d =>
+            {
+                IDictionary<string, object> dd = d;
+                return dd["TeamNumber"].ToString() == team.TeamNumber.ToString() &&
+                       dd["Match N."].ToString() == scoutForm.MatchNumber.ToString();
+            });
+            if (row is null)
+            {
+                isNew = true;
+                row = new ExpandoObject();
+                row.Add("TeamNumber", team.TeamNumber);
+                row.Add("Nickname", team.Nickname);
+                row.Add("Type", scoutForm.Type);
+                row.Add("Match N.", scoutForm.MatchNumber);
+            }
+            else if(row["Type"].ToString() == scoutForm.Type.ToString())
+            {
+                Console.WriteLine($"Duplicate scout form found of type {scoutForm.Type}, match: @{scoutForm.MatchNumber}, team: @{team.TeamNumber}");
+                continue;
+            }
+            
 
             foreach (var formData in scoutForm.FormDataInStages.SelectMany(i => i.FormData.WithCascadeData()))
             {
@@ -136,17 +157,23 @@ public class MatchesDataProcessor
 
             eventAnalyticSettings?.CombinedFields.ForEach(combinedFields =>
             {
-                double sum = 0;
+                double? sum = null;
                 foreach (var field in combinedFields.Fields)
                 {
-                    sum += scoutForm.FormDataInStages.SelectMany(i => i.FormData.WithCascadeData())
-                        .FirstOrDefault(i => i.Field.Id == field.Id)?.NumericValue ?? 0;
+                    var res = scoutForm.FormDataInStages.SelectMany(i => i.FormData.WithCascadeData())
+                        .FirstOrDefault(i => i.Field.Id == field.Id)?.NumericValue;
+                    if (res is null) 
+                        continue;
+                    sum ??= 0;
+                    sum += res;
                 }
 
-                row.Add("RawValue" + combinedFields.Id, sum);
+                if(sum is not null)
+                    row.Add("RawValue" + combinedFields.Id, sum);
             });
 
-            data.Add((ExpandoObject)row);
+            if(isNew)
+                data.Add((ExpandoObject)row);
         }
 
 

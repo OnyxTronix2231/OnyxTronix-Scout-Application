@@ -51,7 +51,7 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories
             DocumentReference docRef = CollectionReference.Document();
            
             await docRef.SetAsync(mapped);
-            return await Task.Run(() => new OkResult());
+            return new OkResult();
         }
 
         public virtual async Task<ActionResult> Remove(string id)
