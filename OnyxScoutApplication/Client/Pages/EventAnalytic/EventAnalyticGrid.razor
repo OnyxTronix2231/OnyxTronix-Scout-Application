@@ -17,7 +17,7 @@
                 AllowFiltering="true" AllowResizing="true" AllowSorting="true" AllowMultiSorting="true" AllowExcelExport="true"
                 Toolbar="@toolbarItems" ShowColumnChooser="true" Width="auto" Height="100%">
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
-            <GridEvents ExcelQueryCellInfoEvent="ExcelQueryCellInfoHandler" OnToolbarClick="ToolbarClickHandler" Created="LoadHandler" TValue="ExpandoObject"></GridEvents>
+            <GridEvents ExcelQueryCellInfoEvent="ExcelQueryCellInfoHandler" OnToolbarClick="ToolbarClickHandler" TValue="ExpandoObject"></GridEvents>
             <GridColumns>
                 <GridColumn AllowReordering="false" ShowInColumnChooser="false" HeaderText="Team" Field="TeamNumber" AllowFiltering="true"
                             FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"
@@ -38,10 +38,10 @@
                     int index = i;
                     string nameId = ColumnsFields[index].Id;
                     string name = ColumnsFields[index].Name;
-                    var rawValue = nameId;
+                    var rawValue = "RawValue" + nameId;
 
-                    <GridColumn AutoFit="false" HeaderText="@name" Field="@rawValue" AllowReordering="true"
-                                AllowResizing="true" Type="ColumnType.Double">
+                    <GridColumn SortComparer="new CustomComparer(rawValue)" AutoFit="true" MaxWidth="250px" HeaderText="@name" Field="@rawValue" AllowReordering="true"
+                                AllowResizing="true">
                         <HeaderTemplate>
                             <div>
                                 <span>@ColumnsFields[index].Name</span>
@@ -100,11 +100,41 @@
         await base.OnInitializedAsync();
     }
 
-    private async Task LoadHandler()
+    public class CustomComparer : IComparer<object>
     {
-        await Grid.AutoFitColumnsAsync(ColumnsFields.Select(i => i.Id).ToArray());
+        private readonly string rawValue;
+
+        public CustomComparer(string rawValue)
+        {
+            this.rawValue = rawValue;
+        }
+
+        public int Compare(object xRowDataToCompare, object yRowDataToCompare)
+        {
+            var xObject = ((IDictionary<string, object>) xRowDataToCompare!)[rawValue];
+            var yObject = ((IDictionary<string, object>) yRowDataToCompare!)[rawValue];
+            
+            if (xObject?.ToString() == yObject?.ToString())
+                return 0;
+
+            if (xObject?.ToString() is null || xObject.ToString() == "NaN")
+            {
+                return -1;
+            }
+            
+            if (yObject?.ToString() is null || yObject.ToString() == "NaN")
+            {
+                return 1;
+            }
+
+            var xDouble = double.Parse(xObject.ToString()!);
+            var yDouble = double.Parse(yObject.ToString()!);
+            return xDouble.CompareTo(yDouble);
+        }
     }
 }
+
+
 
 
 <style>

@@ -48,8 +48,8 @@ public class EventAnalyticsController : Controller
         }
 
         var scoutForms = scoutFormsRes.Value!
-            .Concat((await scoutFormUnitOfWork.ScoutForms.GetAllByEventWithData(eventKey, ScoutFormType.Admin)).Value ?? new List<FormDto>())
-            .Where(f => f.DateTime >= analyticsSettings.StartDate && f.DateTime <= analyticsSettings.EndDate).ToList();
+            .Concat((await scoutFormUnitOfWork.ScoutForms.GetAllByEventWithData(eventKey, ScoutFormType.Admin)).Value ??
+                    new List<FormDto>()).ToList();
 
         Console.WriteLine("Selected: " + scoutForms.Count);
         var scoutFormFormat =

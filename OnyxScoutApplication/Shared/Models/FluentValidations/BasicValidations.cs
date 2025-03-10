@@ -8,7 +8,7 @@ namespace OnyxScoutApplication.Shared.Models.FluentValidations
 
         public static bool IsValidTeamNumber(this int teamNumber)
         {
-            return teamNumber is >= 1 and <= 9999;
+            return teamNumber is >= 1 and <= 99999;
         }
         
         public static bool IsValidGameYear(this int year)
