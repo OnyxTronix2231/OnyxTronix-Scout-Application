@@ -4,6 +4,8 @@
             .then(isAvailable => {
                 if (isAvailable) {
                     caller.invokeMethodAsync("onUpdateAvailable").then(r => console.log(r));
+                } else {
+                    console.log("NOT AVAILABLE?? - PLEASE FIX CLIENT UPDATE ALERT")
                 }
             });
     },
