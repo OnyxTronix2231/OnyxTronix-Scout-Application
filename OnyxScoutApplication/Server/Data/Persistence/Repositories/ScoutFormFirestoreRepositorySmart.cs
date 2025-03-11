@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Google.Cloud.Firestore;
@@ -18,6 +19,7 @@ public class ScoutFormFirestoreRepositorySmart : FirestoreRepository<Form, FormD
     // private bool isInit;
     private readonly Dictionary<string, List<Form>> formsByEventKey;
     private readonly Dictionary<string, Task> initAwaits;
+    private static readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
     public ScoutFormFirestoreRepositorySmart(FirestoreDb client, IMapper mapper) : base(client, mapper,
         "ScoutForms")
@@ -100,8 +102,10 @@ public class ScoutFormFirestoreRepositorySmart : FirestoreRepository<Form, FormD
 
     private async Task Init(string eventKey)
     {
+        await semaphoreSlim.WaitAsync();
         if (formsByEventKey.ContainsKey(eventKey))
         {
+            semaphoreSlim.Release();
             return;
         }
 
@@ -115,5 +119,6 @@ public class ScoutFormFirestoreRepositorySmart : FirestoreRepository<Form, FormD
             Console.WriteLine($"New change in {eventKey} ScoutForms, updating cache");
             formsByEventKey[eventKey] = snapshot.Select(i => i.ConvertTo<Form>()).ToList();
         });
+        semaphoreSlim.Release();
     }
 }
