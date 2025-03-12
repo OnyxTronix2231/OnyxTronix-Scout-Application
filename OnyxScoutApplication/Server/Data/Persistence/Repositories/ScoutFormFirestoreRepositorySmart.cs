@@ -20,6 +20,7 @@ public class ScoutFormFirestoreRepositorySmart : FirestoreRepository<Form, FormD
     private readonly Dictionary<string, List<Form>> formsByEventKey;
     private readonly Dictionary<string, Task> initAwaits;
     private static readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
+    private static readonly SemaphoreSlim addSemaphoreSlim = new SemaphoreSlim(1, 1);
 
     public ScoutFormFirestoreRepositorySmart(FirestoreDb client, IMapper mapper) : base(client, mapper,
         "ScoutForms")
@@ -30,6 +31,7 @@ public class ScoutFormFirestoreRepositorySmart : FirestoreRepository<Form, FormD
 
     public override async Task<ActionResult> Add(FormDto form)
     {
+        await addSemaphoreSlim.WaitAsync();
         var result = await CollectionReference.WhereEqualTo("Year", form.Year)
             .WhereEqualTo("Year", form.Year)
             .WhereEqualTo("KeyName", form.KeyName)
@@ -39,10 +41,13 @@ public class ScoutFormFirestoreRepositorySmart : FirestoreRepository<Form, FormD
 
         if (result.Count != 0)
         {
+            addSemaphoreSlim.Release();
             return ResultCode(System.Net.HttpStatusCode.BadRequest, "This scout form already exists!");
         }
 
-        return await base.Add(form);
+        var res = await base.Add(form);
+        addSemaphoreSlim.Release();
+        return res;
     }
 
     public async Task<ActionResult<FormDto>> GetWithFields(string id)
@@ -103,22 +108,31 @@ public class ScoutFormFirestoreRepositorySmart : FirestoreRepository<Form, FormD
     private async Task Init(string eventKey)
     {
         await semaphoreSlim.WaitAsync();
-        if (formsByEventKey.ContainsKey(eventKey))
+        try
+        {
+            if (formsByEventKey.ContainsKey(eventKey))
+            {
+                return;
+            }
+            var tmp = CollectionReference.WhereEqualTo("EventName", eventKey);
+            var forms = await tmp.GetSnapshotAsync();
+            formsByEventKey[eventKey] = forms.Select(i => i.ConvertTo<Form>()).ToList();
+
+            var collection = CollectionReference.WhereEqualTo("EventName", eventKey);
+        
+            collection.Listen(snapshot =>
+            {
+                Console.WriteLine($"New change in {eventKey} ScoutForms, updating cache");
+                formsByEventKey[eventKey] = snapshot.Select(i => i.ConvertTo<Form>()).ToList();
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        finally
         {
             semaphoreSlim.Release();
-            return;
         }
-
-        var collection = CollectionReference.WhereEqualTo("EventName", eventKey);
-        
-        var forms = await collection.GetSnapshotAsync();
-        //formDtos = Mapper.Map<List<FormDto>>(forms.Select(i => i.ConvertTo<Form>()));
-        formsByEventKey[eventKey] = forms.Select(i => i.ConvertTo<Form>()).ToList();
-        collection.Listen(snapshot =>
-        {
-            Console.WriteLine($"New change in {eventKey} ScoutForms, updating cache");
-            formsByEventKey[eventKey] = snapshot.Select(i => i.ConvertTo<Form>()).ToList();
-        });
-        semaphoreSlim.Release();
     }
 }
