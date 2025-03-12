@@ -8,17 +8,15 @@
 
 @attribute [OnyxAuthorize(Role = Role.Scouter)]
 
-<h1>Events</h1>
-
 <div>
     <EventSelector OnEventSelectionChange="UpdateMatchTable"></EventSelector>
 </div>
-
-<div style="float: right">
+<br/>
+<div>
     <SfButton class="e-warning" @onclick="HandleRefreshButtonClick" style="margin-right: 5px">
         Refresh
     </SfButton>
-    
+
     <SfButton CssClass="e-danger" Disabled="!AppManager.IsOnlineMode"
               @onclick="() => AppManager.IsOnlineMode = false">
         Offline
@@ -32,43 +30,56 @@
 <br/>
 
 
-@if (!isInit)
-{
-    Console.WriteLine("skippinggg");
-    return;
-}
-@{
-    Console.WriteLine("not skipping");
-}
 <div>
     <MatchesGrid Matches="qMatches" OnTeamClicked="OnTeamClicked">
         <MatchGridSettings SubmittedForms="@scoutForms" AllowPaging="true" PagingScopeName="qMatches"></MatchGridSettings>
     </MatchesGrid>
 </div>
 
-<br/>
-<div>
-    <MatchesGrid Matches="qfMatches" OnTeamClicked="OnTeamClicked">
-        <MatchGridSettings SubmittedForms="@scoutForms"></MatchGridSettings>
-    </MatchesGrid>
-</div>
+@if (efMatches.Count != 0)
+{
+    <br/>
+    <div>
+        <MatchesGrid Matches="efMatches" OnTeamClicked="OnTeamClicked">
+            <MatchGridSettings SubmittedForms="@scoutForms"></MatchGridSettings>
+        </MatchesGrid>
+    </div>
+}
+
+@if (qfMatches.Count != 0)
+{
+    <br/>
+     <div>
+        <MatchesGrid Matches="qfMatches" OnTeamClicked="OnTeamClicked">
+            <MatchGridSettings SubmittedForms="@scoutForms"></MatchGridSettings>
+        </MatchesGrid>
+    </div>
+}
 
 <br/>
-<div>
-    <MatchesGrid Matches="sfMatches" OnTeamClicked="OnTeamClicked">
-        <MatchGridSettings SubmittedForms="@scoutForms"></MatchGridSettings>
-    </MatchesGrid>
-</div>
+@if (sfMatches.Count != 0)
+{
+    <br/>
+    <div>
+        <MatchesGrid Matches="sfMatches" OnTeamClicked="OnTeamClicked">
+            <MatchGridSettings SubmittedForms="@scoutForms"></MatchGridSettings>
+        </MatchesGrid>
+    </div>
+}
 
-<br/>
-<div>
-    <MatchesGrid Matches="fMatches" OnTeamClicked="OnTeamClicked">
-        <MatchGridSettings SubmittedForms="@scoutForms"></MatchGridSettings>
-    </MatchesGrid>
-</div>
+@if (fMatches.Count != 0)
+{
+    <br/>
+    <div>
+        <MatchesGrid Matches="fMatches" OnTeamClicked="OnTeamClicked">
+            <MatchGridSettings SubmittedForms="@scoutForms"></MatchGridSettings>
+        </MatchesGrid>
+    </div>
+}
 
 @code {
     private List<Match> qMatches = new();
+    private List<Match> efMatches = new();
     private List<Match> qfMatches = new();
     private List<Match> sfMatches = new();
     private List<Match> fMatches = new();
@@ -102,6 +113,7 @@
     {
         matches = matches.OrderBy(i => i.Date).ToList();
         qMatches = matches.Where(i => i.Level == "qm").ToList();
+        efMatches = matches.Where(i => i.Level == "ef").ToList();
         qfMatches = matches.Where(i => i.Level == "qf").ToList();
         sfMatches = matches.Where(i => i.Level == "sf").ToList();
         fMatches = matches.Where(i => i.Level == "f").ToList();

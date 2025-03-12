@@ -4,23 +4,29 @@
 @inject EventService EventService
 @inject TheBlueAllianceService TheBlueAllianceService
 
-<SfDropDownList TValue="int?" TItem="int?" Width="150px" PopupHeight="150px" PopupWidth="150px" Placeholder="Select a year" Value="selectedYearFilter" DataSource="@filterYears">
-    <DropDownListEvents TItem="int?" TValue="int?" OnValueSelect="OnYearFilterChange"></DropDownListEvents>
-</SfDropDownList>
+<div style="display: flex; gap: 5px;">
+    <div style="max-width: 100px">
+        <SfDropDownList TValue="int?" TItem="int?"  Placeholder="Select a year" Value="selectedYearFilter" DataSource="@filterYears">
+            <DropDownListEvents TItem="int?" TValue="int?" OnValueSelect="OnYearFilterChange"></DropDownListEvents>
+        </SfDropDownList>
+    </div>
+    
+    <div style="max-width: 150px">
+        <SfDropDownList TValue="string" TItem="string" Placeholder="Select a country" Value="selectedCountryFilter" DataSource="@filterCountries">
+            <DropDownListEvents TItem="string" TValue="string" OnValueSelect="OnCountryFilterChange"></DropDownListEvents>
+        </SfDropDownList>
+    </div>
+</div>
 
-
-<SfDropDownList TValue="string" TItem="string" Width="200px" PopupHeight="200px" PopupWidth="200px" Placeholder="Select a country" Value="selectedCountryFilter" DataSource="@filterCountries">
-    <DropDownListEvents TItem="string" TValue="string" OnValueSelect="OnCountryFilterChange"></DropDownListEvents>
-</SfDropDownList>
-<br/>
-@if (filteredEvents != null)
-{
-    <SfDropDownList TValue="string" TItem="Event" Width="355px" PopupHeight="355px" PopupWidth="355px" Placeholder="Select an event" Value="lastEventKey" DataSource="@filteredEvents">
-        <DropDownListEvents TItem="Event" TValue="string" OnValueSelect="OnEventChange"></DropDownListEvents>
-        <DropDownListFieldSettings Text="Name" Value="Key"></DropDownListFieldSettings>
-    </SfDropDownList>
-}
-
+<div style="max-width: 255px">
+    @if (filteredEvents != null)
+    {
+        <SfDropDownList TValue="string" TItem="Event" Placeholder="Select an event" Value="lastEventKey" DataSource="@filteredEvents">
+            <DropDownListEvents TItem="Event" TValue="string" OnValueSelect="OnEventChange"></DropDownListEvents>
+            <DropDownListFieldSettings Text="Name" Value="Key"></DropDownListFieldSettings>
+        </SfDropDownList>
+    }
+</div>
 
 @code {
 
