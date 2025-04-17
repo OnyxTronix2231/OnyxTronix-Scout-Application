@@ -15,39 +15,46 @@ namespace OnyxScoutApplication.Server.Data.Persistence.Repositories;
 
 public class ScoutFormFirestoreRepositorySmart : FirestoreRepository<Form, FormDto>, IScoutFormRepository
 {
-    // private List<Form> formDtos;
-    // private bool isInit;
     private readonly Dictionary<string, List<Form>> formsByEventKey;
-    private readonly Dictionary<string, Task> initAwaits;
     private static readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
     private static readonly SemaphoreSlim addSemaphoreSlim = new SemaphoreSlim(1, 1);
 
     public ScoutFormFirestoreRepositorySmart(FirestoreDb client, IMapper mapper) : base(client, mapper,
         "ScoutForms")
     {
-        // isInit = false;
         formsByEventKey = new Dictionary<string, List<Form>>();
     }
 
     public override async Task<ActionResult> Add(FormDto form)
     {
         await addSemaphoreSlim.WaitAsync();
-        var result = await CollectionReference.WhereEqualTo("Year", form.Year)
-            .WhereEqualTo("Year", form.Year)
-            .WhereEqualTo("KeyName", form.KeyName)
-            .WhereEqualTo("TeamNumber", form.TeamNumber)
-            .WhereEqualTo("Type", form.Type)
-            .GetSnapshotAsync();
+        try
+        {
+            var result = await CollectionReference.WhereEqualTo("Year", form.Year)
+                .WhereEqualTo("Year", form.Year)
+                .WhereEqualTo("KeyName", form.KeyName)
+                .WhereEqualTo("TeamNumber", form.TeamNumber)
+                .WhereEqualTo("Type", form.Type)
+                .GetSnapshotAsync();
 
-        if (result.Count != 0)
+            if (result.Count != 0)
+            {
+                return ResultCode(System.Net.HttpStatusCode.BadRequest, "This scout form already exists!");
+            }
+
+            var res = await base.Add(form);
+            return res;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        finally
         {
             addSemaphoreSlim.Release();
-            return ResultCode(System.Net.HttpStatusCode.BadRequest, "This scout form already exists!");
         }
-
-        var res = await base.Add(form);
-        addSemaphoreSlim.Release();
-        return res;
+        
     }
 
     public async Task<ActionResult<FormDto>> GetWithFields(string id)

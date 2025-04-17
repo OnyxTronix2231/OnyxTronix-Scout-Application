@@ -14,12 +14,12 @@
         <SfButton OnClick="SavePageNumber">Save page number</SfButton>
     }
 
-    <SfGrid @ref="@grid" DataSource="@Matches" AllowSorting="true" AllowFiltering="true" Height="@Settings.Height" AllowPaging="@Settings.AllowPaging">
+    <SfGrid @ref="@grid" DataSource="@Matches" AllowSorting="true" FrozenColumns="1" AllowFiltering="true" Height="@Settings.Height" AllowPaging="@Settings.AllowPaging">
         <GridPageSettings PageSize="10"></GridPageSettings>
         <GridEvents Created="OnLoad" QueryCellInfo="CustomizeCell" TValue="Match"></GridEvents>
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
-            <GridColumn Field=@nameof(Match.FullMatchNumber) AutoFit="false" HeaderText="No." Width="80px"></GridColumn>
+            <GridColumn Field=@nameof(Match.FullMatchNumber) AutoFit="false" HeaderText="No." Width="60px"></GridColumn>
             <GridColumn Field=@nameof(Match.Date) AutoFit="false" HeaderText="Match date" Format="HH:mm dd/MM/yyyy" Type="ColumnType.DateTime" Width="135px"></GridColumn>
             @for (int i = 0; i < 3; i++)
             {
@@ -42,8 +42,8 @@
                     </Template>
                 </GridColumn>
             }
-            <GridColumn Field="Alliances.Blue.Score" AutoFit="false" HeaderText="" TextAlign="TextAlign.Right" Width="40px"></GridColumn>
-            <GridColumn Field="Alliances.Red.Score" AutoFit="false" HeaderText="" TextAlign="TextAlign.Left" Width="80px"></GridColumn>
+            <GridColumn Field="Alliances.Blue.Score" AutoFit="false" HeaderText="" TextAlign="TextAlign.Right" Width="50px"></GridColumn>
+            <GridColumn Field="Alliances.Red.Score" AutoFit="false" HeaderText="" TextAlign="TextAlign.Left" Width="50px"></GridColumn>
             @for (int i = 0; i < 3; i++)
             {
                 var headName = "T" + (i + 1);

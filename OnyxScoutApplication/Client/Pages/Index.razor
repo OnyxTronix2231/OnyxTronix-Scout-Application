@@ -56,7 +56,6 @@
     </div>
 }
 
-<br/>
 @if (sfMatches.Count != 0)
 {
     <br/>
@@ -84,11 +83,9 @@
     private List<Match> sfMatches = new();
     private List<Match> fMatches = new();
     private List<SimpleFormDto> scoutForms;
-    private bool isInit;
 
     protected override async Task OnInitializedAsync()
     {
-        isInit = false;
         var matches = await TheBlueAllianceService.GetMatches();
         if (matches is null)
         {
@@ -117,7 +114,6 @@
         qfMatches = matches.Where(i => i.Level == "qf").ToList();
         sfMatches = matches.Where(i => i.Level == "sf").ToList();
         fMatches = matches.Where(i => i.Level == "f").ToList();
-        isInit = true;
     }
 
     private void OnTeamClicked(TeamInMatch teamInMatch)
