@@ -35,7 +35,7 @@ public class MatchesDataProcessor
     public AnalyticsResult GetMatchesData()
     {
         scoutFormFieldsToCalculate = scoutFormFormatDto.FieldsInStages.SelectMany(i => i.Fields.WithCascadeFields()
-            .Where(f => f.FieldType != FieldType.TextField)).ToList();
+        ).ToList();
         var columnsFields = scoutFormFieldsToCalculate.Select(i => new ColumnField
             { Name = i.Name, MarkupName = new MarkupString(i.Name), Id = i.Id.ToString() }).ToList();
 
