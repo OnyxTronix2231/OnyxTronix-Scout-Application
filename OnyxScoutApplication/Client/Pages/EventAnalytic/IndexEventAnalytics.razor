@@ -1,9 +1,5 @@
 ﻿@page "/EventAnalytics"
-@using OnyxScoutApplication.Shared.Models.ScoutFormFormatModels
-@using OnyxScoutApplication.Shared.Models.ScoutFormModels
 @using OnyxScoutApplication.Shared.Other.Analyzers
-@using Syncfusion.Blazor.Data
-@using Syncfusion.ExcelExport
 @using System.Dynamic
 @using System.IO
 @using Syncfusion.XlsIO
@@ -66,7 +62,7 @@
             analyticSettings = await LocalStorage.GetItemAsync<EventAnalyticSettingsDto>("EventAnalyticSettings/" + selectedEvent.Key);
         }
 
-    // scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
+        // scoutForms = await SessionStorage.GetItemAsync<List<SimpleFormDto>>("ScoutForms.All");
         scoutForms = await ScoutFormService.GetMainGameForms();
         selectedScoutForms = scoutForms.ToList();
 
@@ -75,6 +71,7 @@
         {
             return;
         }
+
         minDate = formsByDates.First().DateTime.DateTime - TimeSpan.FromMinutes(5);
         maxDate = formsByDates.Last().DateTime.DateTime + TimeSpan.FromMinutes(5);
     }
@@ -83,8 +80,7 @@
     {
         startDateTime = obj.StartDateTime;
         endDateTime = obj.EndDateTime;
-        selectedScoutForms = scoutForms.
-            Where(f => f.DateTime <= obj.EndDateTime && f.DateTime >= obj.StartDateTime).ToList();
+        selectedScoutForms = scoutForms.Where(f => f.DateTime <= obj.EndDateTime && f.DateTime >= obj.StartDateTime).ToList();
         var analyticsRes = await Http.TryPostJson<AnalyticsResult>
             ($"EventAnalytics/GetEventAnalytics/{selectedEvent.Year}/{selectedEvent.Key}", new AnalyticsSettings { StartDate = obj.StartDateTime, EndDate = obj.EndDateTime, EventAnalyticSettingsDto = analyticSettings });
         if (analyticsRes is null)
@@ -93,6 +89,7 @@
             NavigationManager.NavigateTo("");
             return;
         }
+
         calculatedTeamsData = analyticsRes.CalculatedTeamsData;
         columnsFields = analyticsRes.ColumnsFields;
     }
@@ -107,33 +104,40 @@
             return;
         }
 
-    // calculatedTeamsData = analyticsRes.CalculatedTeamsData;
-    // columnsFields = analyticsRes.ColumnsFields;
+        // calculatedTeamsData = analyticsRes.CalculatedTeamsData;
+        // columnsFields = analyticsRes.ColumnsFields;
         using (ExcelEngine excelEngine = new ExcelEngine())
         {
             IApplication application = excelEngine.Excel;
             application.DefaultVersion = ExcelVersion.Xlsx;
 
-    //Create a workbook.
+            //Create a workbook.
             IWorkbook workbook = application.Workbooks.Create(1);
             IWorksheet worksheet = workbook.Worksheets[0];
 
-    //Initialize DataTable and data get from SampleDataTable method.
+            if (HasDuplicateColumnFieldNames(analyticsRes.ColumnsFields, out var duplicateNames))
+            {
+                Console.WriteLine("Duplicate field names found: " + string.Join(", ", duplicateNames));
+                await NotificationManager.NotifyAsync("Duplicate field names found: " + string.Join(", ", duplicateNames), "", NotificationType.Danger);
+                return;
+            }
+
+            //Initialize DataTable and data get from SampleDataTable method.
             DataTable table = DataTable(analyticsRes.ColumnsFields, analyticsRes.CalculatedTeamsData);
 
-    //Export data from DataTable to Excel worksheet.
+            //Export data from DataTable to Excel worksheet.
             worksheet.ImportDataTable(table, true, 1, 1);
 
             worksheet.UsedRange.AutofitColumns();
 
 
-    //Save the document as a stream and return the stream.
+            //Save the document as a stream and return the stream.
             using (MemoryStream stream = new MemoryStream())
             {
-    //Save the created Excel document to MemoryStream
+                //Save the created Excel document to MemoryStream
                 workbook.SaveAs(stream);
 
-    //Download the excel file.
+                //Download the excel file.
                 await Js.SaveAs($"Samples_{analyticsRes.NumberOfCalculatedForms}_{selectedEvent.Key}.xlsx", stream.ToArray());
             }
         }
@@ -148,16 +152,13 @@
         {
             reports.Columns.Add(column.Name);
         }
-        
-        
-        
 
         foreach (var row in rows.Cast<IDictionary<string, object>>())
         {
             List<object> data = new List<object>();
             data.Add($"{row["TeamNumber"]}\n{row["Nickname"]}");
             data.Add(row["Match N."]?.ToString());
-            
+
             foreach (var column in columnFields)
             {
                 if (!row.ContainsKey("RawValue" + column.Id))
@@ -166,11 +167,24 @@
                     data.Add("");
                     continue;
                 }
+
                 data.Add(row["RawValue" + column.Id]?.ToString());
             }
+
             reports.Rows.Add(data.ToArray());
         }
+
         return reports;
     }
 
+    private static bool HasDuplicateColumnFieldNames(List<ColumnField> columnFields, out List<string> duplicateNames)
+    {
+        duplicateNames = columnFields
+            .GroupBy(x => x.Name)
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key)
+            .ToList();
+
+        return duplicateNames.Any();
+    }
 }
